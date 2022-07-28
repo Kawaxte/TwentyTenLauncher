@@ -18,5 +18,4 @@ By default, AlphacraftLauncher will download **Beta 1.1_02** as it was the last 
 ## TODO
 - >Signing in using a *valid* Microsoft account.
 - >'version' file reading and writing.
-- >'.exe' for Windows.
 - >'.app' for OSX.
