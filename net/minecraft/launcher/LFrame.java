@@ -4,7 +4,6 @@
 package net.minecraft.launcher;
 
 import net.minecraft.MCLauncher;
-import net.minecraft.auth.AInstances;
 import net.minecraft.auth.APanel;
 import net.minecraft.auth.yggdrasil.YAuthenticate;
 

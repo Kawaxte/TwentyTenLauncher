@@ -43,7 +43,6 @@ public class APanel extends Panel {
     public Button loginButton = new Button("Login");
     public Button retryButton = new Button("Try again");
     public Button offlineButton = new Button("Play offline");
-    public AInstances authInstances;
 
     public APanel(final LFrame launcherFrame) {
         this.setLayout(new GridBagLayout());
@@ -106,7 +105,7 @@ public class APanel extends Panel {
 
         Panel text = new Panel(new GridLayout(0, 1, 0, 2));
         panel.add(text, "West");
-        text.add(new Label("Email:", 2));
+        text.add(new Label("Username:", 2));
         text.add(new Label("Password:", 2));
         text.add(new Label(""));
 
@@ -144,6 +143,7 @@ public class APanel extends Panel {
                         }
                     }
                 });
+                this.loginButton.setEnabled(false);
             } else {
                 accountLabel = new Label("", 1) {
                     public void update(Graphics g) {
