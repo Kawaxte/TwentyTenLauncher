@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 public class LUpdater implements Serializable {
-    public static String currentVersion = "0.7.2922";
+    public static String currentVersion = "0.7.3022";
     public static String latestVersion = isOutdated();
 
     public static String isOutdated() {

@@ -1,6 +1,5 @@
 package net.minecraft.auth.yggdrasil;
 
-import net.minecraft.auth.AInstances;
 import net.minecraft.auth.AUtils;
 import net.minecraft.launcher.LFrame;
 import org.json.JSONObject;
@@ -13,7 +12,6 @@ import java.net.URLConnection;
 public class YAuthenticate implements Serializable {
     public final YAgent yggdrasilAgent = new YAgent();
     private final LFrame launcherFrame;
-    private final AInstances authInstances = new AInstances(this);
 
     public YAuthenticate(LFrame launcherFrame) {
         this.launcherFrame = launcherFrame;
@@ -46,7 +44,7 @@ public class YAuthenticate implements Serializable {
                                 return;
                             } else if (username.matches("^\\w+$") && username.length() > 2 && username.length() < 17) {
                                 String sessionId = "mockToken" + ":" + "mockAccessToken" + ":" + "mockUUID";
-                                authInstances.playOnline(username, sessionId);
+                                launcherFrame.playOnline(username, sessionId);
                                 System.out.println("Username is '" + username + "'");
                             } else {
                                 launcherFrame.getAuthPanel().setError("Login failed");
@@ -63,14 +61,13 @@ public class YAuthenticate implements Serializable {
                     }
                 } else {
                     if (jsonResponse.getJSONArray("availableProfiles").length() == 0) {
-                        username = "Player";
                         String sessionId = jsonResponse.getString("clientToken") + ":" + jsonResponse.getString("accessToken") + ":" + "mockUUID";
-                        authInstances.playOnline(username, sessionId);
+                        launcherFrame.playOnline(username, sessionId);
                         System.out.println("Username is '" + username + "'");
                     } else {
                         username = jsonResponse.getJSONObject("selectedProfile").getString("name");
                         String sessionId = jsonResponse.getString("clientToken") + ":" + jsonResponse.getString("accessToken") + ":" + jsonResponse.getJSONObject("selectedProfile").getString("id");
-                        authInstances.playOnline(username, sessionId);
+                        launcherFrame.playOnline(username, sessionId);
                         System.out.println("Username is '" + username + "'");
                     }
                 }

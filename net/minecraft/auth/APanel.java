@@ -209,7 +209,7 @@ public class APanel extends Panel {
         offlinePanel.add(this.retryButton, "East");
         offlinePanel.add(this.offlineButton, "West");
 
-        boolean canPlayOffline = AInstances.canPlayOffline(this.usernameTextField.getText());
+        boolean canPlayOffline = LFrame.canPlayOffline(this.usernameTextField.getText());
         this.offlineButton.setEnabled(canPlayOffline);
         if (!canPlayOffline) {
             panel.add(new Label("Play online once to enable offline", 0));
