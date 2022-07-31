@@ -147,8 +147,8 @@ public class MCUpdater implements Runnable {
 
     protected void downloadFiles(String path) throws Exception {
         this.state = 4;
-        int[] fileSizes = new int[this.urlList.length];
 
+        int[] fileSizes = new int[this.urlList.length];
         int initialPercentage;
         for (initialPercentage = 0; initialPercentage < this.urlList.length; initialPercentage++) {
             URLConnection connection = this.urlList[initialPercentage].openConnection();
@@ -350,7 +350,6 @@ public class MCUpdater implements Runnable {
         }
         return file.substring(file.lastIndexOf("/") + 1);
     }
-
 
     protected InputStream getJarInputStream(URLConnection connection) throws Exception {
         final InputStream[] is = new InputStream[1];

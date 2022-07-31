@@ -18,7 +18,7 @@ public class YAuthenticate implements Serializable {
     }
 
     public void authenticate(String username, String password) {
-        if (!hasNetwork()) {
+        if (!(hasNetwork())) {
             launcherFrame.getAuthPanel().setError("Can't connect to minecraft.net");
             launcherFrame.getAuthPanel().setNoNetwork();
         } else {

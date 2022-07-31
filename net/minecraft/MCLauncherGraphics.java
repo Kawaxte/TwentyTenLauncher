@@ -24,16 +24,19 @@ public class MCLauncherGraphics implements Serializable {
                     g.drawImage(minecraftLauncher.getImage(), i * 32, j * 32, null);
                 }
             }
-            g.setColor(Color.LIGHT_GRAY);
+
             String title = "Updating Minecraft";
+            g.setFont(new Font(null, Font.BOLD, 20));
+            g.setColor(Color.LIGHT_GRAY);
+
             if (minecraftLauncher.getMinecraftUpdater().fatalError) {
                 title = "Failed to launch";
             }
-            g.setFont(new Font(null, Font.BOLD, 20));
             g.drawString(title,
                     minecraftLauncher.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
                     minecraftLauncher.getHeight() / 2 / 2 - g.getFontMetrics().getHeight() * 2);
             g.setFont(new Font(null, Font.PLAIN, 12));
+
             title = minecraftLauncher.getMinecraftUpdater().getDescriptionForState();
             if (minecraftLauncher.getMinecraftUpdater().fatalError) {
                 title = minecraftLauncher.getMinecraftUpdater().fatalErrorDescription;
@@ -41,10 +44,12 @@ public class MCLauncherGraphics implements Serializable {
             g.drawString(title,
                     minecraftLauncher.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
                     minecraftLauncher.getHeight() / 2 / 2 + g.getFontMetrics().getHeight());
+
             title = minecraftLauncher.getMinecraftUpdater().subtaskMessage;
             g.drawString(title,
                     minecraftLauncher.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
                     minecraftLauncher.getHeight() / 2 / 2 + g.getFontMetrics().getHeight() * 2);
+
             if (!minecraftLauncher.getMinecraftUpdater().fatalError) {
                 g.setColor(Color.BLACK);
                 g.fillRect(64, minecraftLauncher.getHeight() / 2 - 64, minecraftLauncher.getWidth() / 2 - 128 + 1, 5);
