@@ -19,7 +19,6 @@ public class MCLauncher extends Applet implements AppletStub {
     public Map<String, String> customParameters = new HashMap<>();
     private Image image;
     private VolatileImage volatileImage;
-    private int context = 0;
     private boolean active = false;
     private boolean minecraftUpdaterStarted = false;
     private Applet applet;
@@ -39,18 +38,7 @@ public class MCLauncher extends Applet implements AppletStub {
     }
 
     public boolean isActive() {
-        switch (this.context) {
-            case 0:
-                this.context = -1;
-                try {
-                    if (getAppletContext() != null) {
-                        this.context = 1;
-                    }
-                } catch (Exception ignored) {}
-            case -1:
-                return this.active;
-        }
-        return super.isActive();
+        return active;
     }
 
     public void init(String username, String sessionId) {
@@ -73,19 +61,28 @@ public class MCLauncher extends Applet implements AppletStub {
     }
 
     public void start() {
-        if (this.applet != null) {
+        if (minecraftUpdaterStarted) {
+            if (this.applet == null) {
+                return;
+            }
             this.applet.start();
-        } else if (!minecraftUpdaterStarted) {
-            Thread thread = new Thread(() -> {
-                this.minecraftUpdater.run();
-                try {
-                    if (!this.minecraftUpdater.fatalError) {
-                        this.replace(this.minecraftUpdater.createApplet());
+        } else {
+            Thread thread = new Thread(minecraftUpdater) {
+                public void run() {
+                    minecraftUpdater.run();
+                    try {
+                        if (!minecraftUpdater.fatalError) {
+                            try {
+                                replace(minecraftUpdater.createApplet());
+                            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            });
+            };
             thread.setDaemon(true);
             thread.start();
             thread = new Thread(() ->
@@ -116,16 +113,25 @@ public class MCLauncher extends Applet implements AppletStub {
 
     public void replace(Applet applet) {
         this.applet = applet;
-        applet.setStub(this);
-        applet.setSize(this.getWidth(), this.getHeight());
         this.setLayout(new BorderLayout());
         this.add(applet, "Center");
+        applet.setStub(this);
+        applet.setSize(this.getWidth(), this.getHeight());
         applet.init();
-        this.active = true;
         applet.start();
+        this.active = true;
         this.validate();
     }
-    public void appletResize(int width, int height) {}
+
+    public void appletResize(int width, int height) {
+        if (this.applet != null) {
+            this.applet.resize(width, height);
+        }
+    }
+
+    public boolean canPlayOffline() {
+        return this.minecraftUpdater.canPlayOffline();
+    }
 
     public URL getCodeBase() {
         try {
@@ -146,13 +152,13 @@ public class MCLauncher extends Applet implements AppletStub {
     }
 
     public String getParameter(String name) {
-        if (this.customParameters.get(name) != null) {
+        if (this.customParameters != null) {
             return this.customParameters.get(name);
         } else {
             try {
                 return super.getParameter(name);
             } catch (Exception e) {
-                this.customParameters.put(name, null);
+                e.printStackTrace();
                 return null;
             }
         }
@@ -176,9 +182,5 @@ public class MCLauncher extends Applet implements AppletStub {
 
     public void setVolatileImage(VolatileImage volatileImage) {
         this.volatileImage = volatileImage;
-    }
-
-    public boolean canPlayOffline() {
-        return this.minecraftUpdater.canPlayOffline();
     }
 }

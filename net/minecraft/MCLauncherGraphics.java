@@ -14,8 +14,12 @@ public class MCLauncherGraphics implements Serializable {
 
     public void paint(Graphics g2) {
         if (minecraftLauncher.getApplet() == null) {
-            if (minecraftLauncher.getVolatileImage() == null || minecraftLauncher.getVolatileImage().getWidth() != minecraftLauncher.getWidth() / 2 || minecraftLauncher.getVolatileImage().getHeight() != minecraftLauncher.getHeight() / 2) {
-                minecraftLauncher.setVolatileImage(minecraftLauncher.createVolatileImage(minecraftLauncher.getWidth() / 2, minecraftLauncher.getHeight() / 2));
+            if (minecraftLauncher.getVolatileImage() == null
+                    || minecraftLauncher.getVolatileImage().getWidth() != minecraftLauncher.getWidth() / 2
+                    || minecraftLauncher.getVolatileImage().getHeight() != minecraftLauncher.getHeight() / 2) {
+                minecraftLauncher.setVolatileImage(minecraftLauncher.createVolatileImage(
+                        minecraftLauncher.getWidth() / 2,
+                        minecraftLauncher.getHeight() / 2));
             }
 
             Graphics g = minecraftLauncher.getVolatileImage().getGraphics();
@@ -52,14 +56,18 @@ public class MCLauncherGraphics implements Serializable {
 
             if (!minecraftLauncher.getMinecraftUpdater().fatalError) {
                 g.setColor(Color.BLACK);
-                g.fillRect(64, minecraftLauncher.getHeight() / 2 - 64, minecraftLauncher.getWidth() / 2 - 128 + 1, 5);
+                g.fillRect(64, minecraftLauncher.getHeight() / 2 - 64,
+                        minecraftLauncher.getWidth() / 2 - 128 + 1, 5);
                 g.setColor(new Color(0, 128, 0));
-                g.fillRect(64, minecraftLauncher.getHeight() / 2 - 64, minecraftLauncher.getMinecraftUpdater().percentage * (minecraftLauncher.getWidth() / 2 - 128) / 100, 4);
+                g.fillRect(64, minecraftLauncher.getHeight() / 2 - 64,
+                        minecraftLauncher.getMinecraftUpdater().percentage * (minecraftLauncher.getWidth() / 2 - 128) / 100, 4);
                 g.setColor(new Color(32, 160, 32));
-                g.fillRect(64, minecraftLauncher.getHeight() / 2 - 64 + 1, minecraftLauncher.getMinecraftUpdater().percentage * (minecraftLauncher.getWidth() / 2 - 128) / 100 - 2, 1);
+                g.fillRect(64, minecraftLauncher.getHeight() / 2 - 64 + 1,
+                        minecraftLauncher.getMinecraftUpdater().percentage * (minecraftLauncher.getWidth() / 2 - 128) / 100 - 2, 1);
             }
             g.dispose();
-            g2.drawImage(minecraftLauncher.getVolatileImage(), 0, 0, minecraftLauncher.getWidth() / 2 * 2, minecraftLauncher.getHeight() / 2 * 2, null);
+            g2.drawImage(minecraftLauncher.getVolatileImage(), 0, 0,
+                    minecraftLauncher.getWidth() / 2 * 2, minecraftLauncher.getHeight() / 2 * 2, null);
         }
     }
 

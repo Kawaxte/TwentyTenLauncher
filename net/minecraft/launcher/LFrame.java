@@ -7,14 +7,13 @@ import net.minecraft.MCLauncher;
 import net.minecraft.auth.APanel;
 import net.minecraft.auth.yggdrasil.YAuthenticate;
 
-import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.Objects;
 
 public class LFrame extends Frame {
@@ -50,11 +49,7 @@ public class LFrame extends Frame {
                 System.exit(0);
             }
         });
-        try {
-            this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("favicon.png"))));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("favicon.png"))).getImage());
     }
 
     public static void main(String[] args) {

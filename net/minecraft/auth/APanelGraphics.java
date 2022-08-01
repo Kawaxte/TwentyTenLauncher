@@ -20,7 +20,9 @@ public class APanelGraphics implements Serializable {
         if (authPanel.getVolatileImage() == null
                 || authPanel.getVolatileImage().getWidth() != authPanel.getWidth() / 2
                 || authPanel.getVolatileImage().getHeight() != authPanel.getHeight() / 2) {
-            authPanel.setVolatileImage(authPanel.createVolatileImage(authPanel.getWidth() / 2, authPanel.getHeight() / 2));
+            authPanel.setVolatileImage(authPanel.createVolatileImage(
+                    authPanel.getWidth() / 2,
+                    authPanel.getHeight() / 2));
         }
 
         Graphics g = authPanel.getVolatileImage().getGraphics();

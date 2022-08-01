@@ -66,7 +66,9 @@ public class YAuthenticate implements Serializable {
                         System.out.println("Username is '" + username + "'");
                     } else {
                         username = jsonResponse.getJSONObject("selectedProfile").getString("name");
-                        String sessionId = jsonResponse.getString("clientToken") + ":" + jsonResponse.getString("accessToken") + ":" + jsonResponse.getJSONObject("selectedProfile").getString("id");
+                        String sessionId = jsonResponse.getString("clientToken") + ":"
+                                + jsonResponse.getString("accessToken") + ":"
+                                + jsonResponse.getJSONObject("selectedProfile").getString("id");
                         launcherFrame.playOnline(username, sessionId);
                         System.out.println("Username is '" + username + "'");
                     }
