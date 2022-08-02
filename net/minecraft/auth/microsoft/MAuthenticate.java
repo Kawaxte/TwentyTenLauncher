@@ -11,6 +11,8 @@ import net.minecraft.launcher.LFrame;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -81,7 +83,14 @@ public class MAuthenticate extends VBox {
             frame.setLocationRelativeTo(null);
             frame.setResizable(false);
             frame.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("favicon2.png"))).getImage());
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent we) {
+                    new Thread(() -> Platform.runLater(() -> {
+                        frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+                        frame.dispose();
+                    })).start();
+                }
+            });
             reset();
         } catch (Exception e) {
             e.printStackTrace();
