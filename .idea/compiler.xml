@@ -2,5 +2,10 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Eclipse" />
+    <excludeFromCompile>
+      <file url="file://$PROJECT_DIR$/README.md" />
+      <file url="file://$PROJECT_DIR$/AlphacraftLauncher.iml" />
+      <file url="file://$PROJECT_DIR$/.gitignore" />
+    </excludeFromCompile>
   </component>
 </project>

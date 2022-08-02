@@ -128,7 +128,11 @@ public class APanel extends Panel {
                     public void paint(Graphics g) {
                         super.paint(g);
                         g.setColor(Color.BLUE);
-                        g.drawLine(this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2, this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1, this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2 + g.getFontMetrics().stringWidth(this.getText()), this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
+                        g.drawLine(
+                                this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2,
+                                this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1,
+                                this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2 + g.getFontMetrics().stringWidth(this.getText()),
+                                this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
                     }
                 };
                 accountLabel.setText("You need to update the launcher!");
@@ -153,7 +157,11 @@ public class APanel extends Panel {
                     public void paint(Graphics g) {
                         super.paint(g);
                         g.setColor(Color.BLUE);
-                        g.drawLine(this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2, this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1, this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2 + g.getFontMetrics().stringWidth(this.getText()), this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
+                        g.drawLine(
+                                this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2,
+                                this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1,
+                                this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2 + g.getFontMetrics().stringWidth(this.getText()),
+                                this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
                     }
                 };
                 accountLabel.setText("Need account?");
