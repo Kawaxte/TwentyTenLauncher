@@ -8,11 +8,11 @@ By default, AlphacraftLauncher will download **Beta 1.1_02** as it was the last 
 > You need a minimum of Java 8 or greater to run this application.
 
 ## Features
-- You can sign in using *valid* Microsoft accounts, Mojang accounts, Legacy accounts, and 'cracked' usernames.
+- You can sign in using *valid* Microsoft accounts, Mojang accounts, Legacy accounts, and *pirated* usernames.
   - To sign in with a *valid* Microsoft account, enter "**$MS**" in the 'Username' field.
   - To sign in with a *valid* Mojang account, enter the **email address** in the 'Username:' field
   - To sign in with a *valid* Legacy account, enter the **username** in the 'Username:' field.
-  - To sign in using a 'cracked' username, leave the 'Password:' field empty.
+  - To sign in using a *pirated* username, leave the 'Password:' field empty.
 - Support for skins and appropriate sounds for different Alpha/Beta versions of Minecraft.
 - Out-of-box compatibility with MCPatcher (HDTextureFix) and legacy mods (ModLoader).
 - Automatic update checking that will tell you so in the login panel, just like in the original!
