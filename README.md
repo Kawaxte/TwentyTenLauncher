@@ -14,7 +14,7 @@ By default, AlphacraftLauncher will download **Beta 1.1_02** as it was the last 
 - Support for skins and appropriate sounds for different Alpha/Beta versions of Minecraft.
 - Out-of-box compatibility with MCPatcher (HDTextureFix) and legacy mods (ModLoader).
 - Automatic update checking that will tell you so in the login panel, just like in the original!
-![Launcher](https://i.imgur.com/l62eqhr.png)
+![Launcher](https://i.imgur.com/CNB25rv.png)
 
 ## TODO
 - >Signing in using a *valid* Microsoft account.
