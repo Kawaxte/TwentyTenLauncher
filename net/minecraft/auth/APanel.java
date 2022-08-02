@@ -34,6 +34,11 @@ import java.util.Objects;
 public class APanel extends Panel {
     private final APanelGraphics authPanelGraphics = new APanelGraphics(this);
     private final ALastLogin authLastLogin = new ALastLogin(this);
+    private static final String updateUrl = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
+    private static final String registerUrl = "https://signup.live.com/signup"
+            + "?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d"
+            + "&client_id=00000000402b5328"
+            + "&lic=1";
     private Image image;
     private VolatileImage volatileImage;
     public Label errorLabel = new Label("", 1);
@@ -141,7 +146,7 @@ public class APanel extends Panel {
                 accountLabel.addMouseListener(new MouseAdapter() {
                     public void mouseClicked(MouseEvent me) {
                         try {
-                            Desktop.getDesktop().browse(new URI("https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest"));
+                            Desktop.getDesktop().browse(new URI(updateUrl));
                         } catch (IOException | URISyntaxException e) {
                             e.printStackTrace();
                         }
@@ -170,7 +175,7 @@ public class APanel extends Panel {
                 accountLabel.addMouseListener(new MouseAdapter() {
                     public void mouseClicked(MouseEvent me) {
                         try {
-                            Desktop.getDesktop().browse(new URI("https://signup.live.com/signup?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&client_id=000000004420578E&lic=1"));
+                            Desktop.getDesktop().browse(new URI(registerUrl));
                         } catch (IOException | URISyntaxException e) {
                             e.printStackTrace();
                         }

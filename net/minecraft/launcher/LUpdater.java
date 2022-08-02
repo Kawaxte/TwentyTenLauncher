@@ -9,7 +9,7 @@ public class LUpdater implements Serializable {
     public static String latestVersion = isOutdated();
 
     public static String isOutdated() {
-        String version = String.valueOf(LUtils.executeGet("https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest"));
+        String version = String.valueOf(LUtils.excuteJSONGet("https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest"));
         return new JSONObject(version).getString("tag_name");
     }
 }

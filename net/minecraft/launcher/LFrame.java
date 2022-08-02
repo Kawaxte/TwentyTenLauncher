@@ -5,6 +5,7 @@ package net.minecraft.launcher;
 
 import net.minecraft.MCLauncher;
 import net.minecraft.auth.APanel;
+import net.minecraft.auth.microsoft.MAuthenticate;
 import net.minecraft.auth.yggdrasil.YAuthenticate;
 
 import javax.swing.ImageIcon;
@@ -17,6 +18,7 @@ import java.awt.event.WindowEvent;
 import java.util.Objects;
 
 public class LFrame extends Frame {
+    private final MAuthenticate microsoftAuthenticate = new MAuthenticate(this);
     private final YAuthenticate yggdrasilAuthenticate = new YAuthenticate(this);
     public MCLauncher minecraftLauncher;
     public APanel authPanel;
@@ -111,6 +113,10 @@ public class LFrame extends Frame {
 
     public MCLauncher getMinecraftLauncher() {
         return minecraftLauncher;
+    }
+
+    public void getMicrosoftAuthenticate() {
+        microsoftAuthenticate.authenticate();
     }
 
     public void getYggdrasilAuthenticate(String username, String password) {

@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class LUtils {
-    public static JSONObject executeGet(String url) {
+    public static JSONObject excuteJSONGet(String url) {
         try {
             CloseableHttpClient client = HttpClientBuilder.create().build();
 

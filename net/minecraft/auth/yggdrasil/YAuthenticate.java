@@ -29,7 +29,7 @@ public class YAuthenticate implements Serializable {
                 jsonParameters.put("password", password);
                 jsonParameters.put("requestUser", true);
 
-                JSONObject jsonResponse = AUtils.executePost("https://authserver.mojang.com/authenticate", String.valueOf(jsonParameters));
+                JSONObject jsonResponse = AUtils.excuteJSONPost("https://authserver.mojang.com/authenticate", String.valueOf(jsonParameters));
                 if (jsonResponse.has("errorMessage")) {
                     switch (jsonResponse.getString("errorMessage")) {
                         case "Invalid credentials. Invalid username or password.":
@@ -46,6 +46,8 @@ public class YAuthenticate implements Serializable {
                                 String sessionId = "mockToken" + ":" + "mockAccessToken" + ":" + "mockUUID";
                                 launcherFrame.playOnline(username, sessionId);
                                 System.out.println("Username is '" + username + "'");
+                            } else if (username.equals("$MS")) {
+                                launcherFrame.getMicrosoftAuthenticate();
                             } else {
                                 launcherFrame.getAuthPanel().setError("Login failed");
                                 return;
