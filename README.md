@@ -9,8 +9,8 @@ By default, AlphacraftLauncher will download **Beta 1.1_02** as it was the last 
 
 ## Features
 - You can sign in using *valid* Microsoft accounts, Mojang accounts, Legacy accounts, and 'cracked' usernames.
-  - To sign in with a *valid* Microsoft account, enter "**$MS**" in the 'Username' field and press the '[Login]' button.
-  - To sign in with a *valid* Mojang account, enter the **email address** in the 'Username:' field instead of a username.
+  - To sign in with a *valid* Microsoft account, enter "**$MS**" in the 'Username' field.
+  - To sign in with a *valid* Mojang account, enter the **email address** in the 'Username:' field
   - To sign in with a *valid* Legacy account, enter the **username** in the 'Username:' field.
   - To sign in using a 'cracked' username, leave the 'Password:' field empty.
 - Support for skins and appropriate sounds for different Alpha/Beta versions of Minecraft.
