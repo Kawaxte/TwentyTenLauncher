@@ -8,7 +8,7 @@ By default, AlphacraftLauncher will download **Beta 1.1_02** as it was the last 
 > You need a minimum of Java 8 or greater to run this application.
 
 ## Features
-- You can sign in using *valid* Microsoft accounts, Mojang accounts, Legacy accounts, and by using 'cracked' usernames.
+- You can sign in using *valid* Microsoft accounts, Mojang accounts, Legacy accounts, and 'cracked' usernames.
   - To sign in with a *valid* Microsoft account, enter "**$MS**" in the 'Username' field and press the '[Login]' button.
   - To sign in with a *valid* Mojang account, enter the **email address** in the 'Username:' field instead of a username.
   - To sign in with a *valid* Legacy account, enter the **username** in the 'Username:' field.
