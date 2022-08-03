@@ -2,6 +2,7 @@ package net.minecraft.auth.yggdrasil;
 
 import net.minecraft.auth.AUtils;
 import net.minecraft.launcher.LFrame;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -24,12 +25,9 @@ public class YAuthenticate implements Serializable {
         } else {
             try {
                 JSONObject jsonParameters = new JSONObject();
-                jsonParameters.put("agent", yggdrasilAgent.getAgentObject());
-                jsonParameters.put("username", username);
-                jsonParameters.put("password", password);
-                jsonParameters.put("requestUser", true);
+                jsonParameters.put("agent", yggdrasilAgent.getAgentObject()).put("username", username).put("password", password).put("requestUser", true);
 
-                JSONObject jsonResponse = AUtils.excuteJSONPost("https://authserver.mojang.com/authenticate", String.valueOf(jsonParameters));
+                JSONObject jsonResponse = AUtils.requestJSONPOST("https://authserver.mojang.com/authenticate", String.valueOf(jsonParameters));
                 if (jsonResponse.has("errorMessage")) {
                     switch (jsonResponse.getString("errorMessage")) {
                         case "Invalid credentials. Invalid username or password.":
@@ -38,19 +36,20 @@ public class YAuthenticate implements Serializable {
                             launcherFrame.getAuthPanel().setError("Login failed");
                             break;
                         case "Forbidden":
-                            if (username.isEmpty()) {
-                                launcherFrame.getAuthPanel().setError("Can't connect to minecraft.net");
-                                launcherFrame.getAuthPanel().setNoNetwork();
-                                return;
-                            } else if (username.matches("^\\w+$") && username.length() > 2 && username.length() < 17) {
-                                String sessionId = "mockToken" + ":" + "mockAccessToken" + ":" + "mockUUID";
-                                launcherFrame.playOnline(username, sessionId);
-                                System.out.println("Username is '" + username + "'");
-                            } else if (username.equals("$MS")) {
-                                launcherFrame.getMicrosoftAuthenticate();
+                            if (!username.matches("^\\w+$") || username.length() <= 2 || username.length() >= 17) {
+                                if (username.isEmpty()) {
+                                    launcherFrame.getAuthPanel().setError("Can't connect to minecraft.net");
+                                    launcherFrame.getAuthPanel().setNoNetwork();
+                                    return;
+                                } else if ("$MS".equals(username)) {
+                                    launcherFrame.getMicrosoftAuthenticate();
+                                } else {
+                                    launcherFrame.getAuthPanel().setError("Login failed");
+                                    return;
+                                }
                             } else {
-                                launcherFrame.getAuthPanel().setError("Login failed");
-                                return;
+                                launcherFrame.playOnline(username, "mockToken:mockAccessToken:mockUUID");
+                                System.out.println("Username is '" + username + "'");
                             }
                             break;
                         case "Migrated":
@@ -63,19 +62,19 @@ public class YAuthenticate implements Serializable {
                     }
                 } else {
                     if (jsonResponse.getJSONArray("availableProfiles").length() == 0) {
-                        String sessionId = jsonResponse.getString("clientToken") + ":" + jsonResponse.getString("accessToken") + ":" + "mockUUID";
-                        launcherFrame.playOnline(username, sessionId);
-                        System.out.println("Username is '" + username + "'");
+                        launcherFrame.playOnline(username, String.format("%s:%s:mockUUID",
+                                jsonResponse.getString("clientToken"),
+                                jsonResponse.getString("accessToken")));
                     } else {
                         username = jsonResponse.getJSONObject("selectedProfile").getString("name");
-                        String sessionId = jsonResponse.getString("clientToken") + ":"
-                                + jsonResponse.getString("accessToken") + ":"
-                                + jsonResponse.getJSONObject("selectedProfile").getString("id");
-                        launcherFrame.playOnline(username, sessionId);
-                        System.out.println("Username is '" + username + "'");
+                        launcherFrame.playOnline(username, String.format("%s:%s:%s",
+                                jsonResponse.getString("clientToken"),
+                                jsonResponse.getString("accessToken"),
+                                jsonResponse.getJSONObject("selectedProfile").getString("id")));
                     }
+                    System.out.println("Username is '" + username + "'");
                 }
-            } catch (Exception e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
                 launcherFrame.getAuthPanel().setError(e.toString());
                 launcherFrame.getAuthPanel().setNoNetwork();
@@ -93,7 +92,7 @@ public class YAuthenticate implements Serializable {
             URLConnection connection = url.openConnection();
             connection.connect();
             return true;
-        } catch (IOException iOException) {
+        } catch (IOException e) {
             return false;
         }
     }

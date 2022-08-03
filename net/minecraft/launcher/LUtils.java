@@ -5,12 +5,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class LUtils {
-    public static JSONObject excuteJSONGet(String url) {
+public final class LUtils {
+    private LUtils() {
+        throw new UnsupportedOperationException();
+    }
+
+    public static String requestJSONGET(String url) {
         try {
             CloseableHttpClient client = HttpClientBuilder.create().build();
 
@@ -18,7 +21,7 @@ public class LUtils {
             get.setHeader("Content-Type", "application/json");
 
             HttpResponse response = client.execute(get);
-            return new JSONObject(response != null ? EntityUtils.toString(response.getEntity()) : "");
+            return EntityUtils.toString(response.getEntity());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

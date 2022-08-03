@@ -11,8 +11,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class AUtils {
-    public static JSONObject excutePost(String url, String parameters) throws IOException {
+public final class AUtils {
+    private AUtils() {
+        throw new UnsupportedOperationException();
+    }
+
+    public static JSONObject requestPOST(String url, String parameters) throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().build();
 
         HttpPost post = new HttpPost(url);
@@ -23,7 +27,7 @@ public class AUtils {
         return new JSONObject(response != null ? EntityUtils.toString(response.getEntity()) : "");
     }
 
-    public static JSONObject excuteJSONPost(String url, String jsonParameters) throws IOException {
+    public static JSONObject requestJSONPOST(String url, String jsonParameters) throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().build();
 
         HttpPost post = new HttpPost(url);
@@ -34,7 +38,7 @@ public class AUtils {
         return new JSONObject(response != null ? EntityUtils.toString(response.getEntity()) : "");
     }
 
-    public static JSONObject excuteJSONGet(String url, String accessToken) {
+    public static JSONObject requestJSONGET(String url, String accessToken) {
         try {
             CloseableHttpClient client = HttpClientBuilder.create().build();
 

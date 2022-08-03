@@ -12,10 +12,6 @@ public class APanelGraphics implements Serializable {
         this.authPanel = authPanel;
     }
 
-    public void update(Graphics g) {
-        authPanel.paint(g);
-    }
-
     public void paint(Graphics g2) {
         if (authPanel.getVolatileImage() == null
                 || authPanel.getVolatileImage().getWidth() != authPanel.getWidth() / 2
@@ -26,19 +22,27 @@ public class APanelGraphics implements Serializable {
         }
 
         Graphics g = authPanel.getVolatileImage().getGraphics();
-        for (int x = 0; x <= authPanel.getWidth() / 2 / 32; x++) {
-            for (int y = 0; y <= authPanel.getHeight() / 2 / 32; y++) {
-                g.drawImage(authPanel.getImage(), x * 32, y * 32, null);
-            }
+        int x = 0;
+        if (x <= authPanel.getWidth() / 2 / 32) {
+            do {
+                for (int y = 0; y <= authPanel.getHeight() / 2 / 32; y++) {
+                    g.drawImage(authPanel.getImage(), x * 32, y * 32, null);
+                }
+                x++;
+            } while (x <= authPanel.getWidth() / 2 / 32);
         }
-
-        String title = "Minecraft Launcher";
         g.setFont(new Font(null, Font.BOLD, 20));
         g.setColor(Color.LIGHT_GRAY);
+
+        String title = "Minecraft Launcher";
         g.drawString(title,
                 authPanel.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
                 authPanel.getHeight() / 2 / 2 - g.getFontMetrics().getHeight() * 2);
         g.dispose();
         g2.drawImage(authPanel.getVolatileImage(), 0, 0, authPanel.getWidth() / 2 * 2, authPanel.getHeight() / 2 * 2, null);
+    }
+
+    public void update(Graphics g) {
+        authPanel.paint(g);
     }
 }

@@ -4,7 +4,11 @@ import net.minecraft.MCLauncher;
 
 import java.util.ArrayList;
 
-public class LMain {
+public final class LMain {
+    private LMain() {
+        throw new UnsupportedOperationException();
+    }
+
     public static void main(String[] args) {
         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 511L) {
             try {

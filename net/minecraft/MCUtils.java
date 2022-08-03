@@ -4,17 +4,22 @@
 package net.minecraft;
 
 import java.io.File;
+import java.util.Locale;
 
-public class MCUtils {
+public final class MCUtils {
+    private MCUtils() {
+        throw new UnsupportedOperationException();
+    }
+
     public static File getWorkingDirectory() {
         File workingDirectory;
         String userHome = System.getProperty("user.home", ".");
         switch (MCUtils.getPlatform()) {
-            case linux:
-                workingDirectory = new File(userHome, ".minecraft/");
-                break;
             case osx:
                 workingDirectory = new File(userHome, "Library/Application Support/minecraft/");
+                break;
+            case linux:
+                workingDirectory = new File(userHome, ".minecraft");
                 break;
             case windows:
                 String applicationData = System.getenv("APPDATA");
@@ -25,7 +30,7 @@ public class MCUtils {
                 workingDirectory = new File(userHome, ".minecraft/");
                 break;
             default:
-                workingDirectory = new File(userHome, "minecraft/");
+                workingDirectory = new File(userHome, ".minecraft/");
         }
 
         if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
@@ -35,7 +40,7 @@ public class MCUtils {
     }
 
     public static OS getPlatform() {
-        String osName = System.getProperty("os.name").toLowerCase();
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         if (osName.contains("mac")) {
             return OS.osx;
         } else if (osName.contains("nix")

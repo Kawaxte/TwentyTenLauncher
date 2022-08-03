@@ -61,40 +61,32 @@ public class MCLauncher extends Applet implements AppletStub {
     }
 
     public void start() {
-        if (minecraftUpdaterStarted) {
-            if (this.applet == null) {
-                return;
-            }
-            this.applet.start();
-        } else {
+        if (!minecraftUpdaterStarted) {
             Thread thread = new Thread(minecraftUpdater) {
+                @Override
                 public void run() {
                     minecraftUpdater.run();
                     try {
                         if (!minecraftUpdater.fatalError) {
-                            try {
-                                replace(minecraftUpdater.createApplet());
-                            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                                throw new RuntimeException(e);
-                            }
+                            replace(minecraftUpdater.createApplet());
                         }
-                    } catch (Exception e) {
+                    } catch (RuntimeException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 }
             };
-            thread.setDaemon(true);
-            thread.start();
-            thread = new Thread(() ->
-            {
+            thread.setDaemon(true); thread.start(); thread = new Thread(() -> {
                 while (this.applet == null)
                 {
                     this.repaint();
                 }
-            });
-            thread.setDaemon(true);
-            thread.start();
+            }); thread.setDaemon(true); thread.start();
             this.minecraftUpdaterStarted = true;
+        } else {
+            if (this.applet == null) {
+                return;
+            }
+            this.applet.start();
         }
     }
 

@@ -34,6 +34,7 @@ public class LFrame extends Frame {
         this.pack();
         this.setLocationRelativeTo(null);
         this.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent we) {
                 new Thread(() -> {
                     try {

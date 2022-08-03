@@ -144,6 +144,7 @@ public class APanel extends Panel {
                 accountLabel.setForeground(Color.BLUE);
                 accountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 accountLabel.addMouseListener(new MouseAdapter() {
+                    @Override
                     public void mouseClicked(MouseEvent me) {
                         try {
                             Desktop.getDesktop().browse(new URI(updateUrl));
@@ -152,7 +153,7 @@ public class APanel extends Panel {
                         }
                     }
                 });
-                this.loginButton.setEnabled(false);
+                this.loginButton.setEnabled(LUpdater.latestVersion.compareTo(LUpdater.currentVersion) < 0);
             } else {
                 accountLabel = new Label("", 1) {
                     public void update(Graphics g) {
@@ -173,6 +174,7 @@ public class APanel extends Panel {
                 accountLabel.setForeground(Color.BLUE);
                 accountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 accountLabel.addMouseListener(new MouseAdapter() {
+                    @Override
                     public void mouseClicked(MouseEvent me) {
                         try {
                             Desktop.getDesktop().browse(new URI(registerUrl));

@@ -23,22 +23,29 @@ public class MCLauncherGraphics implements Serializable {
             }
 
             Graphics g = minecraftLauncher.getVolatileImage().getGraphics();
-            for (int i = 0; i <= minecraftLauncher.getWidth() / 2 / 32; i++) {
-                for (int j = 0; j <= minecraftLauncher.getHeight() / 2 / 32; j++) {
-                    g.drawImage(minecraftLauncher.getImage(), i * 32, j * 32, null);
-                }
+            int i = 0;
+            if (i <= minecraftLauncher.getWidth() / 2 / 32) {
+                do {
+                    for (int j = 0; j <= minecraftLauncher.getHeight() / 2 / 32; j++) {
+                        g.drawImage(minecraftLauncher.getImage(), i * 32, j * 32, null);
+                    }
+                    i++;
+                } while (i <= minecraftLauncher.getWidth() / 2 / 32);
             }
-
-            String title = "Updating Minecraft";
             g.setFont(new Font(null, Font.BOLD, 20));
             g.setColor(Color.LIGHT_GRAY);
 
+            String title = "Updating Minecraft";
             if (minecraftLauncher.getMinecraftUpdater().fatalError) {
                 title = "Failed to launch";
+                g.drawString(title,
+                        minecraftLauncher.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
+                        minecraftLauncher.getHeight() / 2 / 2 - g.getFontMetrics().getHeight() * 2);
+            } else {
+                g.drawString(title,
+                        minecraftLauncher.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
+                        minecraftLauncher.getHeight() / 2 / 2 - g.getFontMetrics().getHeight() * 2);
             }
-            g.drawString(title,
-                    minecraftLauncher.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
-                    minecraftLauncher.getHeight() / 2 / 2 - g.getFontMetrics().getHeight() * 2);
             g.setFont(new Font(null, Font.PLAIN, 12));
 
             title = minecraftLauncher.getMinecraftUpdater().getDescriptionForState();
@@ -48,7 +55,6 @@ public class MCLauncherGraphics implements Serializable {
             g.drawString(title,
                     minecraftLauncher.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
                     minecraftLauncher.getHeight() / 2 / 2 + g.getFontMetrics().getHeight());
-
             title = minecraftLauncher.getMinecraftUpdater().subtaskMessage;
             g.drawString(title,
                     minecraftLauncher.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
