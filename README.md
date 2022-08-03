@@ -8,13 +8,20 @@ By default, AlphacraftLauncher will download **Beta 1.1_02** as it was the last 
 > You need a minimum of Java 8 or greater to run this application.
 
 ## Features
-- You can sign in using any *valid* Mojang account that owns Minecraft and hasn't been migrated to Microsoft... yet.
-  - You can sign in using any *valid* Mojang account that doesn't own Minecraft.
-  - You can sign in using any *valid* username, just like the original launcher before the 'excutePost()' implementation.
+- You can sign in using *valid* Microsoft accounts, Mojang accounts, Legacy accounts, and *pirated* usernames.
+  - To sign in with a *valid* Microsoft account, enter "**$MS**" in the 'Username' field.
+  - To sign in with a *valid* Mojang account, enter the **email address** in the 'Username:' field
+  - To sign in with a *valid* Legacy account, enter the **username** in the 'Username:' field.
+  - To sign in using a *pirated* username, leave the 'Password:' field empty.
 - Support for skins and appropriate sounds for different Alpha/Beta versions of Minecraft.
 - Out-of-box compatibility with MCPatcher (HDTextureFix) and legacy mods (ModLoader).
 - Automatic update checking that will tell you so in the login panel, just like in the original!
 ![Launcher](https://i.imgur.com/CNB25rv.png)
 
 ## TODO
-- >Signing in using a *valid* Microsoft account.
+- >Saving "lastLogin" details for Microsoft accounts.
+- >Release the new version with Microsoft authentication (under heavy testing as of now!)
+
+## Issues
+- >Microsoft authenticator's JFrame will display nothing after reopening.
+- >Microsoft authenticator's JFrame will exit with code "-1073740791 (0xC0000409)" when clicking "Back" and reopening.
