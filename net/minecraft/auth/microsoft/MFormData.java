@@ -5,7 +5,11 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Map;
 
-public class MFormData {
+public final class MFormData {
+    private MFormData() {
+        throw new UnsupportedOperationException();
+    }
+
     public static String ofFormData(Map<Object, Object> parameter) throws UnsupportedEncodingException {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Object, Object> entry : parameter.entrySet()) {
