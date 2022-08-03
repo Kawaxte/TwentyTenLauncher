@@ -22,4 +22,4 @@ By default, AlphacraftLauncher will download **Beta 1.1_02** as it was the last 
 - >Saving "lastLogin" details for Microsoft accounts.
 
 ## Issues
-- >Microsoft authenticator's JFrame will display nothing after reopening.
+- >MSA won't display anything after reopening.
