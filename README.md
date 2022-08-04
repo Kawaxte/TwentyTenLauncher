@@ -20,6 +20,4 @@ This launcher can run versions from **indev 0.13 (20091223-2)** up to **1.5.2** 
 
 ## TODO
 - >Saving "lastLogin" details for Microsoft accounts.
-
-## Issues
-- >MSA won't display anything after reopening.
+- >Fix an issue regarding JavaFX window being empty when closing and reopening.
