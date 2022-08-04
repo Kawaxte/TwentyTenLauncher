@@ -18,10 +18,11 @@ import java.awt.event.WindowEvent;
 import java.util.Objects;
 
 public class LFrame extends Frame {
+    private static final long serialVersionUID = 1L;
     private final MAuthenticate microsoftAuthenticate = new MAuthenticate(this);
     private final YAuthenticate yggdrasilAuthenticate = new YAuthenticate(this);
-    public MCLauncher minecraftLauncher;
-    public APanel authPanel;
+    MCLauncher minecraftLauncher;
+    APanel authPanel;
 
     public LFrame() {
         super("Minecraft Launcher " + LUpdater.currentVersion);

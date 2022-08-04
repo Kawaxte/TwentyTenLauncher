@@ -10,7 +10,7 @@ public final class MFormData {
         throw new UnsupportedOperationException();
     }
 
-    public static String ofFormData(Map<Object, Object> parameter) throws UnsupportedEncodingException {
+    static String ofFormData(Map<Object, Object> parameter) throws UnsupportedEncodingException {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Object, Object> entry : parameter.entrySet()) {
             Arrays.asList(Arrays.asList(URLEncoder.encode(entry.getKey().toString(), "UTF-8"), "="),

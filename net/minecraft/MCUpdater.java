@@ -14,9 +14,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Vector;
@@ -27,25 +27,25 @@ import java.util.zip.ZipFile;
 import static net.minecraft.MCUtils.OS.osx;
 
 public class MCUpdater implements Runnable {
-    private static ClassLoader classLoader;
-    protected URL[] urlList;
-    protected Thread thread;
-    protected int state;
-    public int percentage;
-    public int currentSizeDownload;
-    public int totalSizeDownload;
-    public int currentSizeExtract;
-    public int totalSizeExtract;
-    public boolean fatalError;
-    protected static boolean natives_loaded = false;
-    public String fatalErrorDescription;
-    protected String assetsUrl = "http://files.betacraft.uk/launcher/assets/";
-    protected String clientUrl = "https://piston-data.mojang.com/v1/objects/e1c682219df45ebda589a557aadadd6ed093c86c/";
-    protected String clientVersion = "client";
-    protected String subtaskMessage = "";
-    protected String downloadSpeedMessage = "";
+    static ClassLoader classLoader;
+    int state;
+    int percentage;
+    int currentSizeDownload;
+    int totalSizeDownload;
+    int currentSizeExtract;
+    int totalSizeExtract;
+    boolean fatalError;
+    static boolean natives_loaded = false;
+    static final String assetsUrl = "http://files.betacraft.uk/launcher/assets/";
+    static final String clientUrl = "https://piston-data.mojang.com/v1/objects/e1c682219df45ebda589a557aadadd6ed093c86c/";
+    static final String clientVersion = "client";
+    String fatalErrorDescription;
+    String subtaskMessage = "";
+    String downloadSpeedMessage = "";
+    URL[] urlList;
+    Thread thread;
 
-    public void init() {
+    void init() {
         this.state = 1;
     }
 
@@ -62,7 +62,7 @@ public class MCUpdater implements Runnable {
             if (!dir.exists()) {
                 boolean mkdirs = dir.mkdirs();
                 if (!mkdirs) {
-                    throw new Exception("Failed to create directory: " + path);
+                    throw new Exception("Failed to create directory " + path);
                 }
             }
 
@@ -77,12 +77,11 @@ public class MCUpdater implements Runnable {
             this.state = 7;
         } catch (Exception e) {
             this.fatalErrorOccurred(e.getMessage(), e);
-        } finally {
             this.thread = null;
         }
     }
 
-    protected String getDescriptionForState() {
+    String getDescriptionForState() {
         switch (this.state) {
             case 1:
                 return "Initializing loader";
@@ -103,7 +102,7 @@ public class MCUpdater implements Runnable {
         }
     }
 
-    protected void loadFileURLs() throws MalformedURLException {
+    void loadFileURLs() throws MalformedURLException {
         this.state = 2;
 
         String libs;
@@ -122,36 +121,30 @@ public class MCUpdater implements Runnable {
                 natives = "natives-windows.zip";
                 break;
             default:
-                throw new RuntimeException();
+                throw new RuntimeException("OS (" + System.getProperty("os.name" + ") not supported."));
         }
         this.urlList = new URL[]{
                 new URL(assetsUrl + libs),
                 new URL(assetsUrl + natives),
-                new URL(clientUrl + this.clientVersion + ".jar")};
+                new URL(clientUrl + clientVersion + ".jar")};
     }
 
-    public boolean canPlayOffline() {
+    boolean canPlayOffline() {
         File dir;
         try {
             String path = AccessController.doPrivileged((PrivilegedExceptionAction<String>) () ->
                     MCUtils.getWorkingDirectory() + File.separator + "bin" + File.separator);
             dir = new File(path);
-            if (!dir.exists() || Objects.requireNonNull(dir.list()).length == 0) {
-                return false;
-            }
+            return dir.exists() && Objects.requireNonNull(dir.listFiles()).length > 0 && new File(path + "minecraft.jar").exists();
         } catch (PrivilegedActionException e) {
             e.printStackTrace();
             return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        File[] files = dir.listFiles();
-        if (files != null) {
-            return Arrays.stream(files).anyMatch(file -> "minecraft.jar".equals(file.getName()));
-        }
-        return false;
     }
 
-    protected void downloadFiles(String path) throws Exception {
+    void downloadFiles(String path) throws Exception {
         this.state = 4;
         int[] fileSizes = new int[this.urlList.length];
 
@@ -202,8 +195,8 @@ public class MCUpdater implements Runnable {
         this.subtaskMessage = "";
     }
 
-    protected void renameJar(String path) {
-        File jarFile = new File(path + this.clientVersion + ".jar");
+    void renameJar(String path) {
+        File jarFile = new File(path + clientVersion + ".jar");
         File minecraftJar = new File(path + "minecraft.jar");
         boolean renameTo = jarFile.renameTo(minecraftJar);
         if (!renameTo) {
@@ -211,7 +204,7 @@ public class MCUpdater implements Runnable {
         }
     }
 
-    protected void extractZipArchives(String path) {
+    void extractZipArchives(String path) {
         String libsZip;
         String nativesZip;
         try {
@@ -219,7 +212,7 @@ public class MCUpdater implements Runnable {
             if (!libsDir.exists()) {
                 boolean mkdirs = libsDir.mkdirs();
                 if (!mkdirs) {
-                    throw new RuntimeException("Failed to create directory: " + libsDir.getAbsolutePath());
+                    throw new RuntimeException("Failed to create directory " + path);
                 }
             } else {
                 switch (MCUtils.getPlatform()) {
@@ -236,7 +229,7 @@ public class MCUpdater implements Runnable {
                         nativesZip = "natives-osx.zip";
                         break;
                     default:
-                        throw new RuntimeException();
+                        throw new RuntimeException("OS (" + System.getProperty("os.name" + ") not supported."));
                 }
                 extractZIP(path + libsZip, String.valueOf(libsDir));
                 extractZIP(path + nativesZip, libsDir + File.separator + "natives");
@@ -247,7 +240,7 @@ public class MCUpdater implements Runnable {
         }
     }
 
-    protected void updateClasspath(File dir) throws MalformedURLException {
+    void updateClasspath(File dir) throws MalformedURLException {
         this.state = 6;
         this.percentage = 95;
 
@@ -265,10 +258,14 @@ public class MCUpdater implements Runnable {
         urls.copyInto(urlArray);
 
         if (classLoader == null) {
-            classLoader = new URLClassLoader(urlArray, MCUpdater.class.getClassLoader());
+            classLoader = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> {
+                URLClassLoader cl = new URLClassLoader(urlArray, Thread.currentThread().getContextClassLoader());
+                Thread.currentThread().setContextClassLoader(cl);
+                return cl;
+            });
         } else {
             try {
-                classLoader.loadClass("net.minecraft.client.Minecraft");
+                Class.forName("net.minecraft.client.Minecraft", true, classLoader);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -278,7 +275,7 @@ public class MCUpdater implements Runnable {
         if (MCUtils.getPlatform() == osx || MCUtils.getPlatform() == MCUtils.OS.linux || MCUtils.getPlatform() == MCUtils.OS.windows) {
             path = dir.getAbsolutePath() + File.separator;
         } else {
-            throw new RuntimeException("Unknown OS: " + System.getProperty("os.name"));
+            throw new RuntimeException("OS (" + System.getProperty("os.name" + ") not supported."));
         }
         this.unloadNatives(path);
         System.setProperty("org.lwjgl.librarypath", path + "natives");
@@ -286,13 +283,13 @@ public class MCUpdater implements Runnable {
         natives_loaded = true;
     }
 
-    protected void fatalErrorOccurred(String error, Exception e) {
+    void fatalErrorOccurred(String error, Exception e) {
         e.printStackTrace();
         this.fatalError = true;
         this.fatalErrorDescription = "Fatal error occurred (" + this.state + "): " + error;
     }
 
-    private void unloadNatives(String nativePath) {
+    void unloadNatives(String nativePath) {
         if (!natives_loaded) {
             return;
         } try {
@@ -312,7 +309,7 @@ public class MCUpdater implements Runnable {
         }
     }
 
-    protected void extractZIP(String path, String archive) {
+    void extractZIP(String path, String archive) {
         this.state = 5;
         int initialPercentage = this.percentage;
 
@@ -360,18 +357,18 @@ public class MCUpdater implements Runnable {
         }
         boolean delete = new File(path).delete();
         if (!delete) {
-            throw new RuntimeException("Failed to delete file: " + path);
+            throw new RuntimeException("Failed to delete " + path);
         }
     }
 
-    protected String getFileName(URL url) {
+    String getFileName(URL url) {
         if (url.getFile().lastIndexOf('/') != -1) {
             return url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
         }
         return url.getFile();
     }
 
-    protected InputStream getJarInputStream(URLConnection connection) throws Exception {
+    InputStream getJarInputStream(URLConnection connection) throws Exception {
         final InputStream[] is = new InputStream[1];
         AccessController.doPrivileged((PrivilegedExceptionAction<Void>) () -> {
             is[0] = connection.getInputStream();
@@ -383,7 +380,7 @@ public class MCUpdater implements Runnable {
         return is[0];
     }
 
-    public Applet createApplet() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    Applet createApplet() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         return (Applet) classLoader.loadClass("net.minecraft.client.MinecraftApplet").newInstance();
     }
 }

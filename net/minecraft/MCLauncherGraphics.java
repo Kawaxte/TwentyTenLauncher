@@ -6,13 +6,14 @@ import java.awt.Graphics;
 import java.io.Serializable;
 
 public class MCLauncherGraphics implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final MCLauncher minecraftLauncher;
 
     public MCLauncherGraphics(MCLauncher minecraftLauncher) {
         this.minecraftLauncher = minecraftLauncher;
     }
 
-    public void paint(Graphics g2) {
+    void paint(Graphics g2) {
         if (minecraftLauncher.getApplet() == null) {
             if (minecraftLauncher.getVolatileImage() == null
                     || minecraftLauncher.getVolatileImage().getWidth() != minecraftLauncher.getWidth() / 2
@@ -77,7 +78,7 @@ public class MCLauncherGraphics implements Serializable {
         }
     }
 
-    public void update(Graphics g) {
+    void update(Graphics g) {
         minecraftLauncher.paint(g);
     }
 }

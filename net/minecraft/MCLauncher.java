@@ -15,14 +15,15 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MCLauncher extends Applet implements AppletStub {
+    private static final long serialVersionUID = 1L;
     private final MCLauncherGraphics mcLauncherGraphics = new MCLauncherGraphics(this);
-    public Map<String, String> customParameters = new HashMap<>();
-    private Image image;
-    private VolatileImage volatileImage;
-    private boolean active = false;
-    private boolean minecraftUpdaterStarted = false;
-    private Applet applet;
-    private MCUpdater minecraftUpdater;
+    public final Map<String, String> customParameters = new HashMap<>();
+    boolean active = false;
+    boolean minecraftUpdaterStarted = false;
+    Image image;
+    VolatileImage volatileImage;
+    Applet applet;
+    MCUpdater minecraftUpdater;
 
     public MCLauncher() {
         System.setProperty("http.proxyHost", "betacraft.uk");
@@ -156,23 +157,23 @@ public class MCLauncher extends Applet implements AppletStub {
         }
     }
 
-    public MCUpdater getMinecraftUpdater() {
+    MCUpdater getMinecraftUpdater() {
         return this.minecraftUpdater;
     }
 
-    public Applet getApplet() {
+    Applet getApplet() {
         return this.applet;
     }
 
-    public Image getImage() {
+    Image getImage() {
         return image;
     }
 
-    public VolatileImage getVolatileImage() {
+    VolatileImage getVolatileImage() {
         return this.volatileImage;
     }
 
-    public void setVolatileImage(VolatileImage volatileImage) {
+    void setVolatileImage(VolatileImage volatileImage) {
         this.volatileImage = volatileImage;
     }
 }

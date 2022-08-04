@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class YAuthenticate implements Serializable {
+    private static final long serialVersionUID = 1L;
     public final YAgent yggdrasilAgent = new YAgent();
     private final LFrame launcherFrame;
 
@@ -41,7 +42,7 @@ public class YAuthenticate implements Serializable {
                                     launcherFrame.getAuthPanel().setError("Can't connect to minecraft.net");
                                     launcherFrame.getAuthPanel().setNoNetwork();
                                     return;
-                                } else if ("$MS".equals(username)) {
+                                } else if ("$MS".equalsIgnoreCase(username)) {
                                     launcherFrame.getMicrosoftAuthenticate();
                                 } else {
                                     launcherFrame.getAuthPanel().setError("Login failed");
@@ -86,7 +87,7 @@ public class YAuthenticate implements Serializable {
         return launcherFrame;
     }
 
-    public boolean hasNetwork() {
+    boolean hasNetwork() {
         try {
             URL url = new URL("https://minecraft.net/");
             URLConnection connection = url.openConnection();

@@ -6,13 +6,14 @@ import java.awt.Graphics;
 import java.io.Serializable;
 
 public class APanelGraphics implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final APanel authPanel;
 
     public APanelGraphics(APanel authPanel) {
         this.authPanel = authPanel;
     }
 
-    public void paint(Graphics g2) {
+    void paint(Graphics g2) {
         if (authPanel.getVolatileImage() == null
                 || authPanel.getVolatileImage().getWidth() != authPanel.getWidth() / 2
                 || authPanel.getVolatileImage().getHeight() != authPanel.getHeight() / 2) {
@@ -42,7 +43,7 @@ public class APanelGraphics implements Serializable {
         g2.drawImage(authPanel.getVolatileImage(), 0, 0, authPanel.getWidth() / 2 * 2, authPanel.getHeight() / 2 * 2, null);
     }
 
-    public void update(Graphics g) {
+    void update(Graphics g) {
         authPanel.paint(g);
     }
 }
