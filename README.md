@@ -19,5 +19,5 @@ This launcher can run versions from **indev 0.13 (20091223-2)** up to **1.5.2** 
 ![Launcher](https://i.imgur.com/CNB25rv.png)
 
 ## TODO
-- >Saving "lastLogin" details for Microsoft accounts.
+- >Saving "lastlogin" details for Microsoft accounts.
 - >Fix an issue regarding JavaFX window being empty when closing and reopening.
