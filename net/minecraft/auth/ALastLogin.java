@@ -18,16 +18,16 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.Random;
 
 public class ALastLogin implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final APanel authPanel;
 
     public ALastLogin(APanel authPanel) {
         this.authPanel = authPanel;
     }
 
-    public void readUsername() {
+    void readUsername() {
         File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
         DataInputStream dis = null;
         try {
@@ -50,7 +50,7 @@ public class ALastLogin implements Serializable {
         }
     }
 
-    public void writeUsername() {
+    void writeUsername() {
         File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
         DataOutputStream dos = null;
         try {
@@ -73,17 +73,13 @@ public class ALastLogin implements Serializable {
         }
     }
 
-    private static Cipher getCipher(int mode) {
+    static Cipher getCipher(int mode) {
         try {
-            Random random = new Random(43287234L);
-            byte[] salt = new byte[8];
-            random.nextBytes(salt);
-
-            PBEParameterSpec ps = new PBEParameterSpec(salt, 5);
-            SecretKey sk = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(new PBEKeySpec("passwordfile".toCharArray()));
+            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+            SecretKey key = keyFactory.generateSecret(new PBEKeySpec("passwordfile".toCharArray()));
 
             Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
-            cipher.init(mode, sk, ps);
+            cipher.init(mode, key, new PBEParameterSpec(new byte[]{0, 0, 0, 0, 0, 0, 0, 0}, 20));
             return cipher;
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
