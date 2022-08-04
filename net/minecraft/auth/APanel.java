@@ -7,6 +7,7 @@ import net.minecraft.launcher.LFrame;
 import net.minecraft.launcher.LUpdater;
 
 import javax.imageio.ImageIO;
+import javax.xml.stream.XMLStreamReader;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Checkbox;
@@ -32,22 +33,23 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class APanel extends Panel {
+    private static final long serialVersionUID = 1L;
     private final APanelGraphics authPanelGraphics = new APanelGraphics(this);
     private final ALastLogin authLastLogin = new ALastLogin(this);
-    private static final String updateUrl = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
-    private static final String registerUrl = "https://signup.live.com/signup"
+    static final String updateUrl = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
+    static final String registerUrl = "https://signup.live.com/signup"
             + "?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d"
             + "&client_id=00000000402b5328"
             + "&lic=1";
-    private Image image;
-    private VolatileImage volatileImage;
-    public Label errorLabel = new Label("", 1);
-    public TextField usernameTextField = new TextField(20);
-    public TextField passwordTextField = new TextField(20);
-    public Checkbox rememberCheckbox = new Checkbox("Remember password");
-    public Button loginButton = new Button("Login");
-    public Button retryButton = new Button("Try again");
-    public Button offlineButton = new Button("Play offline");
+    final Label errorLabel = new Label("", 1);
+    final TextField usernameTextField = new TextField(20);
+    final TextField passwordTextField = new TextField(20);
+    final Checkbox rememberCheckbox = new Checkbox("Remember password");
+    final Button loginButton = new Button("Login");
+    final Button retryButton = new Button("Try again");
+    final Button offlineButton = new Button("Play offline");
+    Image image;
+    VolatileImage volatileImage;
 
     public APanel(final LFrame launcherFrame) {
         this.setLayout(new GridBagLayout());
@@ -83,8 +85,10 @@ public class APanel extends Panel {
         authPanelGraphics.paint(g2);
     }
 
-    private Panel buildLoginPanel() {
+    Panel buildLoginPanel() {
         Panel panel = new Panel() {
+            private static final long serialVersionUID = 1L;
+
             public Insets getInsets() {
                 return new Insets(12, 24, 16, 32);
             }
@@ -123,26 +127,25 @@ public class APanel extends Panel {
 
         Panel onlinePanel = new Panel(new BorderLayout());
         try {
-            Label accountLabel;
-            if (!LUpdater.latestVersion.matches(LUpdater.currentVersion)) {
-                accountLabel = new Label("", 1) {
-                    public void update(Graphics g) {
-                        this.paint(g);
-                    }
+            Label accountLabel = new Label("", 1) {
+                private static final long serialVersionUID = 0L;
 
-                    public void paint(Graphics g) {
-                        super.paint(g);
-                        g.setColor(Color.BLUE);
-                        g.drawLine(
-                                this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2,
-                                this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1,
-                                this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2 + g.getFontMetrics().stringWidth(this.getText()),
-                                this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
-                    }
-                };
+                public void update(Graphics g) {
+                    this.paint(g);
+                }
+
+                public void paint(Graphics g) {
+                    super.paint(g);
+                    g.setColor(Color.BLUE);
+                    g.drawLine(
+                            this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2,
+                            this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1,
+                            this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2 + g.getFontMetrics().stringWidth(this.getText()),
+                            this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
+                }
+            };
+            if (!LUpdater.latestVersion.matches(LUpdater.currentVersion)) {
                 accountLabel.setText("You need to update the launcher!");
-                accountLabel.setForeground(Color.BLUE);
-                accountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 accountLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent me) {
@@ -155,24 +158,7 @@ public class APanel extends Panel {
                 });
                 this.loginButton.setEnabled(LUpdater.latestVersion.compareTo(LUpdater.currentVersion) < 0);
             } else {
-                accountLabel = new Label("", 1) {
-                    public void update(Graphics g) {
-                        this.paint(g);
-                    }
-
-                    public void paint(Graphics g) {
-                        super.paint(g);
-                        g.setColor(Color.BLUE);
-                        g.drawLine(
-                                this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2,
-                                this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1,
-                                this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2 + g.getFontMetrics().stringWidth(this.getText()),
-                                this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
-                    }
-                };
                 accountLabel.setText("Need account?");
-                accountLabel.setForeground(Color.BLUE);
-                accountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 accountLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent me) {
@@ -184,6 +170,8 @@ public class APanel extends Panel {
                     }
                 });
             }
+            accountLabel.setForeground(Color.BLUE);
+            accountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             onlinePanel.add(accountLabel, "West");
         } catch (HeadlessException e) {
             e.printStackTrace();
@@ -193,8 +181,10 @@ public class APanel extends Panel {
         return panel;
     }
 
-    private Panel buildOfflinePanel() {
+    Panel buildOfflinePanel() {
         Panel panel = new Panel() {
+            private static final long serialVersionUID = 1L;
+
             public Insets getInsets() {
                 return new Insets(12, 24, 16, 32);
             }
@@ -233,7 +223,7 @@ public class APanel extends Panel {
         return panel;
     }
 
-    private void getUsername() {
+    void getUsername() {
         authLastLogin.readUsername();
     }
 
@@ -241,27 +231,27 @@ public class APanel extends Panel {
         authLastLogin.writeUsername();
     }
 
-    public Image getImage() {
+    Image getImage() {
         return this.image;
     }
 
-    public VolatileImage getVolatileImage() {
+    VolatileImage getVolatileImage() {
         return this.volatileImage;
     }
 
-    public TextField getUsernameTextField() {
+    TextField getUsernameTextField() {
         return this.usernameTextField;
     }
 
-    public TextField getPasswordTextField() {
+    TextField getPasswordTextField() {
         return this.passwordTextField;
     }
 
-    public Checkbox getRememberCheckbox() {
+    Checkbox getRememberCheckbox() {
         return this.rememberCheckbox;
     }
 
-    public void setVolatileImage(VolatileImage volatileImage) {
+    void setVolatileImage(VolatileImage volatileImage) {
         this.volatileImage = volatileImage;
     }
 
