@@ -10,9 +10,9 @@ This launcher can run versions from **indev 0.13 (20091223-2)** up to **1.5.2** 
 ## Features
 - You can sign in using *valid* Microsoft accounts, Mojang accounts, Legacy accounts, and *'cracked'* accounts.
   - To sign in with a *valid* Microsoft account, enter (case insensitive) "**$MS**" in the 'Username' field.
-  - To sign in with a *valid* Mojang account, enter a *valid* email address and password in their respective fields.
-  - To sign in with a *valid* Legacy account, enter a *valid* username and password in their respective fields.
-  - To sign in using a *'cracked'* account, enter a *valid* username in the 'Username' field.
+  - To sign in with a *valid* Mojang account, enter a *valid* **email address and password** in their respective fields.
+  - To sign in with a *valid* Legacy account, enter a *valid* **username and password** in their respective fields.
+  - To sign in using a *'cracked'* account, enter a *valid* **username** in the 'Username' field.
 - Support for skins and appropriate sounds for different Alpha/Beta versions of Minecraft.
 - Out-of-box compatibility with MCPatcher (HDTextureFix) and legacy mods (ModLoader).
 - Automatic update checking that will tell you so in the login panel, just like in the original!
