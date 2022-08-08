@@ -108,7 +108,7 @@ public class MCUpdate implements Runnable {
         if (!natives_loaded) {
             try {
                 Field field = ClassLoader.class.getDeclaredField("loadedLibraryNames");
-                field.set(classLoader, new Vector<>());
+                field.setAccessible(true);
 
                 Vector<?> loadedLibraryNames = (Vector<?>) field.get(classLoader);
                 loadedLibraryNames.clear();
