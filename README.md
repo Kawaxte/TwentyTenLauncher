@@ -8,16 +8,12 @@ This launcher can run versions from **indev 0.13 (20091223-2)** up to **1.5.2** 
 > You need a minimum of Java 8 or greater to run this application.
 
 ## Features
-- You can sign in using *valid* Microsoft accounts, Mojang accounts, Legacy accounts, and *'cracked'* accounts.
-  - To sign in with a *valid* Microsoft account, enter (case insensitive) "**$MS**" in the 'Username' field.
-  - To sign in with a *valid* Mojang account, enter a *valid* **email address** and **password** in their respective fields.
-  - To sign in with a *valid* Legacy account, enter a *valid* **username** and **password** in their respective fields.
-  - To sign in using a *'cracked'* account, enter a *valid* **username** in the 'Username' field.
+- You can sign in using either a *valid* Legacy account, Mojang account, or Microsoft account.
+  - Enter (case insensitive) "**$MS**" in the 'Username:' field to sign in using a Microsoft account.
 - Support for skins and appropriate sounds for different Alpha/Beta versions of Minecraft.
-- Out-of-box compatibility with MCPatcher (HDTextureFix) and legacy mods (ModLoader).
-- Automatic update checking that will tell you so in the login panel, just like in the original!
+- Out-of-box compatibility with MCPatcher and ModLoader.
+- Check for the latest version of the launcher.
 ![Launcher](https://i.imgur.com/CNB25rv.png)
 
 ## TODO
-- >Saving "lastlogin" details for Microsoft accounts.
-- >Fix an issue regarding JavaFX window being empty when closing and reopening.
+- >Immediate online instance after reading the lastlogin details for Microsoft account.
