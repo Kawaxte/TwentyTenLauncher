@@ -93,7 +93,7 @@ public class MSAuthenticate extends AbstractAction {
                     }
                 }
                 if (change.wasAdded() && webView.getEngine().getLocation().contains("oauth20_desktop.srf?error=access_denied")) {
-                    dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSED));
+                    dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
                     dialog = null;
                 }
             });
@@ -111,8 +111,8 @@ public class MSAuthenticate extends AbstractAction {
             }
             String name = apiResponse.getString("name");
             String uuid = apiResponse.getString("id");
-            frame.dispose();
             this.launcherFrame.getOnlineInstance(name, String.format("%s:%s:%s", clientToken, accessToken, uuid));
+            frame.dispose();
             AuthLastLogin.writeLastLogin(AuthPanel.getUsernameTextField().getText(), clientToken, accessToken, uuid);
         } catch (IOException e) {
             e.printStackTrace();
