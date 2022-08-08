@@ -1,13 +1,12 @@
 /*
  * Decompiled with CFR 0.150.
  */
-package net.minecraft.auth;
+package net.minecraft.launcher.auth;
 
-import net.minecraft.launcher.LFrame;
-import net.minecraft.launcher.LUpdater;
+import net.minecraft.launcher.LauncherFrame;
+import net.minecraft.launcher.LauncherUpdate;
 
 import javax.imageio.ImageIO;
-import javax.xml.stream.XMLStreamReader;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Checkbox;
@@ -24,6 +23,7 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextField;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.VolatileImage;
@@ -31,49 +31,36 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
+import java.util.UUID;
 
-public class APanel extends Panel {
+public class AuthPanel extends Panel {
     private static final long serialVersionUID = 1L;
-    private final APanelGraphics authPanelGraphics = new APanelGraphics(this);
-    private final ALastLogin authLastLogin = new ALastLogin(this);
-    static final String updateUrl = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
-    static final String registerUrl = "https://signup.live.com/signup"
-            + "?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d"
-            + "&client_id=00000000402b5328"
-            + "&lic=1";
-    final Label errorLabel = new Label("", 1);
-    final TextField usernameTextField = new TextField(20);
-    final TextField passwordTextField = new TextField(20);
-    final Checkbox rememberCheckbox = new Checkbox("Remember password");
-    final Button loginButton = new Button("Login");
-    final Button retryButton = new Button("Try again");
-    final Button offlineButton = new Button("Play offline");
-    Image image;
-    VolatileImage volatileImage;
+    private final AuthPanelGraphics authPanelGraphics = new AuthPanelGraphics(this);
+    private final LauncherFrame launcherFrame;
+    protected Label errorLabel = new Label("", 1);
+    protected static TextField usernameTextField = new TextField(20);
+    protected static TextField passwordTextField = new TextField(20);
+    protected static Checkbox rememberCheckbox = new Checkbox("Remember password");
+    protected Button loginButton = new Button("Login");
+    protected Button retryButton = new Button("Try again");
+    protected Button offlineButton = new Button("Play offline");
+    protected String clientSecret = UUID.randomUUID().toString().replace("-", "");
+    private Image image;
+    private VolatileImage volatileImage;
 
-    public APanel(final LFrame launcherFrame) {
+    public AuthPanel(final LauncherFrame launcherFrame) {
+        this.launcherFrame = launcherFrame;
         this.setLayout(new GridBagLayout());
         this.add(this.buildLoginPanel());
-        this.getUsername();
-        this.retryButton.addActionListener(ae -> {
-            this.errorLabel.setText("");
-            this.removeAll();
-            this.add(this.buildLoginPanel());
-            this.validate();
-        });
-        this.offlineButton.addActionListener(e -> launcherFrame.playOffline(this.usernameTextField.getText()));
-        this.loginButton.addActionListener(ae -> {
-            try {
-                launcherFrame.getYggdrasilAuthenticate(this.usernameTextField.getText(), this.passwordTextField.getText());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        this.loginButton.addActionListener(this::loginButtonPressed);
+        this.offlineButton.addActionListener(this::offlineButtonPressed);
+        this.retryButton.addActionListener(this::retryButtonPressed);
         try {
-            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("dirt.png"))).getScaledInstance(32, 32, Image.SCALE_AREA_AVERAGING);
+            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        AuthLastLogin.readLastLogin();
     }
 
     public void update(Graphics g) {
@@ -85,7 +72,26 @@ public class APanel extends Panel {
         authPanelGraphics.paint(g2);
     }
 
-    Panel buildLoginPanel() {
+    private void loginButtonPressed(ActionEvent ae) {
+        if ("$MS".equalsIgnoreCase(usernameTextField.getText())) {
+            launcherFrame.getMicrosoftAuthenticate();
+        } else {
+            launcherFrame.getYggdrasilAuthenticate(usernameTextField.getText(), passwordTextField.getText(), clientSecret);
+        }
+    }
+
+    private void offlineButtonPressed(ActionEvent ae) {
+        launcherFrame.getOfflineInstance(usernameTextField.getText());
+    }
+
+    private void retryButtonPressed(ActionEvent ae) {
+        this.errorLabel.setText("");
+        this.removeAll();
+        this.add(this.buildLoginPanel());
+        this.validate();
+    }
+
+    private Panel buildLoginPanel() {
         Panel panel = new Panel() {
             private static final long serialVersionUID = 1L;
 
@@ -120,10 +126,10 @@ public class APanel extends Panel {
 
         Panel textField = new Panel(new GridLayout(0, 1, 0, 2));
         panel.add(textField, "Center");
-        textField.add(this.usernameTextField);
-        textField.add(this.passwordTextField);
-        textField.add(this.rememberCheckbox);
-        this.passwordTextField.setEchoChar('*');
+        textField.add(usernameTextField);
+        textField.add(passwordTextField);
+        textField.add(rememberCheckbox);
+        passwordTextField.setEchoChar('*');
 
         Panel onlinePanel = new Panel(new BorderLayout());
         try {
@@ -144,26 +150,29 @@ public class APanel extends Panel {
                             this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
                 }
             };
-            if (!LUpdater.latestVersion.matches(LUpdater.currentVersion)) {
+            if (!(LauncherUpdate.latestVersion != null && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
                 accountLabel.setText("You need to update the launcher!");
                 accountLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent me) {
                         try {
-                            Desktop.getDesktop().browse(new URI(updateUrl));
+                            Desktop.getDesktop().browse(new URI("https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest"));
                         } catch (IOException | URISyntaxException e) {
                             e.printStackTrace();
                         }
                     }
                 });
-                this.loginButton.setEnabled(LUpdater.latestVersion.compareTo(LUpdater.currentVersion) < 0);
+                this.loginButton.setEnabled((LauncherUpdate.latestVersion != null ? LauncherUpdate.latestVersion.compareTo(LauncherUpdate.currentVersion) : 0) < 0);
             } else {
                 accountLabel.setText("Need account?");
                 accountLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent me) {
                         try {
-                            Desktop.getDesktop().browse(new URI(registerUrl));
+                            Desktop.getDesktop().browse(new URI("https://signup.live.com/signup"
+                                    + "?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d"
+                                    + "&client_id=00000000402b5328"
+                                    + "&lic=1"));
                         } catch (IOException | URISyntaxException e) {
                             e.printStackTrace();
                         }
@@ -181,7 +190,7 @@ public class APanel extends Panel {
         return panel;
     }
 
-    Panel buildOfflinePanel() {
+    private Panel buildOfflinePanel() {
         Panel panel = new Panel() {
             private static final long serialVersionUID = 1L;
 
@@ -214,7 +223,7 @@ public class APanel extends Panel {
         offlinePanel.add(this.retryButton, "East");
         offlinePanel.add(this.offlineButton, "West");
 
-        boolean canPlayOffline = LFrame.canPlayOffline(this.usernameTextField.getText());
+        boolean canPlayOffline = LauncherFrame.canPlayOffline(usernameTextField.getText());
         this.offlineButton.setEnabled(canPlayOffline);
         if (!canPlayOffline) {
             panel.add(new Label("Play online once to enable offline", 0));
@@ -223,48 +232,49 @@ public class APanel extends Panel {
         return panel;
     }
 
-    void getUsername() {
-        authLastLogin.readUsername();
+    /**
+     * ##################################################
+     * #               GETTERS & SETTERS                #
+     * ##################################################
+     */
+    public static TextField getUsernameTextField() {
+        return usernameTextField;
     }
 
-    public void getLogin() {
-        authLastLogin.writeUsername();
+    public static TextField getPasswordTextField() {
+        return passwordTextField;
     }
 
-    Image getImage() {
+    public static Checkbox getRememberCheckbox() {
+        return rememberCheckbox;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public Image getImage() {
         return this.image;
     }
 
-    VolatileImage getVolatileImage() {
+    public VolatileImage getVolatileImage() {
         return this.volatileImage;
     }
 
-    TextField getUsernameTextField() {
-        return this.usernameTextField;
-    }
-
-    TextField getPasswordTextField() {
-        return this.passwordTextField;
-    }
-
-    Checkbox getRememberCheckbox() {
-        return this.rememberCheckbox;
-    }
-
-    void setVolatileImage(VolatileImage volatileImage) {
+    public void setVolatileImage(VolatileImage volatileImage) {
         this.volatileImage = volatileImage;
+    }
+
+    public void setNoNetwork() {
+        this.removeAll();
+        this.add(this.buildOfflinePanel());
+        this.validate();
     }
 
     public void setError(String error) {
         this.removeAll();
         this.add(this.buildLoginPanel());
         this.errorLabel.setText(error);
-        this.validate();
-    }
-
-    public void setNoNetwork() {
-        this.removeAll();
-        this.add(this.buildOfflinePanel());
         this.validate();
     }
 }

@@ -14,43 +14,39 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class MCLauncher extends Applet implements AppletStub {
+public class MCInstance extends Applet implements AppletStub {
     private static final long serialVersionUID = 1L;
-    private final MCLauncherGraphics mcLauncherGraphics = new MCLauncherGraphics(this);
-    public final Map<String, String> customParameters = new HashMap<>();
-    boolean active = false;
-    boolean minecraftUpdaterStarted = false;
-    Image image;
-    VolatileImage volatileImage;
-    Applet applet;
-    MCUpdater minecraftUpdater;
+    private final MCInstanceGraphics minecraftInstanceGraphics = new MCInstanceGraphics(this);
+    public final Map<String, String> parameters = new HashMap<>();
+    private boolean active = false;
+    private boolean minecraftUpdateStarted = false;
+    private Image image;
+    private VolatileImage volatileImage;
+    private Applet applet;
+    private MCUpdate minecraftUpdate;
 
-    public MCLauncher() {
+    public MCInstance() {
         System.setProperty("http.proxyHost", "betacraft.uk");
         System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     }
 
     public void paint(Graphics g2) {
-        mcLauncherGraphics.paint(g2);
+        minecraftInstanceGraphics.paint(g2);
     }
 
     public void update(Graphics g) {
-        mcLauncherGraphics.update(g);
-    }
-
-    public boolean isActive() {
-        return active;
+        minecraftInstanceGraphics.update(g);
     }
 
     public void init(String username, String sessionId) {
         try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("dirt.png"))).getScaledInstance(32, 32, Image.SCALE_AREA_AVERAGING);
+            image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.customParameters.put("username", username);
-        this.customParameters.put("sessionid", sessionId);
-        this.minecraftUpdater = new MCUpdater();
+        this.parameters.put("username", username);
+        this.parameters.put("sessionid", sessionId);
+        this.minecraftUpdate = new MCUpdate();
     }
 
     public void init() {
@@ -62,32 +58,29 @@ public class MCLauncher extends Applet implements AppletStub {
     }
 
     public void start() {
-        if (!minecraftUpdaterStarted) {
-            Thread thread = new Thread(minecraftUpdater) {
+        if (minecraftUpdateStarted) {
+            if (this.applet == null) {
+                return;
+            }
+            this.applet.start();
+        } else {
+            Thread thread = new Thread(minecraftUpdate) {
                 @Override
                 public void run() {
-                    minecraftUpdater.run();
+                    minecraftUpdate.run();
                     try {
-                        if (!minecraftUpdater.fatalError) {
-                            replace(minecraftUpdater.createApplet());
+                        if (!minecraftUpdate.fatalError) {
+                            replace(minecraftUpdate.createAppletInstance());
                         }
                     } catch (RuntimeException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 }
             };
-            thread.setDaemon(true); thread.start(); thread = new Thread(() -> {
-                while (this.applet == null)
-                {
-                    this.repaint();
-                }
-            }); thread.setDaemon(true); thread.start();
-            this.minecraftUpdaterStarted = true;
-        } else {
-            if (this.applet == null) {
-                return;
-            }
-            this.applet.start();
+            thread.setDaemon(true); thread.start();
+
+            thread = new Thread(this::run); thread.setDaemon(true); thread.start();
+            this.minecraftUpdateStarted = true;
         }
     }
 
@@ -104,7 +97,7 @@ public class MCLauncher extends Applet implements AppletStub {
         }
     }
 
-    public void replace(Applet applet) {
+    private void replace(Applet applet) {
         this.applet = applet;
         this.setLayout(new BorderLayout());
         this.add(applet, "Center");
@@ -122,10 +115,27 @@ public class MCLauncher extends Applet implements AppletStub {
         }
     }
 
-    public boolean canPlayOffline() {
-        return this.minecraftUpdater.canPlayOffline();
+    private void run() {
+        if (this.applet == null) {
+            do {
+                this.repaint();
+            } while (this.applet == null);
+        }
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public boolean canPlayOffline() {
+        return this.minecraftUpdate.canPlayOffline();
+    }
+
+    /**
+     * ##################################################
+     * #               GETTERS & SETTERS                #
+     * ##################################################
+     */
     public URL getCodeBase() {
         try {
             return new URL("https://www.minecraft.net/");
@@ -145,8 +155,8 @@ public class MCLauncher extends Applet implements AppletStub {
     }
 
     public String getParameter(String name) {
-        if (this.customParameters != null) {
-            return this.customParameters.get(name);
+        if (this.parameters != null) {
+            return this.parameters.get(name);
         } else {
             try {
                 return super.getParameter(name);
@@ -157,23 +167,23 @@ public class MCLauncher extends Applet implements AppletStub {
         }
     }
 
-    MCUpdater getMinecraftUpdater() {
-        return this.minecraftUpdater;
-    }
-
-    Applet getApplet() {
-        return this.applet;
-    }
-
-    Image getImage() {
+    public Image getImage() {
         return image;
     }
 
-    VolatileImage getVolatileImage() {
+    public VolatileImage getVolatileImage() {
         return this.volatileImage;
     }
 
-    void setVolatileImage(VolatileImage volatileImage) {
+    public Applet getApplet() {
+        return this.applet;
+    }
+
+    public MCUpdate getMinecraftUpdate() {
+        return this.minecraftUpdate;
+    }
+
+    public void setVolatileImage(VolatileImage volatileImage) {
         this.volatileImage = volatileImage;
     }
 }

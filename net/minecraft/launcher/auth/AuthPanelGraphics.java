@@ -1,19 +1,17 @@
-package net.minecraft.auth;
+package net.minecraft.launcher.auth;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.io.Serializable;
 
-public class APanelGraphics implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private final APanel authPanel;
+public class AuthPanelGraphics {
+    private final AuthPanel authPanel;
 
-    public APanelGraphics(APanel authPanel) {
+    public AuthPanelGraphics(AuthPanel authPanel) {
         this.authPanel = authPanel;
     }
 
-    void paint(Graphics g2) {
+    protected void paint(Graphics g2) {
         if (authPanel.getVolatileImage() == null
                 || authPanel.getVolatileImage().getWidth() != authPanel.getWidth() / 2
                 || authPanel.getVolatileImage().getHeight() != authPanel.getHeight() / 2) {
@@ -23,14 +21,16 @@ public class APanelGraphics implements Serializable {
         }
 
         Graphics g = authPanel.getVolatileImage().getGraphics();
-        int x = 0;
-        if (x <= authPanel.getWidth() / 2 / 32) {
+        int i = 0;
+        if (i <= authPanel.getWidth() / 2 / 32) {
             do {
-                for (int y = 0; y <= authPanel.getHeight() / 2 / 32; y++) {
-                    g.drawImage(authPanel.getImage(), x * 32, y * 32, null);
+                int j = 0;
+                while (j <= authPanel.getHeight() / 2 / 32) {
+                    g.drawImage(authPanel.getImage(), i * 32, j * 32, null);
+                    j++;
                 }
-                x++;
-            } while (x <= authPanel.getWidth() / 2 / 32);
+                i++;
+            } while (i <= authPanel.getWidth() / 2 / 32);
         }
         g.setFont(new Font(null, Font.BOLD, 20));
         g.setColor(Color.LIGHT_GRAY);
@@ -43,7 +43,7 @@ public class APanelGraphics implements Serializable {
         g2.drawImage(authPanel.getVolatileImage(), 0, 0, authPanel.getWidth() / 2 * 2, authPanel.getHeight() / 2 * 2, null);
     }
 
-    void update(Graphics g) {
+    protected void update(Graphics g) {
         authPanel.paint(g);
     }
 }

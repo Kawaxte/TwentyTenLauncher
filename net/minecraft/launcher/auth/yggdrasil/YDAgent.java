@@ -1,12 +1,8 @@
-package net.minecraft.auth.yggdrasil;
+package net.minecraft.launcher.auth.yggdrasil;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
-
-public class YAgent implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+public class YDAgent {
     public JSONObject getAgentObject() {
         JSONObject agentParameters = new JSONObject();
         agentParameters.put("name", "Minecraft").put("version", 1);

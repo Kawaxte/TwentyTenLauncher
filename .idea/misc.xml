@@ -38,6 +38,7 @@
       <entry_point TYPE="field" FQNAME="net.minecraft.MCLauncherGraphics serialVersionUID" />
       <entry_point TYPE="field" FQNAME="net.minecraft.auth.yggdrasil.YAgent serialVersionUID" />
       <entry_point TYPE="field" FQNAME="net.minecraft.auth.yggdrasil.YAuthenticate serialVersionUID" />
+      <entry_point TYPE="field" FQNAME="net.minecraft.MCUpdate thread" />
     </entry_points>
     <pattern value="net.minecraft.MCUpdater" method="createApplet" />
     <pattern value="net.minecraft.MCUpdater" method="getDescriptionForState" />
@@ -57,6 +58,8 @@
     <pattern value="net.minecraft.MCLauncherGraphics" />
     <pattern value="net.minecraft.auth.yggdrasil.YAgent" />
     <pattern value="net.minecraft.auth.yggdrasil.YAuthenticate" />
+    <pattern value="net.minecraft.launcher.LMain" method="LMain" />
+    <pattern value="net.minecraft.launcher.LUpdater" method="LUpdater" />
   </component>
   <component name="FindBugsConfigurable">
     <option name="make" value="true" />
