@@ -1,16 +1,18 @@
 package net.minecraft.launcher.auth;
 
 public class AuthCredentials {
-    protected static String username;
-    protected static String clientToken;
-    protected static String accessToken;
-    protected static String uuid;
+    public static AuthCredentials credentials;
+    private final String username;
+    private final String clientToken;
+    private final String accessToken;
+    private final String uuid;
 
-    private AuthCredentials(String username, String clientToken, String accessToken, String uuid) {
-        AuthCredentials.username = username;
-        AuthCredentials.clientToken = clientToken;
-        AuthCredentials.accessToken = accessToken;
-        AuthCredentials.uuid = uuid;
+    public AuthCredentials(String username, String clientToken, String accessToken, String uuid) {
+        credentials = this;
+        this.username = username;
+        this.clientToken = clientToken;
+        this.accessToken = accessToken;
+        this.uuid = uuid;
     }
 
     /**
@@ -18,18 +20,19 @@ public class AuthCredentials {
      * #               GETTERS & SETTERS                #
      * ##################################################
      */
-    protected static String setClientToken(String clientToken) {
-        AuthCredentials.clientToken = clientToken;
-        return clientToken;
+    public String getUsername() {
+        return this.username;
     }
 
-    protected static String setAccessToken(String accessToken) {
-        AuthCredentials.accessToken = accessToken;
-        return accessToken;
+    public String getClientToken() {
+        return this.clientToken;
     }
 
-    protected static String setUuid(String uuid) {
-        AuthCredentials.uuid = uuid;
-        return uuid;
+    public String getAccessToken() {
+        return this.accessToken;
+    }
+
+    public String getUuid() {
+        return this.uuid;
     }
 }

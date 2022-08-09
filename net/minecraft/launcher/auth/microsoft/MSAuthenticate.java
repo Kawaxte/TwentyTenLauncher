@@ -8,6 +8,7 @@ import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 import net.minecraft.MCUtils;
 import net.minecraft.launcher.LauncherFrame;
+import net.minecraft.launcher.auth.AuthCredentials;
 import net.minecraft.launcher.auth.AuthLastLogin;
 import net.minecraft.launcher.auth.AuthPanel;
 import org.json.JSONObject;
@@ -38,7 +39,6 @@ public class MSAuthenticate extends AbstractAction {
     static final String xblXstsAuthurl = "https://xsts.auth.xboxlive.com/xsts/authorize";
     static final String apiMinecraftAuthUrl = "https://api.minecraftservices.com/authentication/login_with_xbox";
     private static final String apiMinecraftProfileUrl = "https://api.minecraftservices.com/minecraft/profile";
-    private static String authCode;
     public final LauncherFrame launcherFrame;
     private final JFrame frame;
     private JDialog dialog;
@@ -49,7 +49,15 @@ public class MSAuthenticate extends AbstractAction {
     }
 
     public void authenticate() {
-        SwingUtilities.invokeLater(() -> actionPerformed(new ActionEvent(this, 0, "Authenticate")));
+        if (AuthLastLogin.readLastLogin() != null) {
+            if (!Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValid()) {
+                AuthLastLogin.deleteLastLogin();
+                return;
+            }
+            acquireMCProfile(Objects.requireNonNull(AuthLastLogin.readLastLogin()).getAccessToken());
+        } else {
+            SwingUtilities.invokeLater(() -> actionPerformed(new ActionEvent(this, 0, "Authenticate")));
+        }
     }
 
     @Override
@@ -71,7 +79,7 @@ public class MSAuthenticate extends AbstractAction {
 
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension(468, 613);
+                return new Dimension(468, 634);
             }
         };
         dialog.add(fxPanel);
@@ -87,7 +95,7 @@ public class MSAuthenticate extends AbstractAction {
                 if (change.next() && change.wasAdded()) {
                     for (WebHistory.Entry entry : change.getAddedSubList()) {
                         if (entry.getUrl().startsWith(loaDesktopUrl + "?code=")) {
-                            authCode = entry.getUrl().substring(entry.getUrl().indexOf("=") + 1, entry.getUrl().indexOf("&"));
+                            String authCode = entry.getUrl().substring(entry.getUrl().indexOf("=") + 1, entry.getUrl().indexOf("&"));
                             microsoftTokens.acquireAccessToken(authCode);
                         }
                     }
@@ -102,18 +110,23 @@ public class MSAuthenticate extends AbstractAction {
         dialog.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("favicon2.png"))).getImage());
     }
 
-    void acquireMCProfile(String accessToken) {
+    void acquireMCProfile(String access_token) {
+        String username = AuthPanel.getUsernameTextField().getText();
         String clientToken = this.launcherFrame.getClientToken();
         try {
-            JSONObject apiResponse = MCUtils.requestMethod(apiMinecraftProfileUrl, "GET", accessToken);
+            JSONObject apiResponse = MCUtils.requestMethod(apiMinecraftProfileUrl, "GET", access_token);
             if (apiResponse == null) {
                 throw new IOException("No response from Minecraft API");
             }
             String name = apiResponse.getString("name");
             String uuid = apiResponse.getString("id");
-            this.launcherFrame.getOnlineInstance(name, String.format("%s:%s:%s", clientToken, accessToken, uuid));
+            new AuthCredentials(username, clientToken, access_token, uuid);
+            AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getUsername(),
+                    AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
             frame.dispose();
-            AuthLastLogin.writeLastLogin(AuthPanel.getUsernameTextField().getText(), clientToken, accessToken, uuid);
+            System.out.println("Username is '" + username + "'");
+            this.launcherFrame.getOnlineInstance(name, String.format("%s:%s:%s",
+                    AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid()));
         } catch (IOException e) {
             e.printStackTrace();
         }

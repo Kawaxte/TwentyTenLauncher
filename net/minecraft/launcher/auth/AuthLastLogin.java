@@ -14,20 +14,39 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Random;
-import java.util.stream.Stream;
 
 public class AuthLastLogin {
+    public final String username;
+    public final String accessToken;
+    public final String clientToken;
+    public final String uuid;
+
+    private AuthLastLogin(String username, String clientToken, String accessToken, String uuid) {
+        this.username = username;
+        this.clientToken = clientToken;
+        this.accessToken = accessToken;
+        this.uuid = uuid;
+    }
+
+    public static void deleteLastLogin() {
+        File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
+        boolean delete = lastLogin.delete();
+        if(!delete) {
+            lastLogin.deleteOnExit();
+        }
+    }
+
     public static void writeLastLogin(String username, String clientToken, String accessToken, String uuid) {
         File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
         DataOutputStream dos = null;
         try {
             Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
             dos = new DataOutputStream(new CipherOutputStream(Files.newOutputStream(lastLogin.toPath()), cipher));
-            for (String s : new String[]{username,
-                    AuthPanel.getRememberCheckbox().getState() ? AuthPanel.getPasswordTextField().getText() : "",
-                    AuthCredentials.setClientToken(clientToken), AuthCredentials.setAccessToken(accessToken), AuthCredentials.setUuid(uuid)}) {
-                dos.writeUTF(s);
-            }
+            dos.writeUTF(username);
+            dos.writeUTF(AuthPanel.getRememberCheckbox().getState() ? AuthPanel.getPasswordTextField().getText(): "");
+            dos.writeUTF(clientToken);
+            dos.writeUTF(accessToken);
+            dos.writeUTF(uuid);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -41,7 +60,7 @@ public class AuthLastLogin {
         }
     }
 
-    public static void readLastLogin() {
+    public static AuthLastLogin readLastLogin() {
         File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
         DataInputStream dis = null;
         try {
@@ -52,9 +71,10 @@ public class AuthLastLogin {
             String password = dis.readUTF();
             String clientToken = dis.readUTF();
             String accessToken = dis.readUTF();
-            if (Stream.of(username, clientToken, accessToken).allMatch(s -> s.length() > 0)) {
+            if(accessToken.length() > 0 && username.length() > 0) {
                 AuthPanel.getUsernameTextField().setText(username);
                 AuthPanel.getPasswordTextField().setText(password);
+                return new AuthLastLogin(username, clientToken, accessToken, "");
             }
             AuthPanel.getRememberCheckbox().setState(AuthPanel.getPasswordTextField().getText().length() > 0);
         } catch (Exception e) {
@@ -68,6 +88,11 @@ public class AuthLastLogin {
                 e.printStackTrace();
             }
         }
+        return null;
+    }
+
+    public boolean isValid() {
+        return accessToken.length() > 0 && username.length() > 0;
     }
 
     /**
@@ -86,5 +111,9 @@ public class AuthLastLogin {
         Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
         cipher.init(mode, key, new PBEParameterSpec(salt, 1000));
         return cipher;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 }

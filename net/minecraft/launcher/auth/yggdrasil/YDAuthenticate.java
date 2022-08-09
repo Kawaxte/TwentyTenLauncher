@@ -3,6 +3,7 @@ package net.minecraft.launcher.auth.yggdrasil;
 import net.minecraft.MCUtils;
 import net.minecraft.launcher.LauncherFrame;
 import net.minecraft.launcher.LauncherUpdate;
+import net.minecraft.launcher.auth.AuthCredentials;
 import net.minecraft.launcher.auth.AuthLastLogin;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,16 +34,19 @@ public class YDAuthenticate {
             if (authResponse != null) {
                 if (!authResponse.has("error")) {
                     if (!authResponse.has("selectedProfile")) {
-                        this.launcherFrame.showError("User not premium");
+                        this.launcherFrame.showError("Login failed");
                         this.launcherFrame.getAuthPanel().setNoNetwork();
                         return;
                     }
                     String name = authResponse.getJSONObject("selectedProfile").getString("name");
                     String accessToken = authResponse.getString("accessToken");
                     String uuid = authResponse.getJSONObject("selectedProfile").getString("id");
-                    this.launcherFrame.getOnlineInstance(name, String.format("%s:%s:%s", clientToken, accessToken, uuid));
+                    new AuthCredentials(username, clientToken, accessToken, uuid);
+                    AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getUsername(),
+                            AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
                     System.out.println("Username is '" + username + "'");
-                    AuthLastLogin.writeLastLogin(username, clientToken, accessToken, uuid);
+                    this.launcherFrame.getOnlineInstance(name, String.format("%s:%s:%s",
+                            AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid()));
                 } else {
                     switch (authResponse.getString("error")) {
                         case "ForbiddenOperationException":
