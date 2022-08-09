@@ -4,7 +4,7 @@ import net.minecraft.MCUtils;
 import org.json.JSONObject;
 
 public final class LauncherUpdate {
-    public static final String currentVersion = "0.8.0822";
+    public static final String currentVersion = "0.8.0922";
     public static final String latestVersion = isOutdated();
 
     private static String isOutdated() {
