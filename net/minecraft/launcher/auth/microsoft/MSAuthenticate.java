@@ -50,11 +50,10 @@ public class MSAuthenticate extends AbstractAction {
 
     public void authenticate() {
         if (AuthLastLogin.readLastLogin() != null) {
-            if (!Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValid()) {
-                AuthLastLogin.deleteLastLogin();
-                return;
+            if (Objects.requireNonNull(AuthLastLogin.readLastLogin()).getUsername().equals("$ms")
+                    && Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForMicrosoft()) {
+                acquireMCProfile(Objects.requireNonNull(AuthLastLogin.readLastLogin()).getAccessToken());
             }
-            acquireMCProfile(Objects.requireNonNull(AuthLastLogin.readLastLogin()).getAccessToken());
         } else {
             SwingUtilities.invokeLater(() -> actionPerformed(new ActionEvent(this, 0, "Authenticate")));
         }
@@ -112,19 +111,17 @@ public class MSAuthenticate extends AbstractAction {
 
     void acquireMCProfile(String access_token) {
         String username = AuthPanel.getUsernameTextField().getText();
-        String clientToken = this.launcherFrame.getClientToken();
+        String clientToken = this.launcherFrame.getClientSecret();
         try {
             JSONObject apiResponse = MCUtils.requestMethod(apiMinecraftProfileUrl, "GET", access_token);
-            if (apiResponse == null) {
-                throw new IOException("No response from Minecraft API");
-            }
+
             String name = apiResponse.getString("name");
             String uuid = apiResponse.getString("id");
             new AuthCredentials(username, clientToken, access_token, uuid);
             AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getUsername(),
                     AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
-            frame.dispose();
             System.out.println("Username is '" + username + "'");
+            frame.dispose();
             this.launcherFrame.getOnlineInstance(name, String.format("%s:%s:%s",
                     AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid()));
         } catch (IOException e) {

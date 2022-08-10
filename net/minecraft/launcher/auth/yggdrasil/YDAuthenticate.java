@@ -2,7 +2,6 @@ package net.minecraft.launcher.auth.yggdrasil;
 
 import net.minecraft.MCUtils;
 import net.minecraft.launcher.LauncherFrame;
-import net.minecraft.launcher.LauncherUpdate;
 import net.minecraft.launcher.auth.AuthCredentials;
 import net.minecraft.launcher.auth.AuthLastLogin;
 import org.json.JSONException;
@@ -24,45 +23,36 @@ public class YDAuthenticate {
         parameters.put("username", username);
         parameters.put("password", password);
         parameters.put("clientToken", clientToken);
+        parameters.put("requestUser", true);
         try {
             JSONObject authResponse = MCUtils.requestMethod("https://authserver.mojang.com/authenticate", "POST", String.valueOf(parameters));
-            if (!(LauncherUpdate.latestVersion != null && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
-                this.launcherFrame.showError("Outdated launcher");
-                this.launcherFrame.getAuthPanel().setNoNetwork();
-                return;
-            }
-            if (authResponse != null) {
-                if (!authResponse.has("error")) {
-                    if (!authResponse.has("selectedProfile")) {
-                        this.launcherFrame.showError("Login failed");
-                        this.launcherFrame.getAuthPanel().setNoNetwork();
-                        return;
-                    }
-                    String name = authResponse.getJSONObject("selectedProfile").getString("name");
-                    String accessToken = authResponse.getString("accessToken");
-                    String uuid = authResponse.getJSONObject("selectedProfile").getString("id");
-                    new AuthCredentials(username, clientToken, accessToken, uuid);
-                    AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getUsername(),
-                            AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
-                    System.out.println("Username is '" + username + "'");
-                    this.launcherFrame.getOnlineInstance(name, String.format("%s:%s:%s",
-                            AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid()));
-                } else {
-                    switch (authResponse.getString("error")) {
-                        case "ForbiddenOperationException":
-                            this.launcherFrame.showError("Login failed");
-                            break;
-                        case "GoneException":
-                            this.launcherFrame.showError("Migrated");
-                            break;
-                        default:
-                            this.launcherFrame.showError(authResponse.getString("error"));
-                            break;
-                    }
-                    this.launcherFrame.authPanel.setNoNetwork();
+            if (!authResponse.has("error")) {
+                if (!authResponse.has("selectedProfile")) {
+                    this.launcherFrame.showError("Login failed");
+                    this.launcherFrame.getAuthPanel().setNoNetwork();
+                    return;
                 }
+                String name = authResponse.getJSONObject("selectedProfile").getString("name");
+                String accessToken = authResponse.getString("accessToken");
+                String uuid = authResponse.getJSONObject("selectedProfile").getString("id");
+                new AuthCredentials(username, clientToken, accessToken, uuid);
+                AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getUsername(),
+                        AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
+                System.out.println("Username is '" + username + "'");
+                this.launcherFrame.getOnlineInstance(name, String.format("%s:%s:%s",
+                        AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid()));
             } else {
-                this.launcherFrame.showError("Can't connect to minecraft.net");
+                switch (authResponse.getString("error")) {
+                    case "ForbiddenOperationException":
+                        this.launcherFrame.showError("Login failed");
+                        break;
+                    case "GoneException":
+                        this.launcherFrame.showError("Migrated");
+                        break;
+                    default:
+                        this.launcherFrame.showError(authResponse.getString("error"));
+                        break;
+                }
                 this.launcherFrame.authPanel.setNoNetwork();
             }
         } catch (IOException | JSONException e) {

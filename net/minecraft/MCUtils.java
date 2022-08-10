@@ -12,6 +12,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import javax.swing.UIManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -52,9 +53,14 @@ public final class MCUtils {
                     throw new RuntimeException("Unknown method: " + method);
             }
         }
-        return result == null ? null : new JSONObject(result);
+        return new JSONObject(result);
     }
 
+    /**
+     * ##################################################
+     * #               GETTERS & SETTERS                #
+     * ##################################################
+     */
     public static OS getPlatform() {
         if (osName.contains("mac")) {
             return OS.osx;
@@ -91,5 +97,13 @@ public final class MCUtils {
             throw new RuntimeException("The working directory could not be created: " + workingDirectory);
         }
         return workingDirectory;
+    }
+
+    public static void setSystemLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

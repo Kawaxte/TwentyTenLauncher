@@ -48,7 +48,7 @@ public class AuthLastLogin {
             dos.writeUTF(accessToken);
             dos.writeUTF(uuid);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Failed to write lastlogin to " + lastLogin.getAbsolutePath());
         } finally {
             try {
                 if (dos != null) {
@@ -78,7 +78,7 @@ public class AuthLastLogin {
             }
             AuthPanel.getRememberCheckbox().setState(AuthPanel.getPasswordTextField().getText().length() > 0);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Failed to read lastlogin from " + lastLogin.getAbsolutePath());
         } finally {
             try {
                 if (dis != null) {
@@ -91,7 +91,11 @@ public class AuthLastLogin {
         return null;
     }
 
-    public boolean isValid() {
+    public boolean isValidForMicrosoft() {
+        return accessToken.length() > 0 && username.equals("$ms");
+    }
+
+    public boolean isValidForYggdrasil() {
         return accessToken.length() > 0 && username.length() > 0;
     }
 
@@ -111,6 +115,14 @@ public class AuthLastLogin {
         Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
         cipher.init(mode, key, new PBEParameterSpec(salt, 1000));
         return cipher;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getClientToken() {
+        return clientToken;
     }
 
     public String getAccessToken() {

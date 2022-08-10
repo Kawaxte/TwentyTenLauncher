@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
-import java.util.UUID;
 
 public class AuthPanel extends Panel {
     private static final long serialVersionUID = 1L;
@@ -44,7 +43,6 @@ public class AuthPanel extends Panel {
     protected Button loginButton = new Button("Login");
     protected Button retryButton = new Button("Try again");
     protected Button offlineButton = new Button("Play offline");
-    protected String clientSecret = UUID.randomUUID().toString().replace("-", "");
     private Image image;
     private VolatileImage volatileImage;
 
@@ -60,7 +58,12 @@ public class AuthPanel extends Panel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        AuthLastLogin.readLastLogin();
+        if (AuthLastLogin.readLastLogin() != null) {
+            if (!Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForMicrosoft()
+                    || !Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForMicrosoft()) {
+                AuthLastLogin.deleteLastLogin();
+            }
+        }
     }
 
     public void update(Graphics g) {
@@ -73,10 +76,16 @@ public class AuthPanel extends Panel {
     }
 
     private void loginButtonPressed(ActionEvent ae) {
+        if (!(LauncherUpdate.latestVersion != null && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
+            this.launcherFrame.showError("Outdated launcher");
+            this.launcherFrame.getAuthPanel().setNoNetwork();
+            return;
+        }
         if ("$MS".equalsIgnoreCase(usernameTextField.getText())) {
-            launcherFrame.getMicrosoftAuthenticate();
+            launcherFrame.getMicrosoftAuthenticate().authenticate();
         } else {
-            launcherFrame.getYggdrasilAuthenticate(usernameTextField.getText(), passwordTextField.getText(), clientSecret);
+            launcherFrame.getYggdrasilAuthenticate().authenticate(
+                    usernameTextField.getText(), passwordTextField.getText(), launcherFrame.getClientSecret());
         }
     }
 
@@ -247,10 +256,6 @@ public class AuthPanel extends Panel {
 
     public static Checkbox getRememberCheckbox() {
         return rememberCheckbox;
-    }
-
-    public String getClientSecret() {
-        return clientSecret;
     }
 
     public Image getImage() {
