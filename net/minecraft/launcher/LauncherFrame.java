@@ -19,15 +19,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.UUID;
 
 public class LauncherFrame extends Frame {
     private static final long serialVersionUID = 1L;
     private final LauncherInstances launcherInstances = new LauncherInstances(this);
     private final MSAuthenticate microsoftAuthenticate = new MSAuthenticate(this, new JFrame());
     private final YDAuthenticate yggdrasilAuthenticate = new YDAuthenticate(this);
-
-    protected String clientSecret = UUID.randomUUID().toString().replace("-", "");
     public MCInstance minecraftInstance;
     public AuthPanel authPanel;
 
@@ -114,10 +111,6 @@ public class LauncherFrame extends Frame {
      * #               GETTERS & SETTERS                #
      * ##################################################
      */
-    public String getClientSecret() {
-        return this.clientSecret;
-    }
-
     public MSAuthenticate getMicrosoftAuthenticate() {
         return this.microsoftAuthenticate;
     }

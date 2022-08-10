@@ -60,7 +60,7 @@ public class AuthPanel extends Panel {
         }
         if (AuthLastLogin.readLastLogin() != null) {
             if (!Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForMicrosoft()
-                    || !Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForMicrosoft()) {
+                    || !Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForYggdrasil()) {
                 AuthLastLogin.deleteLastLogin();
             }
         }
@@ -84,8 +84,7 @@ public class AuthPanel extends Panel {
         if ("$MS".equalsIgnoreCase(usernameTextField.getText())) {
             launcherFrame.getMicrosoftAuthenticate().authenticate();
         } else {
-            launcherFrame.getYggdrasilAuthenticate().authenticate(
-                    usernameTextField.getText(), passwordTextField.getText(), launcherFrame.getClientSecret());
+            launcherFrame.getYggdrasilAuthenticate().authenticate(getUsernameTextField().getText(), getPasswordTextField().getText());
         }
     }
 

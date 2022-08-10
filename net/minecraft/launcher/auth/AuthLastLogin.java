@@ -18,35 +18,24 @@ import java.util.Random;
 public class AuthLastLogin {
     public final String username;
     public final String accessToken;
-    public final String clientToken;
     public final String uuid;
 
-    private AuthLastLogin(String username, String clientToken, String accessToken, String uuid) {
+    private AuthLastLogin(String username, String accessToken, String uuid) {
         this.username = username;
-        this.clientToken = clientToken;
         this.accessToken = accessToken;
         this.uuid = uuid;
     }
 
-    public static void deleteLastLogin() {
-        File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
-        boolean delete = lastLogin.delete();
-        if(!delete) {
-            lastLogin.deleteOnExit();
-        }
-    }
-
-    public static void writeLastLogin(String username, String clientToken, String accessToken, String uuid) {
+    public static void writeLastLogin(String username, String accessToken, String uuid) {
         File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
         DataOutputStream dos = null;
         try {
             Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
             dos = new DataOutputStream(new CipherOutputStream(Files.newOutputStream(lastLogin.toPath()), cipher));
-            dos.writeUTF(username);
-            dos.writeUTF(AuthPanel.getRememberCheckbox().getState() ? AuthPanel.getPasswordTextField().getText(): "");
-            dos.writeUTF(clientToken);
-            dos.writeUTF(accessToken);
-            dos.writeUTF(uuid);
+            for (String s : new String[]{username,
+                    AuthPanel.getRememberCheckbox().getState() ? AuthPanel.getPasswordTextField().getText() : "", accessToken, uuid}) {
+                dos.writeUTF(s);
+            }
         } catch (Exception e) {
             System.err.println("Failed to write lastlogin to " + lastLogin.getAbsolutePath());
         } finally {
@@ -69,14 +58,13 @@ public class AuthLastLogin {
 
             String username = dis.readUTF();
             String password = dis.readUTF();
-            String clientToken = dis.readUTF();
             String accessToken = dis.readUTF();
-            if(accessToken.length() > 0 && username.length() > 0) {
+            if (accessToken.length() > 0 && username.length() > 0) {
                 AuthPanel.getUsernameTextField().setText(username);
                 AuthPanel.getPasswordTextField().setText(password);
-                return new AuthLastLogin(username, clientToken, accessToken, "");
+                AuthPanel.getRememberCheckbox().setState(password.length() > 0);
+                return new AuthLastLogin(username, accessToken, "");
             }
-            AuthPanel.getRememberCheckbox().setState(AuthPanel.getPasswordTextField().getText().length() > 0);
         } catch (Exception e) {
             System.err.println("Failed to read lastlogin from " + lastLogin.getAbsolutePath());
         } finally {
@@ -91,8 +79,18 @@ public class AuthLastLogin {
         return null;
     }
 
+    public static void deleteLastLogin() {
+        File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
+        if (lastLogin.exists()) {
+            boolean delete = lastLogin.delete();
+            if (!delete) {
+                System.err.println("Failed to delete lastlogin from " + lastLogin.getAbsolutePath());
+            }
+        }
+    }
+
     public boolean isValidForMicrosoft() {
-        return accessToken.length() > 0 && username.equals("$ms");
+        return accessToken.length() > 0 && username.equalsIgnoreCase("$MS");
     }
 
     public boolean isValidForYggdrasil() {
@@ -115,14 +113,6 @@ public class AuthLastLogin {
         Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
         cipher.init(mode, key, new PBEParameterSpec(salt, 1000));
         return cipher;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getClientToken() {
-        return clientToken;
     }
 
     public String getAccessToken() {

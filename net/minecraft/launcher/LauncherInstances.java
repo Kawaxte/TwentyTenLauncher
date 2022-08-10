@@ -11,9 +11,6 @@ public class LauncherInstances {
 
     protected void onlineInstance(String username, String sessionId) {
         try {
-            if (username.matches("^\\w+$") && username.length() < 3 || username.length() > 16) {
-                username = "Player";
-            }
             launcherFrame.setMinecraftInstance(new MCInstance());
             launcherFrame.getMinecraftInstance().parameters.put("username", username);
             launcherFrame.getMinecraftInstance().parameters.put("sessionid", sessionId);

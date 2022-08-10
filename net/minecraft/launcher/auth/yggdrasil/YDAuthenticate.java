@@ -17,15 +17,14 @@ public class YDAuthenticate {
         this.launcherFrame = launcherFrame;
     }
 
-    public void authenticate(String username, String password, String clientToken) {
+    public void authenticate(String username, String password) {
         JSONObject parameters = new JSONObject();
         parameters.put("agent", yggdrasilAgent.getAgentObject());
         parameters.put("username", username);
         parameters.put("password", password);
-        parameters.put("clientToken", clientToken);
         parameters.put("requestUser", true);
         try {
-            JSONObject authResponse = MCUtils.requestMethod("https://authserver.mojang.com/authenticate", "POST", String.valueOf(parameters));
+            JSONObject authResponse = MCUtils.requestMethod("https://authserver.mojang.com/authenticate", "POST", parameters.toString());
             if (!authResponse.has("error")) {
                 if (!authResponse.has("selectedProfile")) {
                     this.launcherFrame.showError("Login failed");
@@ -35,12 +34,10 @@ public class YDAuthenticate {
                 String name = authResponse.getJSONObject("selectedProfile").getString("name");
                 String accessToken = authResponse.getString("accessToken");
                 String uuid = authResponse.getJSONObject("selectedProfile").getString("id");
-                new AuthCredentials(username, clientToken, accessToken, uuid);
-                AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getUsername(),
-                        AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
+                new AuthCredentials(username, accessToken, uuid);
+                AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getUsername(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
                 System.out.println("Username is '" + username + "'");
-                this.launcherFrame.getOnlineInstance(name, String.format("%s:%s:%s",
-                        AuthCredentials.credentials.getClientToken(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid()));
+                this.launcherFrame.getOnlineInstance(name, AuthCredentials.credentials.getAccessToken());
             } else {
                 switch (authResponse.getString("error")) {
                     case "ForbiddenOperationException":

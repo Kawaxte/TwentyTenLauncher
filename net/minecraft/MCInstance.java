@@ -23,7 +23,7 @@ public class MCInstance extends Applet implements AppletStub {
     private Image image;
     private VolatileImage volatileImage;
     private Applet applet;
-    private MCUpdate minecraftUpdate;
+    private static MCUpdate minecraftUpdate;
 
     public MCInstance() {
         System.setProperty("http.proxyHost", "betacraft.uk");
@@ -46,9 +46,10 @@ public class MCInstance extends Applet implements AppletStub {
         }
         this.parameters.put("username", username);
         this.parameters.put("sessionid", sessionId);
-        this.minecraftUpdate = new MCUpdate();
+        minecraftUpdate = new MCUpdate();
     }
 
+    @Override
     public void init() {
         if (this.applet != null) {
             this.applet.init();
@@ -57,44 +58,59 @@ public class MCInstance extends Applet implements AppletStub {
         this.init(this.getParameter("username"), this.getParameter("sessionid"));
     }
 
+    @Override
     public void start() {
-        if (minecraftUpdateStarted) {
-            if (this.applet == null) {
-                return;
-            }
-            this.applet.start();
-        } else {
-            Thread thread = new Thread(minecraftUpdate) {
-                @Override
-                public void run() {
-                    minecraftUpdate.run();
-                    try {
-                        if (!minecraftUpdate.fatalError) {
-                            replace(minecraftUpdate.createAppletInstance());
-                        }
-                    } catch (RuntimeException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            thread.setDaemon(true); thread.start();
-
-            thread = new Thread(this::run); thread.setDaemon(true); thread.start();
-            this.minecraftUpdateStarted = true;
-        }
-    }
-
-    public void stop() {
         if (this.applet != null) {
-            this.active = false;
-            this.applet.stop();
+            this.applet.start();
+            return;
         }
+        if (this.minecraftUpdateStarted) {
+            return;
+        }
+        Thread thread = new Thread(() -> {
+            minecraftUpdate.run();
+            try {
+                if (!MCInstance.minecraftUpdate.fatalError) {
+                    MCInstance.this.replace(MCInstance.minecraftUpdate.createAppletInstance());
+                }
+            } catch (RuntimeException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+        thread = new Thread(() -> {
+            while (MCInstance.this.applet == null) {
+                MCInstance.this.repaint();
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+        this.minecraftUpdateStarted = true;
     }
 
+    @Override
+    public void stop() {
+        if (!this.active) {
+            return;
+        }
+        if (this.applet != null) {
+            this.applet.stop();
+            return;
+        }
+        this.active = false;
+    }
+
+    @Override
     public void destroy() {
+        if (!this.active) {
+            return;
+        }
         if (this.applet != null) {
             this.applet.destroy();
+            return;
         }
+        this.active = false;
     }
 
     private void replace(Applet applet) {
@@ -109,26 +125,16 @@ public class MCInstance extends Applet implements AppletStub {
         this.validate();
     }
 
-    public void appletResize(int width, int height) {
-        if (this.applet != null) {
-            this.applet.resize(width, height);
-        }
-    }
+    @Override
+    public void appletResize(int width, int height) {}
 
-    private void run() {
-        if (this.applet == null) {
-            do {
-                this.repaint();
-            } while (this.applet == null);
-        }
-    }
-
+    @Override
     public boolean isActive() {
-        return active;
+        return this.active;
     }
 
     public boolean canPlayOffline() {
-        return this.minecraftUpdate.canPlayOffline();
+        return minecraftUpdate.canPlayOffline();
     }
 
     /**
@@ -136,35 +142,20 @@ public class MCInstance extends Applet implements AppletStub {
      * #               GETTERS & SETTERS                #
      * ##################################################
      */
-    public URL getCodeBase() {
-        try {
-            return new URL("https://www.minecraft.net/");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public URL getDocumentBase() {
         try {
-            return new URL("https://github.com/sojlabjoi");
+            return new URL("http://www.minecraft.net/game/");
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public String getParameter(String name) {
-        if (this.parameters != null) {
-            return this.parameters.get(name);
-        } else {
-            try {
-                return super.getParameter(name);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+    public String getParameter(final String paramKey) {
+        if (this.parameters.containsKey(paramKey)) {
+            return this.parameters.get(paramKey);
         }
+        return null;
     }
 
     public Image getImage() {
@@ -180,7 +171,7 @@ public class MCInstance extends Applet implements AppletStub {
     }
 
     public MCUpdate getMinecraftUpdate() {
-        return this.minecraftUpdate;
+        return minecraftUpdate;
     }
 
     public void setVolatileImage(VolatileImage volatileImage) {
