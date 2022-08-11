@@ -65,7 +65,6 @@ public class AuthPanel extends Panel {
             }
         }
     }
-
     public void update(Graphics g) {
         authPanelGraphics.update(g);
     }
