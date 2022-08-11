@@ -35,7 +35,7 @@ public class YDAuthenticate {
                 String accessToken = authResponse.getString("accessToken");
                 String uuid = authResponse.getJSONObject("selectedProfile").getString("id");
                 new AuthCredentials(username, accessToken, uuid);
-                AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getUsername(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
+                AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
                 System.out.println("Username is '" + username + "'");
                 this.launcherFrame.getOnlineInstance(name, AuthCredentials.credentials.getAccessToken());
             } else {

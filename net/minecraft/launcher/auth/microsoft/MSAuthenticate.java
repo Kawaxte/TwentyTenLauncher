@@ -116,7 +116,7 @@ public class MSAuthenticate extends AbstractAction {
             String name = apiResponse.getString("name");
             String uuid = apiResponse.getString("id");
             new AuthCredentials(username, access_token, uuid);
-            AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getUsername(), AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
+            AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
             System.out.println("Username is '" + username + "'");
             frame.dispose();
             this.launcherFrame.getOnlineInstance(name, AuthCredentials.credentials.getAccessToken());

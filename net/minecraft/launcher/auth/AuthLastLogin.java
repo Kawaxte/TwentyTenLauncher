@@ -9,31 +9,31 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
+import java.awt.TextField;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Random;
 
 public class AuthLastLogin {
-    public final String username;
     public final String accessToken;
     public final String uuid;
 
-    private AuthLastLogin(String username, String accessToken, String uuid) {
-        this.username = username;
+    private AuthLastLogin(String accessToken, String uuid) {
         this.accessToken = accessToken;
         this.uuid = uuid;
     }
 
-    public static void writeLastLogin(String username, String accessToken, String uuid) {
+    public static void writeLastLogin(String accessToken, String uuid) {
         File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
         DataOutputStream dos = null;
         try {
             Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
             dos = new DataOutputStream(new CipherOutputStream(Files.newOutputStream(lastLogin.toPath()), cipher));
-            for (String s : new String[]{username,
-                    AuthPanel.getRememberCheckbox().getState() ? AuthPanel.getPasswordTextField().getText() : "", accessToken, uuid}) {
+            for (String s : Arrays.asList(AuthPanel.getUsernameTextField().getText(),
+                    AuthPanel.getRememberCheckbox().getState() ? AuthPanel.getPasswordTextField().getText() : "", accessToken, uuid)) {
                 dos.writeUTF(s);
             }
         } catch (Exception e) {
@@ -55,18 +55,18 @@ public class AuthLastLogin {
         try {
             Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
             dis = new DataInputStream(new CipherInputStream(Files.newInputStream(lastLogin.toPath()), cipher));
-
-            String username = dis.readUTF();
-            String password = dis.readUTF();
-            String accessToken = dis.readUTF();
-            if (accessToken.length() > 0 && username.length() > 0) {
-                AuthPanel.getUsernameTextField().setText(username);
-                AuthPanel.getPasswordTextField().setText(password);
-                AuthPanel.getRememberCheckbox().setState(password.length() > 0);
-                return new AuthLastLogin(username, accessToken, "");
+            for (TextField textField : Arrays.asList(AuthPanel.getUsernameTextField(), AuthPanel.getPasswordTextField())) {
+                textField.setText(dis.readUTF());
             }
+
+            String accessToken = dis.readUTF();
+            if (accessToken.isEmpty()) {
+                return null;
+            }
+            AuthPanel.getRememberCheckbox().setState(AuthPanel.getPasswordTextField().getText().length() > 0);
         } catch (Exception e) {
             System.err.println("Failed to read lastlogin from " + lastLogin.getAbsolutePath());
+            return null;
         } finally {
             try {
                 if (dis != null) {
@@ -90,11 +90,11 @@ public class AuthLastLogin {
     }
 
     public boolean isValidForMicrosoft() {
-        return accessToken.length() > 0 && username.equalsIgnoreCase("$MS");
+        return accessToken.length() > 0 && AuthPanel.getUsernameTextField().getText().equalsIgnoreCase("$MS");
     }
 
     public boolean isValidForYggdrasil() {
-        return accessToken.length() > 0 && username.length() > 0;
+        return accessToken.length() > 0 && AuthPanel.getUsernameTextField().getText().length() > 0;
     }
 
     /**
