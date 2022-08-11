@@ -13,8 +13,8 @@ import net.minecraft.launcher.auth.AuthLastLogin;
 import net.minecraft.launcher.auth.AuthPanel;
 import org.json.JSONObject;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -39,6 +39,7 @@ public class MSAuthenticate extends AbstractAction {
     static final String xblXstsAuthurl = "https://xsts.auth.xboxlive.com/xsts/authorize";
     static final String apiMinecraftAuthUrl = "https://api.minecraftservices.com/authentication/login_with_xbox";
     private static final String apiMinecraftProfileUrl = "https://api.minecraftservices.com/minecraft/profile";
+    private static final String apiMinecraftStoreUrl = "https://api.minecraftservices.com/entitlements/mcstore";
     public final LauncherFrame launcherFrame;
     private final JFrame frame;
     private JDialog dialog;
@@ -105,7 +106,11 @@ public class MSAuthenticate extends AbstractAction {
             });
             fxPanel.setScene(new Scene(webView));
         });
-        dialog.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("favicon2.png"))).getImage());
+        try {
+            dialog.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/resources/favicon2.png"))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     void acquireMCProfile(String access_token) {
@@ -121,7 +126,21 @@ public class MSAuthenticate extends AbstractAction {
             frame.dispose();
             this.launcherFrame.getOnlineInstance(name, AuthCredentials.credentials.getAccessToken());
         } catch (IOException e) {
+            if (e.getMessage().contains("api.minecraftservices.com")) {
+                this.launcherFrame.showError("Can't connect to minecraft.net");
+                this.launcherFrame.getAuthPanel().setNoNetwork();
+                return;
+            }
             e.printStackTrace();
+        }
+    }
+
+    public void acquireMCStore(String access_token) {
+        try {
+            MCUtils.requestMethod(apiMinecraftStoreUrl, "GET", access_token);
+        } catch (IOException e) {
+            this.launcherFrame.showError("User not premium");
+            this.launcherFrame.getAuthPanel().setNoNetwork();
         }
     }
 }

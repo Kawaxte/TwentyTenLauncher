@@ -40,7 +40,7 @@ public class MCInstance extends Applet implements AppletStub {
 
     public void init(String username, String sessionId) {
         try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
+            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/resources/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,26 +91,17 @@ public class MCInstance extends Applet implements AppletStub {
 
     @Override
     public void stop() {
-        if (!this.active) {
-            return;
-        }
         if (this.applet != null) {
+            this.active = false;
             this.applet.stop();
-            return;
         }
-        this.active = false;
     }
 
     @Override
     public void destroy() {
-        if (!this.active) {
-            return;
-        }
         if (this.applet != null) {
             this.applet.destroy();
-            return;
         }
-        this.active = false;
     }
 
     private void replace(Applet applet) {
@@ -142,6 +133,15 @@ public class MCInstance extends Applet implements AppletStub {
      * #               GETTERS & SETTERS                #
      * ##################################################
      */
+    public URL getCodeBase() {
+        try {
+            return new URL("http://www.minecraft.net/game/");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public URL getDocumentBase() {
         try {
             return new URL("http://www.minecraft.net/game/");

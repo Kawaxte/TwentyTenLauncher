@@ -54,13 +54,12 @@ public class AuthPanel extends Panel {
         this.offlineButton.addActionListener(this::offlineButtonPressed);
         this.retryButton.addActionListener(this::retryButtonPressed);
         try {
-            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
+            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/resources/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (AuthLastLogin.readLastLogin() != null) {
-            if (!Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForMicrosoft()
-                    || !Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForYggdrasil()) {
+            if (!Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForMicrosoft()) {
                 AuthLastLogin.deleteLastLogin();
             }
         }
@@ -75,15 +74,18 @@ public class AuthPanel extends Panel {
     }
 
     private void loginButtonPressed(ActionEvent ae) {
-        if (!(LauncherUpdate.latestVersion != null && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
+        if (!(LauncherUpdate.latestVersion != null
+                && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
             this.launcherFrame.showError("Outdated launcher");
             this.launcherFrame.getAuthPanel().setNoNetwork();
             return;
         }
-        if ("$MS".equalsIgnoreCase(usernameTextField.getText())) {
+        if (usernameTextField.getText().equalsIgnoreCase("$MS")
+                && passwordTextField.getText().equalsIgnoreCase("$MICROSOFT")) {
             launcherFrame.getMicrosoftAuthenticate().authenticate();
         } else {
-            launcherFrame.getYggdrasilAuthenticate().authenticate(getUsernameTextField().getText(), getPasswordTextField().getText());
+            launcherFrame.showError("Login failed");
+            launcherFrame.getAuthPanel().setNoNetwork();
         }
     }
 

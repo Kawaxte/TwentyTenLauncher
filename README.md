@@ -8,12 +8,12 @@ This launcher can run versions from **indev 0.13 (20091223-2)** up to **1.5.2** 
 > You need a minimum of Java 8 or greater to run this application.
 
 ## Features
-- You can sign in using either a *valid* Legacy account, Mojang account, or Microsoft account.
-  - Enter (case insensitive) "**$MS**" in the 'Username:' field to sign in using a Microsoft account.
-- Support for skins and appropriate sounds for different Alpha/Beta versions of Minecraft.
+- You can sign in using a *valid* Microsoft account.
+  - Enter (*case insensitive*) "**$MS**:**$MICROSOFT**" as the login credentials to initiate the MSA.
+- Support for skins and *sounds for versions between INDEV and 1.5.2.
 - Out-of-box compatibility with MCPatcher and ModLoader.
-- Check for the latest version of the launcher.
+- Automatic update checking for the latest releases.
 ![Launcher](https://i.imgur.com/CNB25rv.png)
 
 ## TODO
-N/A
+- > Adding specific sound proxy ports for specific range of versions from Alpha and INDEV.

@@ -7,9 +7,8 @@ import net.minecraft.MCInstance;
 import net.minecraft.MCUtils;
 import net.minecraft.launcher.auth.AuthPanel;
 import net.minecraft.launcher.auth.microsoft.MSAuthenticate;
-import net.minecraft.launcher.auth.yggdrasil.YDAuthenticate;
 
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -24,7 +24,6 @@ public class LauncherFrame extends Frame {
     private static final long serialVersionUID = 1L;
     private final LauncherInstances launcherInstances = new LauncherInstances(this);
     private final MSAuthenticate microsoftAuthenticate = new MSAuthenticate(this, new JFrame());
-    private final YDAuthenticate yggdrasilAuthenticate = new YDAuthenticate(this);
     public MCInstance minecraftInstance;
     public AuthPanel authPanel;
 
@@ -59,7 +58,11 @@ public class LauncherFrame extends Frame {
                 System.exit(0);
             }
         });
-        this.setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("favicon.png"))).getImage());
+        try {
+            this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/resources/favicon.png"))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
@@ -113,10 +116,6 @@ public class LauncherFrame extends Frame {
      */
     public MSAuthenticate getMicrosoftAuthenticate() {
         return this.microsoftAuthenticate;
-    }
-
-    public YDAuthenticate getYggdrasilAuthenticate() {
-        return this.yggdrasilAuthenticate;
     }
 
     public MCInstance getMinecraftInstance() {

@@ -153,7 +153,7 @@ public class MCUpdate implements Runnable {
             if (!dir.exists()) {
                 boolean mkdirs = dir.mkdirs();
                 if (!mkdirs) {
-                    throw new Exception("Failed to readLastLogin directory " + path);
+                    throw new Exception("Failed to read directory " + path);
                 }
             }
             if (!this.canPlayOffline()) {

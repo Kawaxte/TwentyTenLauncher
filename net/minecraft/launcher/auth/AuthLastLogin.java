@@ -9,7 +9,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-import java.awt.TextField;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -18,10 +17,12 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class AuthLastLogin {
+    public final String username;
     public final String accessToken;
     public final String uuid;
 
-    private AuthLastLogin(String accessToken, String uuid) {
+    private AuthLastLogin(String username, String accessToken, String uuid) {
+        this.username = username;
         this.accessToken = accessToken;
         this.uuid = uuid;
     }
@@ -55,15 +56,15 @@ public class AuthLastLogin {
         try {
             Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
             dis = new DataInputStream(new CipherInputStream(Files.newInputStream(lastLogin.toPath()), cipher));
-            for (TextField textField : Arrays.asList(AuthPanel.getUsernameTextField(), AuthPanel.getPasswordTextField())) {
-                textField.setText(dis.readUTF());
-            }
-
+            String username = dis.readUTF();
+            String password = dis.readUTF();
             String accessToken = dis.readUTF();
-            if (accessToken.isEmpty()) {
-                return null;
+            if (username.length() > 0 && accessToken.length() > 0) {
+                AuthPanel.getUsernameTextField().setText(username);
+                AuthPanel.getPasswordTextField().setText(password);
+                AuthPanel.getRememberCheckbox().setState(password.length() > 0);
+                return new AuthLastLogin(username, accessToken, "");
             }
-            AuthPanel.getRememberCheckbox().setState(AuthPanel.getPasswordTextField().getText().length() > 0);
         } catch (Exception e) {
             System.err.println("Failed to read lastlogin from " + lastLogin.getAbsolutePath());
             return null;
@@ -90,11 +91,9 @@ public class AuthLastLogin {
     }
 
     public boolean isValidForMicrosoft() {
-        return accessToken.length() > 0 && AuthPanel.getUsernameTextField().getText().equalsIgnoreCase("$MS");
-    }
-
-    public boolean isValidForYggdrasil() {
-        return accessToken.length() > 0 && AuthPanel.getUsernameTextField().getText().length() > 0;
+        return accessToken.length() > 0
+                && AuthPanel.getUsernameTextField().getText().equalsIgnoreCase("$MS")
+                && AuthPanel.getPasswordTextField().getText().equalsIgnoreCase("$MICROSOFT");
     }
 
     /**
@@ -108,10 +107,10 @@ public class AuthLastLogin {
         rand.nextBytes(salt);
 
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-        SecretKey key = skf.generateSecret(new PBEKeySpec("passwordfile".toCharArray(), salt, 1000, 64 * 8));
+        SecretKey key = skf.generateSecret(new PBEKeySpec("passwordfile".toCharArray()));
 
         Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
-        cipher.init(mode, key, new PBEParameterSpec(salt, 1000));
+        cipher.init(mode, key, new PBEParameterSpec(salt, 5));
         return cipher;
     }
 

@@ -70,25 +70,25 @@ public class MSTokens {
         } catch (IOException e) {
             switch (tokenResponse.getString("XErr")) {
                 case "2148916233":
-                    JOptionPane.showMessageDialog(null,
-                            "This account does not have an Xbox account", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "This account does not have an Xbox account");
+                    microsoftAuthenticate.launcherFrame.showError("Login failed");
                     break;
                 case "2148916235":
-                    JOptionPane.showMessageDialog(null,
-                            "This account is from a country where Xbox Live is not available", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "This account is from a country where Xbox Live is not available");
+                    microsoftAuthenticate.launcherFrame.showError("Login failed");
                     break;
                 case "2148916236":
                 case "2148916237":
-                    JOptionPane.showMessageDialog(null,
-                            "This account needs to complete the age verification process", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "This account needs to complete the age verification process");
+                    microsoftAuthenticate.launcherFrame.showError("Login failed");
                     break;
                 case "2148916238":
-                    JOptionPane.showMessageDialog(null,
-                            "This account is not eligible to play on Xbox Live", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "This account is not eligible to play on Xbox Live");
+                    microsoftAuthenticate.launcherFrame.showError("Login failed");
                     break;
                 default:
-                    JOptionPane.showMessageDialog(null,
-                            e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+                    microsoftAuthenticate.launcherFrame.showError(e.getMessage());
                     break;
             }
         }
@@ -101,6 +101,7 @@ public class MSTokens {
 
             JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.apiMinecraftAuthUrl, "POST", jsonParameters.toString());
             String access_token = tokenResponse.getString("access_token");
+            this.microsoftAuthenticate.acquireMCStore(access_token);
             this.microsoftAuthenticate.acquireMCProfile(access_token);
         } catch (IOException e) {
             e.printStackTrace();
