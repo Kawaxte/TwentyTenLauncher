@@ -15,6 +15,3 @@ This launcher can run versions from **indev 0.13 (20091223-2)** up to **1.5.2** 
 - Out-of-box compatibility with MCPatcher and ModLoader.
 - Automatic update checking for the latest releases.
 ![Launcher](https://i.imgur.com/CNB25rv.png)
-
-## TODO
-- > Adding specific sound proxy ports for specific range of versions from Alpha and INDEV.
