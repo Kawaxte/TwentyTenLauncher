@@ -7,15 +7,20 @@ import javax.swing.JOptionPane;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class MSTokens {
+public class MSTokenRequests {
     private final MSAuthenticate microsoftAuthenticate;
 
-    public MSTokens(MSAuthenticate microsoftAuthenticate) {
+    public MSTokenRequests(MSAuthenticate microsoftAuthenticate) {
         this.microsoftAuthenticate = microsoftAuthenticate;
         MCUtils.setSystemLookAndFeel();
     }
 
-    public void acquireAccessToken(String authCode) {
+    /**
+     * ##################################################
+     * #               GETTERS & SETTERS                #
+     * ##################################################
+     */
+    public void getAccessToken(String authCode) {
         try {
             HashMap<Object, Object> parameters = new HashMap<>();
             parameters.put("client_id", "00000000402b5328");
@@ -26,13 +31,13 @@ public class MSTokens {
 
             JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.loaTokenUrl, "POST", MSFormData.encodeFormData(parameters));
             String access_token = tokenResponse.getString("access_token");
-            acquireXBLToken(access_token);
+            getXBLToken(access_token);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void acquireXBLToken(String access_token) {
+    private void getXBLToken(String access_token) {
         try {
             JSONObject propertyParameters = new JSONObject();
             propertyParameters.put("AuthMethod", "RPS");
@@ -45,13 +50,13 @@ public class MSTokens {
             jsonParameters.put("TokenType", "JWT");
 
             JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.xblUserAuthUrl, "POST", jsonParameters.toString());
-            acquireXSTSToken(tokenResponse.getString("Token"));
+            getXSTSToken(tokenResponse.getString("Token"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void acquireXSTSToken(String token) {
+    private void getXSTSToken(String token) {
         JSONObject tokenResponse = new JSONObject();
         try {
             JSONObject propertyParameters = new JSONObject();
@@ -66,7 +71,7 @@ public class MSTokens {
             tokenResponse = MCUtils.requestMethod(MSAuthenticate.xblXstsAuthurl, "POST", jsonParameters.toString());
             String uhs = tokenResponse.getJSONObject("DisplayClaims").getJSONArray("xui").getJSONObject(0).getString("uhs");
             String xstsToken = tokenResponse.getString("Token");
-            acquireMCToken(uhs, xstsToken);
+            getMinecraftAccessToken(uhs, xstsToken);
         } catch (IOException e) {
             switch (tokenResponse.getString("XErr")) {
                 case "2148916233":
@@ -94,15 +99,15 @@ public class MSTokens {
         }
     }
 
-    private void acquireMCToken(String uhs, String xstsToken) {
+    private void getMinecraftAccessToken(String uhs, String xstsToken) {
         try {
             JSONObject jsonParameters = new JSONObject();
             jsonParameters.put("identityToken", "XBL3.0 x=" + uhs + "; " + xstsToken);
 
             JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.apiMinecraftAuthUrl, "POST", jsonParameters.toString());
             String access_token = tokenResponse.getString("access_token");
-            this.microsoftAuthenticate.acquireMCStore(access_token);
-            this.microsoftAuthenticate.acquireMCProfile(access_token);
+            this.microsoftAuthenticate.getMinecraftStore(access_token);
+            this.microsoftAuthenticate.getMinecraftProfile(access_token);
         } catch (IOException e) {
             e.printStackTrace();
         }

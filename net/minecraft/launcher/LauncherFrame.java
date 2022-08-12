@@ -9,7 +9,7 @@ import net.minecraft.launcher.auth.AuthPanel;
 import net.minecraft.launcher.auth.microsoft.MSAuthenticate;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,7 +23,7 @@ import java.util.Objects;
 public class LauncherFrame extends Frame {
     private static final long serialVersionUID = 1L;
     private final LauncherInstances launcherInstances = new LauncherInstances(this);
-    private final MSAuthenticate microsoftAuthenticate = new MSAuthenticate(this, new JFrame());
+    private final MSAuthenticate microsoftAuthenticate = new MSAuthenticate(this);
     public MCInstance minecraftInstance;
     public AuthPanel authPanel;
 
@@ -59,13 +59,19 @@ public class LauncherFrame extends Frame {
             }
         });
         try {
-            this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/resources/favicon.png"))));
+            this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource(
+                    "net/minecraft/launcher/resources/favicon.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
+        if (!MCUtils.isJavaFXInstalled()) {
+            JOptionPane.showMessageDialog(null, "JavaFX is not installed. Please install JavaFX to use this feature.");
+            System.exit(1);
+            return;
+        }
         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 511L) {
             try {
                 ArrayList<String> parameters = new ArrayList<>();

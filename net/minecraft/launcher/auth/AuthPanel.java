@@ -23,7 +23,6 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextField;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.VolatileImage;
@@ -35,7 +34,6 @@ import java.util.Objects;
 public class AuthPanel extends Panel {
     private static final long serialVersionUID = 1L;
     private final AuthPanelGraphics authPanelGraphics = new AuthPanelGraphics(this);
-    private final LauncherFrame launcherFrame;
     protected Label errorLabel = new Label("", 1);
     protected static TextField usernameTextField = new TextField(20);
     protected static TextField passwordTextField = new TextField(20);
@@ -45,16 +43,37 @@ public class AuthPanel extends Panel {
     protected Button offlineButton = new Button("Play offline");
     private Image image;
     private VolatileImage volatileImage;
+    public final LauncherFrame launcherFrame;
 
     public AuthPanel(final LauncherFrame launcherFrame) {
         this.launcherFrame = launcherFrame;
         this.setLayout(new GridBagLayout());
         this.add(this.buildLoginPanel());
-        this.loginButton.addActionListener(this::loginButtonPressed);
-        this.offlineButton.addActionListener(this::offlineButtonPressed);
-        this.retryButton.addActionListener(this::retryButtonPressed);
+        this.loginButton.addActionListener(e -> {
+            if (!(LauncherUpdate.latestVersion != null
+                    && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
+                launcherFrame.showError("Outdated launcher");
+                launcherFrame.getAuthPanel().setNoNetwork();
+                return;
+            }
+            if ("$MS".equalsIgnoreCase(usernameTextField.getText())
+                    && "$MICROSOFT".equalsIgnoreCase(passwordTextField.getText())) {
+                launcherFrame.getMicrosoftAuthenticate().authenticate();
+            } else {
+                launcherFrame.showError("Login failed");
+                launcherFrame.getAuthPanel().setNoNetwork();
+            }
+        });
+        this.offlineButton.addActionListener(e -> launcherFrame.getOfflineInstance(usernameTextField.getText()));
+        this.retryButton.addActionListener(e -> {
+            this.errorLabel.setText("");
+            this.removeAll();
+            this.add(this.buildLoginPanel());
+            this.validate();
+        });
         try {
-            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/resources/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
+            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource(
+                    "net/minecraft/launcher/resources/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,33 +90,6 @@ public class AuthPanel extends Panel {
     public void paint(Graphics g2) {
 
         authPanelGraphics.paint(g2);
-    }
-
-    private void loginButtonPressed(ActionEvent ae) {
-        if (!(LauncherUpdate.latestVersion != null
-                && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
-            this.launcherFrame.showError("Outdated launcher");
-            this.launcherFrame.getAuthPanel().setNoNetwork();
-            return;
-        }
-        if (usernameTextField.getText().equalsIgnoreCase("$MS")
-                && passwordTextField.getText().equalsIgnoreCase("$MICROSOFT")) {
-            launcherFrame.getMicrosoftAuthenticate().authenticate();
-        } else {
-            launcherFrame.showError("Login failed");
-            launcherFrame.getAuthPanel().setNoNetwork();
-        }
-    }
-
-    private void offlineButtonPressed(ActionEvent ae) {
-        launcherFrame.getOfflineInstance(usernameTextField.getText());
-    }
-
-    private void retryButtonPressed(ActionEvent ae) {
-        this.errorLabel.setText("");
-        this.removeAll();
-        this.add(this.buildLoginPanel());
-        this.validate();
     }
 
     private Panel buildLoginPanel() {

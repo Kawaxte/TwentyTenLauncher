@@ -14,20 +14,18 @@ import net.minecraft.launcher.auth.AuthPanel;
 import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Objects;
 
-public class MSAuthenticate extends AbstractAction {
-    private static final long serialVersionUID = 1L;
-    private final MSTokens microsoftTokens = new MSTokens(this);
+public class MSAuthenticate {
+    private final MSTokenRequests microsoftTokens = new MSTokenRequests(this);
     private static final String loaAuthUrl = "https://login.live.com/oauth20_authorize.srf"
             + "?client_id=00000000402b5328"
             + "&response_type=code"
@@ -44,35 +42,34 @@ public class MSAuthenticate extends AbstractAction {
     private final JFrame frame;
     private JDialog dialog;
 
-    public MSAuthenticate(LauncherFrame launcherFrame, JFrame frame) {
+    public MSAuthenticate(LauncherFrame launcherFrame) {
         this.launcherFrame = launcherFrame;
-        this.frame = frame;
+        this.frame = new JFrame();
     }
 
     public void authenticate() {
         if (AuthLastLogin.readLastLogin() != null) {
             if (Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForMicrosoft()) {
-                acquireMCProfile(Objects.requireNonNull(AuthLastLogin.readLastLogin()).getAccessToken());
+                getMinecraftProfile(Objects.requireNonNull(AuthLastLogin.readLastLogin()).getAccessToken());
             }
         } else {
-            SwingUtilities.invokeLater(() -> actionPerformed(new ActionEvent(this, 0, "Authenticate")));
+            SwingUtilities.invokeLater(this::loginWindow);
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void loginWindow() {
         if (dialog != null) {
             dialog.toFront();
             return;
         }
-        dialog = new JDialog(frame, JDialog.ModalityType.MODELESS);
+        dialog = new JDialog(frame, Dialog.ModalityType.MODELESS);
+        dialog.setTitle("Sign in to Minecraft");
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
                 dialog = null;
             }
         });
-        dialog.setTitle("Sign in to Minecraft");
         JFXPanel fxPanel = new JFXPanel() {
             private static final long serialVersionUID = 1L;
 
@@ -92,35 +89,47 @@ public class MSAuthenticate extends AbstractAction {
             webView.getEngine().setJavaScriptEnabled(true);
             webView.getEngine().getHistory().getEntries().addListener((ListChangeListener<WebHistory.Entry>) change -> {
                 if (change.next() && change.wasAdded()) {
-                    for (WebHistory.Entry entry : change.getAddedSubList()) {
-                        if (entry.getUrl().startsWith(loaDesktopUrl + "?code=")) {
-                            String authCode = entry.getUrl().substring(entry.getUrl().indexOf("=") + 1, entry.getUrl().indexOf("&"));
-                            microsoftTokens.acquireAccessToken(authCode);
-                        }
-                    }
+                    change.getAddedSubList().stream().filter(entry ->
+                            entry.getUrl().startsWith(loaDesktopUrl + "?code=")).map(entry ->
+                            entry.getUrl().substring(entry.getUrl().indexOf("=") + 1,
+                                    entry.getUrl().indexOf("&"))).forEachOrdered(microsoftTokens::getAccessToken);
                 }
                 if (change.wasAdded() && webView.getEngine().getLocation().contains("oauth20_desktop.srf?error=access_denied")) {
                     dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
-                    dialog = null;
                 }
             });
             fxPanel.setScene(new Scene(webView));
         });
         try {
-            dialog.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/resources/favicon2.png"))));
+            dialog.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource(
+                    "net/minecraft/launcher/resources/favicon2.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    void acquireMCProfile(String access_token) {
+    /**
+     * ##################################################
+     * #               GETTERS & SETTERS                #
+     * ##################################################
+     */
+    public void getMinecraftStore(String access_token) {
+        try {
+            MCUtils.requestMethod(apiMinecraftStoreUrl, "GET", access_token);
+        } catch (IOException e) {
+            this.launcherFrame.showError("Login failed");
+            this.launcherFrame.getAuthPanel().setNoNetwork();
+        }
+    }
+
+    void getMinecraftProfile(String access_token) {
         String username = AuthPanel.getUsernameTextField().getText();
         try {
             JSONObject apiResponse = MCUtils.requestMethod(apiMinecraftProfileUrl, "GET", access_token);
 
             String name = apiResponse.getString("name");
             String uuid = apiResponse.getString("id");
-            new AuthCredentials(username, access_token, uuid);
+            new AuthCredentials(access_token, uuid);
             AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
             System.out.println("Username is '" + username + "'");
             frame.dispose();
@@ -132,15 +141,6 @@ public class MSAuthenticate extends AbstractAction {
                 return;
             }
             e.printStackTrace();
-        }
-    }
-
-    public void acquireMCStore(String access_token) {
-        try {
-            MCUtils.requestMethod(apiMinecraftStoreUrl, "GET", access_token);
-        } catch (IOException e) {
-            this.launcherFrame.showError("User not premium");
-            this.launcherFrame.getAuthPanel().setNoNetwork();
         }
     }
 }

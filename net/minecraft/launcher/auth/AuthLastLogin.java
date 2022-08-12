@@ -16,7 +16,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Random;
 
-public class AuthLastLogin {
+public final class AuthLastLogin {
     public final String username;
     public final String accessToken;
     public final String uuid;
@@ -92,8 +92,8 @@ public class AuthLastLogin {
 
     public boolean isValidForMicrosoft() {
         return accessToken.length() > 0
-                && AuthPanel.getUsernameTextField().getText().equalsIgnoreCase("$MS")
-                && AuthPanel.getPasswordTextField().getText().equalsIgnoreCase("$MICROSOFT");
+                && "$MS".equalsIgnoreCase(AuthPanel.getUsernameTextField().getText())
+                && "$MICROSOFT".equalsIgnoreCase(AuthPanel.getPasswordTextField().getText());
     }
 
     /**

@@ -5,12 +5,12 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Map;
 
-public class MSFormData {
+public final class MSFormData {
     private MSFormData() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated.");
     }
 
-    protected static String encodeFormData(Map<Object, Object> parameter) {
+    static String encodeFormData(Map<Object, Object> parameter) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Object, Object> entry : parameter.entrySet()) {
             try {

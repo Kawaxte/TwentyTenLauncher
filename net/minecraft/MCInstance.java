@@ -40,7 +40,8 @@ public class MCInstance extends Applet implements AppletStub {
 
     public void init(String username, String sessionId) {
         try {
-            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/resources/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
+            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource(
+                    "net/minecraft/launcher/resources/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,8 +71,8 @@ public class MCInstance extends Applet implements AppletStub {
         Thread thread = new Thread(() -> {
             minecraftUpdate.run();
             try {
-                if (!MCInstance.minecraftUpdate.fatalError) {
-                    MCInstance.this.replace(MCInstance.minecraftUpdate.createAppletInstance());
+                if (!minecraftUpdate.fatalError) {
+                    this.replace(minecraftUpdate.createAppletInstance());
                 }
             } catch (RuntimeException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -80,8 +81,8 @@ public class MCInstance extends Applet implements AppletStub {
         thread.setDaemon(true);
         thread.start();
         thread = new Thread(() -> {
-            while (MCInstance.this.applet == null) {
-                MCInstance.this.repaint();
+            while (this.applet == null) {
+                this.repaint();
             }
         });
         thread.setDaemon(true);
@@ -117,7 +118,11 @@ public class MCInstance extends Applet implements AppletStub {
     }
 
     @Override
-    public void appletResize(int width, int height) {}
+    public void appletResize(int width, int height) {
+        if (this.applet != null) {
+            this.applet.resize(width, height);
+        }
+    }
 
     @Override
     public boolean isActive() {

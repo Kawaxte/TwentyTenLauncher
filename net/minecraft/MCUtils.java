@@ -22,6 +22,10 @@ public final class MCUtils {
     public static String userHome = System.getProperty("user.home", ".");
     public static String applicationData = System.getenv("APPDATA");
 
+    private MCUtils() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated.");
+    }
+
     public enum OS {
         osx, linux, windows
     }
@@ -54,6 +58,15 @@ public final class MCUtils {
             }
         }
         return new JSONObject(result);
+    }
+
+    public static boolean isJavaFXInstalled() {
+        try {
+            Class.forName("javafx.application.Application");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     /**
