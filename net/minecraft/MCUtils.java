@@ -44,14 +44,32 @@ public final class MCUtils {
                     }
                     get.setHeader("Content-Type", type);
                     response = client.execute(get);
-                    result = response != null ? EntityUtils.toString(response.getEntity()) : "";
+                    switch (response.getStatusLine().getStatusCode()) {
+                        case 200:
+                            System.out.println(response.getStatusLine().getStatusCode() + " OK");
+                            result = EntityUtils.toString(response.getEntity());
+                            break;
+                        case 401:
+                            System.err.println(response.getStatusLine().getStatusCode() + " Unauthorized");
+                        default:
+                            throw new IOException(String.valueOf(response.getStatusLine().getStatusCode()));
+                    }
                     break;
                 case "POST":
                     HttpPost post = new HttpPost(url);
                     post.setHeader("Content-Type", type);
                     post.setEntity(new StringEntity(data));
                     response = client.execute(post);
-                    result = response != null ? EntityUtils.toString(response.getEntity()) : "";
+                    switch (response.getStatusLine().getStatusCode()) {
+                        case 200:
+                            System.out.println(response.getStatusLine().getStatusCode() + "OK");
+                            result = EntityUtils.toString(response.getEntity());
+                            break;
+                        case 401:
+                            System.err.println(response.getStatusLine().getStatusCode() + "Unauthorized");
+                        default:
+                            throw new IOException(String.valueOf(response.getStatusLine().getStatusCode()));
+                    }
                     break;
                 default:
                     throw new RuntimeException("Unknown method: " + method);

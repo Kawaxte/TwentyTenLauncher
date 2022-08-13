@@ -30,19 +30,19 @@ public class MSTokenRequests {
             parameters.put("scope", "service::user.auth.xboxlive.com::MBI_SSL");
 
             JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.loaTokenUrl, "POST", MSFormData.encodeFormData(parameters));
-            String access_token = tokenResponse.getString("access_token");
-            getXBLToken(access_token);
+            String accessToken = tokenResponse.getString("access_token");
+            getXBLToken(accessToken);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void getXBLToken(String access_token) {
+    private void getXBLToken(String accessToken) {
         try {
             JSONObject propertyParameters = new JSONObject();
             propertyParameters.put("AuthMethod", "RPS");
             propertyParameters.put("SiteName", "user.auth.xboxlive.com");
-            propertyParameters.put("RpsTicket", access_token);
+            propertyParameters.put("RpsTicket", accessToken);
 
             JSONObject jsonParameters = new JSONObject();
             jsonParameters.put("Properties", propertyParameters);
@@ -105,9 +105,9 @@ public class MSTokenRequests {
             jsonParameters.put("identityToken", "XBL3.0 x=" + uhs + "; " + xstsToken);
 
             JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.apiMinecraftAuthUrl, "POST", jsonParameters.toString());
-            String access_token = tokenResponse.getString("access_token");
-            this.microsoftAuthenticate.getMinecraftStore(access_token);
-            this.microsoftAuthenticate.getMinecraftProfile(access_token);
+            String accessToken = tokenResponse.getString("access_token");
+            this.microsoftAuthenticate.getMinecraftStore(accessToken);
+            this.microsoftAuthenticate.getMinecraftProfile(accessToken);
         } catch (IOException e) {
             e.printStackTrace();
         }
