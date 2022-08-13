@@ -51,7 +51,6 @@ public class AuthPanel extends Panel {
         this.launcherFrame = launcherFrame;
         this.setLayout(new GridBagLayout());
         this.add(this.buildLoginPanel());
-
         this.loginButton.addActionListener(e -> {
             if (!(LauncherUpdate.latestVersion != null
                     && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
