@@ -56,8 +56,8 @@ public class AuthPanel extends Panel {
                 launcherFrame.getAuthPanel().setNoNetwork();
                 return;
             }
-            if ("$MS".equalsIgnoreCase(usernameTextField.getText())
-                    && "$MICROSOFT".equalsIgnoreCase(passwordTextField.getText())) {
+            if ("$MICROSOFT".equalsIgnoreCase(usernameTextField.getText())
+                    && "$CORPORATION".equalsIgnoreCase(passwordTextField.getText())) {
                 launcherFrame.getMicrosoftAuthenticate().authenticate();
             } else {
                 launcherFrame.showError("Login failed");

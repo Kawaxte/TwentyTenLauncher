@@ -46,10 +46,11 @@ public class MSTokenRequests {
             parameters.put("scope", "service::user.auth.xboxlive.com::MBI_SSL");
 
             JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.loaTokenUrl, "POST", MSFormData.encodeFormData(parameters));
-            System.out.println("Token response: " + tokenResponse);
+
             String accessToken = tokenResponse.getString("access_token");
             String refreshToken = tokenResponse.getString("refresh_token");
-            if (tokenResponse.getString("expires_in").equals("0")) {
+            int expiresIn = tokenResponse.getInt("expires_in");
+            if (expiresIn == 0) {
                 refreshAccessToken(refreshToken);
             } else {
                 getXBLToken(accessToken);
