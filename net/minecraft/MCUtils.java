@@ -50,7 +50,7 @@ public final class MCUtils {
                             result = EntityUtils.toString(response.getEntity());
                             break;
                         case 401:
-                            System.err.println(response.getStatusLine().getStatusCode() + " Unauthorized");
+                            System.err.println(response.getStatusLine().getStatusCode() + " Unauthorised");
                         default:
                             throw new IOException(String.valueOf(response.getStatusLine().getStatusCode()));
                     }
@@ -66,7 +66,7 @@ public final class MCUtils {
                             result = EntityUtils.toString(response.getEntity());
                             break;
                         case 401:
-                            System.err.println(response.getStatusLine().getStatusCode() + " Unauthorized");
+                            System.err.println(response.getStatusLine().getStatusCode() + " Unauthorised");
                         default:
                             throw new IOException(String.valueOf(response.getStatusLine().getStatusCode()));
                     }
