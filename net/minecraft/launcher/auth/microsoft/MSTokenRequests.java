@@ -52,9 +52,9 @@ public class MSTokenRequests {
             int expiresIn = tokenResponse.getInt("expires_in");
             if (expiresIn == 0) {
                 refreshAccessToken(refreshToken);
-            } else {
-                getXBLToken(accessToken);
+                return;
             }
+            getXBLToken(accessToken);
         } catch (IOException e) {
             e.printStackTrace();
         }

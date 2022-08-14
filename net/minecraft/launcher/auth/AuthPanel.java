@@ -77,11 +77,7 @@ public class AuthPanel extends Panel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (AuthLastLogin.readLastLogin() != null) {
-            if (!Objects.requireNonNull(AuthLastLogin.readLastLogin()).isValidForMicrosoft()) {
-                AuthLastLogin.deleteLastLogin();
-            }
-        }
+        AuthLastLogin.readLastLogin();
     }
 
     public void update(Graphics g) {

@@ -80,22 +80,6 @@ public final class AuthLastLogin {
         return null;
     }
 
-    public static void deleteLastLogin() {
-        File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
-        if (lastLogin.exists()) {
-            boolean delete = lastLogin.delete();
-            if (!delete) {
-                System.err.println("Failed to delete lastlogin from " + lastLogin.getAbsolutePath());
-            }
-        }
-    }
-
-    public boolean isValidForMicrosoft() {
-        return accessToken.length() > 0
-                && "$MS".equalsIgnoreCase(AuthPanel.getUsernameTextField().getText())
-                && "$MICROSOFT".equalsIgnoreCase(AuthPanel.getPasswordTextField().getText());
-    }
-
     /**
      * ##################################################
      * #               GETTERS & SETTERS                #
