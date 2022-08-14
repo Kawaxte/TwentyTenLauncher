@@ -9,7 +9,7 @@ This launcher can run versions from **indev 0.13 (20091223-2)** up to **1.5.2** 
 
 ## Features
 - You can sign in using a *valid* Microsoft account.
-  - Enter (*case insensitive*) "**$MS**:**$MICROSOFT**" as the login credentials to initiate the MSA.
+  - Enter (*case insensitive*) "**$MICROSOFT**:**$CORPORATION**" as the login credentials to initiate the MSA.
 - Support for skins and the usage of sound proxy.
   - Due to the way the launcher works, it is nearly impossible to add specific sound proxy ports to specific versions of the game.
 - Out-of-box compatibility with MCPatcher and ModLoader.
