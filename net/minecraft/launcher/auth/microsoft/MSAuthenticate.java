@@ -128,8 +128,8 @@ public class MSAuthenticate {
             String uuid = apiResponse.getString("id");
             new AuthCredentials(accessToken, uuid);
             AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
-            System.out.println("Username is '" + username + "'");
             frame.dispose();
+            System.out.println("Username is '" + username + "'");
             this.launcherFrame.getOnlineInstance(name, AuthCredentials.credentials.getAccessToken());
         } catch (IOException e) {
             if (e.getMessage().contains("api.minecraftservices.com")) {

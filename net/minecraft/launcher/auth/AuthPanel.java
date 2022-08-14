@@ -23,8 +23,6 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextField;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.VolatileImage;
@@ -66,40 +64,12 @@ public class AuthPanel extends Panel {
                 launcherFrame.getAuthPanel().setNoNetwork();
             }
         });
-        this.loginButton.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    AuthPanel.this.loginButtonPressed();
-                }
-            }
-        });
         this.offlineButton.addActionListener(e -> launcherFrame.getOfflineInstance(usernameTextField.getText()));
-        this.offlineButton.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    launcherFrame.getOfflineInstance(usernameTextField.getText());
-                }
-            }
-        });
         this.retryButton.addActionListener(e -> {
             this.errorLabel.setText("");
             this.removeAll();
             this.add(this.buildLoginPanel());
             this.validate();
-        });
-        this.retryButton.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    AuthPanel.this.retryButtonPressed();
-                }
-            }
-        });
-        rememberCheckbox.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    AuthPanel.this.rememberCheckBoxPressed();
-                }
-            }
         });
         try {
             this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource(
@@ -112,33 +82,6 @@ public class AuthPanel extends Panel {
                 AuthLastLogin.deleteLastLogin();
             }
         }
-    }
-
-    private void rememberCheckBoxPressed() {
-        rememberCheckbox.setState(!rememberCheckbox.getState());
-    }
-
-    private void loginButtonPressed() {
-        if (!(LauncherUpdate.latestVersion != null
-                && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
-            launcherFrame.showError("Outdated launcher");
-            launcherFrame.getAuthPanel().setNoNetwork();
-            return;
-        }
-        if ("$MS".equalsIgnoreCase(usernameTextField.getText())
-                && "$MICROSOFT".equalsIgnoreCase(passwordTextField.getText())) {
-            launcherFrame.getMicrosoftAuthenticate().authenticate();
-        } else {
-            launcherFrame.showError("Login failed");
-            launcherFrame.getAuthPanel().setNoNetwork();
-        }
-    }
-
-    private void retryButtonPressed() {
-        this.errorLabel.setText("");
-        this.removeAll();
-        this.add(this.buildLoginPanel());
-        this.validate();
     }
 
     public void update(Graphics g) {

@@ -62,11 +62,11 @@ public final class MCUtils {
                     response = client.execute(post);
                     switch (response.getStatusLine().getStatusCode()) {
                         case 200:
-                            System.out.println(response.getStatusLine().getStatusCode() + "OK");
+                            System.out.println(response.getStatusLine().getStatusCode() + " OK");
                             result = EntityUtils.toString(response.getEntity());
                             break;
                         case 401:
-                            System.err.println(response.getStatusLine().getStatusCode() + "Unauthorized");
+                            System.err.println(response.getStatusLine().getStatusCode() + " Unauthorized");
                         default:
                             throw new IOException(String.valueOf(response.getStatusLine().getStatusCode()));
                     }

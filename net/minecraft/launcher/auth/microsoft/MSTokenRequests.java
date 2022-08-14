@@ -15,6 +15,22 @@ public class MSTokenRequests {
         MCUtils.setSystemLookAndFeel();
     }
 
+    private void refreshAccessToken(String refreshToken) {
+        try {
+            HashMap<Object, Object> parameters = new HashMap<>();
+            parameters.put("client_id", "00000000402b5328");
+            parameters.put("grant_type", "refresh_token");
+            parameters.put("redirect_uri", MSAuthenticate.loaDesktopUrl);
+            parameters.put("scope", "service::user.auth.xboxlive.com::MBI_SSL");
+            parameters.put("refresh_token", refreshToken);
+            JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.loaTokenUrl, "POST", MSFormData.encodeFormData(parameters));
+            String accessToken = tokenResponse.getString("access_token");
+            getXBLToken(accessToken);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * ##################################################
      * #               GETTERS & SETTERS                #
@@ -30,8 +46,14 @@ public class MSTokenRequests {
             parameters.put("scope", "service::user.auth.xboxlive.com::MBI_SSL");
 
             JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.loaTokenUrl, "POST", MSFormData.encodeFormData(parameters));
+            System.out.println("Token response: " + tokenResponse);
             String accessToken = tokenResponse.getString("access_token");
-            getXBLToken(accessToken);
+            String refreshToken = tokenResponse.getString("refresh_token");
+            if (tokenResponse.getString("expires_in").equals("0")) {
+                refreshAccessToken(refreshToken);
+            } else {
+                getXBLToken(accessToken);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,6 +125,7 @@ public class MSTokenRequests {
         try {
             JSONObject jsonParameters = new JSONObject();
             jsonParameters.put("identityToken", "XBL3.0 x=" + uhs + "; " + xstsToken);
+            jsonParameters.put("ensureLegacyEnabled", true);
 
             JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.apiMinecraftAuthUrl, "POST", jsonParameters.toString());
             String accessToken = tokenResponse.getString("access_token");
