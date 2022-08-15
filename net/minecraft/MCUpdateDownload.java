@@ -17,26 +17,29 @@ public class MCUpdateDownload {
         minecraftUpdate.setState(4);
         int[] fileSizes = new int[minecraftUpdate.getUrlList().length];
 
+        int i = 0;
         URLConnection connection;
-        for (int i = 0; i < minecraftUpdate.getUrlList().length; i++) {
-            connection = minecraftUpdate.getUrlList()[i].openConnection();
-            connection.setDefaultUseCaches(false);
+        if (i < minecraftUpdate.getUrlList().length) {
+            do {
+                connection = minecraftUpdate.getUrlList()[i].openConnection();
+                connection.setDefaultUseCaches(false);
 
-            fileSizes[i] = connection.getContentLength();
-            minecraftUpdate.setTotalSizeDownload(minecraftUpdate.getTotalSizeDownload() + fileSizes[i]);
+                fileSizes[i] = connection.getContentLength();
+                minecraftUpdate.setTotalSizeDownload(minecraftUpdate.getTotalSizeDownload() + fileSizes[i]);
+                i++;
+            } while (i < minecraftUpdate.getUrlList().length);
         }
 
         int initialPercentage = 10;
         byte[] buffer = new byte[1024];
         for (URL url : minecraftUpdate.getUrlList()) {
-            boolean downloadFile = true;
-            while (downloadFile) {
-                downloadFile = false;
-                connection = url.openConnection();
-                try (InputStream is = minecraftUpdate.getJARInputStream().getJARInputStream(connection); FileOutputStream fos = new FileOutputStream(path + minecraftUpdate.getFileName(url))) {
-                    long downloadStartTime = System.currentTimeMillis();
+            connection = url.openConnection();
+            try (InputStream is = minecraftUpdate.getJARInputStream().getJARInputStream(connection); FileOutputStream fos = new FileOutputStream(path + minecraftUpdate.getFileName(url))) {
+                long downloadStartTime = System.currentTimeMillis();
+                int bufferSize = is.read(buffer);
+                if (bufferSize > 0) {
                     int downloadedAmount = 0;
-                    for (int bufferSize = is.read(buffer); bufferSize > 0; bufferSize = is.read(buffer)) {
+                    do {
                         fos.write(buffer, 0, bufferSize);
                         minecraftUpdate.setCurrentSizeDownload(minecraftUpdate.getCurrentSizeDownload() + bufferSize);
                         minecraftUpdate.setPercentage((int) ((double) minecraftUpdate.getCurrentSizeDownload() / (double) minecraftUpdate.getTotalSizeDownload() * 45.0D + 10.0D));
@@ -54,14 +57,13 @@ public class MCUpdateDownload {
                                     + minecraftUpdate.getCurrentSizeDownload() * 100 / minecraftUpdate.getTotalSizeDownload() + "%" + minecraftUpdate.getDownloadSpeedMessage());
                         }
                         downloadedAmount += bufferSize;
-                    }
+                        bufferSize = is.read(buffer);
+                    } while (bufferSize > 0);
                 }
             }
         }
         boolean renameTo = new File(path + minecraftUpdate.getClientJAR() + ".jar").renameTo(new File(path + "minecraft.jar"));
-        if (!renameTo) {
-            throw new Exception("Failed to rename " + path + minecraftUpdate.getClientJAR() + ".jar to " + path + "minecraft.jar");
-        }
+        assert renameTo : "Failed to rename " + path + minecraftUpdate.getClientJAR() + ".jar to " + path + "minecraft.jar";
         minecraftUpdate.setSubtaskMessage("");
     }
 }

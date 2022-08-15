@@ -20,11 +20,10 @@ public class MCUpdateExtract {
             File libsDir = new File(path);
             if (!libsDir.exists()) {
                 boolean mkdirs = libsDir.mkdirs();
-                if (!mkdirs) {
-                    throw new IOException("Failed to create libs directory in " + path);
-                }
+                assert mkdirs : "Failed to create libs directory in " + path;
                 return;
             }
+
             String libsZip;
             String nativesZip;
             switch (MCUtils.getPlatform()) {
@@ -51,10 +50,9 @@ public class MCUpdateExtract {
         }
     }
 
-    private void extractZIP(String path, String archive) {
+    private void extractZIP(String path, String archive) throws RuntimeException, IOException {
         minecraftUpdate.setState(5);
         int initialPercentage = minecraftUpdate.getPercentage();
-
         try (ZipFile zipFile = new ZipFile(path)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             if (entries.hasMoreElements()) {
@@ -64,7 +62,7 @@ public class MCUpdateExtract {
                     if (entry.isDirectory()) {
                         boolean mkdirs = new File(archive + File.separator + entry.getName()).mkdirs();
                         if (mkdirs) {
-                            totalSizeExtract += 1;
+                            totalSizeExtract++;
                         }
                     }
                     totalSizeExtract = (int) ((long) totalSizeExtract + entry.getSize());
@@ -86,11 +84,13 @@ public class MCUpdateExtract {
                         try (InputStream is = zipFile.getInputStream(entry); FileOutputStream fos = new FileOutputStream(archive + File.separator + entry.getName())) {
                             int bufferSize;
                             byte[] buffer = new byte[1024];
-                            while ((bufferSize = is.read(buffer, 0, buffer.length)) != -1) {
-                                fos.write(buffer, 0, bufferSize);
-                                currentSizeExtract += bufferSize;
-                                minecraftUpdate.setPercentage((int) ((double) currentSizeExtract * 20.0D / (double) totalSizeExtract) + initialPercentage);
-                                minecraftUpdate.setSubtaskMessage(String.format("Extracting: %s %d%%", entry.getName(), currentSizeExtract * 100 / totalSizeExtract));
+                            if ((bufferSize = is.read(buffer, 0, buffer.length)) != -1) {
+                                do {
+                                    fos.write(buffer, 0, bufferSize);
+                                    currentSizeExtract += bufferSize;
+                                    minecraftUpdate.setPercentage((int) ((double) currentSizeExtract * 20.0D / (double) totalSizeExtract) + initialPercentage);
+                                    minecraftUpdate.setSubtaskMessage(String.format("Extracting: %s %d%%", entry.getName(), currentSizeExtract * 100 / totalSizeExtract));
+                                } while ((bufferSize = is.read(buffer, 0, buffer.length)) != -1);
                             }
                         } catch (IOException e) {
                             throw new RuntimeException("Failed to extract " + entry.getName() + " from " + path, e);
@@ -98,12 +98,8 @@ public class MCUpdateExtract {
                     } while (entries.hasMoreElements());
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to extract " + path, e);
         }
         boolean delete = new File(path).delete();
-        if (!delete) {
-            throw new RuntimeException("Failed to delete " + path);
-        }
+        assert delete : "Failed to delete " + path;
     }
 }

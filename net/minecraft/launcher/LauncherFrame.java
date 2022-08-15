@@ -87,7 +87,7 @@ public class LauncherFrame extends Frame {
                 ProcessBuilder pb = new ProcessBuilder(parameters);
                 Process process = pb.start();
                 if (process.waitFor() != 0) {
-                    throw new Exception("!");
+                    throw new Exception("Process exited with error code " + process.exitValue());
                 }
                 System.exit(0);
             } catch (Exception e) {

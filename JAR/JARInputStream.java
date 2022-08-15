@@ -12,9 +12,7 @@ public class JARInputStream {
             is[0] = connection.getInputStream();
             return null;
         });
-        if (is[0] == null) {
-            throw new Exception("Failed to open " + connection.getURL().toString());
-        }
+        assert is[0] != null : "Failed to open " + connection.getURL().toString();
         return is[0];
     }
 }

@@ -100,7 +100,7 @@ public final class MCUtils {
         } else if (osName.contains("win")) {
             return OS.windows;
         } else {
-            throw new RuntimeException("Unknown OS: " + osName);
+            throw new RuntimeException("OS (" + System.getProperty("os.name") + ") not supported");
         }
     }
 

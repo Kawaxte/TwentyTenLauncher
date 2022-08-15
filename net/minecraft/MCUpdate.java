@@ -44,7 +44,7 @@ public class MCUpdate implements Runnable {
         this.state = 1;
     }
 
-    private void loadFileURLs() throws MalformedURLException {
+    private void loadFileURLs() {
         this.state = 2;
 
         String libs;
@@ -65,59 +65,53 @@ public class MCUpdate implements Runnable {
             default:
                 throw new RuntimeException();
         }
-        this.urlList = new URL[]{
-                new URL("http://files.betacraft.uk/launcher/assets/" + libs),
-                new URL("http://files.betacraft.uk/launcher/assets/" + natives),
-                new URL("https://piston-data.mojang.com/v1/objects/e1c682219df45ebda589a557aadadd6ed093c86c/" + clientJAR + ".jar")};
+        try {
+            this.urlList = new URL[]{
+                    new URL("http://files.betacraft.uk/launcher/assets/" + libs),
+                    new URL("http://files.betacraft.uk/launcher/assets/" + natives),
+                    new URL("https://piston-data.mojang.com/v1/objects/e1c682219df45ebda589a557aadadd6ed093c86c/" + clientJAR + ".jar")};
+        } catch (MalformedURLException e) {
+            this.fatalErrorException("No such file or archive found", e);
+        }
     }
 
-    private void updateClasspath(File dir) throws MalformedURLException {
+    private void updateClasspath(File dir) throws Exception {
         this.state = 6;
         this.percentage = 95;
-
         String[] classpath = new String[]{
                 dir.getAbsolutePath() + File.separator + "jinput.jar",
                 dir.getAbsolutePath() + File.separator + "lwjgl.jar",
                 dir.getAbsolutePath() + File.separator + "lwjgl_util.jar",
                 dir.getAbsolutePath() + File.separator + "minecraft.jar"};
+
         URL[] urls = new URL[classpath.length];
-        for (int i = 0; i < classpath.length; i++) {
+        int i = 0;
+        do {
             urls[i] = new File(classpath[i]).toURI().toURL();
-        }
+            i++;
+        } while (i < classpath.length);
         if (classLoader == null) {
             classLoader = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> {
                 URLClassLoader cl = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
                 Thread.currentThread().setContextClassLoader(cl);
                 return cl;
             });
-        } else {
-            try {
-                Class.forName("net.minecraft.client.Minecraft", true, classLoader);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Could not find class " + classLoader + " in classpath " + Arrays.toString(classpath), e);
-            }
         }
 
         String path;
         if (platforms.contains(MCUtils.getPlatform())) {
             path = dir.getAbsolutePath() + File.separator;
         } else {
-            throw new RuntimeException("OS (" + System.getProperty("os.name") + ") not supported");
+            throw new RuntimeException();
         }
-
         if (!natives_loaded) {
-            try {
-                Field field = ClassLoader.class.getDeclaredField("loadedLibraryNames");
-                field.setAccessible(true);
+            Field field = ClassLoader.class.getDeclaredField("loadedLibraryNames");
+            field.setAccessible(true);
 
-                Vector<?> loadedLibraryNames = (Vector<?>) field.get(classLoader);
-                loadedLibraryNames.clear();
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to unload natives from " + classLoader, e);
-            }
+            Vector<?> loadedLibraryNames = (Vector<?>) field.get(classLoader);
+            loadedLibraryNames.clear();
         }
-        System.setProperty("org.lwjgl.librarypath", path + "natives");
-        System.setProperty("net.java.games.input.librarypath", path + "natives");
+        Arrays.asList("org.lwjgl.librarypath", "net.java.games.input.librarypath").forEach(s -> System.setProperty(s, path + "natives"));
         natives_loaded = true;
     }
 
@@ -152,16 +146,13 @@ public class MCUpdate implements Runnable {
             File dir = new File(path);
             if (!dir.exists()) {
                 boolean mkdirs = dir.mkdirs();
-                if (!mkdirs) {
-                    throw new Exception("Failed to read directory " + path);
-                }
+                assert mkdirs : "Failed to read directory " + path;
             }
             if (!this.canPlayOffline()) {
                 minecraftUpdateDownload.downloadFiles(path);
                 minecraftUpdateExtract.extractZIPArchives(path);
-            } else {
-                this.percentage = 90;
             }
+            this.percentage = 90;
             this.updateClasspath(dir);
             this.state = 7;
         } catch (Exception e) {
@@ -195,15 +186,12 @@ public class MCUpdate implements Runnable {
             case 7:
                 return "Done loading";
             default:
-                return "Unknown getState";
+                return "Unknown state";
         }
     }
 
     protected String getFileName(URL url) {
-        if (url.getFile().lastIndexOf('/') != -1) {
-            return url.getFile().substring(url.getFile().lastIndexOf('/') + 1);
-        }
-        return url.getFile();
+        return url.getFile().lastIndexOf('/') != -1 ? url.getFile().substring(url.getFile().lastIndexOf('/') + 1) : url.getFile();
     }
 
     protected String getClientJAR() {

@@ -12,15 +12,14 @@ public final class MSFormData {
 
     static String encodeFormData(Map<Object, Object> parameter) {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Object, Object> entry : parameter.entrySet()) {
+        parameter.forEach((key, value) -> {
             try {
-                Arrays.asList(Arrays.asList(URLEncoder.encode(entry.getKey().toString(), "UTF-8"), "="),
-                        Arrays.asList(URLEncoder.encode(entry.getValue().toString(), "UTF-8"), "&")).forEach(strings ->
-                        strings.forEach(sb::append));
+                Arrays.asList(Arrays.asList(URLEncoder.encode(key.toString(), "UTF-8"), "="),
+                        Arrays.asList(URLEncoder.encode(value.toString(), "UTF-8"), "&")).forEach(strings -> strings.forEach(sb::append));
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("Failed to encode data from " + entry.getKey() + " to " + entry.getValue(), e);
+                throw new RuntimeException("Failed to encode data from " + key + " to " + value, e);
             }
-        }
+        });
         sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
