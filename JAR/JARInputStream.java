@@ -5,8 +5,8 @@ import java.net.URLConnection;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 
-public class JARInputStream {
-    public InputStream getJARInputStream(URLConnection connection) throws Exception {
+public class JarInputStream {
+    public InputStream getJarInputStream(URLConnection connection) throws Exception {
         final InputStream[] is = new InputStream[1];
         AccessController.doPrivileged((PrivilegedExceptionAction<Void>) () -> {
             is[0] = connection.getInputStream();
