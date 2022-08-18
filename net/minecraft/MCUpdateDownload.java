@@ -34,7 +34,7 @@ public class MCUpdateDownload {
         byte[] buffer = new byte[1024];
         for (URL url : minecraftUpdate.getUrlList()) {
             connection = url.openConnection();
-            try (InputStream is = minecraftUpdate.getJARInputStream().getJARInputStream(connection); FileOutputStream fos = new FileOutputStream(path + minecraftUpdate.getFileName(url))) {
+            try (InputStream is = minecraftUpdate.getJarInputStream().getJarInputStream(connection); FileOutputStream fos = new FileOutputStream(path + minecraftUpdate.getFileName(url))) {
                 long downloadStartTime = System.currentTimeMillis();
                 int bufferSize = is.read(buffer);
                 if (bufferSize > 0) {
@@ -62,8 +62,8 @@ public class MCUpdateDownload {
                 }
             }
         }
-        boolean renameTo = new File(path + minecraftUpdate.getClientJAR() + ".jar").renameTo(new File(path + "minecraft.jar"));
-        assert renameTo : "Failed to rename " + path + minecraftUpdate.getClientJAR() + ".jar to " + path + "minecraft.jar";
+        boolean renameTo = new File(path + minecraftUpdate.getMainJarName() + ".jar").renameTo(new File(path + "minecraft.jar"));
+        assert renameTo : "Failed to rename " + path + minecraftUpdate.getMainJarName() + ".jar to " + path + "minecraft.jar";
         minecraftUpdate.setSubtaskMessage("");
     }
 }

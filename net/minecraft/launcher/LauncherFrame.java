@@ -59,7 +59,7 @@ public class LauncherFrame extends Frame {
             }
         });
         try {
-            this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("resources/favicon.png"))));
+            this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/favicon.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }

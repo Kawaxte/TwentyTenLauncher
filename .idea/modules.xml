@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/AlphacraftLauncher.iml" filepath="$PROJECT_DIR$/.idea/AlphacraftLauncher.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AlphacraftLauncher.iml" filepath="$PROJECT_DIR$/AlphacraftLauncher.iml" />
     </modules>
   </component>
 </project>

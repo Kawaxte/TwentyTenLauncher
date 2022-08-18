@@ -3,7 +3,7 @@
  */
 package net.minecraft;
 
-import JAR.JARInputStream;
+import JAR.JarInputStream;
 
 import java.applet.Applet;
 import java.io.File;
@@ -24,7 +24,7 @@ import java.util.Vector;
 
 public class MCUpdate implements Runnable {
     private static final Set<MCUtils.OS> platforms = Collections.unmodifiableSet(EnumSet.of(MCUtils.OS.osx, MCUtils.OS.linux, MCUtils.OS.windows));
-    private static final String clientJAR = "client";
+    private static final String mainJarName = "client";
     private final MCUpdateDownload minecraftUpdateDownload = new MCUpdateDownload(this);
     private final MCUpdateExtract minecraftUpdateExtract = new MCUpdateExtract(this);
     private int state;
@@ -38,7 +38,7 @@ public class MCUpdate implements Runnable {
     private String downloadSpeedMessage = "";
     private URL[] urlList;
     private ClassLoader classLoader;
-    protected JARInputStream JARInputStream = new JARInputStream();
+    protected JarInputStream JarInputStream = new JarInputStream();
 
     protected void init() {
         this.state = 1;
@@ -69,7 +69,7 @@ public class MCUpdate implements Runnable {
             this.urlList = new URL[]{
                     new URL("http://files.betacraft.uk/launcher/assets/" + libs),
                     new URL("http://files.betacraft.uk/launcher/assets/" + natives),
-                    new URL("https://piston-data.mojang.com/v1/objects/e1c682219df45ebda589a557aadadd6ed093c86c/" + clientJAR + ".jar")};
+                    new URL("https://piston-data.mojang.com/v1/objects/e1c682219df45ebda589a557aadadd6ed093c86c/" + mainJarName + ".jar")};
         } catch (MalformedURLException e) {
             this.fatalErrorException("No such file or archive found", e);
         }
@@ -194,12 +194,12 @@ public class MCUpdate implements Runnable {
         return url.getFile().lastIndexOf('/') != -1 ? url.getFile().substring(url.getFile().lastIndexOf('/') + 1) : url.getFile();
     }
 
-    protected String getClientJAR() {
-        return clientJAR;
+    protected String getMainJarName() {
+        return mainJarName;
     }
 
-    protected JARInputStream getJARInputStream() {
-        return JARInputStream;
+    protected JarInputStream getJarInputStream() {
+        return JarInputStream;
     }
 
     protected String getDownloadSpeedMessage() {

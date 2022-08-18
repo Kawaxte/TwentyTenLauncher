@@ -99,7 +99,7 @@ public class MSAuthenticate {
             fxPanel.setScene(new Scene(webView));
         });
         try {
-            dialog.setIconImage(ImageIO.read(Objects.requireNonNull(MSAuthenticate.this.getClass().getClassLoader().getResource("resources/favicon2.png"))));
+            dialog.setIconImage(ImageIO.read(Objects.requireNonNull(MSAuthenticate.this.getClass().getClassLoader().getResource("net/minecraft/launcher/auth/microsoft/favicon.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }

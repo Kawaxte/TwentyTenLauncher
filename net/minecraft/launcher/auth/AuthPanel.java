@@ -43,6 +43,7 @@ public class AuthPanel extends Panel {
     protected Button offlineButton = new Button("Play offline");
     private Image image;
     private VolatileImage volatileImage;
+    private boolean outdated = false;
     public final LauncherFrame launcherFrame;
 
     public AuthPanel(final LauncherFrame launcherFrame) {
@@ -52,6 +53,7 @@ public class AuthPanel extends Panel {
         this.loginButton.addActionListener(e -> {
             if (!(LauncherUpdate.latestVersion != null
                     && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
+                setOutdated();
                 launcherFrame.showError("Outdated launcher");
                 launcherFrame.getAuthPanel().setNoNetwork();
                 return;
@@ -73,7 +75,7 @@ public class AuthPanel extends Panel {
         });
         try {
             this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource(
-                    "resources/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
+                    "net/minecraft/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -148,7 +150,7 @@ public class AuthPanel extends Panel {
                             this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
                 }
             };
-            if (!(LauncherUpdate.latestVersion != null && LauncherUpdate.latestVersion.matches(LauncherUpdate.currentVersion))) {
+            if (this.outdated) {
                 accountLabel.setText("You need to update the launcher!");
                 accountLabel.addMouseListener(new MouseAdapter() {
                     @Override
@@ -270,5 +272,9 @@ public class AuthPanel extends Panel {
         this.add(this.buildLoginPanel());
         this.errorLabel.setText(error);
         this.validate();
+    }
+
+    private void setOutdated() {
+        this.outdated = true;
     }
 }

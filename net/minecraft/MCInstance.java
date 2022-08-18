@@ -41,7 +41,7 @@ public class MCInstance extends Applet implements AppletStub {
     public void init(String username, String sessionId) {
         try {
             this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource(
-                    "resources/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
+                    "net/minecraft/dirt.png"))).getScaledInstance(32, 32, Image.SCALE_FAST);
         } catch (IOException e) {
             e.printStackTrace();
         }
