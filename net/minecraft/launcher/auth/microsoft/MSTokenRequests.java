@@ -91,7 +91,7 @@ public class MSTokenRequests {
             jsonParameters.put("RelyingParty", "rp://api.minecraftservices.com/");
             jsonParameters.put("TokenType", "JWT");
 
-            tokenResponse = MCUtils.requestMethod(MSAuthenticate.xblXstsAuthurl, "POST", jsonParameters.toString());
+            tokenResponse = MCUtils.requestMethod(MSAuthenticate.xblXstsAuthUrl, "POST", jsonParameters.toString());
             String uhs = tokenResponse.getJSONObject("DisplayClaims").getJSONArray("xui").getJSONObject(0).getString("uhs");
             String xstsToken = tokenResponse.getString("Token");
             getMinecraftAccessToken(uhs, xstsToken);

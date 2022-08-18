@@ -34,7 +34,7 @@ public class MSAuthenticate {
     static final String loaDesktopUrl = "https://login.live.com/oauth20_desktop.srf";
     static final String loaTokenUrl = "https://login.live.com/oauth20_token.srf";
     static final String xblUserAuthUrl = "https://user.auth.xboxlive.com/user/authenticate";
-    static final String xblXstsAuthurl = "https://xsts.auth.xboxlive.com/xsts/authorize";
+    static final String xblXstsAuthUrl = "https://xsts.auth.xboxlive.com/xsts/authorize";
     static final String apiMinecraftAuthUrl = "https://api.minecraftservices.com/authentication/login_with_xbox";
     private static final String apiMinecraftProfileUrl = "https://api.minecraftservices.com/minecraft/profile";
     private static final String apiMinecraftStoreUrl = "https://api.minecraftservices.com/entitlements/mcstore";
@@ -99,7 +99,7 @@ public class MSAuthenticate {
             fxPanel.setScene(new Scene(webView));
         });
         try {
-            dialog.setIconImage(ImageIO.read(Objects.requireNonNull(MSAuthenticate.this.getClass().getClassLoader().getResource("net/minecraft/launcher/auth/microsoft/favicon.png"))));
+            dialog.setIconImage(ImageIO.read(Objects.requireNonNull(MSAuthenticate.this.getClass().getClassLoader().getResource("favicon.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }
