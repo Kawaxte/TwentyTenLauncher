@@ -52,7 +52,7 @@ public final class MCUtils {
                         case 401:
                             System.err.println(response.getStatusLine().getStatusCode() + " Unauthorised");
                         default:
-                            throw new IOException(String.valueOf(response.getStatusLine().getStatusCode()));
+                            throw new IOException();
                     }
                     break;
                 case "POST":
@@ -68,7 +68,7 @@ public final class MCUtils {
                         case 401:
                             System.err.println(response.getStatusLine().getStatusCode() + " Unauthorised");
                         default:
-                            throw new IOException(String.valueOf(response.getStatusLine().getStatusCode()));
+                            throw new IOException();
                     }
                     break;
                 default:

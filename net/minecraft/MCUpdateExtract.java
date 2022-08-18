@@ -15,7 +15,7 @@ public class MCUpdateExtract {
         this.minecraftUpdate = minecraftUpdate;
     }
 
-    protected void extractZIPArchives(String path) {
+    protected void extractZipArchives(String path) {
         try {
             File libsDir = new File(path);
             if (!libsDir.exists()) {
@@ -42,15 +42,15 @@ public class MCUpdateExtract {
                 default:
                     throw new RuntimeException("OS (" + System.getProperty("os.name") + ") not supported");
             }
-            extractZIP(path + libsZip, String.valueOf(libsDir));
-            extractZIP(path + nativesZip, libsDir + File.separator + "natives");
+            extractZip(path + libsZip, String.valueOf(libsDir));
+            extractZip(path + nativesZip, libsDir + File.separator + "natives");
             minecraftUpdate.setSubtaskMessage("");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void extractZIP(String path, String archive) throws RuntimeException, IOException {
+    private void extractZip(String path, String archive) throws RuntimeException, IOException {
         minecraftUpdate.setState(5);
         int initialPercentage = minecraftUpdate.getPercentage();
         try (ZipFile zipFile = new ZipFile(path)) {

@@ -150,7 +150,7 @@ public class MCUpdate implements Runnable {
             }
             if (!this.canPlayOffline()) {
                 minecraftUpdateDownload.downloadFiles(path);
-                minecraftUpdateExtract.extractZIPArchives(path);
+                minecraftUpdateExtract.extractZipArchives(path);
             }
             this.percentage = 90;
             this.updateClasspath(dir);
