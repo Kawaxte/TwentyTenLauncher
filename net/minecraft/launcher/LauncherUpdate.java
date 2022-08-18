@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import javax.swing.JOptionPane;
 
 public final class LauncherUpdate {
-    public static final String currentVersion = "0.8.1822";
+    public static final String currentVersion = "0.8.1922";
     public static final String latestVersion = isOutdated();
 
     private LauncherUpdate() {

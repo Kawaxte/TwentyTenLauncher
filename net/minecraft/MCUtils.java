@@ -8,7 +8,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
@@ -32,7 +32,7 @@ public final class MCUtils {
 
     public static JSONObject requestMethod(String url, String method, String data) throws IOException {
         String result;
-        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             String type = data.contains("{") && data.contains("}") ? "application/json" : "application/x-www-form-urlencoded";
 
             HttpResponse response;

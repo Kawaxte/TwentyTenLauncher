@@ -2,9 +2,8 @@
   <library name="libs">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/libs/json-20220320.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/httpcore-4.4.15.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/httpclient-4.5.13.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/commons-logging-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/httpcore-4.4.15.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
