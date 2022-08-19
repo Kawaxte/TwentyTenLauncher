@@ -10,7 +10,6 @@ import net.minecraft.MCUtils;
 import net.minecraft.launcher.LauncherFrame;
 import net.minecraft.launcher.auth.AuthCredentials;
 import net.minecraft.launcher.auth.AuthLastLogin;
-import net.minecraft.launcher.auth.AuthPanel;
 import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
@@ -49,8 +48,8 @@ public class MSAuthenticate {
 
     public void authenticate() {
         if (AuthLastLogin.readLastLogin() != null) {
-                getMinecraftProfile(Objects.requireNonNull(AuthLastLogin.readLastLogin()).getAccessToken());
-                return;
+            getMinecraftProfile(Objects.requireNonNull(AuthLastLogin.readLastLogin()).getAccessToken());
+            return;
         }
         SwingUtilities.invokeLater(this::run);
     }
@@ -87,19 +86,22 @@ public class MSAuthenticate {
             webView.getEngine().setJavaScriptEnabled(true);
             webView.getEngine().getHistory().getEntries().addListener((ListChangeListener<WebHistory.Entry>) change -> {
                 if (change.next() && change.wasAdded()) {
-                    change.getAddedSubList().stream().filter(entry ->
-                            entry.getUrl().startsWith(loaDesktopUrl + "?code=")).map(entry ->
-                            entry.getUrl().substring(entry.getUrl().indexOf("=") + 1,
-                                    entry.getUrl().indexOf("&"))).forEachOrdered(microsoftTokens::getAccessToken);
+                    change.getAddedSubList().stream()
+                            .filter(entry -> entry.getUrl().startsWith(loaDesktopUrl + "?code="))
+                            .map(entry -> entry.getUrl().substring(entry.getUrl().indexOf("=") + 1,
+                                    entry.getUrl().indexOf("&")))
+                            .forEachOrdered(microsoftTokens::getAccessToken);
                 }
-                if (change.wasAdded() && webView.getEngine().getLocation().contains("oauth20_desktop.srf?error=access_denied")) {
+                if (change.wasAdded()
+                        && webView.getEngine().getLocation().contains("oauth20_desktop.srf?error=access_denied")) {
                     dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
                 }
             });
             fxPanel.setScene(new Scene(webView));
         });
         try {
-            dialog.setIconImage(ImageIO.read(Objects.requireNonNull(MSAuthenticate.this.getClass().getClassLoader().getResource("favicon.png"))));
+            dialog.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader()
+                    .getResourceAsStream("net/minecraft/launcher/auth/microsoft/favicon.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,7 +109,7 @@ public class MSAuthenticate {
 
     /**
      * ##################################################
-     * #               GETTERS & SETTERS                #
+     * # GETTERS & SETTERS #
      * ##################################################
      */
     public void getMinecraftStore(String accessToken) {
@@ -120,16 +122,14 @@ public class MSAuthenticate {
     }
 
     void getMinecraftProfile(String accessToken) {
-        String username = AuthPanel.getUsernameTextField().getText();
         try {
             JSONObject apiResponse = MCUtils.requestMethod(apiMinecraftProfileUrl, "GET", accessToken);
 
             String name = apiResponse.getString("name");
-            String uuid = apiResponse.getString("id");
-            new AuthCredentials(accessToken, uuid);
-            AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getAccessToken(), AuthCredentials.credentials.getUuid());
+            new AuthCredentials(accessToken);
+            AuthLastLogin.writeLastLogin(AuthCredentials.credentials.getAccessToken());
+            System.out.println("Username is '" + name + "'");
             frame.dispose();
-            System.out.println("Username is '" + username + "'");
             this.launcherFrame.getOnlineInstance(name, AuthCredentials.credentials.getAccessToken());
         } catch (IOException e) {
             if (e.getMessage().contains("api.minecraftservices.com")) {

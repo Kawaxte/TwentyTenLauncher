@@ -50,7 +50,7 @@ public class MCUpdateExtract {
         }
     }
 
-    private void extractZip(String path, String archive) throws RuntimeException, IOException {
+    private void extractZip(String path, String path2) throws RuntimeException, IOException {
         minecraftUpdate.setState(5);
         int initialPercentage = minecraftUpdate.getPercentage();
         try (ZipFile zipFile = new ZipFile(path)) {
@@ -60,7 +60,7 @@ public class MCUpdateExtract {
                 do {
                     ZipEntry entry = entries.nextElement();
                     if (entry.isDirectory()) {
-                        boolean mkdirs = new File(archive + File.separator + entry.getName()).mkdirs();
+                        boolean mkdirs = new File(path2 + File.separator + entry.getName()).mkdirs();
                         if (mkdirs) {
                             totalSizeExtract++;
                         }
@@ -76,20 +76,27 @@ public class MCUpdateExtract {
                             continue;
                         }
 
-                        File file = new File(archive + File.separator + entry.getName());
+                        File file = new File(path2 + File.separator + entry.getName());
                         boolean mkdirs = file.getParentFile().mkdirs();
                         if (mkdirs) {
-                            minecraftUpdate.setPercentage(initialPercentage + (int) ((long) (totalSizeExtract - currentSizeExtract) * (long) (100 - initialPercentage) / (long) totalSizeExtract));
+                            minecraftUpdate.setPercentage(
+                                    initialPercentage + (int) ((long) (totalSizeExtract - currentSizeExtract)
+                                            * (long) (100 - initialPercentage) / (long) totalSizeExtract));
                         }
-                        try (InputStream is = zipFile.getInputStream(entry); FileOutputStream fos = new FileOutputStream(archive + File.separator + entry.getName())) {
+                        try (InputStream is = zipFile.getInputStream(entry);
+                                FileOutputStream fos = new FileOutputStream(
+                                        path2 + File.separator + entry.getName())) {
                             int bufferSize;
                             byte[] buffer = new byte[1024];
                             if ((bufferSize = is.read(buffer, 0, buffer.length)) != -1) {
                                 do {
                                     fos.write(buffer, 0, bufferSize);
                                     currentSizeExtract += bufferSize;
-                                    minecraftUpdate.setPercentage((int) ((double) currentSizeExtract * 20.0D / (double) totalSizeExtract) + initialPercentage);
-                                    minecraftUpdate.setSubtaskMessage(String.format("Extracting: %s %d%%", entry.getName(), currentSizeExtract * 100 / totalSizeExtract));
+                                    minecraftUpdate.setPercentage(
+                                            (int) ((double) currentSizeExtract * 20.0D / (double) totalSizeExtract)
+                                                    + initialPercentage);
+                                    minecraftUpdate.setSubtaskMessage(String.format("Extracting: %s %d%%",
+                                            entry.getName(), currentSizeExtract * 100 / totalSizeExtract));
                                 } while ((bufferSize = is.read(buffer, 0, buffer.length)) != -1);
                             }
                         } catch (IOException e) {

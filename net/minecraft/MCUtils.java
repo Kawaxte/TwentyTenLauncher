@@ -33,7 +33,8 @@ public final class MCUtils {
     public static JSONObject requestMethod(String url, String method, String data) throws IOException {
         String result;
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            String type = data.contains("{") && data.contains("}") ? "application/json" : "application/x-www-form-urlencoded";
+            String type = data.contains("{") && data.contains("}") ? "application/json"
+                    : "application/x-www-form-urlencoded";
 
             HttpResponse response;
             switch (method) {
@@ -89,20 +90,28 @@ public final class MCUtils {
 
     /**
      * ##################################################
-     * #               GETTERS & SETTERS                #
+     * # GETTERS & SETTERS #
      * ##################################################
      */
     public static OS getPlatform() {
-        if (osName.contains("mac")) {
-            return OS.osx;
-        } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
-            return OS.linux;
-        } else if (osName.contains("win")) {
-            return OS.windows;
-        } else {
-            throw new RuntimeException("OS (" + System.getProperty("os.name") + ") not supported");
+        switch (osName) {
+            case "mac os x":
+                return OS.osx;
+            case "linux":
+                return OS.linux;
+            case "windows 2000":
+            case "windows xp":
+            case "windows vista":
+            case "windows 7":
+            case "windows 8":
+            case "windows 8.1":
+            case "windows 10":
+            case "windows 11":
+                return OS.windows;
+            default:
+                throw new RuntimeException("OS (" + System.getProperty("os.name") + ") not supported");
+            } 
         }
-    }
 
     public static File getWorkingDirectory() {
         File workingDirectory;
@@ -121,7 +130,7 @@ public final class MCUtils {
                 workingDirectory = new File(userHome, ".minecraft/");
                 break;
             default:
-                workingDirectory = new File(userHome, ".minecraft/");
+                workingDirectory = new File(userHome, "minecraft/");
         }
 
         if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {

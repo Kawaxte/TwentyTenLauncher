@@ -146,7 +146,8 @@ public class AuthPanel extends Panel {
                     g.drawLine(
                             this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2,
                             this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1,
-                            this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2 + g.getFontMetrics().stringWidth(this.getText()),
+                            this.getBounds().width / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2
+                                    + g.getFontMetrics().stringWidth(this.getText()),
                             this.getBounds().height / 2 + g.getFontMetrics().getHeight() / 2 - 1);
                 }
             };
@@ -156,13 +157,16 @@ public class AuthPanel extends Panel {
                     @Override
                     public void mouseClicked(MouseEvent me) {
                         try {
-                            Desktop.getDesktop().browse(new URI("https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest"));
+                            Desktop.getDesktop()
+                                    .browse(new URI("https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest"));
                         } catch (IOException | URISyntaxException e) {
                             e.printStackTrace();
                         }
                     }
                 });
-                this.loginButton.setEnabled((LauncherUpdate.latestVersion != null ? LauncherUpdate.latestVersion.compareTo(LauncherUpdate.currentVersion) : 0) < 0);
+                this.loginButton.setEnabled((LauncherUpdate.latestVersion != null
+                        ? LauncherUpdate.latestVersion.compareTo(LauncherUpdate.currentVersion)
+                        : 0) < 0);
             } else {
                 accountLabel.setText("Need account?");
                 accountLabel.addMouseListener(new MouseAdapter() {
@@ -234,7 +238,7 @@ public class AuthPanel extends Panel {
 
     /**
      * ##################################################
-     * #               GETTERS & SETTERS                #
+     * # GETTERS & SETTERS #
      * ##################################################
      */
     public static TextField getUsernameTextField() {

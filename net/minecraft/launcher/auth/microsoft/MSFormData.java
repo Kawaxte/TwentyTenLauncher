@@ -15,7 +15,8 @@ public final class MSFormData {
         parameter.forEach((key, value) -> {
             try {
                 Arrays.asList(Arrays.asList(URLEncoder.encode(key.toString(), "UTF-8"), "="),
-                        Arrays.asList(URLEncoder.encode(value.toString(), "UTF-8"), "&")).forEach(strings -> strings.forEach(sb::append));
+                        Arrays.asList(URLEncoder.encode(value.toString(), "UTF-8"), "&"))
+                        .forEach(strings -> strings.forEach(sb::append));
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException("Failed to encode data from " + key + " to " + value, e);
             }

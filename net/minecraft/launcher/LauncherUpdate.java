@@ -15,7 +15,8 @@ public final class LauncherUpdate {
 
     private static String isOutdated() {
         try {
-            JSONObject apiResponse = MCUtils.requestMethod("https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest", "GET", "{}");
+            JSONObject apiResponse = MCUtils.requestMethod(
+                    "https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest", "GET", "{}");
             return apiResponse.getString("tag_name");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "An error occurred while checking for updates.");

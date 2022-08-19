@@ -67,10 +67,14 @@ public class MCInstanceGraphics {
                         minecraftInstance.getWidth() / 2 - 128 + 1, 5);
                 g.setColor(new Color(0, 128, 0));
                 g.fillRect(64, minecraftInstance.getHeight() / 2 - 64,
-                        minecraftInstance.getMinecraftUpdate().percentage * (minecraftInstance.getWidth() / 2 - 128) / 100, 4);
+                        minecraftInstance.getMinecraftUpdate().percentage * (minecraftInstance.getWidth() / 2 - 128)
+                                / 100,
+                        4);
                 g.setColor(new Color(32, 160, 32));
                 g.fillRect(64, minecraftInstance.getHeight() / 2 - 64 + 1,
-                        minecraftInstance.getMinecraftUpdate().percentage * (minecraftInstance.getWidth() / 2 - 128) / 100 - 2, 1);
+                        minecraftInstance.getMinecraftUpdate().percentage * (minecraftInstance.getWidth() / 2 - 128)
+                                / 100 - 2,
+                        1);
             }
             g.dispose();
             g2.drawImage(minecraftInstance.getVolatileImage(), 0, 0,

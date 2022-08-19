@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- */
 package net.minecraft.launcher;
 
 import net.minecraft.MCInstance;
@@ -59,7 +56,8 @@ public class LauncherFrame extends Frame {
             }
         });
         try {
-            this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/favicon.png"))));
+            this.setIconImage(ImageIO.read(
+                    Objects.requireNonNull(getClass().getClassLoader().getResource("net/minecraft/favicon.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -76,9 +74,9 @@ public class LauncherFrame extends Frame {
                 ArrayList<String> parameters = new ArrayList<>();
                 parameters.add(MCUtils.getPlatform() == MCUtils.OS.windows ? "javaw" : "java");
                 parameters.add("-Xmx1G");
-                parameters.add("-Dsun.java2d.noddraw=true");
-                parameters.add("-Dsun.java2d.d3d=false");
                 parameters.add("-Dsun.java2d.opengl=false");
+                parameters.add("-Dsun.java2d.d3d=false");
+                parameters.add("-Dsun.java2d.xrender=true");
                 parameters.add("-Dsun.java2d.pmoffscreen=false");
                 parameters.add("-cp");
                 parameters.add(MCInstance.class.getProtectionDomain().getCodeSource().getLocation().getPath());
@@ -116,7 +114,7 @@ public class LauncherFrame extends Frame {
 
     /**
      * ##################################################
-     * #               GETTERS & SETTERS                #
+     * # GETTERS & SETTERS #
      * ##################################################
      */
     public MSAuthenticate getMicrosoftAuthenticate() {

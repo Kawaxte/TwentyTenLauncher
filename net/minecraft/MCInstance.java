@@ -135,7 +135,7 @@ public class MCInstance extends Applet implements AppletStub {
 
     /**
      * ##################################################
-     * #               GETTERS & SETTERS                #
+     * # GETTERS & SETTERS #
      * ##################################################
      */
     public URL getCodeBase() {
@@ -149,7 +149,7 @@ public class MCInstance extends Applet implements AppletStub {
 
     public URL getDocumentBase() {
         try {
-            return new URL("http://www.minecraft.net/game/");
+            return new URL("https://github.com/sojlabjoi");
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;

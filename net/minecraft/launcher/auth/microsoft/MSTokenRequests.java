@@ -23,7 +23,8 @@ public class MSTokenRequests {
             parameters.put("redirect_uri", MSAuthenticate.loaDesktopUrl);
             parameters.put("scope", "service::user.auth.xboxlive.com::MBI_SSL");
             parameters.put("refresh_token", refreshToken);
-            JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.loaTokenUrl, "POST", MSFormData.encodeFormData(parameters));
+            JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.loaTokenUrl, "POST",
+                    MSFormData.encodeFormData(parameters));
             String accessToken = tokenResponse.getString("access_token");
             getXBLToken(accessToken);
         } catch (IOException e) {
@@ -33,7 +34,7 @@ public class MSTokenRequests {
 
     /**
      * ##################################################
-     * #               GETTERS & SETTERS                #
+     * # GETTERS & SETTERS #
      * ##################################################
      */
     public void getAccessToken(String authCode) {
@@ -45,7 +46,8 @@ public class MSTokenRequests {
             parameters.put("redirect_uri", MSAuthenticate.loaDesktopUrl);
             parameters.put("scope", "service::user.auth.xboxlive.com::MBI_SSL");
 
-            JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.loaTokenUrl, "POST", MSFormData.encodeFormData(parameters));
+            JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.loaTokenUrl, "POST",
+                    MSFormData.encodeFormData(parameters));
 
             String accessToken = tokenResponse.getString("access_token");
             String refreshToken = tokenResponse.getString("refresh_token");
@@ -72,7 +74,8 @@ public class MSTokenRequests {
             jsonParameters.put("RelyingParty", "http://auth.xboxlive.com");
             jsonParameters.put("TokenType", "JWT");
 
-            JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.xblUserAuthUrl, "POST", jsonParameters.toString());
+            JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.xblUserAuthUrl, "POST",
+                    jsonParameters.toString());
             getXSTSToken(tokenResponse.getString("Token"));
         } catch (IOException e) {
             e.printStackTrace();
@@ -84,7 +87,7 @@ public class MSTokenRequests {
         try {
             JSONObject propertyParameters = new JSONObject();
             propertyParameters.put("SandboxId", "RETAIL");
-            propertyParameters.put("UserTokens", new String[]{token});
+            propertyParameters.put("UserTokens", new String[] { token });
 
             JSONObject jsonParameters = new JSONObject();
             jsonParameters.put("Properties", propertyParameters);
@@ -92,7 +95,8 @@ public class MSTokenRequests {
             jsonParameters.put("TokenType", "JWT");
 
             tokenResponse = MCUtils.requestMethod(MSAuthenticate.xblXstsAuthUrl, "POST", jsonParameters.toString());
-            String uhs = tokenResponse.getJSONObject("DisplayClaims").getJSONArray("xui").getJSONObject(0).getString("uhs");
+            String uhs = tokenResponse.getJSONObject("DisplayClaims").getJSONArray("xui").getJSONObject(0)
+                    .getString("uhs");
             String xstsToken = tokenResponse.getString("Token");
             getMinecraftAccessToken(uhs, xstsToken);
         } catch (IOException e) {
@@ -102,7 +106,8 @@ public class MSTokenRequests {
                     microsoftAuthenticate.launcherFrame.showError("Login failed");
                     break;
                 case "2148916235":
-                    JOptionPane.showMessageDialog(null, "This account is from a country where Xbox Live is not available");
+                    JOptionPane.showMessageDialog(null,
+                            "This account is from a country where Xbox Live is not available");
                     microsoftAuthenticate.launcherFrame.showError("Login failed");
                     break;
                 case "2148916236":
@@ -128,7 +133,8 @@ public class MSTokenRequests {
             jsonParameters.put("identityToken", "XBL3.0 x=" + uhs + "; " + xstsToken);
             jsonParameters.put("ensureLegacyEnabled", true);
 
-            JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.apiMinecraftAuthUrl, "POST", jsonParameters.toString());
+            JSONObject tokenResponse = MCUtils.requestMethod(MSAuthenticate.apiMinecraftAuthUrl, "POST",
+                    jsonParameters.toString());
             String accessToken = tokenResponse.getString("access_token");
             this.microsoftAuthenticate.getMinecraftStore(accessToken);
             this.microsoftAuthenticate.getMinecraftProfile(accessToken);

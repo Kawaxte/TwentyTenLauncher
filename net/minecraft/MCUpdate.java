@@ -23,7 +23,8 @@ import java.util.Set;
 import java.util.Vector;
 
 public class MCUpdate implements Runnable {
-    private static final Set<MCUtils.OS> platforms = Collections.unmodifiableSet(EnumSet.of(MCUtils.OS.osx, MCUtils.OS.linux, MCUtils.OS.windows));
+    private static final Set<MCUtils.OS> platforms = Collections
+            .unmodifiableSet(EnumSet.of(MCUtils.OS.osx, MCUtils.OS.linux, MCUtils.OS.windows));
     private static final String mainJarName = "client";
     private final MCUpdateDownload minecraftUpdateDownload = new MCUpdateDownload(this);
     private final MCUpdateExtract minecraftUpdateExtract = new MCUpdateExtract(this);
@@ -66,10 +67,11 @@ public class MCUpdate implements Runnable {
                 throw new RuntimeException();
         }
         try {
-            this.urlList = new URL[]{
+            this.urlList = new URL[] {
                     new URL("http://files.betacraft.uk/launcher/assets/" + libs),
                     new URL("http://files.betacraft.uk/launcher/assets/" + natives),
-                    new URL("https://piston-data.mojang.com/v1/objects/e1c682219df45ebda589a557aadadd6ed093c86c/" + mainJarName + ".jar")};
+                    new URL("https://piston-data.mojang.com/v1/objects/e1c682219df45ebda589a557aadadd6ed093c86c/"
+                            + mainJarName + ".jar") };
         } catch (MalformedURLException e) {
             this.fatalErrorException("No such file or archive found", e);
         }
@@ -78,11 +80,11 @@ public class MCUpdate implements Runnable {
     private void updateClasspath(File dir) throws Exception {
         this.state = 6;
         this.percentage = 95;
-        String[] classpath = new String[]{
+        String[] classpath = new String[] {
                 dir.getAbsolutePath() + File.separator + "jinput.jar",
                 dir.getAbsolutePath() + File.separator + "lwjgl.jar",
                 dir.getAbsolutePath() + File.separator + "lwjgl_util.jar",
-                dir.getAbsolutePath() + File.separator + "minecraft.jar"};
+                dir.getAbsolutePath() + File.separator + "minecraft.jar" };
 
         URL[] urls = new URL[classpath.length];
         int i = 0;
@@ -111,7 +113,8 @@ public class MCUpdate implements Runnable {
             Vector<?> loadedLibraryNames = (Vector<?>) field.get(classLoader);
             loadedLibraryNames.clear();
         }
-        Arrays.asList("org.lwjgl.librarypath", "net.java.games.input.librarypath").forEach(s -> System.setProperty(s, path + "natives"));
+        Arrays.asList("org.lwjgl.librarypath", "net.java.games.input.librarypath")
+                .forEach(s -> System.setProperty(s, path + "natives"));
         natives_loaded = true;
     }
 
@@ -123,11 +126,13 @@ public class MCUpdate implements Runnable {
 
     protected boolean canPlayOffline() {
         try {
-            String path = AccessController.doPrivileged((PrivilegedExceptionAction<String>) () ->
-                    MCUtils.getWorkingDirectory() + File.separator + "bin" + File.separator);
+            String path = AccessController
+                    .doPrivileged((PrivilegedExceptionAction<String>) () -> MCUtils.getWorkingDirectory()
+                            + File.separator + "bin" + File.separator);
 
             File dir = new File(path);
-            return dir.exists() && Objects.requireNonNull(dir.listFiles()).length > 0 && new File(path + "minecraft.jar").exists();
+            return dir.exists() && Objects.requireNonNull(dir.listFiles()).length > 0
+                    && new File(path + "minecraft.jar").exists();
         } catch (PrivilegedActionException e) {
             e.printStackTrace();
             return false;
@@ -140,8 +145,9 @@ public class MCUpdate implements Runnable {
         this.percentage = 5;
         try {
             this.loadFileURLs();
-            String path = AccessController.doPrivileged((PrivilegedExceptionAction<String>) () ->
-                    MCUtils.getWorkingDirectory() + File.separator + "bin" + File.separator);
+            String path = AccessController
+                    .doPrivileged((PrivilegedExceptionAction<String>) () -> MCUtils.getWorkingDirectory()
+                            + File.separator + "bin" + File.separator);
 
             File dir = new File(path);
             if (!dir.exists()) {
@@ -160,13 +166,14 @@ public class MCUpdate implements Runnable {
         }
     }
 
-    protected Applet createAppletInstance() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    protected Applet createAppletInstance()
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         return (Applet) classLoader.loadClass("net.minecraft.client.MinecraftApplet").newInstance();
     }
 
     /**
      * ##################################################
-     * #               GETTERS & SETTERS                #
+     * # GETTERS & SETTERS #
      * ##################################################
      */
     protected String getState() {
@@ -191,7 +198,8 @@ public class MCUpdate implements Runnable {
     }
 
     protected String getFileName(URL url) {
-        return url.getFile().lastIndexOf('/') != -1 ? url.getFile().substring(url.getFile().lastIndexOf('/') + 1) : url.getFile();
+        return url.getFile().lastIndexOf('/') != -1 ? url.getFile().substring(url.getFile().lastIndexOf('/') + 1)
+                : url.getFile();
     }
 
     protected String getMainJarName() {

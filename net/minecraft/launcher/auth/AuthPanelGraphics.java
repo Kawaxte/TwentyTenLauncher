@@ -40,7 +40,8 @@ public class AuthPanelGraphics {
                 authPanel.getWidth() / 2 / 2 - g.getFontMetrics().stringWidth(title) / 2,
                 authPanel.getHeight() / 2 / 2 - g.getFontMetrics().getHeight() * 2);
         g.dispose();
-        g2.drawImage(authPanel.getVolatileImage(), 0, 0, authPanel.getWidth() / 2 * 2, authPanel.getHeight() / 2 * 2, null);
+        g2.drawImage(authPanel.getVolatileImage(), 0, 0, authPanel.getWidth() / 2 * 2, authPanel.getHeight() / 2 * 2,
+                null);
     }
 
     protected void update(Graphics g) {

@@ -17,24 +17,25 @@ import java.util.Arrays;
 import java.util.Random;
 
 public final class AuthLastLogin {
-    public final String username;
     public final String accessToken;
-    public final String uuid;
 
-    private AuthLastLogin(String username, String accessToken, String uuid) {
-        this.username = username;
+    private AuthLastLogin(String accessToken) {
         this.accessToken = accessToken;
-        this.uuid = uuid;
     }
 
-    public static void writeLastLogin(String accessToken, String uuid) {
+    public static void writeLastLogin(String accessToken) {
         File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
         DataOutputStream dos = null;
         try {
-            Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
-            dos = new DataOutputStream(new CipherOutputStream(Files.newOutputStream(lastLogin.toPath()), cipher));
-            for (String s : Arrays.asList(AuthPanel.getUsernameTextField().getText(),
-                    AuthPanel.getRememberCheckbox().getState() ? AuthPanel.getPasswordTextField().getText() : "", accessToken, uuid)) {
+            Cipher cipher = getCipher(Cipher.DECRYPT_MODE, "passwordfile");
+            if (cipher != null) {
+                dos = new DataOutputStream(new CipherOutputStream(Files.newOutputStream(lastLogin.toPath()), cipher));
+            } else {
+                dos = new DataOutputStream(Files.newOutputStream(lastLogin.toPath()));
+            }
+            for (String s : Arrays.asList(accessToken, AuthPanel.getUsernameTextField().getText(),
+                    AuthPanel.getPasswordTextField().getText(),
+                    AuthPanel.getRememberCheckbox().getState() ? AuthPanel.getPasswordTextField().getText() : "")) {
                 dos.writeUTF(s);
             }
         } catch (Exception e) {
@@ -54,20 +55,25 @@ public final class AuthLastLogin {
         File lastLogin = new File(MCUtils.getWorkingDirectory(), "lastlogin");
         DataInputStream dis = null;
         try {
-            Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
-            dis = new DataInputStream(new CipherInputStream(Files.newInputStream(lastLogin.toPath()), cipher));
-            String username = dis.readUTF();
-            String password = dis.readUTF();
+            Cipher cipher = getCipher(Cipher.ENCRYPT_MODE, "passwordfile");
+            if (cipher != null) {
+                dis = new DataInputStream(new CipherInputStream(Files.newInputStream(lastLogin.toPath()), cipher));
+            } else {
+                dis = new DataInputStream(Files.newInputStream(lastLogin.toPath()));
+            }
             String accessToken = dis.readUTF();
-            if (username.length() > 0 && accessToken.length() > 0) {
-                AuthPanel.getUsernameTextField().setText(username);
-                AuthPanel.getPasswordTextField().setText(password);
-                AuthPanel.getRememberCheckbox().setState(password.length() > 0);
-                return new AuthLastLogin(username, accessToken, "");
+            if (accessToken.length() > 0) {
+                AuthPanel.getUsernameTextField().setText(dis.readUTF());
+                AuthPanel.getPasswordTextField().setText(dis.readUTF());
+                if (AuthPanel.getRememberCheckbox().getState()) {
+                    AuthPanel.getPasswordTextField().getText().length();
+                }
+                AuthPanel.getRememberCheckbox().setState(dis.readBoolean());
+                return new AuthLastLogin(accessToken);
             }
         } catch (Exception e) {
             System.err.println("Failed to read lastlogin from " + lastLogin.getAbsolutePath());
-            return null;
+            e.printStackTrace();
         } finally {
             try {
                 if (dis != null) {
@@ -82,19 +88,22 @@ public final class AuthLastLogin {
 
     /**
      * ##################################################
-     * #               GETTERS & SETTERS                #
+     * # GETTERS & SETTERS #
      * ##################################################
      */
-    private static Cipher getCipher(int mode) throws Exception {
-        Random rand = new Random(43287234L);
+    private static Cipher getCipher(int cipherMode, String cipherString) throws Exception {
+        Random random = new Random(43287234L);
         byte[] salt = new byte[8];
-        rand.nextBytes(salt);
+        random.nextBytes(salt);
 
-        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-        SecretKey key = skf.generateSecret(new PBEKeySpec("passwordfile".toCharArray()));
+        SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+        PBEKeySpec pbeKeySpec = new PBEKeySpec(cipherString.toCharArray());
+
+        SecretKey secretKey = secretKeyFactory.generateSecret(pbeKeySpec);
+        PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 5);
 
         Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
-        cipher.init(mode, key, new PBEParameterSpec(salt, 5));
+        cipher.init(cipherMode, secretKey, pbeParamSpec);
         return cipher;
     }
 

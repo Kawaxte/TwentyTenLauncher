@@ -34,7 +34,8 @@ public class MCUpdateDownload {
         byte[] buffer = new byte[1024];
         for (URL url : minecraftUpdate.getUrlList()) {
             connection = url.openConnection();
-            try (InputStream is = minecraftUpdate.getJarInputStream().getJarInputStream(connection); FileOutputStream fos = new FileOutputStream(path + minecraftUpdate.getFileName(url))) {
+            try (InputStream is = minecraftUpdate.getJarInputStream().getJarInputStream(connection);
+                    FileOutputStream fos = new FileOutputStream(path + minecraftUpdate.getFileName(url))) {
                 long downloadStartTime = System.currentTimeMillis();
                 int bufferSize = is.read(buffer);
                 if (bufferSize > 0) {
@@ -42,7 +43,8 @@ public class MCUpdateDownload {
                     do {
                         fos.write(buffer, 0, bufferSize);
                         minecraftUpdate.setCurrentSizeDownload(minecraftUpdate.getCurrentSizeDownload() + bufferSize);
-                        minecraftUpdate.setPercentage((int) ((double) minecraftUpdate.getCurrentSizeDownload() / (double) minecraftUpdate.getTotalSizeDownload() * 45.0D + 10.0D));
+                        minecraftUpdate.setPercentage((int) ((double) minecraftUpdate.getCurrentSizeDownload()
+                                / (double) minecraftUpdate.getTotalSizeDownload() * 45.0D + 10.0D));
                         if (minecraftUpdate.getPercentage() > initialPercentage) {
                             initialPercentage = minecraftUpdate.getPercentage();
 
@@ -50,11 +52,15 @@ public class MCUpdateDownload {
                             if (downloadTime >= 1000L) {
                                 double downloadSpeed = (double) downloadedAmount / downloadTime;
                                 downloadSpeed = (downloadSpeed * 100.0D) / 100.0D;
-                                minecraftUpdate.setDownloadSpeedMessage(downloadSpeed < 1000.0D ? " @ " + (int) downloadSpeed + " B/sec" : " @ " + (int) (downloadSpeed / 1000.0D) + " KB/sec");
+                                minecraftUpdate.setDownloadSpeedMessage(
+                                        downloadSpeed < 1000.0D ? " @ " + (int) downloadSpeed + " B/sec"
+                                                : " @ " + (int) (downloadSpeed / 1000.0D) + " KB/sec");
                                 downloadStartTime += 1000L;
                             }
                             minecraftUpdate.setSubtaskMessage("Retrieving: " + minecraftUpdate.getFileName(url) + " "
-                                    + minecraftUpdate.getCurrentSizeDownload() * 100 / minecraftUpdate.getTotalSizeDownload() + "%" + minecraftUpdate.getDownloadSpeedMessage());
+                                    + minecraftUpdate.getCurrentSizeDownload() * 100
+                                            / minecraftUpdate.getTotalSizeDownload()
+                                    + "%" + minecraftUpdate.getDownloadSpeedMessage());
                         }
                         downloadedAmount += bufferSize;
                         bufferSize = is.read(buffer);
@@ -62,8 +68,10 @@ public class MCUpdateDownload {
                 }
             }
         }
-        boolean renameTo = new File(path + minecraftUpdate.getMainJarName() + ".jar").renameTo(new File(path + "minecraft.jar"));
-        assert renameTo : "Failed to rename " + path + minecraftUpdate.getMainJarName() + ".jar to " + path + "minecraft.jar";
+        boolean renameTo = new File(path + minecraftUpdate.getMainJarName() + ".jar")
+                .renameTo(new File(path + "minecraft.jar"));
+        assert renameTo
+                : "Failed to rename " + path + minecraftUpdate.getMainJarName() + ".jar to " + path + "minecraft.jar";
         minecraftUpdate.setSubtaskMessage("");
     }
 }
