@@ -1,0 +1,248 @@
+{
+  "infdev": [
+    {
+      "id": "inf20100629",
+      "url": "https://archive.org/download/legacy-minecraft-infdev/inf20100629.jar"
+    },
+    {
+      "id": "inf20100630-1",
+      "url": "https://archive.org/download/legacy-minecraft-infdev/inf20100630-1.jar"
+    },
+    {
+      "id": "inf20100630-2",
+      "url": "https://archive.org/download/legacy-minecraft-infdev/inf20100630-2.jar"
+    }
+  ],
+  "beta": [
+    {
+      "id": "b1.0.2",
+      "url": "https://archive.org/download/legacy-minecraft-beta/b1.0.2.jar"
+    },
+    {
+      "id": "b1.0",
+      "url": "https://archive.org/download/legacy-minecraft-beta/b1.0.jar"
+    },
+    {
+      "id": "b1.0_01",
+      "url": "https://archive.org/download/legacy-minecraft-beta/b1.0_01.jar"
+    },
+    {
+      "id": "b1.1",
+      "url": "https://archive.org/download/legacy-minecraft-beta/b1.1.jar"
+    },
+    {
+      "id": "b1.1_01",
+      "url": "https://archive.org/download/legacy-minecraft-beta/b1.1_01.jar"
+    },
+    {
+      "id": "b1.1_02",
+      "url": "https://archive.org/download/legacy-minecraft-beta/b1.1_02.jar"
+    },
+    {
+      "id": "b1.2",
+      "url": "https://archive.org/download/legacy-minecraft-beta/b1.2.jar"
+    },
+    {
+      "id": "b1.2_01",
+      "url": "https://archive.org/download/legacy-minecraft-beta/b1.2_01.jar"
+    },
+    {
+      "id": "b1.2_02",
+      "url": "https://archive.org/download/legacy-minecraft-beta/b1.2_02.jar"
+    }
+  ],
+  "alpha": [
+    {
+      "id": "a1.0.10",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.10.jar"
+    },
+    {
+      "id": "a1.0.11",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.11.jar"
+    },
+    {
+      "id": "a1.0.12",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.12.jar"
+    },
+    {
+      "id": "a1.0.13",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13.jar"
+    },
+    {
+      "id": "a1.0.13_01-1",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13_01-1.jar"
+    },
+    {
+      "id": "a1.0.13_01-2",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13_01-2.jar"
+    },
+    {
+      "id": "a1.0.14",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.14.jar"
+    },
+    {
+      "id": "a1.0.15",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.15.jar"
+    },
+    {
+      "id": "a1.0.16",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16.jar"
+    },
+    {
+      "id": "a1.0.16_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16_01.jar"
+    },
+    {
+      "id": "a1.0.16_02",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16_02.jar"
+    },
+    {
+      "id": "a1.0.17_02",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_02.jar"
+    },
+    {
+      "id": "a1.0.17_03",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_03.jar"
+    },
+    {
+      "id": "a1.0.17_04",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_04.jar"
+    },
+    {
+      "id": "a1.0.1_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.1_01.jar"
+    },
+    {
+      "id": "a1.0.2_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.2_01.jar"
+    },
+    {
+      "id": "a1.0.2_02",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.2_02.jar"
+    },
+    {
+      "id": "a1.0.3",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.3.jar"
+    },
+    {
+      "id": "a1.0.4",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.4.jar"
+    },
+    {
+      "id": "a1.0.5",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.5.jar"
+    },
+    {
+      "id": "a1.0.5_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.5_01.jar"
+    },
+    {
+      "id": "a1.0.6",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6.jar"
+    },
+    {
+      "id": "a1.0.6_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6_01.jar"
+    },
+    {
+      "id": "a1.0.6_03",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6_03.jar"
+    },
+    {
+      "id": "a1.0.7",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.7.jar"
+    },
+    {
+      "id": "a1.0.8_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.8_01.jar"
+    },
+    {
+      "id": "a1.0.9",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.0.9.jar"
+    },
+    {
+      "id": "a1.1.0",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.1.0.jar"
+    },
+    {
+      "id": "a1.1.1",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.1.1.jar"
+    },
+    {
+      "id": "a1.1.2",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.1.2.jar"
+    },
+    {
+      "id": "a1.1.2_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.1.2_01.jar"
+    },
+    {
+      "id": "a1.2.0",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0.jar"
+    },
+    {
+      "id": "a1.2.0_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0_01.jar"
+    },
+    {
+      "id": "a1.2.0_02",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0_02.jar"
+    },
+    {
+      "id": "a1.2.1_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.1_01.jar"
+    },
+    {
+      "id": "a1.2.2",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.2.jar"
+    },
+    {
+      "id": "a1.2.3",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3.jar"
+    },
+    {
+      "id": "a1.2.3_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_01.jar"
+    },
+    {
+      "id": "a1.2.3_02",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_02.jar"
+    },
+    {
+      "id": "a1.2.3_04",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_04.jar"
+    },
+    {
+      "id": "a1.2.3_05",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_05.jar"
+    },
+    {
+      "id": "a1.2.4_01",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.4_01.jar"
+    },
+    {
+      "id": "a1.2.5",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.5.jar"
+    },
+    {
+      "id": "a1.2.6",
+      "url": "https://archive.org/download/legacy-minecraft-alpha/a1.2.6.jar"
+    }
+  ],
+  "libraries": [
+    {
+      "natives-linux": {
+        "path": "bin/natives",
+        "url": "https://archive.org/download/lwjgl-2/lwjgl-2.9.3/native/linux"
+      },
+      "natives-osx": {
+        "path": "bin/natives",
+        "url": "https://archive.org/download/lwjgl-2/lwjgl-2.9.3/native/macosx"
+      },
+      "natives-windows": {
+        "path": "bin/natives",
+        "url": "https://archive.org/download/lwjgl-2/lwjgl-2.9.3/native/windows"
+      }
+    }
+  ]
+}
