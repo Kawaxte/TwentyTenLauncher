@@ -1,288 +1,344 @@
 {
   "beta": [
     {
-      "versionId": "b1.0",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-beta/b1.0.jar",
-      "releaseDate": "1292803200"
+      "id": "b1.0",
+      "download": "https://archive.org/download/legacy-minecraft-beta/b1.0.jar",
+      "release": "1292803200",
+      "port": "11705"
     },
     {
-      "versionId": "b1.0_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-beta/b1.0_01.jar",
-      "releaseDate": "1292803200"
+      "id": "b1.0_01",
+      "download": "https://archive.org/download/legacy-minecraft-beta/b1.0_01.jar",
+      "release": "1292803200",
+      "port": "11705"
     },
     {
-      "versionId": "b1.0.2",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-beta/b1.0.2.jar",
-      "releaseDate": "1292889600"
+      "id": "b1.0.2",
+      "download": "https://archive.org/download/legacy-minecraft-beta/b1.0.2.jar",
+      "release": "1292889600",
+      "port": "11705"
     },
     {
-      "versionId": "b1.1",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-beta/b1.1.jar",
-      "releaseDate": "1292976000"
+      "id": "b1.1",
+      "download": "https://archive.org/download/legacy-minecraft-beta/b1.1.jar",
+      "release": "1292976000",
+      "port": "11705"
     },
     {
-      "versionId": "b1.1_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-beta/b1.1_01.jar",
-      "releaseDate": "1292976000"
+      "id": "b1.1_01",
+      "download": "https://archive.org/download/legacy-minecraft-beta/b1.1_01.jar",
+      "release": "1292976000",
+      "port": "11705"
     },
     {
-      "versionId": "b1.1_02",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-beta/b1.1_02.jar",
-      "releaseDate": "1292976000"
+      "id": "b1.1_02",
+      "download": "https://archive.org/download/legacy-minecraft-beta/b1.1_02.jar",
+      "release": "1292976000",
+      "port": "11705"
     },
     {
-      "versionId": "b1.2",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-beta/b1.2.jar",
-      "releaseDate": "1294876800"
+      "id": "b1.2",
+      "download": "https://archive.org/download/legacy-minecraft-beta/b1.2.jar",
+      "release": "1294876800",
+      "port": "11705"
     },
     {
-      "versionId": "b1.2_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-beta/b1.2_01.jar",
-      "releaseDate": "1294963200"
+      "id": "b1.2_01",
+      "download": "https://archive.org/download/legacy-minecraft-beta/b1.2_01.jar",
+      "release": "1294963200",
+      "port": "11705"
     },
     {
-      "versionId": "b1.2_02",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-beta/b1.2_02.jar",
-      "releaseDate": "1295568000"
+      "id": "b1.2_02",
+      "download": "https://archive.org/download/legacy-minecraft-beta/b1.2_02.jar",
+      "release": "1295568000",
+      "port": "11705"
     }
   ],
   "alpha": [
     {
-      "versionId": "a1.0.1_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.1_01.jar",
-      "releaseDate": "1278115200"
+      "id": "a1.0.1_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.1_01.jar",
+      "release": "1278115200",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.2_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.2_01.jar",
-      "releaseDate": "1278374400"
+      "id": "a1.0.2_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.2_01.jar",
+      "release": "1278374400",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.2_02",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.2_02.jar",
-      "releaseDate": "1278374400"
+      "id": "a1.0.2_02",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.2_02.jar",
+      "release": "1278374400",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.3",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.3.jar",
-      "releaseDate": "1278460800"
+      "id": "a1.0.3",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.3.jar",
+      "release": "1278460800",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.4",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.4.jar",
-      "releaseDate": "1278633600"
+      "id": "a1.0.4",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.4.jar",
+      "release": "1278633600",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.5",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.5.jar",
-      "releaseDate": "1278979200"
+      "id": "a1.0.5",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.5.jar",
+      "release": "1278979200",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.5_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.5_01.jar",
-      "releaseDate": "1279065600"
+      "id": "a1.0.5_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.5_01.jar",
+      "release": "1279065600",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.6",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6.jar",
-      "releaseDate": "1279238400"
+      "id": "a1.0.6",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6.jar",
+      "release": "1279238400",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.6_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6_01.jar",
-      "releaseDate": "1279324800"
+      "id": "a1.0.6_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6_01.jar",
+      "release": "1279324800",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.6_03",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6_03.jar",
-      "releaseDate": "127932480"
+      "id": "a1.0.6_03",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6_03.jar",
+      "release": "127932480",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.7",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.7.jar",
-      "releaseDate": "1279497600"
+      "id": "a1.0.7",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.7.jar",
+      "release": "1279497600",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.8_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.8_01.jar",
-      "releaseDate": "1279497600"
+      "id": "a1.0.8_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.8_01.jar",
+      "release": "1279497600",
+      "port": "11703"
     },
     {
-      "versionId": "a1.0.9",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.9.jar",
-      "releaseDate": "1279670400"
+      "id": "a1.0.9",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.9.jar",
+      "release": "1279670400",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.10",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.10.jar",
-      "releaseDate": "1279756800"
+      "id": "a1.0.10",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.10.jar",
+      "release": "1279756800",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.11",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.11.jar",
-      "releaseDate": "1279843200"
+      "id": "a1.0.11",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.11.jar",
+      "release": "1279843200",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.12",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.12.jar",
-      "releaseDate": "1280102400"
+      "id": "a1.0.12",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.12.jar",
+      "release": "1280102400",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.13",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13.jar",
-      "releaseDate": "1280275200"
+      "id": "a1.0.13",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13.jar",
+      "release": "1280275200",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.13_01-1",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13_01-1.jar",
-      "releaseDate": "1280361600"
+      "id": "a1.0.13_01-1",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13_01-1.jar",
+      "release": "1280361600",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.13_01-2",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13_01-2.jar",
-      "releaseDate": "1280361600"
+      "id": "a1.0.13_01-2",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13_01-2.jar",
+      "release": "1280361600",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.14",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.14.jar",
-      "releaseDate": "1280448000"
+      "id": "a1.0.14",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.14.jar",
+      "release": "1280448000",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.15",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.15.jar",
-      "releaseDate": "1280793600"
+      "id": "a1.0.15",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.15.jar",
+      "release": "1280793600",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.16",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16.jar",
-      "releaseDate": "1281571200"
+      "id": "a1.0.16",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16.jar",
+      "release": "1281571200",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.16_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16_01.jar",
-      "releaseDate": "1281571200"
+      "id": "a1.0.16_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16_01.jar",
+      "release": "1281571200",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.16_02",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16_02.jar",
-      "releaseDate": "1281657600"
+      "id": "a1.0.16_02",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16_02.jar",
+      "release": "1281657600",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.17_02",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_02.jar",
-      "releaseDate": "1282262400"
+      "id": "a1.0.17_02",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_02.jar",
+      "release": "1282262400",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.17_03",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_03.jar",
-      "releaseDate": "1282521600"
+      "id": "a1.0.17_03",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_03.jar",
+      "release": "1282521600",
+      "port": "11702"
     },
     {
-      "versionId": "a1.0.17_04",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_04.jar",
-      "releaseDate": "1282521600"
+      "id": "a1.0.17_04",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_04.jar",
+      "release": "1282521600",
+      "port": "11702"
     },
     {
-      "versionId": "a1.1.0",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.1.0.jar",
-      "releaseDate": "1284336000"
+      "id": "a1.1.0",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.1.0.jar",
+      "release": "1284336000",
+      "port": "11702"
     },
     {
-      "versionId": "a1.1.1",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.1.1.jar",
-      "releaseDate": "1284768000"
+      "id": "a1.1.1",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.1.1.jar",
+      "release": "1284768000",
+      "port": "11702"
     },
     {
-      "versionId": "a1.1.2",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.1.2.jar",
-      "releaseDate": "1284768000"
+      "id": "a1.1.2",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.1.2.jar",
+      "release": "1284768000",
+      "port": "11702"
     },
     {
-      "versionId": "a1.1.2_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.1.2_01.jar",
-      "releaseDate": "1285200000"
+      "id": "a1.1.2_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.1.2_01.jar",
+      "release": "1285200000",
+      "port": "11702"
     },
     {
-      "versionId": "a1.2.0",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0.jar",
-      "releaseDate": "1288396800"
+      "id": "a1.2.0",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0.jar",
+      "release": "1288396800",
+      "port": ""
     },
     {
-      "versionId": "a1.2.0_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0_01.jar",
-      "releaseDate": "1288396800"
+      "id": "a1.2.0_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0_01.jar",
+      "release": "1288396800",
+      "port": ""
     },
     {
-      "versionId": "a1.2.0_02",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0_02.jar",
-      "releaseDate": "1288483200"
+      "id": "a1.2.0_02",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0_02.jar",
+      "release": "1288483200",
+      "port": ""
     },
     {
-      "versionId": "a1.2.1_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.1_01.jar",
-      "releaseDate": "1288915200"
+      "id": "a1.2.1_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.1_01.jar",
+      "release": "1288915200",
+      "port": ""
     },
     {
-      "versionId": "a1.2.2",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.2.jar",
-      "releaseDate": "1289347200"
+      "id": "a1.2.2",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.2.jar",
+      "release": "1289347200",
+      "port": ""
     },
     {
-      "versionId": "a1.2.3",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3.jar",
-      "releaseDate": "1290470400"
+      "id": "a1.2.3",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3.jar",
+      "release": "1290470400",
+      "port": ""
     },
     {
-      "versionId": "a1.2.3_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_01.jar",
-      "releaseDate": "1290556800"
+      "id": "a1.2.3_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_01.jar",
+      "release": "1290556800",
+      "port": ""
     },
     {
-      "versionId": "a1.2.3_02",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_02.jar",
-      "releaseDate": "1290643200"
+      "id": "a1.2.3_02",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_02.jar",
+      "release": "1290643200",
+      "port": ""
     },
     {
-      "versionId": "a1.2.3_04",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_04.jar",
-      "releaseDate": "1290729600"
+      "id": "a1.2.3_04",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_04.jar",
+      "release": "1290729600",
+      "port": ""
     },
     {
-      "versionId": "a1.2.3_05",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_05.jar",
-      "releaseDate": "1291075200"
+      "id": "a1.2.3_05",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_05.jar",
+      "release": "1291075200",
+      "port": ""
     },
     {
-      "versionId": "a1.2.4_01",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.4_01.jar",
-      "releaseDate": "1291075200"
+      "id": "a1.2.4_01",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.4_01.jar",
+      "release": "1291075200",
+      "port": ""
     },
     {
-      "versionId": "a1.2.5",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.5.jar",
-      "releaseDate": "1291161600"
+      "id": "a1.2.5",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.5.jar",
+      "release": "1291161600",
+      "port": ""
     },
     {
-      "versionId": "a1.2.6",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-alpha/a1.2.6.jar",
-      "releaseDate": "1291334400"
+      "id": "a1.2.6",
+      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.6.jar",
+      "release": "1291334400",
+      "port": ""
     }
   ],
   "infdev": [
     {
-      "versionId": "inf20100629",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-infdev/inf20100629.jar",
-      "releaseDate": "1277769600"
+      "id": "inf20100629",
+      "download": "https://archive.org/download/legacy-minecraft-infdev/inf20100629.jar",
+      "release": "1277769600",
+      "port": "11702"
     },
     {
-      "versionId": "inf20100630-1",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-infdev/inf20100630-1.jar",
-      "releaseDate": "1277856000"
+      "id": "inf20100630-1",
+      "download": "https://archive.org/download/legacy-minecraft-infdev/inf20100630-1.jar",
+      "release": "1277856000",
+      "port": "11702"
     },
     {
-      "versionId": "inf20100630-2",
-      "downloadUrl": "https://archive.org/download/legacy-minecraft-infdev/inf20100630-2.jar",
-      "releaseDate": "1277856000"
+      "id": "inf20100630-2",
+      "download": "https://archive.org/download/legacy-minecraft-infdev/inf20100630-2.jar",
+      "release": "1277856000",
+      "port": "11702"
     }
   ]
 }
