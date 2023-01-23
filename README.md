@@ -1,16 +1,15 @@
-## What is AlphacraftLauncher?
-AlphacraftLauncher is a repurpose of the original Minecraft Launcher released on 29 June 2010.
+# TwentyTen Launcher
 
-By default, AlphacraftLauncher will download **Beta 1.1_02** as it was the last version of Minecraft to be released in 2010, and is what powers 'AlphaPlace', the popular legacy Minecraft server. 
+## Overview
+TwentyTen Launcher (TTLauncher) is a modified version of the original Minecraft Launcher, which was released on June 29, 2010.
 
-This launcher can run versions from **indev 0.13 (20091223-2)** up to **1.5.2** as they were the first and last to support the legacy working directory system, and the loading of the 'net.minecraft.client.MinecraftApplet' class, but if you want to be historically adequate, start from **infdev (20100629)** and end at **Beta 1.2_02**.
+It is capable of running versions of Minecraft ranging from indev 0.13 (20091223-2) to 1.5.2. These versions were chosen because they were the first and last to support the legacy working directory system and the loading of the 'net.minecraft.client.MinecraftApplet' class. If you want to be historically accurate, you can start with infdev (20100629) and end at Beta 1.2_02.
 
-> You need a minimum of Java 8 or greater to run this application.
-
+__It is important to note that you will need a minimum of Java 8 or greater to run this application.__
 ## Features
-- You can sign in using a *valid* Microsoft account.
-  - Enter (*case insensitive*) "**$MICROSOFT**:**$CORPORATION**" as the login credentials to initiate the MSA.
+- Sign in using a valid Microsoft or Mojang account.
+- Manage various indev, Alpha, and Beta versions of Minecraft through instances.
 - Support for skins and the usage of sound proxy.
-  - Due to the way the launcher works, it is nearly impossible to add specific sound proxy ports to specific versions of the game.
-- Out-of-box compatibility with MCPatcher and ModLoader.
+- Out-of-box compatibility with MCPatcher (HDTextureFix) and ModLoader.
+
 ![Launcher](https://i.imgur.com/CNB25rv.png)
