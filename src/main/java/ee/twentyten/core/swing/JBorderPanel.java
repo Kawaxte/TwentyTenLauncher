@@ -12,8 +12,6 @@ public abstract class JBorderPanel extends JPanel {
 
   public JBorderPanel(LayoutManager layout, boolean isDoubleBuffered) {
     super(layout, isDoubleBuffered);
-
-    this.setBackground(Color.GRAY);
   }
 
   @Override
