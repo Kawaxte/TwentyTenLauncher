@@ -10,7 +10,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
 import javax.swing.JPanel;
@@ -45,7 +44,7 @@ public class LauncherPanel extends JPanel {
     int textWidth = fm.stringWidth("TwentyTen Launcher");
     int textHeight = fm.getHeight();
 
-    g2d.drawString("TwentyTen Launcher", (pWidth >> 1 >> 1) - (textWidth / 2),
+    g2d.drawString("TwentyTen Launcher", (pWidth >> 1 >> 1) - (textWidth >> 1),
         (pHeight >> 1 >> 1) - ((textHeight) << 1));
   }
 
@@ -65,9 +64,6 @@ public class LauncherPanel extends JPanel {
         panelHeight >> 1);
 
     Graphics2D g2d = gcVolatileBgImage.createGraphics();
-    //on Mac OS X, the text is drawn with anti-aliasing. We want to remove the anti-aliasing.
-    g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     try {
       for (int index = 0; index < (gridWidth * gridHeight); index++) {
         int gridx = imageWidth * (index % gridWidth);
