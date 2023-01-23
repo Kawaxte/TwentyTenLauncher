@@ -9,7 +9,6 @@ public final class VersionManager {
   public static String currentVersion = null;
 
   private VersionManager() {
-    throw new UnsupportedOperationException("Utility class is not instantiable");
   }
 
   public static String getCurrentVersion() {
