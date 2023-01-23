@@ -38,6 +38,8 @@ public class LauncherLoginPanel extends JBorderPanel {
   public LauncherLoginPanel() {
     super(new BorderLayout(0, 8), true);
 
+    this.setBackground(Color.GRAY);
+
     this.initComponents();
   }
 
