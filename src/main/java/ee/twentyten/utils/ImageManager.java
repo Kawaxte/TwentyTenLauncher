@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 public final class ImageManager {
 
   private ImageManager() {
-    throw new UnsupportedOperationException("Utility class is not instantiable");
   }
 
   public static Image readImage(Class<?> clazz, String name) throws IOException {
