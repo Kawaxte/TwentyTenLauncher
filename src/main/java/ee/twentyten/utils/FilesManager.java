@@ -6,34 +6,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class LauncherManager {
+public final class FilesManager {
 
   private static final String USER_HOME = System.getProperty("user.home", ".");
   private static final String APPDATA = System.getenv("APPDATA");
-  private static Map<EPlatform, File> gameDirectory;
+  private static final Map<EPlatform, File> gameDirectories;
 
   static {
-    LauncherManager.gameDirectory = new HashMap<>();
+    gameDirectories = new HashMap<>();
 
     File gameDirectoryForOsx = new File(
         String.format("%s/Library/Application Support", USER_HOME), "twentyten");
-    LauncherManager.gameDirectory.put(EPlatform.OSX, gameDirectoryForOsx);
+    gameDirectories.put(EPlatform.OSX, gameDirectoryForOsx);
 
     File gameDirectoryForLinux = new File(USER_HOME, ".twentyten");
-    LauncherManager.gameDirectory.put(EPlatform.LINUX, gameDirectoryForLinux);
+    gameDirectories.put(EPlatform.LINUX, gameDirectoryForLinux);
 
     File gameDirectoryForWindows =
         APPDATA != null ? new File(APPDATA, ".twentyten") : new File(USER_HOME, ".twentyten");
-    LauncherManager.gameDirectory.put(EPlatform.WINDOWS, gameDirectoryForWindows);
+    gameDirectories.put(EPlatform.WINDOWS, gameDirectoryForWindows);
   }
 
-  private LauncherManager() {
+  private FilesManager() {
   }
 
   public static File getGameDirectory() {
-    EPlatform platformName = EPlatform.getByOSNames();
+    EPlatform platformName = EPlatform.getPlatform();
 
-    File gameDirectory = LauncherManager.gameDirectory.get(platformName);
+    File gameDirectory = FilesManager.gameDirectories.get(platformName);
     Objects.requireNonNull(gameDirectory, "gameDirectory == null!");
     if (!gameDirectory.mkdirs() && !gameDirectory.exists()) {
       throw new RuntimeException("Can't create the game directory!");
