@@ -3,7 +3,7 @@ package ee.twentyten;
 import ee.twentyten.core.LinkedProperties;
 import ee.twentyten.debug.DebugSystem;
 import ee.twentyten.utils.CipherManager;
-import ee.twentyten.utils.LauncherManager;
+import ee.twentyten.utils.FilesManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,7 +27,7 @@ public class LauncherConfig {
   private String versionId;
 
   public static LauncherConfig load() throws IOException {
-    File configFile = new File(LauncherManager.getGameDirectory(), "twentyten.properties");
+    File configFile = new File(FilesManager.getGameDirectory(), "twentyten.properties");
     if (!configFile.exists()) {
       boolean created = configFile.createNewFile();
       if (!created) {
@@ -71,7 +71,7 @@ public class LauncherConfig {
     properties.setProperty("using-infdev", String.valueOf(this.infdevBox));
     properties.setProperty("selected-version", this.versionId);
 
-    File configFile = new File(LauncherManager.getGameDirectory(), "twentyten.properties");
+    File configFile = new File(FilesManager.getGameDirectory(), "twentyten.properties");
     try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
       properties.store(fos, "TwentyTen Launcher Properties File");
 
