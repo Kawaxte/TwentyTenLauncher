@@ -1,40 +1,31 @@
 package ee.twentyten;
 
 import ee.twentyten.core.EPlatform;
+import ee.twentyten.core.EUnit;
 import ee.twentyten.ui.LauncherFrame;
-import ee.twentyten.utils.ConfigManager;
-import ee.twentyten.utils.LookAndFeelManager;
-import ee.twentyten.utils.VersionManager;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 public class Launcher {
 
-  private static final String VERSION = VersionManager.getCurrentVersion();
+  private static final double MIN_MEMORY = 5.12e8;
+  private static final long MAX_MEMORY = Runtime.getRuntime().maxMemory();
 
-  public static void main(String[] args)
-      throws URISyntaxException, IOException {
-    if (Runtime.getRuntime().maxMemory() < 512L * 1024L * 1024L) {
-      System.out.print("Starting with process");
-      String jarPath = Launcher.class.getProtectionDomain().getCodeSource()
-          .getLocation().toURI()
-          .getPath();
+  public static void main(String... args) {
+    List<String> parameters = new ArrayList<>();
+    parameters.add(EPlatform.getPlatform() == EPlatform.WINDOWS ? "javaw" : "java");
+    parameters.add("-Xmx1G");
+    parameters.add("-Dsun.java2d.d3d=false");
+    parameters.add("-Dsun.java2d.opengl=false");
+    parameters.add("-Dsun.java2d.pmoffscreen=false");
+    parameters.add("-cp");
+    parameters.add(System.getProperty("java.class.path"));
+    parameters.add(LauncherFrame.class.getName());
 
-      List<String> arguments = new LinkedList<>();
-      arguments.add(EPlatform.getByOSNames() == EPlatform.WINDOWS ? "javaw" : "java");
-      arguments.add("-Xmx1G");
-      arguments.add("-Dsun.java2d.opengl=false");
-      arguments.add("-Dsun.java2d.d3d=false");
-      arguments.add("-Dsun.java2d.pmoffscreen=false");
-      arguments.add("-cp");
-      arguments.add(jarPath);
-      arguments.add("ee.twentyten.launcher.Launcher");
-
-      ProcessBuilder pb = new ProcessBuilder(arguments);
+    if (EUnit.convert(MAX_MEMORY, EUnit.MEGABYTE) < MIN_MEMORY) {
+      ProcessBuilder pb = new ProcessBuilder(parameters);
       try {
         Process process = pb.start();
         if (process.waitFor() != 0) {
@@ -49,24 +40,8 @@ public class Launcher {
             String.format("An error occurred while waiting for the process to terminate: %s%n",
                 e.getMessage()), "Error", JOptionPane.ERROR_MESSAGE);
       }
+    } else {
+      LauncherFrame.main(args);
     }
-
-    LookAndFeelManager.setLookAndFeel();
-
-    LauncherConfig config = LauncherConfig.load();
-    if (config.getClientToken() == null) {
-      try {
-        ConfigManager.initConfig();
-      } catch (InstantiationException | IllegalAccessException e) {
-        throw new RuntimeException("Can't initialise the config!", e);
-      }
-    }
-
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        new LauncherFrame(String.format("TwentyTen Launcher %s", VERSION));
-      }
-    });
   }
 }
