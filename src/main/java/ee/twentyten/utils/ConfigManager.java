@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public final class ConfigManager {
 
+  private static final String DEFAULT_CLIENT_TOKEN = ConfigManager.getClientToken();
   private static final String DEFAULT_ACCESS_TOKEN = "";
   private static final String DEFAULT_USERNAME = "";
   private static final String DEFAULT_PASSWORD = "";
@@ -22,7 +23,7 @@ public final class ConfigManager {
   }
 
   public static String getClientToken() {
-    File configFile = new File(LauncherManager.getGameDirectory(), "twentyten.properties");
+    File configFile = new File(FilesManager.getGameDirectory(), "twentyten.properties");
     if (!configFile.exists()) {
       return UUID.randomUUID().toString().replace("-", "");
     }
@@ -40,7 +41,7 @@ public final class ConfigManager {
 
   public static void initConfig() throws InstantiationException, IllegalAccessException {
     LauncherConfig config = LauncherConfig.class.newInstance();
-    config.setClientToken(ConfigManager.getClientToken());
+    config.setClientToken(DEFAULT_CLIENT_TOKEN);
     config.setAccessToken(DEFAULT_ACCESS_TOKEN);
     config.setUsername(DEFAULT_USERNAME);
     config.setPassword(DEFAULT_PASSWORD);
