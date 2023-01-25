@@ -1,25 +1,21 @@
 package ee.twentyten.core;
 
 import java.util.Locale;
-import lombok.Getter;
 
-@Getter
 public enum EPlatform {
-  OSX("macosx", "mac", "darwin"),
-  LINUX("linux", "nix", "nux", "aix"),
-  WINDOWS("windows", "win");
+  OSX("mac", "darwin"),
+  LINUX("nix", "nux", "aix"),
+  WINDOWS("win");
 
   private static final String OS_NAME = System.getProperty("os.name", "generic")
       .toLowerCase(Locale.getDefault());
-  private final String name;
   private final String[] osNames;
 
-  EPlatform(String name, String... osNames) {
-    this.name = name;
+  EPlatform(String... osNames) {
     this.osNames = osNames;
   }
 
-  public static EPlatform getByOSNames() {
+  public static EPlatform getPlatform() {
     for (EPlatform platform : values()) {
       for (String os : platform.osNames) {
         if (OS_NAME.contains(os)) {
