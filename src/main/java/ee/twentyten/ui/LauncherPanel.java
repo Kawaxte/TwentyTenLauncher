@@ -19,7 +19,6 @@ import lombok.Getter;
 public class LauncherPanel extends JPanel {
 
   private final Image bgImage;
-  private final LauncherLoginPanel loginPanel;
   private VolatileImage gcVolatileBgImage;
 
   public LauncherPanel() {
@@ -32,8 +31,8 @@ public class LauncherPanel extends JPanel {
 
     this.setPreferredSize(new Dimension(854, 480));
 
-    this.loginPanel = new LauncherLoginPanel();
-    this.add(this.loginPanel);
+    LauncherLoginPanel loginPanel = new LauncherLoginPanel();
+    this.add(loginPanel);
   }
 
   private void getTitle(int pWidth, int pHeight, Graphics2D g2d) {
