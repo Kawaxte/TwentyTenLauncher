@@ -22,7 +22,8 @@ public final class VersionManager {
     String formattedDay = String.format("%02d", day);
     String formattedMonth = String.format("%02d", month);
 
-    currentVersion = String.format("%d.%s.%s%s", x, formattedMonth, formattedDay, formattedYear);
-    return currentVersion;
+    VersionManager.currentVersion = String.format("%d.%s.%s%s", x, formattedMonth, formattedDay,
+        formattedYear);
+    return VersionManager.currentVersion;
   }
 }
