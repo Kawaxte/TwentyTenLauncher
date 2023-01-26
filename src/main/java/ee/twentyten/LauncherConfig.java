@@ -1,7 +1,6 @@
 package ee.twentyten;
 
 import ee.twentyten.core.LinkedProperties;
-import ee.twentyten.debug.DebugSystem;
 import ee.twentyten.utils.CipherManager;
 import ee.twentyten.utils.FilesManager;
 import java.io.File;
@@ -39,8 +38,6 @@ public class LauncherConfig {
       LinkedProperties properties = new LinkedProperties();
       properties.load(fis);
 
-      DebugSystem.println(configFile.getAbsolutePath());
-
       LauncherConfig config = new LauncherConfig();
       config.clientToken = properties.getProperty("client-token");
       config.accessToken = CipherManager.decrypt(properties.getProperty("access-token"));
@@ -74,8 +71,6 @@ public class LauncherConfig {
     File configFile = new File(FilesManager.getGameDirectory(), "twentyten.properties");
     try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
       properties.store(fos, "TwentyTen Launcher Properties File");
-
-      DebugSystem.println(configFile.getAbsolutePath());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
