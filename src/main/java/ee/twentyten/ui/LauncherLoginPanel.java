@@ -1,11 +1,17 @@
 package ee.twentyten.ui;
 
 import ee.twentyten.core.swing.JBorderPanel;
+import ee.twentyten.utils.VersionManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -19,6 +25,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LauncherLoginPanel extends JBorderPanel {
+
+  private String linkUrls;
+  private boolean outdated;
 
   private JLabel errorLabel;
   private JLabel usernameLabel;
@@ -39,6 +48,10 @@ public class LauncherLoginPanel extends JBorderPanel {
   }
 
   private void initComponents() {
+    this.linkUrls =
+        this.outdated ? VersionManager.GITHUB_LATEST_URL : VersionManager.SIGNUP_LIVE_URL;
+    this.outdated = VersionManager.isOutdated();
+
     this.errorLabel = new JLabel("\u00A0", SwingConstants.CENTER);
     this.errorLabel.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 16));
     this.errorLabel.setForeground(Color.RED.darker());
@@ -48,6 +61,21 @@ public class LauncherLoginPanel extends JBorderPanel {
     this.createMiddlePanel1(gl);
     this.createMiddlePanel2(gl);
     this.createBottomPanel();
+
+    MouseAdapter ma = new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent me) {
+        Object source = me.getSource();
+        if (source == linkLabel) {
+          try {
+            Desktop.getDesktop().browse(URI.create(linkUrls));
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    };
+    this.linkLabel.addMouseListener(ma);
   }
 
   private void createMiddlePanel1(GridLayout gl) {
@@ -87,8 +115,11 @@ public class LauncherLoginPanel extends JBorderPanel {
     JPanel bottomPanel = new JPanel(new BorderLayout());
     bottomPanel.setBackground(Color.GRAY);
 
-    this.linkLabel = new JLabel("<html><a href=''>You need to update the launcher!</a></html>",
-        SwingConstants.LEFT);
+    this.linkLabel = new JLabel(this.outdated ? String.format(
+        "<html><a href='%s'>You need to update the launcher!</a></html>",
+        VersionManager.GITHUB_LATEST_URL)
+        : String.format("<html><a href='%s'>Need account?</a></html>",
+            VersionManager.SIGNUP_LIVE_URL), SwingConstants.LEFT);
     this.linkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
     this.linkLabel.setForeground(Color.BLUE);
     bottomPanel.add(this.linkLabel, BorderLayout.WEST);
