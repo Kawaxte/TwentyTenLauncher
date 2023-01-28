@@ -1,4 +1,4 @@
-package ee.twentyten.utils;
+package ee.twentyten.util;
 
 import ee.twentyten.LauncherConfig;
 import ee.twentyten.core.LinkedProperties;

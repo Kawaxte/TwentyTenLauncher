@@ -1,4 +1,4 @@
-package ee.twentyten.utils;
+package ee.twentyten.util;
 
 public final class FilesManager {
 

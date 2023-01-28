@@ -1,4 +1,4 @@
-package ee.twentyten.utils;
+package ee.twentyten.util;
 
 import java.io.IOException;
 import java.io.InputStream;

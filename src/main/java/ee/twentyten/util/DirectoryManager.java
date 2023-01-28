@@ -1,4 +1,4 @@
-package ee.twentyten.utils;
+package ee.twentyten.util;
 
 import ee.twentyten.core.EPlatform;
 import java.io.File;

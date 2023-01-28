@@ -1,4 +1,4 @@
-package ee.twentyten.utils;
+package ee.twentyten.util;
 
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
