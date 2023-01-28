@@ -2,342 +2,286 @@
   "beta": [
     {
       "id": "b1.0",
-      "download": "https://archive.org/download/legacy-minecraft-beta/b1.0.jar",
-      "release": "1292803200",
+      "host": "betacraft.uk",
       "port": "11705"
     },
     {
       "id": "b1.0_01",
-      "download": "https://archive.org/download/legacy-minecraft-beta/b1.0_01.jar",
-      "release": "1292803200",
+      "host": "betacraft.uk",
       "port": "11705"
     },
     {
       "id": "b1.0.2",
-      "download": "https://archive.org/download/legacy-minecraft-beta/b1.0.2.jar",
-      "release": "1292889600",
+      "host": "betacraft.uk",
       "port": "11705"
     },
     {
       "id": "b1.1",
-      "download": "https://archive.org/download/legacy-minecraft-beta/b1.1.jar",
-      "release": "1292976000",
+      "host": "betacraft.uk",
       "port": "11705"
     },
     {
       "id": "b1.1_01",
-      "download": "https://archive.org/download/legacy-minecraft-beta/b1.1_01.jar",
-      "release": "1292976000",
+      "host": "betacraft.uk",
       "port": "11705"
     },
     {
       "id": "b1.1_02",
-      "download": "https://archive.org/download/legacy-minecraft-beta/b1.1_02.jar",
-      "release": "1292976000",
+      "host": "betacraft.uk",
       "port": "11705"
     },
     {
       "id": "b1.2",
-      "download": "https://archive.org/download/legacy-minecraft-beta/b1.2.jar",
-      "release": "1294876800",
+      "host": "betacraft.uk",
       "port": "11705"
     },
     {
       "id": "b1.2_01",
-      "download": "https://archive.org/download/legacy-minecraft-beta/b1.2_01.jar",
-      "release": "1294963200",
+      "host": "betacraft.uk",
       "port": "11705"
     },
     {
       "id": "b1.2_02",
-      "download": "https://archive.org/download/legacy-minecraft-beta/b1.2_02.jar",
-      "release": "1295568000",
+      "host": "betacraft.uk",
       "port": "11705"
     }
   ],
   "alpha": [
     {
       "id": "a1.0.1_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.1_01.jar",
-      "release": "1278115200",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.2_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.2_01.jar",
-      "release": "1278374400",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.2_02",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.2_02.jar",
-      "release": "1278374400",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.3",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.3.jar",
-      "release": "1278460800",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.4",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.4.jar",
-      "release": "1278633600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.5",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.5.jar",
-      "release": "1278979200",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.5_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.5_01.jar",
-      "release": "1279065600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.6",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6.jar",
-      "release": "1279238400",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.6_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6_01.jar",
-      "release": "1279324800",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.6_03",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.6_03.jar",
-      "release": "127932480",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.7",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.7.jar",
-      "release": "1279497600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.8_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.8_01.jar",
-      "release": "1279497600",
+      "host": "betacraft.uk",
       "port": "11703"
     },
     {
       "id": "a1.0.9",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.9.jar",
-      "release": "1279670400",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.10",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.10.jar",
-      "release": "1279756800",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.11",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.11.jar",
-      "release": "1279843200",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.12",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.12.jar",
-      "release": "1280102400",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.13",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13.jar",
-      "release": "1280275200",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.13_01-1",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13_01-1.jar",
-      "release": "1280361600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.13_01-2",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.13_01-2.jar",
-      "release": "1280361600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.14",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.14.jar",
-      "release": "1280448000",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.15",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.15.jar",
-      "release": "1280793600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.16",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16.jar",
-      "release": "1281571200",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.16_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16_01.jar",
-      "release": "1281571200",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.16_02",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.16_02.jar",
-      "release": "1281657600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.17_02",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_02.jar",
-      "release": "1282262400",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.17_03",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_03.jar",
-      "release": "1282521600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.0.17_04",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.0.17_04.jar",
-      "release": "1282521600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.1.0",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.1.0.jar",
-      "release": "1284336000",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.1.1",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.1.1.jar",
-      "release": "1284768000",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.1.2",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.1.2.jar",
-      "release": "1284768000",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.1.2_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.1.2_01.jar",
-      "release": "1285200000",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "a1.2.0",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0.jar",
-      "release": "1288396800",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.0_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0_01.jar",
-      "release": "1288396800",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.0_02",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.0_02.jar",
-      "release": "1288483200",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.1_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.1_01.jar",
-      "release": "1288915200",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.2",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.2.jar",
-      "release": "1289347200",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.3",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3.jar",
-      "release": "1290470400",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.3_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_01.jar",
-      "release": "1290556800",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.3_02",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_02.jar",
-      "release": "1290643200",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.3_04",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_04.jar",
-      "release": "1290729600",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.3_05",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.3_05.jar",
-      "release": "1291075200",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.4_01",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.4_01.jar",
-      "release": "1291075200",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.5",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.5.jar",
-      "release": "1291161600",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     },
     {
       "id": "a1.2.6",
-      "download": "https://archive.org/download/legacy-minecraft-alpha/a1.2.6.jar",
-      "release": "1291334400",
-      "port": ""
+      "host": "betacraft.uk",
+      "port": "11705"
     }
   ],
   "infdev": [
     {
       "id": "inf20100629",
-      "download": "https://archive.org/download/legacy-minecraft-infdev/inf20100629.jar",
-      "release": "1277769600",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "inf20100630-1",
-      "download": "https://archive.org/download/legacy-minecraft-infdev/inf20100630-1.jar",
-      "release": "1277856000",
+      "host": "betacraft.uk",
       "port": "11702"
     },
     {
       "id": "inf20100630-2",
-      "download": "https://archive.org/download/legacy-minecraft-infdev/inf20100630-2.jar",
-      "release": "1277856000",
+      "host": "betacraft.uk",
       "port": "11702"
     }
   ]
