@@ -11,7 +11,6 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.image.VolatileImage;
-import java.io.IOException;
 import javax.swing.JPanel;
 import lombok.Getter;
 
@@ -19,20 +18,17 @@ import lombok.Getter;
 public class LauncherPanel extends JPanel {
 
   private final Image bgImage;
+  private final LoginLauncherPanel loginPanel;
   private VolatileImage gcVolatileBgImage;
 
   public LauncherPanel() {
     super(new GridBagLayout(), true);
-    try {
-      this.bgImage = ImageManager.readImage(LauncherPanel.class, "icons/dirt.png");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
 
+    this.bgImage = ImageManager.readImage(LauncherPanel.class, "icons/dirt.png");
     this.setPreferredSize(new Dimension(854, 480));
 
-    LauncherLoginPanel loginPanel = new LauncherLoginPanel();
-    this.add(loginPanel);
+    this.loginPanel = new LoginLauncherPanel();
+    this.add(this.loginPanel);
   }
 
   private void getTitle(int pWidth, int pHeight, Graphics2D g2d) {
