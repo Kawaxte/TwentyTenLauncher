@@ -2,7 +2,7 @@ package ee.twentyten;
 
 import ee.twentyten.core.LinkedProperties;
 import ee.twentyten.utils.CipherManager;
-import ee.twentyten.utils.FilesManager;
+import ee.twentyten.utils.DirectoryManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,12 +25,17 @@ public class LauncherConfig {
   private Boolean infdevBox;
   private String versionId;
 
-  public static LauncherConfig load() throws IOException {
-    File configFile = new File(FilesManager.getGameDirectory(), "twentyten.properties");
+  public static LauncherConfig load() {
+    File configFile = new File(DirectoryManager.getGameDirectory(), "twentyten.properties");
     if (!configFile.exists()) {
-      boolean created = configFile.createNewFile();
-      if (!created) {
-        throw new IOException("Can't create a config file!");
+      boolean created;
+      try {
+        created = configFile.createNewFile();
+        if (!created) {
+          throw new IOException("Failed to create launcher config file");
+        }
+      } catch (IOException e) {
+        throw new RuntimeException("Can't create launcher config file", e);
       }
     }
 
@@ -50,7 +55,7 @@ public class LauncherConfig {
       config.versionId = properties.getProperty("selected-version");
       return config;
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Can't load launcher config file", e);
     }
   }
 
@@ -68,11 +73,11 @@ public class LauncherConfig {
     properties.setProperty("using-infdev", String.valueOf(this.infdevBox));
     properties.setProperty("selected-version", this.versionId);
 
-    File configFile = new File(FilesManager.getGameDirectory(), "twentyten.properties");
+    File configFile = new File(DirectoryManager.getGameDirectory(), "twentyten.properties");
     try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
       properties.store(fos, "TwentyTen Launcher Properties File");
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Can't save launcher config file", e);
     }
   }
 }
