@@ -14,18 +14,18 @@ public class Launcher {
   private static final long MAX_MEMORY = Runtime.getRuntime().maxMemory();
 
   public static void main(String... args) {
-    List<String> parameters = new ArrayList<>();
-    parameters.add(EPlatform.getPlatform() == EPlatform.WINDOWS ? "javaw" : "java");
-    parameters.add("-Xmx1G");
-    parameters.add("-Dsun.java2d.d3d=false");
-    parameters.add("-Dsun.java2d.opengl=false");
-    parameters.add("-Dsun.java2d.pmoffscreen=false");
-    parameters.add("-cp");
-    parameters.add(System.getProperty("java.class.path"));
-    parameters.add(LauncherFrame.class.getName());
+    List<String> arguments = new ArrayList<>();
+    arguments.add(EPlatform.getPlatform() == EPlatform.WINDOWS ? "javaw" : "java");
+    arguments.add("-Xmx1024m");
+    arguments.add("-Dsun.java2d.d3d=false");
+    arguments.add("-Dsun.java2d.opengl=false");
+    arguments.add("-Dsun.java2d.pmoffscreen=false");
+    arguments.add("-cp");
+    arguments.add(System.getProperty("java.class.path"));
+    arguments.add(LauncherFrame.class.getName());
 
     if (EUnit.convert(MAX_MEMORY, EUnit.MEGABYTE) < MIN_MEMORY) {
-      ProcessBuilder pb = new ProcessBuilder(parameters);
+      ProcessBuilder pb = new ProcessBuilder(arguments);
       try {
         Process process = pb.start();
         if (process.waitFor() != 0) {
