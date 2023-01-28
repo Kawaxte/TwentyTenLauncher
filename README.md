@@ -48,7 +48,7 @@ improvement, you can report it by opening a new issue. To do this, please follow
 We appreciate your input and will do our best to address any issues or consider any suggestions
 in a timely manner.
 
-# Submitting Pull Requests
+## Submitting Pull Requests
 
 In addition to reporting issues, we welcome contributions from the community in the form of pull
 requests. If you would like to submit a change or addition to the repository, please follow these
