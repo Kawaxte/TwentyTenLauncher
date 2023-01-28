@@ -18,12 +18,17 @@ import org.apache.commons.codec.binary.Base64;
 public final class CipherManager {
 
   private CipherManager() {
+    throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  private static SecretKey getSecretKey() throws NoSuchAlgorithmException {
-    KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-    keyGenerator.init(128, new SecureRandom("passwordfile".getBytes(StandardCharsets.UTF_8)));
-    return new SecretKeySpec(keyGenerator.generateKey().getEncoded(), "AES");
+  private static SecretKey getSecretKey() {
+    try {
+      KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+      keyGenerator.init(128, new SecureRandom("passwordfile".getBytes(StandardCharsets.UTF_8)));
+      return new SecretKeySpec(keyGenerator.generateKey().getEncoded(), "AES");
+    } catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException("Failed to generate secret key", e);
+    }
   }
 
   public static String encrypt(String value) {
@@ -43,7 +48,7 @@ public final class CipherManager {
     } catch (NoSuchAlgorithmException | NoSuchPaddingException |
              InvalidAlgorithmParameterException | BadPaddingException | InvalidKeyException |
              IllegalBlockSizeException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Failed to encrypt value", e);
     }
   }
 
@@ -65,7 +70,7 @@ public final class CipherManager {
     } catch (NoSuchAlgorithmException | NoSuchPaddingException |
              InvalidAlgorithmParameterException | BadPaddingException | InvalidKeyException |
              IllegalBlockSizeException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Failed to decrypt value", e);
     }
   }
 }
