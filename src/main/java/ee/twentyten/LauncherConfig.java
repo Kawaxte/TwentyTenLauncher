@@ -1,8 +1,8 @@
 package ee.twentyten;
 
 import ee.twentyten.core.LinkedProperties;
-import ee.twentyten.utils.CipherManager;
-import ee.twentyten.utils.DirectoryManager;
+import ee.twentyten.util.CipherManager;
+import ee.twentyten.util.DirectoryManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

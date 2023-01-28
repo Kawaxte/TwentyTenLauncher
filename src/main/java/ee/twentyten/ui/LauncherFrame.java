@@ -3,9 +3,9 @@ package ee.twentyten.ui;
 import ee.twentyten.LauncherConfig;
 import ee.twentyten.core.ELookAndFeel;
 import ee.twentyten.core.event.CustomMouseListener;
-import ee.twentyten.utils.ConfigManager;
-import ee.twentyten.utils.ImageManager;
-import ee.twentyten.utils.LauncherManager;
+import ee.twentyten.util.ConfigManager;
+import ee.twentyten.util.ImageManager;
+import ee.twentyten.util.LauncherManager;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -30,7 +30,7 @@ public class LauncherFrame extends JFrame implements ActionListener, CustomMouse
   public LauncherFrame() {
     super(String.format("TwentyTen Launcher %s", LauncherManager.getCurrentVersion()));
 
-    this.setIconImage(ImageManager.readImage(LauncherFrame.class, "icons/favicon.png"));
+    this.setIconImage(ImageManager.readImage(LauncherFrame.class, "icon/favicon.png"));
     this.setMinimumSize(new Dimension(640, 480));
 
     this.panel = new LauncherPanel();

@@ -1,6 +1,6 @@
 package ee.twentyten.ui;
 
-import ee.twentyten.utils.ImageManager;
+import ee.twentyten.util.ImageManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -24,7 +24,7 @@ public class LauncherPanel extends JPanel {
   public LauncherPanel() {
     super(new GridBagLayout(), true);
 
-    this.bgImage = ImageManager.readImage(LauncherPanel.class, "icons/dirt.png");
+    this.bgImage = ImageManager.readImage(LauncherPanel.class, "icon/dirt.png");
     this.setPreferredSize(new Dimension(854, 480));
 
     this.loginPanel = new LoginLauncherPanel();

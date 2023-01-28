@@ -1,7 +1,7 @@
 package ee.twentyten.ui;
 
 import ee.twentyten.core.JBorderPanel;
-import ee.twentyten.utils.LauncherManager;
+import ee.twentyten.util.LauncherManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
