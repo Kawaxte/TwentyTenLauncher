@@ -1,62 +1,30 @@
 package ee.twentyten.utils;
 
-import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class VersionManager {
 
-  public static final String GITHUB_LATEST_URL;
-  public static final String SIGNUP_LIVE_URL;
-  private static final String API_GITHUB_LATEST_URL;
-  public static String currentVersion = null;
+  public static final String RAW_GITHUBUSERCONTENT_VERSIONS_URL;
+  public static final Map<String, String> FORMATTED_VERSION_IDS;
+  public static final Map<String, List<String>> TYPE_TO_IDS;
+  public static final Map<String, List<String>> IDS_TO_PORTS;
 
   static {
-    GITHUB_LATEST_URL = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
-    SIGNUP_LIVE_URL = "https://signup.live.com/signup?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&client_id=00000000402b5328&lic=1";
-    API_GITHUB_LATEST_URL = "https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest";
+    RAW_GITHUBUSERCONTENT_VERSIONS_URL = "https://raw.githubusercontent.com/sojlabjoi/AlphacraftLauncher/master/versions.json";
+
+    FORMATTED_VERSION_IDS = new HashMap<>();
+    FORMATTED_VERSION_IDS.put("beta", "Beta %s");
+    FORMATTED_VERSION_IDS.put("alpha", "Alpha v%s");
+    FORMATTED_VERSION_IDS.put("infdev", "Infdev (%s)");
+
+    TYPE_TO_IDS = new HashMap<>();
+
+    IDS_TO_PORTS = new HashMap<>();
   }
 
   private VersionManager() {
-  }
-
-  public static String getCurrentVersion() {
-    Calendar calendar = Calendar.getInstance();
-    int year = calendar.get(Calendar.YEAR);
-    int month = calendar.get(Calendar.MONTH) + 1;
-    int day = calendar.get(Calendar.DAY_OF_MONTH);
-    int x = (year - 2022) % 10;
-
-    String formattedYear = String.format("%02d", year % 100);
-    String formattedDay = String.format("%02d", day);
-    String formattedMonth = String.format("%02d", month);
-
-    VersionManager.currentVersion = String.format("%d.%s.%s%s", x, formattedMonth, formattedDay,
-        formattedYear);
-    return VersionManager.currentVersion;
-  }
-
-  public static boolean isOutdated() {
-    SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
-      @Override
-      protected Boolean doInBackground() throws Exception {
-        String latestVersion = RequestManager.requestJsonGet(API_GITHUB_LATEST_URL).get("tag_name")
-            .toString();
-        return !currentVersion.equals(latestVersion);
-      }
-    };
-    worker.execute();
-
-    try {
-      return worker.get();
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    } catch (ExecutionException e) {
-      JOptionPane.showMessageDialog(null,
-          String.format("An error occurred while checking for updates:%s%n", e.getMessage()),
-          "Error", JOptionPane.ERROR_MESSAGE);
-    }
-    return false;
+    throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 }
