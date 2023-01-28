@@ -15,79 +15,103 @@ import org.json.JSONObject;
 public final class RequestManager {
 
   private RequestManager() {
+    throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
   private static HttpsURLConnection getHttpResponse(HttpsURLConnection connection) {
     return connection;
   }
 
-  private static JSONObject getJsonResponse(HttpsURLConnection connection) throws IOException {
-    InputStream is = connection.getResponseCode() >= 400 ? connection.getErrorStream()
-        : connection.getInputStream();
-
-    String response = IOUtils.toString(is, StandardCharsets.UTF_8);
-    return response.isEmpty() ? new JSONObject() : new JSONObject(response);
-  }
-
-  public static HttpsURLConnection requestHttpGet(String url)
-      throws IOException, NoSuchAlgorithmException, KeyManagementException {
-    SSLContext context = SSLContext.getInstance("TLSv1.2");
-    context.init(null, null, null);
-
-    HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-    connection.setSSLSocketFactory(context.getSocketFactory());
-    connection.setRequestMethod("GET");
-    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-    connection.setRequestProperty("Cache-Control", "no-cache");
-    connection.setRequestProperty("Pragma", "no-cache");
-    connection.setUseCaches(false);
-
-    return getHttpResponse(connection);
-  }
-
-  public static HttpsURLConnection requestHttpHead(String url)
-      throws IOException, NoSuchAlgorithmException, KeyManagementException {
-    SSLContext context = SSLContext.getInstance("TLSv1.2");
-    context.init(null, null, null);
-
-    HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-    connection.setSSLSocketFactory(context.getSocketFactory());
-    connection.setRequestMethod("HEAD");
-    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-    connection.setRequestProperty("Cache-Control", "no-cache");
-    connection.setRequestProperty("Pragma", "no-cache");
-    connection.setUseCaches(false);
-
-    return getHttpResponse(connection);
-  }
-
-  public static JSONObject requestJsonGet(String url)
-      throws IOException, NoSuchAlgorithmException, KeyManagementException {
-    SSLContext context = SSLContext.getInstance("TLSv1.2");
-    context.init(null, null, null);
-
-    HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-    connection.setSSLSocketFactory(context.getSocketFactory());
-    connection.setRequestMethod("GET");
-    connection.setRequestProperty("Content-Type", "application/json");
-
-    return getJsonResponse(connection);
-  }
-
-  public static JSONObject requestJsonPost(String url, JSONObject data)
-      throws IOException, KeyManagementException, NoSuchAlgorithmException {
-    SSLContext context = SSLContext.getInstance("TLSv1.2");
-    context.init(null, null, null);
-
-    HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-    connection.setSSLSocketFactory(context.getSocketFactory());
-    connection.setRequestMethod("POST");
-    connection.setRequestProperty("Content-Type", "application/json");
-    connection.setDoOutput(true);
-
-    try (OutputStream os = connection.getOutputStream()) {
-      os.write(String.valueOf(data).getBytes());
+  private static JSONObject getJsonResponse(HttpsURLConnection connection) {
+    try (InputStream is = connection.getResponseCode() >= 400 ? connection.getErrorStream()
+        : connection.getInputStream()) {
+      String response = IOUtils.toString(is, StandardCharsets.UTF_8);
+      return response.isEmpty() ? new JSONObject() : new JSONObject(response);
+    } catch (IOException e) {
+      throw new RuntimeException(
+          String.format("Can't read response from %s", connection.getURL().toString()), e);
     }
-    return getJsonResponse(connection);
+  }
+
+  public static HttpsURLConnection requestHttpGet(String url) {
+    try {
+      SSLContext context = SSLContext.getInstance("TLSv1.2");
+      context.init(null, null, null);
+
+      HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+      connection.setSSLSocketFactory(context.getSocketFactory());
+      connection.setRequestMethod("GET");
+      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+      connection.setRequestProperty("Cache-Control", "no-cache");
+      connection.setRequestProperty("Pragma", "no-cache");
+      connection.setUseCaches(false);
+
+      return getHttpResponse(connection);
+    } catch (KeyManagementException | NoSuchAlgorithmException e) {
+      throw new RuntimeException("Failed to initialise SSL context", e);
+    } catch (IOException e) {
+      throw new RuntimeException(String.format("Can't connect to %s", url), e);
+    }
+  }
+
+  public static HttpsURLConnection requestHttpHead(String url) {
+    try {
+      SSLContext context = SSLContext.getInstance("TLSv1.2");
+      context.init(null, null, null);
+
+      HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+      connection.setSSLSocketFactory(context.getSocketFactory());
+      connection.setRequestMethod("HEAD");
+      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+      connection.setRequestProperty("Cache-Control", "no-cache");
+      connection.setRequestProperty("Pragma", "no-cache");
+      connection.setUseCaches(false);
+
+      return getHttpResponse(connection);
+    } catch (KeyManagementException | NoSuchAlgorithmException e) {
+      throw new RuntimeException("Failed to initialise SSL context", e);
+    } catch (IOException e) {
+      throw new RuntimeException(String.format("Can't connect to %s", url), e);
+    }
+  }
+
+  public static JSONObject requestJsonGet(String url) {
+    try {
+      SSLContext context = SSLContext.getInstance("TLSv1.2");
+      context.init(null, null, null);
+
+      HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+      connection.setSSLSocketFactory(context.getSocketFactory());
+      connection.setRequestMethod("GET");
+      connection.setRequestProperty("Content-Type", "application/json");
+
+      return getJsonResponse(connection);
+    } catch (KeyManagementException | NoSuchAlgorithmException e) {
+      throw new RuntimeException("Failed to initialise SSL context", e);
+    } catch (IOException e) {
+      throw new RuntimeException(String.format("Can't connect to %s", url), e);
+    }
+  }
+
+  public static JSONObject requestJsonPost(String url, JSONObject data) {
+    try {
+      SSLContext context = SSLContext.getInstance("TLSv1.2");
+      context.init(null, null, null);
+
+      HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+      connection.setSSLSocketFactory(context.getSocketFactory());
+      connection.setRequestMethod("POST");
+      connection.setRequestProperty("Content-Type", "application/json");
+      connection.setDoOutput(true);
+
+      try (OutputStream os = connection.getOutputStream()) {
+        os.write(String.valueOf(data).getBytes());
+      }
+      return getJsonResponse(connection);
+    } catch (KeyManagementException | NoSuchAlgorithmException e) {
+      throw new RuntimeException("Failed to initialise SSL context", e);
+    } catch (IOException e) {
+      throw new RuntimeException(String.format("Can't connect to %s", url), e);
+    }
   }
 }
