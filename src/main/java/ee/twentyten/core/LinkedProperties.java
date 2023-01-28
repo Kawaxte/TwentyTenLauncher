@@ -30,22 +30,26 @@ public class LinkedProperties extends Properties {
   }
 
   @Override
-  public void store(OutputStream out, String comments) throws IOException {
-    if (comments != null) {
-      out.write("# ".getBytes());
-      out.write(comments.getBytes());
-      out.write(System.lineSeparator().getBytes());
-    }
+  public void store(OutputStream out, String comments) {
+    try {
+      if (comments != null) {
+        out.write("# ".getBytes());
+        out.write(comments.getBytes());
+        out.write(System.lineSeparator().getBytes());
+      }
 
-    Set<Map.Entry<Object, Object>> entries = entrySet();
-    for (Map.Entry<Object, Object> entry : entries) {
-      String key = (String) entry.getKey();
-      out.write(key.getBytes());
-      out.write("=".getBytes());
+      Set<Map.Entry<Object, Object>> entries = entrySet();
+      for (Map.Entry<Object, Object> entry : entries) {
+        String key = (String) entry.getKey();
+        out.write(key.getBytes());
+        out.write("=".getBytes());
 
-      String value = (String) entry.getValue();
-      out.write(value.getBytes());
-      out.write(System.lineSeparator().getBytes());
+        String value = (String) entry.getValue();
+        out.write(value.getBytes());
+        out.write(System.lineSeparator().getBytes());
+      }
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to store properties", e);
     }
   }
 }
