@@ -30,7 +30,7 @@ public final class DirectoryManager {
     File workingDirectory = DirectoryManager.WORKING_DIRECTORIES.get(platformName);
     Objects.requireNonNull(workingDirectory, "workingDirectory == null!");
     if (!workingDirectory.mkdirs() && !workingDirectory.exists()) {
-      throw new RuntimeException("Failed to create working directory");
+      throw new SecurityException("Failed to create working directory");
     }
     return workingDirectory;
   }
