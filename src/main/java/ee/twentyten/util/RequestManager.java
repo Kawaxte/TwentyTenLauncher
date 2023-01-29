@@ -27,17 +27,30 @@ public final class RequestManager {
         : connection.getInputStream()) {
       String response = IOUtils.toString(is, StandardCharsets.UTF_8);
       return response.isEmpty() ? new JSONObject() : new JSONObject(response);
-    } catch (IOException e) {
+    } catch (IOException ioe) {
       throw new RuntimeException(
-          String.format("Can't read response from %s", connection.getURL().toString()), e);
+          String.format("Failed to read response from %s", connection.getURL()), ioe);
     }
   }
 
   public static HttpsURLConnection requestHttpGet(String url) {
+    SSLContext context;
     try {
-      SSLContext context = SSLContext.getInstance("TLSv1.2");
+      context = SSLContext.getInstance("TLSv1.2");
+    } catch (NoSuchAlgorithmException nae1) {
+      try {
+        context = SSLContext.getDefault();
+      } catch (NoSuchAlgorithmException nae2) {
+        throw new RuntimeException("Failed to get default SSL context", nae2);
+      }
+    }
+    try {
       context.init(null, null, null);
+    } catch (KeyManagementException kme) {
+      throw new RuntimeException("Failed to initialise SSL context", kme);
+    }
 
+    try {
       HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
       connection.setSSLSocketFactory(context.getSocketFactory());
       connection.setRequestMethod("GET");
@@ -46,18 +59,29 @@ public final class RequestManager {
       connection.setRequestProperty("Pragma", "no-cache");
       connection.setUseCaches(false);
       return getHttpResponse(connection);
-    } catch (KeyManagementException | NoSuchAlgorithmException e) {
-      throw new RuntimeException("Failed to initialise SSL context", e);
-    } catch (IOException e) {
-      throw new RuntimeException(String.format("Can't connect to %s", url), e);
+    } catch (IOException ioe) {
+      throw new RuntimeException(String.format("Can't connect to %s", url), ioe);
     }
   }
 
   public static HttpsURLConnection requestHttpHead(String url) {
+    SSLContext context;
     try {
-      SSLContext context = SSLContext.getInstance("TLSv1.2");
+      context = SSLContext.getInstance("TLSv1.2");
+    } catch (NoSuchAlgorithmException nae1) {
+      try {
+        context = SSLContext.getDefault();
+      } catch (NoSuchAlgorithmException nae2) {
+        throw new RuntimeException("Failed to get default SSL context", nae2);
+      }
+    }
+    try {
       context.init(null, null, null);
+    } catch (KeyManagementException kme) {
+      throw new RuntimeException("Failed to initialise SSL context", kme);
+    }
 
+    try {
       HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
       connection.setSSLSocketFactory(context.getSocketFactory());
       connection.setRequestMethod("HEAD");
@@ -66,35 +90,57 @@ public final class RequestManager {
       connection.setRequestProperty("Pragma", "no-cache");
       connection.setUseCaches(false);
       return getHttpResponse(connection);
-    } catch (KeyManagementException | NoSuchAlgorithmException e) {
-      throw new RuntimeException("Failed to initialise SSL context", e);
-    } catch (IOException e) {
-      throw new RuntimeException(String.format("Can't connect to %s", url), e);
+    } catch (IOException ioe) {
+      throw new RuntimeException(String.format("Can't connect to %s", url), ioe);
     }
   }
 
   public static JSONObject requestJsonGet(String url) {
+    SSLContext context;
     try {
-      SSLContext context = SSLContext.getInstance("TLSv1.2");
+      context = SSLContext.getInstance("TLSv1.2");
+    } catch (NoSuchAlgorithmException nae1) {
+      try {
+        context = SSLContext.getDefault();
+      } catch (NoSuchAlgorithmException nae2) {
+        throw new RuntimeException("Failed to get default SSL context", nae2);
+      }
+    }
+    try {
       context.init(null, null, null);
+    } catch (KeyManagementException kme) {
+      throw new RuntimeException("Failed to initialise SSL context", kme);
+    }
 
+    try {
       HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
       connection.setSSLSocketFactory(context.getSocketFactory());
       connection.setRequestMethod("GET");
       connection.setRequestProperty("Content-Type", "application/json");
       return getJsonResponse(connection);
-    } catch (KeyManagementException | NoSuchAlgorithmException e) {
-      throw new RuntimeException("Failed to initialise SSL context", e);
-    } catch (IOException e) {
-      throw new RuntimeException(String.format("Can't connect to %s", url), e);
+    } catch (IOException ioe) {
+      throw new RuntimeException(String.format("Can't connect to %s", url), ioe);
     }
   }
 
   public static JSONObject requestJsonPost(String url, JSONObject data) {
+    SSLContext context;
     try {
-      SSLContext context = SSLContext.getInstance("TLSv1.2");
+      context = SSLContext.getInstance("TLSv1.2");
+    } catch (NoSuchAlgorithmException nae) {
+      try {
+        context = SSLContext.getDefault();
+      } catch (NoSuchAlgorithmException nae2) {
+        throw new RuntimeException("Failed to get default SSL context", nae2);
+      }
+    }
+    try {
       context.init(null, null, null);
+    } catch (KeyManagementException kme) {
+      throw new RuntimeException("Failed to initialise SSL context", kme);
+    }
 
+    try {
       HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
       connection.setSSLSocketFactory(context.getSocketFactory());
       connection.setRequestMethod("POST");
@@ -103,12 +149,10 @@ public final class RequestManager {
 
       try (OutputStream os = connection.getOutputStream()) {
         os.write(String.valueOf(data).getBytes());
+        return getJsonResponse(connection);
       }
-      return getJsonResponse(connection);
-    } catch (KeyManagementException | NoSuchAlgorithmException e) {
-      throw new RuntimeException("Failed to initialise SSL context", e);
-    } catch (IOException e) {
-      throw new RuntimeException(String.format("Can't connect to %s", url), e);
+    } catch (IOException ioe) {
+      throw new RuntimeException(String.format("Can't connect to %s", url), ioe);
     }
   }
 }
