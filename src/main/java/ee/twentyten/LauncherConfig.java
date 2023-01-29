@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.io.FileUtils;
 
 @Getter
 @Setter
@@ -28,14 +29,10 @@ public class LauncherConfig {
   public static LauncherConfig load() {
     File configFile = new File(DirectoryManager.getWorkingDirectory(), "twentyten.properties");
     if (!configFile.exists()) {
-      boolean created;
       try {
-        created = configFile.createNewFile();
-        if (!created) {
-          throw new IOException("Failed to create launcher config file");
-        }
-      } catch (IOException e) {
-        throw new RuntimeException("Can't create launcher config file", e);
+        FileUtils.touch(configFile);
+      } catch (IOException ioe) {
+        throw new RuntimeException("Failed to create config file", ioe);
       }
     }
 
@@ -54,8 +51,8 @@ public class LauncherConfig {
       config.infdevBox = Boolean.parseBoolean(properties.getProperty("using-infdev"));
       config.versionId = properties.getProperty("selected-version");
       return config;
-    } catch (IOException e) {
-      throw new RuntimeException("Can't load launcher config file", e);
+    } catch (IOException ioe) {
+      throw new RuntimeException("Failed to load config file", ioe);
     }
   }
 
@@ -76,8 +73,8 @@ public class LauncherConfig {
     File configFile = new File(DirectoryManager.getWorkingDirectory(), "twentyten.properties");
     try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
       properties.store(fos, "TwentyTen Launcher Properties File");
-    } catch (IOException e) {
-      throw new RuntimeException("Can't save launcher config file", e);
+    } catch (IOException ioe) {
+      throw new RuntimeException("Failed to save config file", ioe);
     }
   }
 }
