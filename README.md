@@ -42,7 +42,7 @@ We rely on the power of the community to help improve our launcher. That's why w
 tracker and pull request feature to manage and resolve any issues that arise and to review and
 incorporate contributions from our users.
 
-<h3 align="center">Reporting Issues and Suggestions</h3>
+<h2 align="center">Reporting Issues and Suggestions</h2>
 
 If you encounter a problem while using this repository or have an idea for a new feature or
 improvement, you can report it by opening a new issue. To do this, please follow these steps:
@@ -57,7 +57,7 @@ improvement, you can report it by opening a new issue. To do this, please follow
 We appreciate your input and will do our best to address any issues or consider any suggestions
 in a timely manner.
 
-<h3 align="center">Submitting Pull Requests</h3>
+<h2 align="center">Submitting Pull Requests</h2>
 
 In addition to reporting issues, we welcome contributions from the community in the form of pull
 requests. If you would like to submit a change or addition to the repository, please follow these
