@@ -1,5 +1,6 @@
 package ee.twentyten.util;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +18,23 @@ public final class VersionManager {
     FORMATTED_VERSION_IDS.put("infdev", "Infdev (%s)");
 
     TYPE_TO_IDS = new HashMap<>();
-
     IDS_TO_PORTS = new HashMap<>();
   }
 
   private VersionManager() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
+  }
+
+  public static void getVersionsFile() {
+    File workingDirectory = DirectoryManager.getWorkingDirectory();
+    File versionsDirectory = new File(workingDirectory, "versions");
+    if (!versionsDirectory.exists() && !versionsDirectory.mkdir()) {
+      throw new SecurityException("Failed to create versions directory");
+    }
+
+    File versionsFile = new File(versionsDirectory, "versions.json");
+    if (!versionsFile.exists()) {
+      FilesManager.downloadFile(FilesManager.VERSIONS_JSON_URL, versionsFile);
+    }
   }
 }
