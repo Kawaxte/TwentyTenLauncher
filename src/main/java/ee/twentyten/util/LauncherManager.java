@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public final class LauncherManager {
 
@@ -20,6 +22,15 @@ public final class LauncherManager {
 
   private LauncherManager() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
+  }
+
+  public static void setLookAndFeel() {
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+             UnsupportedLookAndFeelException exceptions) {
+      throw new RuntimeException("Failed to set look and feel", exceptions);
+    }
   }
 
   public static String getCurrentVersion() {
@@ -51,12 +62,11 @@ public final class LauncherManager {
 
     try {
       return worker.get();
-    } catch (InterruptedException e) {
+    } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
-      throw new RuntimeException("Failed to check for updates", e);
-    } catch (ExecutionException e) {
+    } catch (ExecutionException ee) {
       JOptionPane.showMessageDialog(null,
-          String.format("An error occurred while checking for updates:%n%s", e.getMessage()),
+          String.format("An error occurred while checking for updates:%n%s", ee.getMessage()),
           "Error", JOptionPane.ERROR_MESSAGE);
     }
     return false;
