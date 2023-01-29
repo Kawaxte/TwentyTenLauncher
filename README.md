@@ -1,40 +1,48 @@
-# TwentyTen Launcher
+<h1 align="center">TwentyTen Launcher</h1>
+<p align="center">
+  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
+    <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher">
+  </a>
+  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
+    <img src="https://img.shields.io/github/downloads/sojlabjoi/AlphacraftLauncher/total.svg">
+  </a>
+  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/blob/stable/LICENSE">
+    <img src="https://img.shields.io/github/license/sojlabjoi/AlphacraftLauncher">
+  </a>
+</p>
 
-A modern and polished remaster of the original Minecraft Launcher from June 29, 2010
+<div align="center">A modern and polished remaster of the original Minecraft Launcher from June 29, 2010</div>
 
-[![Release](https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher)](https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/sojlabjoi/AlphacraftLauncher/latest/total)](https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest)
+---
+This repository was created to provide a modern and polished "Legacy" Minecraft experience. It
+covers a range of versions from _Indev 0.13 (20091223-2)_ to _1.5.2_, offering players the chance to
+uncover hidden treasures from the past. To further enhance the authentic experience, the launcher
+also supports _Infdev (20100629)_ to _Beta 1.2_02_ natively.
 
-## Overview
+It is worth mentioning that the reason for limiting version support is to guarantee a historically
+accurate experience. _Infdev (20100629)_ was the earliest version that could be downloaded using the
+original launcher, while _Beta 1.2_02_ was the final version to come with the original launcher.
 
-__TwentyTen Launcher__ is built from the ground up to provide a modern and polished "Legacy"
-Minecraft
-experience while
-reliving the game's evolution. It supports versions ranging from _Indev 0.13 (20091223-2)_ to
-_1.5.2_,
-providing players with the opportunity to discover hidden gems from the past. For an even more
-authentic experience, the launcher also natively supports versions from _Infdev (20100629)_ to _Beta
-1.2_02_.
+> Please be advised that this application requires a minimum of Java 7 or higher to run.
 
-It's important to note that the reason we've chosen to limit our version support is to ensure a
-historically accurate experience. _Infdev (20100629)_ was the first version to be downloadable using
-the original launcher, and _Beta 1.2_02_ was the last version to come with the original launcher.
+<h2 align="center">Managing Issues and Contributions</h2>
+<p align="center">
+   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/issues">
+      <img src="https://img.shields.io/github/issues/sojlabjoi/AlphacraftLauncher">
+   </a>
+   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/pulls">
+      <img src="https://img.shields.io/github/issues-pr/sojlabjoi/AlphacraftLauncher">
+   </a>
+</p>
 
-> Please note that a minimum of Java 7 or greater is required to run this application.
-
-# Managing Issues and Contributions
-
+---
 We rely on the power of the community to help improve our launcher. That's why we use GitHub's issue
 tracker and pull request feature to manage and resolve any issues that arise and to review and
 incorporate contributions from our users.
 
-You can easily access these features by clicking on the links below:
+<h3 align="center">Reporting Issues and Suggestions</h3>
 
-[![Issues](https://img.shields.io/github/issues/sojlabjoi/AlphacraftLauncher.svg)](https://github.com/sojlabjoi/AlphacraftLauncher/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/sojlabjoi/AlphacraftLauncher)](https://github.com/sojlabjoi/AlphacraftLauncher/pulls)
-
-## Reporting Issues and Suggestions
-
+---
 If you encounter a problem while using this repository or have an idea for a new feature or
 improvement, you can report it by opening a new issue. To do this, please follow these steps:
 
@@ -48,8 +56,9 @@ improvement, you can report it by opening a new issue. To do this, please follow
 We appreciate your input and will do our best to address any issues or consider any suggestions
 in a timely manner.
 
-## Submitting Pull Requests
+<h3 align="center">Submitting Pull Requests</h3>
 
+---
 In addition to reporting issues, we welcome contributions from the community in the form of pull
 requests. If you would like to submit a change or addition to the repository, please follow these
 steps:
