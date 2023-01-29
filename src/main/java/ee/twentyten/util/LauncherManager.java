@@ -7,15 +7,15 @@ import javax.swing.SwingWorker;
 
 public final class LauncherManager {
 
-  public static final String GITHUB_LATEST_URL;
-  public static final String SIGNUP_LIVE_URL;
-  private static final String API_GITHUB_LATEST_URL;
+  public static final String LATEST_RELEASE_URL;
+  public static final String ACCOUNT_SIGNUP_URL;
+  private static final String LATEST_RELEASE_API_URL;
   public static String currentVersion = null;
 
   static {
-    GITHUB_LATEST_URL = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
-    SIGNUP_LIVE_URL = "https://signup.live.com/signup?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&client_id=00000000402b5328&lic=1";
-    API_GITHUB_LATEST_URL = "https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest";
+    LATEST_RELEASE_URL = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
+    ACCOUNT_SIGNUP_URL = "https://signup.live.com/signup?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&client_id=00000000402b5328&lic=1";
+    LATEST_RELEASE_API_URL = "https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest";
   }
 
   private LauncherManager() {
@@ -42,7 +42,7 @@ public final class LauncherManager {
     SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
       @Override
       protected Boolean doInBackground() {
-        String latestVersion = RequestManager.requestJsonGet(API_GITHUB_LATEST_URL).get("tag_name")
+        String latestVersion = RequestManager.requestJsonGet(LATEST_RELEASE_API_URL).get("tag_name")
             .toString();
         return !currentVersion.equals(latestVersion);
       }
@@ -53,9 +53,10 @@ public final class LauncherManager {
       return worker.get();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
+      throw new RuntimeException("Failed to check for updates", e);
     } catch (ExecutionException e) {
       JOptionPane.showMessageDialog(null,
-          String.format("An error occurred while checking for updates:%s%n", e.getMessage()),
+          String.format("An error occurred while checking for updates:%n%s", e.getMessage()),
           "Error", JOptionPane.ERROR_MESSAGE);
     }
     return false;
