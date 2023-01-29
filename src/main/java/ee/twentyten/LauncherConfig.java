@@ -26,7 +26,7 @@ public class LauncherConfig {
   private String versionId;
 
   public static LauncherConfig load() {
-    File configFile = new File(DirectoryManager.getGameDirectory(), "twentyten.properties");
+    File configFile = new File(DirectoryManager.getWorkingDirectory(), "twentyten.properties");
     if (!configFile.exists()) {
       boolean created;
       try {
@@ -73,7 +73,7 @@ public class LauncherConfig {
     properties.setProperty("using-infdev", String.valueOf(this.infdevBox));
     properties.setProperty("selected-version", this.versionId);
 
-    File configFile = new File(DirectoryManager.getGameDirectory(), "twentyten.properties");
+    File configFile = new File(DirectoryManager.getWorkingDirectory(), "twentyten.properties");
     try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
       properties.store(fos, "TwentyTen Launcher Properties File");
     } catch (IOException e) {
