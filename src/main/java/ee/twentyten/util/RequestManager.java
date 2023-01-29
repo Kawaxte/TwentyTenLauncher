@@ -45,7 +45,6 @@ public final class RequestManager {
       connection.setRequestProperty("Cache-Control", "no-cache");
       connection.setRequestProperty("Pragma", "no-cache");
       connection.setUseCaches(false);
-
       return getHttpResponse(connection);
     } catch (KeyManagementException | NoSuchAlgorithmException e) {
       throw new RuntimeException("Failed to initialise SSL context", e);
@@ -66,7 +65,6 @@ public final class RequestManager {
       connection.setRequestProperty("Cache-Control", "no-cache");
       connection.setRequestProperty("Pragma", "no-cache");
       connection.setUseCaches(false);
-
       return getHttpResponse(connection);
     } catch (KeyManagementException | NoSuchAlgorithmException e) {
       throw new RuntimeException("Failed to initialise SSL context", e);
@@ -84,7 +82,6 @@ public final class RequestManager {
       connection.setSSLSocketFactory(context.getSocketFactory());
       connection.setRequestMethod("GET");
       connection.setRequestProperty("Content-Type", "application/json");
-
       return getJsonResponse(connection);
     } catch (KeyManagementException | NoSuchAlgorithmException e) {
       throw new RuntimeException("Failed to initialise SSL context", e);
