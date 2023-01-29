@@ -9,15 +9,27 @@ import java.util.UUID;
 
 public final class ConfigManager {
 
-  private static final String DEFAULT_CLIENT_TOKEN = ConfigManager.getClientToken();
-  private static final String DEFAULT_ACCESS_TOKEN = "";
-  private static final String DEFAULT_USERNAME = "";
-  private static final String DEFAULT_PASSWORD = "";
-  private static final boolean DEFAULT_REMEMBER_PASSWORD = false;
-  private static final boolean DEFAULT_BETA_VERSION = true;
-  private static final boolean DEFAULT_ALPHA_VERSION = false;
-  private static final boolean DEFAULT_INFDEV_VERSION = false;
-  private static final String DEFAULT_VERSION_ID = "b1.1_02";
+  private static final String DEFAULT_CLIENT_TOKEN;
+  private static final String DEFAULT_ACCESS_TOKEN;
+  private static final String DEFAULT_USERNAME;
+  private static final String DEFAULT_PASSWORD;
+  private static final boolean DEFAULT_REMEMBER_PASSWORD;
+  private static final boolean DEFAULT_BETA_VERSION;
+  private static final boolean DEFAULT_ALPHA_VERSION;
+  private static final boolean DEFAULT_INFDEV_VERSION;
+  private static final String DEFAULT_VERSION_ID;
+
+  static {
+    DEFAULT_CLIENT_TOKEN = ConfigManager.getClientToken();
+    DEFAULT_ACCESS_TOKEN = "";
+    DEFAULT_USERNAME = "";
+    DEFAULT_PASSWORD = "";
+    DEFAULT_REMEMBER_PASSWORD = false;
+    DEFAULT_BETA_VERSION = true;
+    DEFAULT_ALPHA_VERSION = false;
+    DEFAULT_INFDEV_VERSION = false;
+    DEFAULT_VERSION_ID = "b1.1_02";
+  }
 
   private ConfigManager() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
@@ -32,8 +44,14 @@ public final class ConfigManager {
     LinkedProperties properties = new LinkedProperties();
     try {
       properties.load(Files.newInputStream(configFile.toPath()));
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to load config file!", e);
+    } catch (IOException ioe1) {
+      try {
+        properties.load(ConfigManager.class.getResourceAsStream("twentyten.properties"));
+      } catch (IOException ioe2) {
+        throw new RuntimeException(
+            String.format("Failed to load config file from %s", configFile.getAbsolutePath()),
+            ioe2);
+      }
     }
 
     String clientToken = UUID.randomUUID().toString().replace("-", "");
@@ -53,8 +71,8 @@ public final class ConfigManager {
       config.setInfdevBox(DEFAULT_INFDEV_VERSION);
       config.setVersionId(DEFAULT_VERSION_ID);
       config.save();
-    } catch (InstantiationException | IllegalAccessException e) {
-      throw new RuntimeException("Failed to initialise config", e);
+    } catch (InstantiationException | IllegalAccessException exceptions) {
+      throw new RuntimeException("Failed to initialise LauncherConfig", exceptions);
     }
   }
 }
