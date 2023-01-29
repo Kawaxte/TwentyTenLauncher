@@ -1,7 +1,6 @@
 package ee.twentyten;
 
 import ee.twentyten.core.EPlatform;
-import ee.twentyten.core.EUnit;
 import ee.twentyten.ui.LauncherFrame;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,10 +9,15 @@ import javax.swing.JOptionPane;
 
 public class Launcher {
 
-  private static final double MIN_MEMORY = 5.12e8;
-  private static final long MAX_MEMORY = Runtime.getRuntime().maxMemory();
+  private static final long MIN_MEMORY;
+  private static final long MAX_MEMORY;
 
-  public static void main(String... args) {
+  static {
+    MIN_MEMORY = 524288L;
+    MAX_MEMORY = Runtime.getRuntime().maxMemory();
+  }
+
+  public static void main(String[] args) {
     List<String> arguments = new ArrayList<>();
     arguments.add(EPlatform.getPlatform() == EPlatform.WINDOWS ? "javaw" : "java");
     arguments.add("-Xmx1024m");
@@ -24,7 +28,7 @@ public class Launcher {
     arguments.add(System.getProperty("java.class.path"));
     arguments.add(LauncherFrame.class.getName());
 
-    if (EUnit.convert(MAX_MEMORY, EUnit.MEGABYTE) < MIN_MEMORY) {
+    if (MAX_MEMORY < MIN_MEMORY) {
       ProcessBuilder pb = new ProcessBuilder(arguments);
       try {
         Process process = pb.start();
