@@ -1,11 +1,13 @@
 package ee.twentyten.ui;
 
 import ee.twentyten.LauncherConfig;
-import ee.twentyten.core.ELookAndFeel;
 import ee.twentyten.core.event.CustomMouseListener;
+import ee.twentyten.ui.panel.LauncherPanel;
+import ee.twentyten.ui.panel.LoginLauncherPanel;
 import ee.twentyten.util.ConfigManager;
 import ee.twentyten.util.ImageManager;
 import ee.twentyten.util.LauncherManager;
+import ee.twentyten.util.VersionManager;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -46,13 +48,14 @@ public class LauncherFrame extends JFrame implements ActionListener, CustomMouse
   }
 
   public static void main(String[] args) {
-    ELookAndFeel.setLookAndFeel();
-
     LauncherConfig config = LauncherConfig.load();
     if (config.getClientToken() == null) {
       ConfigManager.initConfig();
     }
 
+    VersionManager.getVersionsFile();
+
+    LauncherManager.setLookAndFeel();
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -72,8 +75,8 @@ public class LauncherFrame extends JFrame implements ActionListener, CustomMouse
         if (source == loginPanel.getLinkLabel()) {
           try {
             Desktop.getDesktop().browse(URI.create(loginPanel.getLinkUrls()));
-          } catch (IOException e) {
-            throw new RuntimeException("Can't launch the default browser", e);
+          } catch (IOException ioe) {
+            throw new RuntimeException("Failed to launch the default browser", ioe);
           }
         }
       }
