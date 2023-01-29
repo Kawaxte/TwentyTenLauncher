@@ -21,14 +21,10 @@ public final class CipherManager {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  private static SecretKey getSecretKey() {
-    try {
-      KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-      keyGenerator.init(128, new SecureRandom("passwordfile".getBytes(StandardCharsets.UTF_8)));
-      return new SecretKeySpec(keyGenerator.generateKey().getEncoded(), "AES");
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException("Failed to generate secret key", e);
-    }
+  private static SecretKey getSecretKey() throws NoSuchAlgorithmException {
+    KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+    keyGenerator.init(128, new SecureRandom("passwordfile".getBytes(StandardCharsets.UTF_8)));
+    return new SecretKeySpec(keyGenerator.generateKey().getEncoded(), "AES");
   }
 
   public static String encrypt(String value) {
@@ -45,10 +41,10 @@ public final class CipherManager {
 
       byte[] encryptedByte = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
       return Base64.encodeBase64String(encryptedByte);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException |
-             InvalidAlgorithmParameterException | BadPaddingException | InvalidKeyException |
-             IllegalBlockSizeException e) {
-      throw new RuntimeException("Failed to encrypt value", e);
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+             IllegalBlockSizeException | BadPaddingException |
+             InvalidAlgorithmParameterException exceptions) {
+      throw new RuntimeException("Failed to encrypt value", exceptions);
     }
   }
 
@@ -67,10 +63,10 @@ public final class CipherManager {
       byte[] decryptedBase64 = Base64.decodeBase64(value);
       byte[] decryptedByte = cipher.doFinal(decryptedBase64);
       return new String(decryptedByte, StandardCharsets.UTF_8);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException |
-             InvalidAlgorithmParameterException | BadPaddingException | InvalidKeyException |
-             IllegalBlockSizeException e) {
-      throw new RuntimeException("Failed to decrypt value", e);
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+             IllegalBlockSizeException | BadPaddingException |
+             InvalidAlgorithmParameterException exceptions) {
+      throw new RuntimeException("Failed to decrypt value", exceptions);
     }
   }
 }
