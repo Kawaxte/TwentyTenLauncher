@@ -33,11 +33,11 @@ public class Launcher {
         }
       } catch (IOException e) {
         JOptionPane.showMessageDialog(null,
-            String.format("An error occurred while starting the process: %s%n", e.getMessage()),
+            String.format("An error occurred while starting the process:%n%s", e.getMessage()),
             "Error", JOptionPane.ERROR_MESSAGE);
       } catch (InterruptedException e) {
         JOptionPane.showMessageDialog(null,
-            String.format("An error occurred while waiting for the process to terminate: %s%n",
+            String.format("An error occurred while waiting for the process to terminate:%n%s",
                 e.getMessage()), "Error", JOptionPane.ERROR_MESSAGE);
       }
     } else {
