@@ -44,7 +44,6 @@ incorporate contributions from our users.
 
 <h3 align="center">Reporting Issues and Suggestions</h3>
 
-----
 If you encounter a problem while using this repository or have an idea for a new feature or
 improvement, you can report it by opening a new issue. To do this, please follow these steps:
 
@@ -60,7 +59,6 @@ in a timely manner.
 
 <h3 align="center">Submitting Pull Requests</h3>
 
-----
 In addition to reporting issues, we welcome contributions from the community in the form of pull
 requests. If you would like to submit a change or addition to the repository, please follow these
 steps:
@@ -70,5 +68,5 @@ steps:
 3. Submit a pull request to the main repository, detailing your changes and any relevant
    information.
 
-A member of the repository team will review your request and provide feedback or merge the
-changes as appropriate.
+A member of the repository team will review your request and provide feedback or merge the changes
+as appropriate.
