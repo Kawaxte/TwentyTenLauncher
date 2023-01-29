@@ -6,14 +6,11 @@ import java.util.Map;
 
 public final class VersionManager {
 
-  public static final String RAW_GITHUBUSERCONTENT_VERSIONS_URL;
   public static final Map<String, String> FORMATTED_VERSION_IDS;
   public static final Map<String, List<String>> TYPE_TO_IDS;
   public static final Map<String, List<String>> IDS_TO_PORTS;
 
   static {
-    RAW_GITHUBUSERCONTENT_VERSIONS_URL = "https://raw.githubusercontent.com/sojlabjoi/AlphacraftLauncher/master/versions.json";
-
     FORMATTED_VERSION_IDS = new HashMap<>();
     FORMATTED_VERSION_IDS.put("beta", "Beta %s");
     FORMATTED_VERSION_IDS.put("alpha", "Alpha v%s");
