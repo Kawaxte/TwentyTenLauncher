@@ -73,7 +73,7 @@ public class LauncherFrame extends JFrame implements ActionListener, CustomMouse
           try {
             Desktop.getDesktop().browse(URI.create(loginPanel.getLinkUrls()));
           } catch (IOException e) {
-            throw new RuntimeException("Can't open browser", e);
+            throw new RuntimeException("Can't launch the default browser", e);
           }
         }
       }
@@ -86,7 +86,6 @@ public class LauncherFrame extends JFrame implements ActionListener, CustomMouse
     if (source == this.panel.getLoginPanel().getOptionsButton()) {
       OptionsDialog optionsDialog = new OptionsDialog(LauncherFrame.frameInstance);
       optionsDialog.setVisible(true);
-      optionsDialog.setResizable(false);
     }
   }
 }
