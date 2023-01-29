@@ -1,4 +1,4 @@
-package ee.twentyten.core;
+package ee.twentyten.core.swing;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

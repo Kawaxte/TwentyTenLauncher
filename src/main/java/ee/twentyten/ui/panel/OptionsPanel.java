@@ -1,5 +1,6 @@
-package ee.twentyten.ui;
+package ee.twentyten.ui.panel;
 
+import ee.twentyten.ui.OptionsTabbedPane;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.BorderFactory;

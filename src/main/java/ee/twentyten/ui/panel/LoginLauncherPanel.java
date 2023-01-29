@@ -1,6 +1,6 @@
-package ee.twentyten.ui;
+package ee.twentyten.ui.panel;
 
-import ee.twentyten.core.JBorderPanel;
+import ee.twentyten.core.swing.JBorderPanel;
 import ee.twentyten.util.LauncherManager;
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -1,4 +1,4 @@
-package ee.twentyten.ui;
+package ee.twentyten.ui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;

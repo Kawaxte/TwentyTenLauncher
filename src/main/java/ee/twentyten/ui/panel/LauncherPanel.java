@@ -1,4 +1,4 @@
-package ee.twentyten.ui;
+package ee.twentyten.ui.panel;
 
 import ee.twentyten.util.ImageManager;
 import java.awt.Color;
