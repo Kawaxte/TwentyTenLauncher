@@ -10,41 +10,42 @@ public final class DirectoryManager {
 
   private static final String USER_HOME;
   private static final String APPDATA;
-  private static final Map<EPlatform, File> GAME_DIRECTORIES;
+  private static final Map<EPlatform, File> WORKING_DIRECTORIES;
 
   static {
     USER_HOME = System.getProperty("user.home", ".");
     APPDATA = System.getenv("APPDATA");
 
-    GAME_DIRECTORIES = new HashMap<>();
-    DirectoryManager.getGameDirectoriesForPlatform();
+    WORKING_DIRECTORIES = new HashMap<>();
+    DirectoryManager.getWorkingDirectoryPerPlatform();
   }
 
   private DirectoryManager() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static File getGameDirectory() {
+  public static File getWorkingDirectory() {
     EPlatform platformName = EPlatform.getPlatform();
 
-    File gameDirectory = DirectoryManager.GAME_DIRECTORIES.get(platformName);
-    Objects.requireNonNull(gameDirectory, "gameDirectory == null!");
-    if (!gameDirectory.mkdirs() && !gameDirectory.exists()) {
-      throw new RuntimeException("Failed to create game directory");
+    File workingDirectory = DirectoryManager.WORKING_DIRECTORIES.get(platformName);
+    Objects.requireNonNull(workingDirectory, "workingDirectory == null!");
+    if (!workingDirectory.mkdirs() && !workingDirectory.exists()) {
+      throw new RuntimeException("Failed to create working directory");
     }
-    return gameDirectory;
+    return workingDirectory;
   }
 
-  private static void getGameDirectoriesForPlatform() {
-    File gameDirectoryForOsx = new File(String.format("%s/Library/Application Support", USER_HOME),
+  private static void getWorkingDirectoryPerPlatform() {
+    File workingDirectoryForOsx = new File(
+        String.format("%s/Library/Application Support", USER_HOME),
         "twentyten");
-    GAME_DIRECTORIES.put(EPlatform.OSX, gameDirectoryForOsx);
+    WORKING_DIRECTORIES.put(EPlatform.OSX, workingDirectoryForOsx);
 
-    File gameDirectoryForLinux = new File(USER_HOME, ".twentyten");
-    GAME_DIRECTORIES.put(EPlatform.LINUX, gameDirectoryForLinux);
+    File workingDirectoryForLinux = new File(USER_HOME, ".twentyten");
+    WORKING_DIRECTORIES.put(EPlatform.LINUX, workingDirectoryForLinux);
 
-    File gameDirectoryForWindows =
+    File workingDirectoryForWindows =
         APPDATA != null ? new File(APPDATA, ".twentyten") : new File(USER_HOME, ".twentyten");
-    GAME_DIRECTORIES.put(EPlatform.WINDOWS, gameDirectoryForWindows);
+    WORKING_DIRECTORIES.put(EPlatform.WINDOWS, workingDirectoryForWindows);
   }
 }
