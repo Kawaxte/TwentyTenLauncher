@@ -1,5 +1,6 @@
 package ee.twentyten.ui;
 
+import ee.twentyten.ui.panel.VersionsOptionsPanel;
 import javax.swing.JTabbedPane;
 import lombok.Getter;
 
