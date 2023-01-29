@@ -9,9 +9,7 @@ public class OptionsTabbedPane extends JTabbedPane {
   private final VersionsOptionsPanel versionsOptionsPanel;
 
   public OptionsTabbedPane() {
-    super();
-
-    this.setTabPlacement(JTabbedPane.TOP);
+    super(JTabbedPane.TOP);
 
     this.versionsOptionsPanel = new VersionsOptionsPanel();
     this.add("Versions", this.versionsOptionsPanel);
