@@ -25,13 +25,11 @@
   </build>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/org.json/json -->
     <dependency>
       <artifactId>json</artifactId>
       <groupId>org.json</groupId>
       <version>20220924</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
     <dependency>
       <artifactId>lombok</artifactId>
       <groupId>org.projectlombok</groupId>
@@ -50,7 +48,6 @@
     </dependency>
   </dependencies>
   <groupId>ee.sojla</groupId>
-
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
@@ -58,6 +55,13 @@
     <maven.compiler.target>7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
   <version>1.0-SNAPSHOT</version>
 
 </project>
