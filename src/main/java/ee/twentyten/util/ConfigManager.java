@@ -24,7 +24,7 @@ public final class ConfigManager {
   }
 
   public static String getClientToken() {
-    File configFile = new File(DirectoryManager.getGameDirectory(), "twentyten.properties");
+    File configFile = new File(DirectoryManager.getWorkingDirectory(), "twentyten.properties");
     if (!configFile.exists()) {
       return UUID.randomUUID().toString().replace("-", "");
     }
