@@ -26,7 +26,7 @@ original launcher, while _Beta 1.2_02_ was the final version to come with the or
 
 > Please be advised that this application requires a minimum of Java 7 or higher to run.
 
-<h1 align="center">Managing Issues and Contributions</h1>
+<h2 align="center">Managing Issues and Contributions</h2>
 
 <p align="center">
    <a href="https://github.com/sojlabjoi/AlphacraftLauncher/issues">
@@ -37,7 +37,6 @@ original launcher, while _Beta 1.2_02_ was the final version to come with the or
    </a>
 </p>
 
-----
 We rely on the power of the community to help improve our launcher. That's why we use GitHub's issue
 tracker and pull request feature to manage and resolve any issues that arise and to review and
 incorporate contributions from our users.
