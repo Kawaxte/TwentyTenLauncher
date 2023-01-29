@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public final class ImageManager {
 
@@ -17,8 +18,8 @@ public final class ImageManager {
     Objects.requireNonNull(input);
     try {
       return ImageIO.read(input);
-    } catch (IOException e) {
-      throw new RuntimeException(String.format("Can't read image from %s", input), e);
+    } catch (IOException ioe) {
+      return new ImageIcon(new byte[768]).getImage();
     }
   }
 }
