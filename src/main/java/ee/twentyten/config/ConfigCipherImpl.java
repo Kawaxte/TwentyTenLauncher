@@ -8,7 +8,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import org.apache.commons.codec.binary.Base64;
 
-public class ConfigCipherImpl implements IConfigCipherImpl {
+public class ConfigCipherImpl implements IConfigCipher {
 
   @Override
   public String encrypt(String value) throws GeneralSecurityException {
