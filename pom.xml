@@ -11,7 +11,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>ee.twentyten.Launcher</mainClass>
+              <mainClass>ee.twentyten.launcher.Launcher</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
@@ -45,6 +45,16 @@
       <artifactId>commons-codec</artifactId>
       <groupId>commons-codec</groupId>
       <version>1.15</version>
+    </dependency>
+    <dependency>
+      <artifactId>slf4j-api</artifactId>
+      <groupId>org.slf4j</groupId>
+      <version>1.7.36</version>
+    </dependency>
+    <dependency>
+      <artifactId>slf4j-simple</artifactId>
+      <groupId>org.slf4j</groupId>
+      <version>1.7.36</version>
     </dependency>
   </dependencies>
   <groupId>ee.sojla</groupId>
