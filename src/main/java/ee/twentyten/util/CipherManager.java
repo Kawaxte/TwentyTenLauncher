@@ -1,72 +1,47 @@
 package ee.twentyten.util;
 
+import ee.twentyten.config.ConfigCipherImpl;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import org.apache.commons.codec.binary.Base64;
 
 public final class CipherManager {
+
+  private static final ConfigCipherImpl AES_CIPHER;
+
+  static {
+    AES_CIPHER = new ConfigCipherImpl();
+  }
 
   private CipherManager() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  private static SecretKey getSecretKey() throws NoSuchAlgorithmException {
+  public static SecretKey getSecretKey() throws NoSuchAlgorithmException {
     KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
     keyGenerator.init(128, new SecureRandom("passwordfile".getBytes(StandardCharsets.UTF_8)));
     return new SecretKeySpec(keyGenerator.generateKey().getEncoded(), "AES");
   }
 
-  public static String encrypt(String value) {
-    if (value == null || value.isEmpty()) {
-      return "";
-    }
-
+  public static String encryptValue(String value) {
     try {
-      SecretKey key = CipherManager.getSecretKey();
-      IvParameterSpec iv = new IvParameterSpec(key.getEncoded());
-
-      Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-
-      byte[] encryptedByte = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
-      return Base64.encodeBase64String(encryptedByte);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
-             IllegalBlockSizeException | BadPaddingException |
-             InvalidAlgorithmParameterException exceptions) {
-      throw new RuntimeException("Failed to encrypt value", exceptions);
+      return AES_CIPHER.encrypt(value);
+    } catch (GeneralSecurityException gse) {
+      DebugLoggingManager.logError(CipherManager.class, "Failed to encrypt value", gse);
     }
+    return value;
   }
 
-  public static String decrypt(String value) {
-    if (value == null || value.isEmpty()) {
-      return "";
-    }
-
+  public static String decryptValue(String value) {
     try {
-      SecretKey key = CipherManager.getSecretKey();
-      IvParameterSpec iv = new IvParameterSpec(key.getEncoded());
-
-      Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      cipher.init(Cipher.DECRYPT_MODE, key, iv);
-
-      byte[] decryptedBase64 = Base64.decodeBase64(value);
-      byte[] decryptedByte = cipher.doFinal(decryptedBase64);
-      return new String(decryptedByte, StandardCharsets.UTF_8);
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
-             IllegalBlockSizeException | BadPaddingException |
-             InvalidAlgorithmParameterException exceptions) {
-      throw new RuntimeException("Failed to decrypt value", exceptions);
+      return AES_CIPHER.decrypt(value);
+    } catch (GeneralSecurityException gse) {
+      DebugLoggingManager.logError(CipherManager.class, "Failed to decrypt value", gse);
     }
+    return value;
   }
 }
