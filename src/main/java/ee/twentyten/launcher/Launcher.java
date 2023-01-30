@@ -1,7 +1,6 @@
-package ee.twentyten;
+package ee.twentyten.launcher;
 
-import ee.twentyten.core.EPlatform;
-import ee.twentyten.ui.LauncherFrame;
+import ee.twentyten.launcher.ui.LauncherFrame;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +34,14 @@ public class Launcher {
         if (process.waitFor() != 0) {
           System.exit(process.exitValue());
         }
-      } catch (IOException e) {
+      } catch (IOException ioe) {
         JOptionPane.showMessageDialog(null,
-            String.format("An error occurred while starting the process:%n%s", e.getMessage()),
+            String.format("An error occurred while starting the process:%n%s", ioe.getMessage()),
             "Error", JOptionPane.ERROR_MESSAGE);
-      } catch (InterruptedException e) {
+      } catch (InterruptedException ie) {
         JOptionPane.showMessageDialog(null,
             String.format("An error occurred while waiting for the process to terminate:%n%s",
-                e.getMessage()), "Error", JOptionPane.ERROR_MESSAGE);
+                ie.getMessage()), "Error", JOptionPane.ERROR_MESSAGE);
       }
     } else {
       LauncherFrame.main(args);

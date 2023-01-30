@@ -1,4 +1,4 @@
-package ee.twentyten.core;
+package ee.twentyten.launcher;
 
 import java.util.Locale;
 
@@ -16,13 +16,15 @@ public enum EPlatform {
   }
 
   public static EPlatform getPlatform() {
-    for (EPlatform platform : values()) {
-      for (String os : platform.osNames) {
+    EPlatform platform = null;
+    for (EPlatform p : values()) {
+      for (String os : p.osNames) {
         if (OS_NAME.contains(os)) {
-          return platform;
+          platform = p;
+          break;
         }
       }
     }
-    return null;
+    return platform;
   }
 }
