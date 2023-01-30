@@ -1,6 +1,6 @@
-package ee.twentyten.ui.panel;
+package ee.twentyten.launcher.ui;
 
-import ee.twentyten.core.swing.JBorderPanel;
+import ee.twentyten.custom.CustomJPanel;
 import ee.twentyten.util.LauncherManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,8 +19,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginLauncherPanel extends JBorderPanel {
+public class LauncherLoginPanel extends CustomJPanel {
 
+  private String linkUrls;
+  private boolean outdated;
   private JLabel errorLabel;
   private JLabel usernameLabel;
   private JTextField usernameField;
@@ -29,11 +31,9 @@ public class LoginLauncherPanel extends JBorderPanel {
   private JButton optionsButton;
   private JCheckBox rememberPasswordCheckBox;
   private JLabel linkLabel;
-  private String linkUrls;
-  private boolean outdated;
   private JButton loginButton;
 
-  public LoginLauncherPanel() {
+  public LauncherLoginPanel() {
     super(new BorderLayout(0, 8), true);
 
     this.setBackground(Color.GRAY);
@@ -51,7 +51,22 @@ public class LoginLauncherPanel extends JBorderPanel {
     this.errorLabel.setForeground(Color.RED.darker());
     this.add(this.errorLabel, BorderLayout.NORTH);
 
+    this.usernameLabel = new JLabel("Username:", SwingConstants.RIGHT);
+    this.passwordLabel = new JLabel("Password:", SwingConstants.RIGHT);
+    this.optionsButton = new JButton("Options");
+    this.usernameField = new JTextField(20);
+    this.passwordField = new JPasswordField(20);
+    this.rememberPasswordCheckBox = new JCheckBox("Remember Password");
     this.createMiddlePanel();
+
+    this.linkLabel = new JLabel(this.outdated ? String.format(
+        "<html><a href='%s'>You need to update the launcher!</a></html>",
+        LauncherManager.LATEST_RELEASE_URL)
+        : String.format("<html><a href='%s'>Need account?</a></html>",
+            LauncherManager.ACCOUNT_SIGNUP_URL), SwingConstants.LEFT);
+    this.linkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    this.linkLabel.setForeground(Color.BLUE);
+    this.loginButton = new JButton("Login");
     this.createBottomPanel();
   }
 
@@ -59,9 +74,6 @@ public class LoginLauncherPanel extends JBorderPanel {
     GridLayout gl = new GridLayout(3, 1, 0, 2);
 
     JPanel middlePanel1 = new JPanel(gl, true);
-    this.usernameLabel = new JLabel("Username:", SwingConstants.RIGHT);
-    this.passwordLabel = new JLabel("Password:", SwingConstants.RIGHT);
-    this.optionsButton = new JButton("Options");
     middlePanel1.add(this.usernameLabel, 0);
     middlePanel1.add(this.passwordLabel, 1);
     middlePanel1.add(this.optionsButton, 2);
@@ -69,9 +81,6 @@ public class LoginLauncherPanel extends JBorderPanel {
     this.add(middlePanel1, BorderLayout.WEST);
 
     JPanel middlePanel2 = new JPanel(gl, true);
-    this.usernameField = new JTextField(20);
-    this.passwordField = new JPasswordField(20);
-    this.rememberPasswordCheckBox = new JCheckBox("Remember Password");
     this.rememberPasswordCheckBox.setContentAreaFilled(false);
     middlePanel2.add(this.usernameField, 0);
     middlePanel2.add(this.passwordField, 1);
@@ -82,14 +91,6 @@ public class LoginLauncherPanel extends JBorderPanel {
 
   private void createBottomPanel() {
     JPanel bottomPanel = new JPanel(new BorderLayout(), true);
-    this.linkLabel = new JLabel(this.outdated ? String.format(
-        "<html><a href='%s'>You need to update the launcher!</a></html>",
-        LauncherManager.LATEST_RELEASE_URL)
-        : String.format("<html><a href='%s'>Need account?</a></html>",
-            LauncherManager.ACCOUNT_SIGNUP_URL), SwingConstants.LEFT);
-    this.linkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    this.linkLabel.setForeground(Color.BLUE);
-    this.loginButton = new JButton("Login");
     bottomPanel.add(this.linkLabel, BorderLayout.WEST);
     bottomPanel.add(this.loginButton, BorderLayout.EAST);
     bottomPanel.setBackground(Color.GRAY);
