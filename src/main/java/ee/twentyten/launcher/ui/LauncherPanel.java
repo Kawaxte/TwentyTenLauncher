@@ -1,6 +1,6 @@
-package ee.twentyten.ui.panel;
+package ee.twentyten.launcher.ui;
 
-import ee.twentyten.util.ImageManager;
+import ee.twentyten.util.FilesManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -18,17 +18,17 @@ import lombok.Getter;
 public class LauncherPanel extends JPanel {
 
   private final Image bgImage;
-  private final LoginLauncherPanel loginPanel;
+  private final LauncherLoginPanel launcherLoginPanel;
   private VolatileImage gcVolatileBgImage;
 
   public LauncherPanel() {
     super(new GridBagLayout(), true);
 
-    this.bgImage = ImageManager.readImage(LauncherPanel.class, "icon/dirt.png");
+    this.bgImage = FilesManager.readImageFile(LauncherPanel.class, "icon/dirt.png");
     this.setPreferredSize(new Dimension(854, 480));
 
-    this.loginPanel = new LoginLauncherPanel();
-    this.add(this.loginPanel);
+    this.launcherLoginPanel = new LauncherLoginPanel();
+    this.add(this.launcherLoginPanel);
   }
 
   private void getTitle(int pWidth, int pHeight, Graphics2D g2d) {
