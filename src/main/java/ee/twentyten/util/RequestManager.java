@@ -1,158 +1,99 @@
 package ee.twentyten.util;
 
+import ee.twentyten.request.HttpRequestImpl;
+import ee.twentyten.request.JsonRequestImpl;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 public final class RequestManager {
+
+  public static final Map<String, String> JSON_HEADER;
+  public static final Map<String, String> X_WWW_FORM_HEADER;
+  public static final Map<String, String> NO_CACHE_HEADER;
+  private static final HttpRequestImpl HTTP_REQUEST;
+  private static final JsonRequestImpl JSON_REQUEST;
+
+  static {
+    JSON_HEADER = Collections.unmodifiableMap(new HashMap<String, String>() {{
+      put("Content-Type", "application/json; charset=UTF-8");
+      put("Accept", "application/json");
+    }});
+    X_WWW_FORM_HEADER = Collections.unmodifiableMap(new HashMap<String, String>() {{
+      put("Content-Type", "application/x-www-form-urlencoded");
+      put("Accept", "application/x-www-form-urlencoded");
+    }});
+    NO_CACHE_HEADER = Collections.unmodifiableMap(new HashMap<String, String>() {{
+      put("Cache-Control", "no-cache");
+      put("Pragma", "no-cache");
+    }});
+
+    HTTP_REQUEST = new HttpRequestImpl();
+    JSON_REQUEST = new JsonRequestImpl();
+  }
 
   private RequestManager() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  private static HttpsURLConnection getHttpResponse(HttpsURLConnection connection) {
-    return connection;
-  }
-
-  private static JSONObject getJsonResponse(HttpsURLConnection connection) {
-    try (InputStream is = connection.getResponseCode() >= 400 ? connection.getErrorStream()
-        : connection.getInputStream()) {
-      String response = IOUtils.toString(is, StandardCharsets.UTF_8);
-      return response.isEmpty() ? new JSONObject() : new JSONObject(response);
+  public static HttpsURLConnection sendHttpRequest(String url, String method,
+      Map<String, String> headers) {
+    try {
+      URL requestUrl = new URL(url);
+      return HTTP_REQUEST.sendRequest(requestUrl, method, headers);
     } catch (IOException ioe) {
-      throw new RuntimeException(
-          String.format("Failed to read response from %s", connection.getURL()), ioe);
+      DebugLoggingManager.logError(RequestManager.class, "Failed to send HTTP request", ioe);
     }
+    return null;
   }
 
-  public static HttpsURLConnection requestHttpGet(String url) {
-    SSLContext context;
+  public static HttpsURLConnection sendHttpRequest(String url, String method,
+      Map<String, String> headers, String data) {
     try {
-      context = SSLContext.getInstance("TLSv1.2");
-    } catch (NoSuchAlgorithmException nae1) {
-      try {
-        context = SSLContext.getDefault();
-      } catch (NoSuchAlgorithmException nae2) {
-        throw new RuntimeException("Failed to get default SSL context", nae2);
-      }
+      URL requestUrl = new URL(url);
+      return HTTP_REQUEST.sendRequest(requestUrl, method, headers, data);
+    } catch (IOException ioe) {
+      DebugLoggingManager.logError(RequestManager.class, "Failed to send HTTP request", ioe);
     }
-    try {
-      context.init(null, null, null);
-    } catch (KeyManagementException kme) {
-      throw new RuntimeException("Failed to initialise SSL context", kme);
-    }
+    return null;
+  }
 
+  public static JSONObject sendJsonRequest(String url, String method, Map<String, String> headers) {
     try {
-      HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+      URL requestUrl = new URL(url);
+      return JSON_REQUEST.sendRequest(requestUrl, method, headers);
+    } catch (IOException ioe) {
+      DebugLoggingManager.logError(RequestManager.class, "Failed to send JSON request", ioe);
+    }
+    return null;
+  }
+
+  public static JSONObject sendJsonRequest(String url, String method, Map<String, String> headers,
+      JSONObject data) {
+    try {
+      URL requestUrl = new URL(url);
+      return JSON_REQUEST.sendRequest(requestUrl, method, headers, data);
+    } catch (IOException ioe) {
+      DebugLoggingManager.logError(RequestManager.class, "Failed to send JSON request", ioe);
+    }
+    return null;
+  }
+
+  public static void enforceProtocol(HttpsURLConnection connection) {
+    try {
+      SSLContext context = SSLContext.getInstance("TLSv1.2");
+      context.init(null, null, new SecureRandom());
+
       connection.setSSLSocketFactory(context.getSocketFactory());
-      connection.setRequestMethod("GET");
-      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-      connection.setRequestProperty("Cache-Control", "no-cache");
-      connection.setRequestProperty("Pragma", "no-cache");
-      connection.setUseCaches(false);
-      return getHttpResponse(connection);
-    } catch (IOException ioe) {
-      throw new RuntimeException(String.format("Can't connect to %s", url), ioe);
-    }
-  }
-
-  public static HttpsURLConnection requestHttpHead(String url) {
-    SSLContext context;
-    try {
-      context = SSLContext.getInstance("TLSv1.2");
-    } catch (NoSuchAlgorithmException nae1) {
-      try {
-        context = SSLContext.getDefault();
-      } catch (NoSuchAlgorithmException nae2) {
-        throw new RuntimeException("Failed to get default SSL context", nae2);
-      }
-    }
-    try {
-      context.init(null, null, null);
-    } catch (KeyManagementException kme) {
-      throw new RuntimeException("Failed to initialise SSL context", kme);
-    }
-
-    try {
-      HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-      connection.setSSLSocketFactory(context.getSocketFactory());
-      connection.setRequestMethod("HEAD");
-      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-      connection.setRequestProperty("Cache-Control", "no-cache");
-      connection.setRequestProperty("Pragma", "no-cache");
-      connection.setUseCaches(false);
-      return getHttpResponse(connection);
-    } catch (IOException ioe) {
-      throw new RuntimeException(String.format("Can't connect to %s", url), ioe);
-    }
-  }
-
-  public static JSONObject requestJsonGet(String url) {
-    SSLContext context;
-    try {
-      context = SSLContext.getInstance("TLSv1.2");
-    } catch (NoSuchAlgorithmException nae1) {
-      try {
-        context = SSLContext.getDefault();
-      } catch (NoSuchAlgorithmException nae2) {
-        throw new RuntimeException("Failed to get default SSL context", nae2);
-      }
-    }
-    try {
-      context.init(null, null, null);
-    } catch (KeyManagementException kme) {
-      throw new RuntimeException("Failed to initialise SSL context", kme);
-    }
-
-    try {
-      HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-      connection.setSSLSocketFactory(context.getSocketFactory());
-      connection.setRequestMethod("GET");
-      connection.setRequestProperty("Content-Type", "application/json");
-      return getJsonResponse(connection);
-    } catch (IOException ioe) {
-      throw new RuntimeException(String.format("Can't connect to %s", url), ioe);
-    }
-  }
-
-  public static JSONObject requestJsonPost(String url, JSONObject data) {
-    SSLContext context;
-    try {
-      context = SSLContext.getInstance("TLSv1.2");
-    } catch (NoSuchAlgorithmException nae) {
-      try {
-        context = SSLContext.getDefault();
-      } catch (NoSuchAlgorithmException nae2) {
-        throw new RuntimeException("Failed to get default SSL context", nae2);
-      }
-    }
-    try {
-      context.init(null, null, null);
-    } catch (KeyManagementException kme) {
-      throw new RuntimeException("Failed to initialise SSL context", kme);
-    }
-
-    try {
-      HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-      connection.setSSLSocketFactory(context.getSocketFactory());
-      connection.setRequestMethod("POST");
-      connection.setRequestProperty("Content-Type", "application/json");
-      connection.setDoOutput(true);
-
-      try (OutputStream os = connection.getOutputStream()) {
-        os.write(String.valueOf(data).getBytes());
-        return getJsonResponse(connection);
-      }
-    } catch (IOException ioe) {
-      throw new RuntimeException(String.format("Can't connect to %s", url), ioe);
+    } catch (GeneralSecurityException gse) {
+      DebugLoggingManager.logError(RequestManager.class, "Failed to enforce protocol", gse);
     }
   }
 }
