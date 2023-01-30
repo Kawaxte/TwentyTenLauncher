@@ -1,4 +1,4 @@
-package net.minecraft.application;
+package net.minecraft;
 
 public interface IMinecraftUpdater {
 

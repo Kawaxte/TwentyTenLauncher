@@ -1,4 +1,4 @@
-package net.minecraft.application;
+package net.minecraft;
 
 import ee.twentyten.util.FilesManager;
 import ee.twentyten.util.ThreadManager;
