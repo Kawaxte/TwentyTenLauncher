@@ -1,4 +1,4 @@
-package ee.twentyten.core.thread;
+package ee.twentyten.thread;
 
 import java.util.concurrent.ThreadFactory;
 
