@@ -1,5 +1,6 @@
-package ee.twentyten.core;
+package ee.twentyten.custom;
 
+import ee.twentyten.util.DebugLoggingManager;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
@@ -9,7 +10,7 @@ import java.util.Set;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
-public class LinkedProperties extends Properties {
+public class CustomLinkedProperties extends Properties {
 
   private final LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
 
@@ -48,8 +49,8 @@ public class LinkedProperties extends Properties {
         out.write(value.getBytes());
         out.write(System.lineSeparator().getBytes());
       }
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to store properties", e);
+    } catch (IOException ioe) {
+      DebugLoggingManager.logError(this.getClass(), "Failed to store properties", ioe);
     }
   }
 }
