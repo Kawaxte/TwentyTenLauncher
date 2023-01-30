@@ -1,4 +1,4 @@
-package ee.twentyten.core.swing;
+package ee.twentyten.custom;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -8,9 +8,9 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
-public class JBorderPanel extends JPanel {
+public class CustomJPanel extends JPanel {
 
-  public JBorderPanel(LayoutManager layout, boolean isDoubleBuffered) {
+  public CustomJPanel(LayoutManager layout, boolean isDoubleBuffered) {
     super(layout, isDoubleBuffered);
   }
 
