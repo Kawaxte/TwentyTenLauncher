@@ -23,12 +23,13 @@ import javax.swing.SwingUtilities;
 
 public class LauncherFrame extends JFrame implements ActionListener {
 
-  private static final long serialVersionUID = 1L;
+  private static final int PRE_RELEASE_VERSION = 1;
   public static LauncherFrame instance;
   private final LauncherLoginPanel loginPanel;
 
   public LauncherFrame() {
-    super(String.format("TwentyTen Launcher %s", LauncherManager.getCurrentVersion(true)));
+    super(String.format("TwentyTen Launcher %s",
+        LauncherManager.getCurrentVersion(PRE_RELEASE_VERSION, true)));
 
     this.setIconImage(FilesManager.readImageFile(LauncherFrame.class, "icon/favicon.png"));
     this.setMinimumSize(new Dimension(640, 480));
