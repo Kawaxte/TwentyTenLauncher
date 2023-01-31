@@ -14,9 +14,10 @@ public class HttpRequestImpl implements IHttpRequest {
   private HttpsURLConnection getResponse(HttpsURLConnection connection) throws IOException {
     int responseCode = connection.getResponseCode();
     String responseMessage = connection.getResponseMessage();
+    String connectionUrl = connection.getURL().toString();
 
     DebugLoggingManager.logInfo(this.getClass(),
-        String.format("%d %s", responseCode, responseMessage));
+        String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
     return connection;
   }
 
@@ -28,6 +29,8 @@ public class HttpRequestImpl implements IHttpRequest {
     for (Map.Entry<String, String> header : headers.entrySet()) {
       connection.setRequestProperty(header.getKey(), header.getValue());
     }
+
+    DebugLoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
 
     RequestManager.enforceProtocol(connection);
     return this.getResponse(connection);
@@ -48,6 +51,8 @@ public class HttpRequestImpl implements IHttpRequest {
         os.write(data.getBytes(StandardCharsets.UTF_8));
       }
     }
+
+    DebugLoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
 
     RequestManager.enforceProtocol(connection);
     return this.getResponse(connection);
