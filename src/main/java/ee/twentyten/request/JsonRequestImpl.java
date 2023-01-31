@@ -17,13 +17,14 @@ public class JsonRequestImpl implements IJsonRequest {
   private JSONObject getResponse(HttpsURLConnection connection) throws IOException {
     int responseCode = connection.getResponseCode();
     String responseMessage = connection.getResponseMessage();
+    String connectionUrl = connection.getURL().toString();
     String response;
     try (InputStream is = responseCode >= 400 ? connection.getErrorStream()
         : connection.getInputStream()) {
       response = IOUtils.toString(is, StandardCharsets.UTF_8);
     }
     DebugLoggingManager.logInfo(this.getClass(),
-        String.format("%d %s", responseCode, responseMessage));
+        String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
     return response.isEmpty() ? new JSONObject() : new JSONObject(response);
   }
 
@@ -35,6 +36,8 @@ public class JsonRequestImpl implements IJsonRequest {
     for (Map.Entry<String, String> header : headers.entrySet()) {
       connection.setRequestProperty(header.getKey(), header.getValue());
     }
+
+    DebugLoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
 
     RequestManager.enforceProtocol(connection);
     return this.getResponse(connection);
@@ -54,6 +57,8 @@ public class JsonRequestImpl implements IJsonRequest {
         os.write(String.valueOf(data).getBytes());
       }
     }
+
+    DebugLoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
 
     RequestManager.enforceProtocol(connection);
     return this.getResponse(connection);
