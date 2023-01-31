@@ -34,8 +34,8 @@ public class Config {
       if (!configFile.exists()) {
         try {
           FileUtils.touch(configFile);
-        } catch (IOException ioe) {
-          DebugLoggingManager.logError(Config.class, "Failed to create config file", ioe);
+        } catch (IOException ioe1) {
+          DebugLoggingManager.logError(Config.class, "Failed to create config file", ioe1);
         }
       }
 
@@ -53,11 +53,14 @@ public class Config {
         c.usingAlpha = Boolean.parseBoolean(properties.getProperty("using-alpha"));
         c.usingInfdev = Boolean.parseBoolean(properties.getProperty("using-infdev"));
         c.selectedVersion = properties.getProperty("selected-version");
-      } catch (IOException ioe) {
-        DebugLoggingManager.logError(Config.class, "Failed to load config file", ioe);
+
+        DebugLoggingManager.logInfo(Config.class,
+            String.format("\"%s\"", configFile.getAbsolutePath()));
+      } catch (IOException ioe2) {
+        DebugLoggingManager.logError(Config.class, "Failed to load config file", ioe2);
       }
-    } catch (IOException ioe) {
-      DebugLoggingManager.logError(Config.class, "Failed to get working directory", ioe);
+    } catch (IOException ioe3) {
+      DebugLoggingManager.logError(Config.class, "Failed to get working directory", ioe3);
     }
     return c;
   }
@@ -80,11 +83,14 @@ public class Config {
       File configFile = new File(LauncherManager.getWorkingDirectory(), "twentyten.properties");
       try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
         properties.store(fos, "TwentyTen Launcher Properties File");
-      } catch (IOException ioe) {
-        DebugLoggingManager.logError(this.getClass(), "Failed to save config file", ioe);
+
+        DebugLoggingManager.logInfo(Config.class,
+            String.format("\"%s\"", configFile.getAbsolutePath()));
+      } catch (IOException ioe1) {
+        DebugLoggingManager.logError(this.getClass(), "Failed to save config file", ioe1);
       }
-    } catch (IOException ioe) {
-      DebugLoggingManager.logError(this.getClass(), "Failed to get working directory", ioe);
+    } catch (IOException ioe2) {
+      DebugLoggingManager.logError(this.getClass(), "Failed to get working directory", ioe2);
     }
   }
 }
