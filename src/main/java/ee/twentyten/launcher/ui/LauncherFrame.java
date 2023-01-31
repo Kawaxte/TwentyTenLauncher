@@ -23,13 +23,19 @@ import javax.swing.SwingUtilities;
 
 public class LauncherFrame extends JFrame implements ActionListener {
 
-  private static final int PRE_RELEASE_VERSION = 1;
+  private static final int PRE_RELEASE_VERSION;
+  private static final String CURRENT_VERSION;
   public static LauncherFrame instance;
+
+  static {
+    PRE_RELEASE_VERSION = 1;
+    CURRENT_VERSION = LauncherManager.getCurrentVersion(PRE_RELEASE_VERSION, true);
+  }
+
   private final LauncherLoginPanel loginPanel;
 
-  public LauncherFrame() {
-    super(String.format("TwentyTen Launcher %s",
-        LauncherManager.getCurrentVersion(PRE_RELEASE_VERSION, true)));
+  public LauncherFrame(String title) {
+    super(title);
 
     this.setIconImage(FilesManager.readImageFile(LauncherFrame.class, "icon/favicon.png"));
     this.setMinimumSize(new Dimension(640, 480));
@@ -81,7 +87,8 @@ public class LauncherFrame extends JFrame implements ActionListener {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        LauncherFrame.instance = new LauncherFrame();
+        LauncherFrame.instance = new LauncherFrame(
+            String.format("TwentyTen Launcher %s", CURRENT_VERSION));
         LauncherFrame.instance.setVisible(true);
       }
     });
