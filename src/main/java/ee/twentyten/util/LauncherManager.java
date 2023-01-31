@@ -36,23 +36,18 @@ public final class LauncherManager {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static String getCurrentVersion(boolean isDevBuild) {
+  public static String getCurrentVersion(int value, boolean isDevBuild) {
     Calendar calendar = Calendar.getInstance();
     int year = calendar.get(Calendar.YEAR);
     int month = calendar.get(Calendar.MONTH) + 1;
     int day = calendar.get(Calendar.DAY_OF_MONTH);
-    int hour = calendar.get(Calendar.HOUR_OF_DAY);
-    int minute = calendar.get(Calendar.MINUTE);
-    int x = (year - 2022) % 10;
+    int milestone = (year - 2022) % 10;
 
     String formattedYear = String.format("%02d", year % 100);
     String formattedMonth = String.format("%02d", month);
     String formattedDay = String.format("%02d", day);
-    String formattedHour = String.format("%02d", hour);
-    String formattedMinute = String.format("%02d", minute);
-    String formattedVersion = String.format("%d.%s.%s%s%s", x, formattedMonth, formattedDay,
-        formattedYear,
-        isDevBuild ? String.format("_%s%s", formattedHour, formattedMinute) : "");
+    String formattedVersion = String.format("%d.%s.%s%s%s", milestone, formattedMonth, formattedDay,
+        formattedYear, isDevBuild ? String.format("_pre%d", value) : "");
     LauncherManager.currentVersion = formattedVersion;
     return formattedVersion;
   }
@@ -63,6 +58,9 @@ public final class LauncherManager {
     File workingDirectory = LauncherManager.WORKING_DIRECTORIES.get(platformName);
     Objects.requireNonNull(workingDirectory, "workingDirectory == null!");
     if (!workingDirectory.exists()) {
+      DebugLoggingManager.logInfo(LauncherManager.class,
+          String.format("\"%s\"", workingDirectory.getAbsolutePath()));
+
       boolean created = workingDirectory.mkdirs();
       if (!created) {
         throw new IOException("Can't create working directory");
@@ -86,12 +84,12 @@ public final class LauncherManager {
 
   public static void setLookAndFeel() {
     try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
+      UIManager.setLookAndFeel(lookAndFeel);
     } catch (ReflectiveOperationException roe) {
       DebugLoggingManager.logError(LauncherManager.class, "Failed to set look and feel", roe);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      DebugLoggingManager.logError(LauncherManager.class, "Failed to find look and feel class",
-          ulafe);
+      DebugLoggingManager.logError(LauncherManager.class, "Can't look and feel class", ulafe);
     }
   }
 
@@ -108,12 +106,10 @@ public final class LauncherManager {
     worker.execute();
 
     try {
-      worker.get();
       return worker.get();
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
     } catch (ExecutionException ee) {
-      ee.printStackTrace();
       JOptionPane.showMessageDialog(null,
           String.format("An error occurred while checking for updates:%n%s", ee.getMessage()),
           "Error", JOptionPane.ERROR_MESSAGE);
