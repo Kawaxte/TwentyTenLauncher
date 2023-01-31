@@ -38,56 +38,64 @@ public final class FilesManager {
     }
   }
 
-  public static JSONObject readJsonFile(File f) throws IOException {
-    if (!f.exists() || !f.isFile()) {
-      throw new FileNotFoundException(String.format("Can't find file in %s", f));
+  public static JSONObject readJsonFile(File src) throws IOException {
+    if (!src.exists() || !src.isFile()) {
+      throw new FileNotFoundException(String.format("Can't find file in %s", src));
     }
 
-    byte[] bytes = Files.readAllBytes(f.toPath());
+    byte[] bytes = Files.readAllBytes(src.toPath());
     String json = new String(bytes, StandardCharsets.UTF_8);
     return new JSONObject(json);
   }
 
-  public static void downloadFile(String url, File srcPath) {
+  public static void downloadFile(String url, File src) {
     try (InputStream is = Objects.requireNonNull(
             RequestManager.sendHttpRequest(url, "GET", RequestManager.X_WWW_FORM_HEADER), "is == null!")
         .getInputStream()) {
-      FileUtils.copyInputStreamToFile(is, srcPath);
+      FileUtils.copyInputStreamToFile(is, src);
+
+      DebugLoggingManager.logInfo(FilesManager.class,
+          String.format("\"%s\"", src.getAbsolutePath()));
     } catch (IOException ioe) {
       DebugLoggingManager.logError(FilesManager.class,
           String.format("Failed to download file from %s", url), ioe);
     }
   }
 
-  public static void moveFile(File srcPath, File destPath) {
+  public static void moveFile(File src, File dest) {
     try {
-      FileUtils.moveFile(srcPath, destPath);
+      FileUtils.moveFile(src, dest);
     } catch (IOException ioe1) {
-      try (FileOutputStream fos = new FileOutputStream(destPath)) {
-        FileUtils.copyFile(srcPath, fos);
+      try (FileOutputStream fos = new FileOutputStream(dest)) {
+        FileUtils.copyFile(src, fos);
 
-        boolean deleted = srcPath.delete();
+        DebugLoggingManager.logInfo(FilesManager.class,
+            String.format("\"%s\"", dest.getAbsolutePath()));
+        boolean deleted = src.delete();
         if (!deleted) {
           throw new IOException(
-              String.format("Failed to delete file from %s", srcPath.getAbsolutePath()));
+              String.format("Failed to delete file from %s", src.getAbsolutePath()));
         }
       } catch (IOException ioe2) {
         DebugLoggingManager.logError(FilesManager.class,
-            String.format("Failed to move file from %s to %s", srcPath.getAbsolutePath(),
-                destPath.getAbsolutePath()), ioe2);
+            String.format("Failed to move file from %s to %s", src.getAbsolutePath(),
+                dest.getAbsolutePath()), ioe2);
       }
     }
   }
 
-  public static void deleteFile(File srcPath) {
+  public static void deleteFile(File src) {
     try {
-      FileUtils.delete(srcPath);
+      FileUtils.delete(src);
+
+      DebugLoggingManager.logInfo(FilesManager.class,
+          String.format("\"%s\"", src.getAbsolutePath()));
     } catch (IOException ioe1) {
       try {
-        FileUtils.forceDelete(srcPath);
+        FileUtils.forceDelete(src);
       } catch (IOException ioe2) {
         DebugLoggingManager.logError(FilesManager.class,
-            String.format("Failed to delete file from %s", srcPath.getAbsolutePath()), ioe2);
+            String.format("Failed to delete file from %s", src.getAbsolutePath()), ioe2);
       }
     }
   }
