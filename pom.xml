@@ -19,7 +19,7 @@
           </descriptorRefs>
         </configuration>
         <groupId>org.apache.maven.plugins</groupId>
-        <version>3.4.2</version>
+        <version>3.3.0</version>
       </plugin>
     </plugins>
   </build>
@@ -35,11 +35,6 @@
       <groupId>org.projectlombok</groupId>
       <scope>provided</scope>
       <version>1.18.24</version>
-    </dependency>
-    <dependency>
-      <artifactId>commons-io</artifactId>
-      <groupId>commons-io</groupId>
-      <version>2.11.0</version>
     </dependency>
     <dependency>
       <artifactId>commons-codec</artifactId>
