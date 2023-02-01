@@ -68,7 +68,7 @@ public class OptionsVersionsPanel extends JPanel implements ActionListener {
   }
 
   @Override
-  public void actionPerformed(ActionEvent ae) {
-    Object source = ae.getSource();
+  public void actionPerformed(ActionEvent event) {
+    Object source = event.getSource();
   }
 }

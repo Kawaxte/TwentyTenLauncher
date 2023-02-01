@@ -32,8 +32,8 @@ public class OptionsDialog extends JDialog implements ActionListener {
   }
 
   @Override
-  public void actionPerformed(ActionEvent ae) {
-    Object source = ae.getSource();
+  public void actionPerformed(ActionEvent event) {
+    Object source = event.getSource();
     if (source == this.optionsPanel.getCancelButton()) {
       this.dispose();
     }
