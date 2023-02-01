@@ -1,7 +1,9 @@
 package net.minecraft.util;
 
+import ee.twentyten.config.Config;
 import ee.twentyten.util.DebugLoggingManager;
 import net.minecraft.auth.yggdrasil.YggdrasilAuthImpl;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AuthManager {
@@ -35,5 +37,20 @@ public class AuthManager {
 
     DebugLoggingManager.logInfo(AuthManager.class, result.toString());
     return result;
+  }
+
+  public static void checkYggdrasilSession(String accessToken, String clientToken) {
+    JSONObject validate = AuthManager.validateWithYggdrasil(accessToken, clientToken);
+    if (validate.has("error")) {
+      JSONObject refresh = AuthManager.refreshWithYggdrasil(accessToken, clientToken, true);
+      if (refresh.has("error")) {
+        throw new JSONException("Failed to refresh valid access token");
+      }
+      String newAccessToken = refresh.getString("accessToken");
+      String newClientToken = refresh.getString("clientToken");
+      Config.instance.setAccessToken(newAccessToken);
+      Config.instance.setClientToken(newClientToken);
+      Config.instance.save();
+    }
   }
 }
