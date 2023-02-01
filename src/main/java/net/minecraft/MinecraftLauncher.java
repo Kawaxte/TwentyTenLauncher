@@ -94,7 +94,7 @@ public class MinecraftLauncher extends JApplet implements AppletStub {
       return;
     }
 
-    ThreadManager.createDaemonThread(new Runnable() {
+    ThreadManager.createDaemonThread("UpdaterThread", new Runnable() {
       @Override
       public void run() {
         MinecraftLauncher.this.updater.run();
