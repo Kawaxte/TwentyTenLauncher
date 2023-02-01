@@ -12,6 +12,7 @@ import lombok.Getter;
 @Getter
 public class OptionsPanel extends JPanel {
 
+  private static final long serialVersionUID = 1L;
   private JTabbedPane tabbedPane;
   private OptionsVersionsPanel optionsVersionsPanel;
   private JButton cancelButton;
