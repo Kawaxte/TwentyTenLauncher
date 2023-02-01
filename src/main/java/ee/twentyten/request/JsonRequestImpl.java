@@ -3,13 +3,12 @@ package ee.twentyten.request;
 import ee.twentyten.util.DebugLoggingManager;
 import ee.twentyten.util.RequestManager;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 public class JsonRequestImpl implements IJsonRequest {
@@ -19,10 +18,18 @@ public class JsonRequestImpl implements IJsonRequest {
     String responseMessage = connection.getResponseMessage();
     String connectionUrl = connection.getURL().toString();
     String response;
-    try (InputStream is = responseCode >= 400 ? connection.getErrorStream()
-        : connection.getInputStream()) {
-      response = IOUtils.toString(is, StandardCharsets.UTF_8);
+    try (InputStreamReader isr = new InputStreamReader(
+        responseCode >= 400 ? connection.getErrorStream() : connection.getInputStream(),
+        StandardCharsets.UTF_8)) {
+      StringBuilder sb = new StringBuilder();
+      char[] buffer = new char[1024];
+      int read;
+      while ((read = isr.read(buffer)) != -1) {
+        sb.append(buffer, 0, read);
+      }
+      response = sb.toString();
     }
+
     DebugLoggingManager.logInfo(this.getClass(),
         String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
     return response.isEmpty() ? new JSONObject() : new JSONObject(response);
