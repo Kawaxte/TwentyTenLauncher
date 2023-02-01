@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.io.FileUtils;
 
 @Getter
 @Setter
@@ -32,10 +31,9 @@ public class Config {
     try {
       File configFile = new File(LauncherManager.getWorkingDirectory(), "twentyten.properties");
       if (!configFile.exists()) {
-        try {
-          FileUtils.touch(configFile);
-        } catch (IOException ioe1) {
-          DebugLoggingManager.logError(Config.class, "Failed to create config file", ioe1);
+        boolean created = configFile.createNewFile();
+        if (!created) {
+          throw new IOException("Failed to create config file");
         }
       }
 
