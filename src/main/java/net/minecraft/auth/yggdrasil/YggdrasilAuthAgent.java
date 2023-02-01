@@ -1,4 +1,4 @@
-package net.minecraft.yggdrasil;
+package net.minecraft.auth.yggdrasil;
 
 import org.json.JSONObject;
 
