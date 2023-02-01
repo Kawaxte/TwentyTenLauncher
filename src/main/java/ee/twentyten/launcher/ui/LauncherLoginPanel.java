@@ -1,5 +1,6 @@
 package ee.twentyten.launcher.ui;
 
+import ee.twentyten.config.Config;
 import ee.twentyten.custom.CustomJPanel;
 import ee.twentyten.util.LauncherManager;
 import java.awt.BorderLayout;
@@ -21,6 +22,7 @@ import lombok.Setter;
 @Setter
 public class LauncherLoginPanel extends CustomJPanel {
 
+  private static final long serialVersionUID = 1L;
   private String linkUrls;
   private boolean outdated;
   private JLabel errorLabel;
@@ -64,8 +66,6 @@ public class LauncherLoginPanel extends CustomJPanel {
         LauncherManager.LATEST_RELEASE_URL)
         : String.format("<html><a href='%s'>Need account?</a></html>",
             LauncherManager.ACCOUNT_SIGNUP_URL), SwingConstants.LEFT);
-    this.linkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    this.linkLabel.setForeground(Color.BLUE);
     this.loginButton = new JButton("Login");
     this.createBottomPanel();
   }
@@ -81,7 +81,10 @@ public class LauncherLoginPanel extends CustomJPanel {
     this.add(middlePanel1, BorderLayout.WEST);
 
     JPanel middlePanel2 = new JPanel(gl, true);
+    this.usernameField.setText(Config.instance.getUsername());
+    this.passwordField.setText(Config.instance.getPassword());
     this.rememberPasswordCheckBox.setContentAreaFilled(false);
+    this.rememberPasswordCheckBox.setSelected(Config.instance.getPasswordSaved());
     middlePanel2.add(this.usernameField, 0);
     middlePanel2.add(this.passwordField, 1);
     middlePanel2.add(this.rememberPasswordCheckBox, 2);
@@ -91,6 +94,8 @@ public class LauncherLoginPanel extends CustomJPanel {
 
   private void createBottomPanel() {
     JPanel bottomPanel = new JPanel(new BorderLayout(), true);
+    this.linkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    this.linkLabel.setForeground(Color.BLUE);
     bottomPanel.add(this.linkLabel, BorderLayout.WEST);
     bottomPanel.add(this.loginButton, BorderLayout.EAST);
     bottomPanel.setBackground(Color.GRAY);

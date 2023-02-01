@@ -63,7 +63,7 @@ public final class LauncherManager {
 
       boolean created = workingDirectory.mkdirs();
       if (!created) {
-        throw new IOException("Can't create working directory");
+        throw new IOException("Failed to create working directory");
       }
     }
     return workingDirectory;
