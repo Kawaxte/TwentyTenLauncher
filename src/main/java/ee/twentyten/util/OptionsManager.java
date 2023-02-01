@@ -16,6 +16,7 @@ public final class OptionsManager {
   public static final Map<String, List<String>> TYPES_TO_IDS;
   public static final Map<String, List<String>> IDS_TO_PORTS;
   public static final Map<String, String> FORMATTED_IDS;
+  private static final String VERSIONS_JSON_URL;
 
   static {
     TYPES = new String[]{"beta", "alpha", "infdev"};
@@ -26,6 +27,8 @@ public final class OptionsManager {
     FORMATTED_IDS.put("beta", "Beta %s");
     FORMATTED_IDS.put("alpha", "Alpha v%s");
     FORMATTED_IDS.put("infdev", "Infdev (%s)");
+
+    VERSIONS_JSON_URL = "https://raw.githubusercontent.com/sojlabjoi/AlphacraftLauncher/master/versions.json";
   }
 
   private OptionsManager() {
@@ -42,7 +45,7 @@ public final class OptionsManager {
     if (!versionsDirectory.exists()) {
       boolean created = versionsDirectory.mkdirs();
       if (!created) {
-        throw new IOException("Can't create versions directory");
+        throw new IOException("Failed to create versions directory");
       }
     }
 
@@ -50,7 +53,7 @@ public final class OptionsManager {
     if (!versionsFile.exists()) {
       long lastModified = System.currentTimeMillis() - versionsFile.lastModified();
       if (lastModified > FilesManager.CACHE_EXPIRATION_TIME) {
-        FilesManager.downloadFile(FilesManager.VERSIONS_JSON_URL, versionsFile);
+        FilesManager.downloadFile(VERSIONS_JSON_URL, versionsFile);
       }
     }
   }
