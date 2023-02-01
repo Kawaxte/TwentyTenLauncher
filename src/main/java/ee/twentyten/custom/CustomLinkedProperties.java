@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class CustomLinkedProperties extends Properties {
 
+  private static final long serialVersionUID = 1L;
   private final LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
 
   @Override
