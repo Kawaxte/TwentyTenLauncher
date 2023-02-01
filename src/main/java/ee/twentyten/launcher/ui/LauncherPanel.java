@@ -44,6 +44,16 @@ public class LauncherPanel extends JPanel {
         (pHeight >> 1 >> 1) - ((textHeight) << 1));
   }
 
+  void showError(String error) {
+    this.removeAll();
+
+    this.add(this.launcherLoginPanel);
+    this.launcherLoginPanel.getErrorLabel().setText(error);
+
+    this.revalidate();
+    this.repaint();
+  }
+
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
