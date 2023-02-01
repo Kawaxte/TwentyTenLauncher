@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadFactory;
 public class DaemonThreadFactory implements ThreadFactory {
 
   @Override
-  public Thread newThread(Runnable r) {
+  public synchronized Thread newThread(Runnable r) {
     Thread t = new Thread(r);
     t.setName(String.format("DaemonThread-%d", t.getId()));
     t.setDaemon(true);
