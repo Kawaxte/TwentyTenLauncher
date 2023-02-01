@@ -8,6 +8,7 @@ import ee.twentyten.util.DebugLoggingManager;
 import ee.twentyten.util.FilesManager;
 import ee.twentyten.util.LauncherManager;
 import ee.twentyten.util.OptionsManager;
+import ee.twentyten.util.ThreadManager;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -108,18 +109,25 @@ public class LauncherFrame extends JFrame implements ActionListener {
       optionsDialog.setVisible(true);
     }
     if (source == loginPanel.getLoginButton()) {
-      String loginUsername = loginPanel.getUsernameField().getText();
-      String loginPassword = new String(loginPanel.getPasswordField().getPassword());
-      boolean loginRememberPasswordSelected = loginPanel.getRememberPasswordCheckBox().isSelected();
+      final String loginUsername = loginPanel.getUsernameField().getText();
+      final String loginPassword = new String(loginPanel.getPasswordField().getPassword());
+      final boolean loginRememberPasswordSelected = loginPanel.getRememberPasswordCheckBox()
+          .isSelected();
       String loginClientToken = Config.instance.getClientToken();
 
-      JSONObject result = AuthManager.authenticateWithYggdrasil(loginUsername, loginPassword,
+      final JSONObject result = AuthManager.authenticateWithYggdrasil(loginUsername, loginPassword,
           loginClientToken, true);
       if (result.has("error")) {
         System.out.print("yes");
         return;
       }
-      this.loginWithYggdrasil(loginUsername, loginPassword, loginRememberPasswordSelected, result);
+
+      ThreadManager.createWorkerThread("LoginThread", new Runnable() {
+        @Override
+        public void run() {
+          loginWithYggdrasil(loginUsername, loginPassword, loginRememberPasswordSelected, result);
+        }
+      }).start();
     }
   }
 
