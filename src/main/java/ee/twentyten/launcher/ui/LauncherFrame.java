@@ -31,6 +31,10 @@ public class LauncherFrame extends JFrame implements ActionListener {
   private static final int PRE_RELEASE_VERSION;
   private static final String CURRENT_VERSION;
   public static LauncherFrame instance;
+  private static String configAccessToken;
+  private static String configClientToken;
+  private static String configUsername;
+  private static String configPassword;
 
   static {
     PRE_RELEASE_VERSION = 1;
@@ -38,6 +42,9 @@ public class LauncherFrame extends JFrame implements ActionListener {
   }
 
   private final LauncherLoginPanel loginPanel;
+  private String loginUsername;
+  private String loginPassword;
+  private boolean loginRememberPassword;
   private LauncherPanel panel;
 
   public LauncherFrame(String title) {
@@ -51,7 +58,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
     this.loginPanel.getOptionsButton().addActionListener(this);
     this.loginPanel.getLinkLabel().addMouseListener(new MouseAdapter() {
       @Override
-      public void mouseClicked(MouseEvent ae) {
+      public void mouseClicked(MouseEvent event) {
         try {
           Desktop.getDesktop().browse(URI.create(loginPanel.getLinkUrls()));
         } catch (IOException ioe1) {
@@ -77,84 +84,103 @@ public class LauncherFrame extends JFrame implements ActionListener {
   }
 
   public static void main(String[] args) {
-    LauncherManager.getWorkingDirectoryForPlatform();
     LauncherManager.setLookAndFeel();
-
-    Config.instance = Config.load();
-    if (Config.instance.getClientToken() == null) {
-      ConfigManager.initConfig();
-    }
-
     try {
       OptionsManager.getVersionsFile();
     } catch (IOException ioe) {
       DebugLoggingManager.logError(LauncherFrame.class, "Failed to get versions file", ioe);
     }
 
+    Config.instance = Config.load();
+    if (Config.instance.getClientToken() == null) {
+      ConfigManager.initConfig();
+    }
+
+    LauncherFrame.configClientToken = Config.instance.getClientToken();
+    LauncherFrame.configAccessToken = Config.instance.getAccessToken();
+    LauncherFrame.configUsername = Config.instance.getUsername();
+    LauncherFrame.configPassword = Config.instance.getPassword();
+    if (!LauncherFrame.configAccessToken.isEmpty() && !LauncherFrame.configClientToken.isEmpty()) {
+      AuthManager.checkYggdrasilSession(LauncherFrame.configAccessToken,
+          LauncherFrame.configClientToken);
+    }
+
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         LauncherFrame.instance = new LauncherFrame(
-            String.format("TwentyTen Launcher %s", CURRENT_VERSION));
+            java.lang.String.format("TwentyTen Launcher %s", CURRENT_VERSION));
         LauncherFrame.instance.setVisible(true);
       }
     });
   }
 
   @Override
-  public void actionPerformed(ActionEvent ae) {
-    Object source = ae.getSource();
-    if (source == loginPanel.getOptionsButton()) {
+  public void actionPerformed(ActionEvent event) {
+    Object source = event.getSource();
+    if (source == LauncherFrame.this.loginPanel.getOptionsButton()) {
       OptionsDialog optionsDialog = new OptionsDialog(LauncherFrame.instance);
       optionsDialog.setVisible(true);
     }
-    if (source == loginPanel.getLoginButton()) {
-      final String loginUsername = loginPanel.getUsernameField().getText();
-      final String loginPassword = new String(loginPanel.getPasswordField().getPassword());
-      final boolean loginRememberPasswordSelected = loginPanel.getRememberPasswordCheckBox()
-          .isSelected();
-      String loginClientToken = Config.instance.getClientToken();
+    if (source == LauncherFrame.this.loginPanel.getLoginButton()) {
+      this.loginUsername = this.loginPanel.getUsernameField().getText();
+      this.loginPassword = new String(this.loginPanel.getPasswordField().getPassword());
+      this.loginRememberPassword = this.loginPanel.getRememberPasswordCheckBox().isSelected();
+      
+      final String[][] yggdrasilLogin = new String[1][2];
+      final String[] profileName = new String[1];
+      final String[] sessionId = new String[1];
 
-      final JSONObject result = AuthManager.authenticateWithYggdrasil(loginUsername, loginPassword,
-          loginClientToken, true);
-      if (result.has("error")) {
-        System.out.print("yes");
-        return;
-      }
-
-      ThreadManager.createWorkerThread("LoginThread", new Runnable() {
+      Thread loginThread = ThreadManager.createWorkerThread("LoginThread", new Runnable() {
         @Override
         public void run() {
-          loginWithYggdrasil(loginUsername, loginPassword, loginRememberPasswordSelected, result);
+          yggdrasilLogin[0] = LauncherFrame.this.loginWithYggdrasil();
+          Objects.requireNonNull(yggdrasilLogin[0], "yggdrasilLogin == null!");
+          profileName[0] = yggdrasilLogin[0][0];
+          sessionId[0] = yggdrasilLogin[0][1];
         }
-      }).start();
+      });
+      loginThread.start();
+      try {
+        loginThread.join();
+      } catch (InterruptedException ie) {
+        DebugLoggingManager.logError(this.getClass(), "Failed to wait for thread to die", ie);
+      }
+      if (yggdrasilLogin[0] != null) {
+        this.launchMinecraft(profileName[0], sessionId[0]);
+      }
     }
   }
 
-  private void loginWithYggdrasil(String username, String password, boolean rememberPassword,
-      JSONObject data) {
-    String name = data.getJSONObject("selectedProfile").getString("name");
-    String uuid = data.getJSONObject("selectedProfile").getString("id");
-    String clientToken = data.getString("clientToken");
-    String accessToken = data.getString("accessToken");
-    String configUsername = Config.instance.getUsername();
-    String configPassword = Config.instance.getPassword();
-    String sessionId = String.format("%s:%s:%s", clientToken, accessToken, uuid);
+  private String[] loginWithYggdrasil() {
+    JSONObject authenticate = AuthManager.authenticateWithYggdrasil(this.loginUsername,
+        this.loginPassword, LauncherFrame.configClientToken, true);
+    if (authenticate.has("error")) {
+      this.panel.showError("Login failed");
+      return null;
+    }
 
+    String clientToken = authenticate.getString("clientToken");
+    String accessToken = authenticate.getString("accessToken");
     Config.instance.setAccessToken(accessToken);
     Config.instance.setClientToken(clientToken);
-    Config.instance.setUsername(username);
-    Config.instance.setPassword(rememberPassword ? password : null);
-    Config.instance.setPasswordSaved(rememberPassword);
-    if (!username.equals(configUsername) || !password.equals(configPassword) || !rememberPassword) {
+    Config.instance.setUsername(this.loginUsername);
+    Config.instance.setPassword(this.loginRememberPassword ? this.loginPassword : null);
+    Config.instance.setPasswordSaved(this.loginRememberPassword);
+    if (!this.loginUsername.equals(LauncherFrame.configUsername) || !this.loginPassword.equals(
+        LauncherFrame.configPassword) || !this.loginRememberPassword) {
       Config.instance.save();
     }
-    this.launchMinecraft(name, sessionId);
+
+    String profileUuid = authenticate.getJSONObject("selectedProfile").getString("id");
+    String profileName = authenticate.getJSONObject("selectedProfile").getString("name");
+    String sessionId = String.format("%s:%s:%s", clientToken, accessToken, profileUuid);
+    return new String[]{profileName, sessionId};
   }
 
-  private void launchMinecraft(String name, String sessionId) {
+  private void launchMinecraft(String username, String sessionId) {
     MinecraftLauncher launcher = new MinecraftLauncher();
-    launcher.parameters.put("username", name);
+    launcher.parameters.put("username", username);
     launcher.parameters.put("sessionid", sessionId);
     launcher.init();
 
