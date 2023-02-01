@@ -16,6 +16,7 @@ import lombok.Getter;
 @Getter
 public class OptionsVersionsPanel extends JPanel implements ActionListener {
 
+  private static final long serialVersionUID = 1L;
   JCheckBox showBetaVersionsCheckBox;
   JCheckBox showAlphaVersionsCheckBox;
   JCheckBox showInfdevVersionsCheckBox;
