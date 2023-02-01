@@ -1,5 +1,6 @@
 package net.minecraft;
 
+import ee.twentyten.util.DebugLoggingManager;
 import ee.twentyten.util.FilesManager;
 import ee.twentyten.util.ThreadManager;
 import java.applet.AppletStub;
@@ -13,27 +14,44 @@ import javax.swing.JApplet;
 
 public class MinecraftLauncher extends JApplet implements AppletStub {
 
-  public final Map<String, String> parameters = new HashMap<>();
-  private MinecraftUpdaterImpl updater;
+  private static final long serialVersionUID = 1L;
+  public final Map<String, String> parameters;
+  private final Image bgImage;
+  private MinecraftUpdater updater;
   private JApplet applet;
-  private Image bgImage;
-  private boolean active;
   private boolean updating;
+  private int context;
+  private boolean active;
 
-  public boolean isActive() {
-    return this.active;
+  public MinecraftLauncher() {
+    this.parameters = new HashMap<>();
+    this.bgImage = FilesManager.readImageFile(MinecraftLauncher.class, "icon/dirt.png");
+    this.updating = false;
+    this.context = 0;
+    this.active = false;
   }
 
+  @Override
+  public boolean isActive() {
+    if (this.context == 0) {
+      this.context = this.getAppletContext() != null ? 1 : -1;
+    }
+    return this.context == -1 ? this.active : super.isActive();
+  }
+
+  @Override
   public URL getDocumentBase() {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException mue) {
-      return null;
+      DebugLoggingManager.logError(this.getClass(), "Failed to create URL object", mue);
     }
+    return null;
   }
 
-  public String getParameter(String value) {
-    return this.parameters.containsKey(value) ? this.parameters.get(value) : null;
+  @Override
+  public String getParameter(String name) {
+    return this.parameters.containsKey(name) ? this.parameters.get(name) : null;
   }
 
   @Override
@@ -46,15 +64,18 @@ public class MinecraftLauncher extends JApplet implements AppletStub {
   }
 
   public void init(String username, String sessionId) {
-    this.bgImage = FilesManager.readImageFile(MinecraftLauncher.class, "icon/dirt.png");
-
+    String hasPaid = sessionId != null ? "true" : "false";
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
-    this.parameters.put("haspaid", sessionId != null ? "true" : "false");
+    this.parameters.put("haspaid", hasPaid);
 
-    this.updater = new MinecraftUpdaterImpl();
+    String formattedParameters = String.format("%s:%s:%s", username, sessionId, hasPaid);
+    DebugLoggingManager.logInfo(this.getClass(), formattedParameters);
+
+    this.updater = new MinecraftUpdater();
   }
 
+  @Override
   public void init() {
     if (this.applet != null) {
       this.applet.init();
@@ -63,6 +84,7 @@ public class MinecraftLauncher extends JApplet implements AppletStub {
     this.init(this.getParameter("username"), this.getParameter("sessionid"));
   }
 
+  @Override
   public void start() {
     if (this.applet != null) {
       this.applet.start();
@@ -75,31 +97,51 @@ public class MinecraftLauncher extends JApplet implements AppletStub {
     ThreadManager.createDaemonThread(new Runnable() {
       @Override
       public void run() {
-        // TODO: MINECRAFT APPLET INSTANCE
+        MinecraftLauncher.this.updater.run();
+        if (!MinecraftLauncher.this.updater.isErrorOccurred()) {
+          replace(MinecraftLauncher.this.updater.createAppletInstance());
+        }
+
+        while (MinecraftLauncher.this.applet == null) {
+          MinecraftLauncher.this.repaint();
+          try {
+            wait();
+          } catch (InterruptedException ie) {
+            DebugLoggingManager.logError(this.getClass(), "Failed to cause thread to wait", ie);
+          }
+        }
       }
     }).start();
+    this.updating = true;
   }
 
+  @Override
   public void stop() {
     if (this.applet != null) {
+      this.active = false;
       this.applet.stop();
     }
-    this.active = false;
   }
 
+  @Override
   public void destroy() {
     if (this.applet != null) {
       this.applet.destroy();
     }
-    this.active = false;
   }
 
   private void replace(JApplet applet) {
     this.applet = applet;
+
+    applet.setStub(this);
+    applet.setSize(this.getWidth(), this.getHeight());
     this.setLayout(new BorderLayout());
     this.add(applet, BorderLayout.CENTER);
-    this.applet.init();
-    this.applet.start();
-    this.repaint();
+
+    applet.init();
+    this.active = true;
+
+    applet.start();
+    this.revalidate();
   }
 }
