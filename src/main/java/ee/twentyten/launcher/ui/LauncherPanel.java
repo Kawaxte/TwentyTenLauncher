@@ -17,6 +17,7 @@ import lombok.Getter;
 @Getter
 public class LauncherPanel extends JPanel {
 
+  private static final long serialVersionUID = 1L;
   private final Image bgImage;
   private final LauncherLoginPanel launcherLoginPanel;
   private VolatileImage gcVolatileBgImage;
