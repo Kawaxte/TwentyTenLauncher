@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 
 public class CustomJPanel extends JPanel {
 
+  private static final long serialVersionUID = 1L;
+
   public CustomJPanel(LayoutManager layout, boolean isDoubleBuffered) {
     super(layout, isDoubleBuffered);
   }
