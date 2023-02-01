@@ -19,10 +19,14 @@ import java.net.URI;
 import java.util.Objects;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import net.minecraft.MinecraftLauncher;
+import net.minecraft.util.AuthManager;
+import org.json.JSONObject;
 
 
 public class LauncherFrame extends JFrame implements ActionListener {
 
+  private static final long serialVersionUID = 1L;
   private static final int PRE_RELEASE_VERSION;
   private static final String CURRENT_VERSION;
   public static LauncherFrame instance;
@@ -33,6 +37,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
   }
 
   private final LauncherLoginPanel loginPanel;
+  private LauncherPanel panel;
 
   public LauncherFrame(String title) {
     super(title);
@@ -40,7 +45,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
     this.setIconImage(FilesManager.readImageFile(LauncherFrame.class, "icon/favicon.png"));
     this.setMinimumSize(new Dimension(640, 480));
 
-    LauncherPanel panel = new LauncherPanel();
+    this.panel = new LauncherPanel();
     this.loginPanel = panel.getLauncherLoginPanel();
     this.loginPanel.getOptionsButton().addActionListener(this);
     this.loginPanel.getLinkLabel().addMouseListener(new MouseAdapter() {
@@ -61,7 +66,8 @@ public class LauncherFrame extends JFrame implements ActionListener {
         }
       }
     });
-    this.setContentPane(panel);
+    this.loginPanel.getLoginButton().addActionListener(this);
+    this.setContentPane(this.panel);
 
     this.pack();
 
@@ -101,5 +107,74 @@ public class LauncherFrame extends JFrame implements ActionListener {
       OptionsDialog optionsDialog = new OptionsDialog(LauncherFrame.instance);
       optionsDialog.setVisible(true);
     }
+    if (source == loginPanel.getLoginButton()) {
+      String loginUsername = loginPanel.getUsernameField().getText();
+      String loginPassword = new String(loginPanel.getPasswordField().getPassword());
+      boolean loginRememberPasswordSelected = loginPanel.getRememberPasswordCheckBox().isSelected();
+      String loginClientToken = Config.instance.getClientToken();
+
+      JSONObject result = AuthManager.authenticateWithYggdrasil(loginUsername, loginPassword,
+          loginClientToken, true);
+      if (result.has("error")) {
+        System.out.print("yes");
+        return;
+      }
+      this.loginWithYggdrasil(loginUsername, loginPassword, loginRememberPasswordSelected, result);
+    }
+  }
+
+  private void loginWithYggdrasil(String username, String password, boolean rememberPassword,
+      JSONObject data) {
+    String name = data.getJSONObject("selectedProfile").getString("name");
+    String uuid = data.getJSONObject("selectedProfile").getString("id");
+    String clientToken = data.getString("clientToken");
+    String accessToken = data.getString("accessToken");
+    String configUsername = Config.instance.getUsername();
+    String configPassword = Config.instance.getPassword();
+    String sessionId = String.format("%s:%s:%s", clientToken, accessToken, uuid);
+
+    Config.instance.setAccessToken(accessToken);
+    Config.instance.setClientToken(clientToken);
+    Config.instance.setUsername(username);
+    Config.instance.setPassword(rememberPassword ? password : null);
+    Config.instance.setPasswordSaved(rememberPassword);
+    if (!username.equals(configUsername) || !password.equals(configPassword) || !rememberPassword) {
+      Config.instance.save();
+    }
+    this.launchMinecraft(name, sessionId);
+  }
+
+  private void launchMinecraft(String name, String sessionId) {
+    MinecraftLauncher launcher = new MinecraftLauncher();
+    launcher.parameters.put("username", name);
+    launcher.parameters.put("sessionid", sessionId);
+    launcher.init();
+
+    this.getContentPane().removeAll();
+    this.getContentPane().repaint();
+    this.add(launcher);
+
+    this.revalidate();
+    this.repaint();
+
+    launcher.start();
+    this.panel = null;
+    this.setTitle("Minecraft");
+  }
+
+  private void launchMinecraftOffline() {
+    MinecraftLauncher launcher = new MinecraftLauncher();
+    launcher.parameters.put("username", "Player");
+    launcher.init();
+
+    this.getContentPane().removeAll();
+    this.getContentPane().repaint();
+    this.add(launcher);
+
+    this.revalidate();
+    this.repaint();
+
+    launcher.start();
+    this.setTitle("Minecraft");
   }
 }
