@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 
 public class OptionsDialog extends JDialog implements ActionListener {
 
+  private static final long serialVersionUID = 1L;
   private final OptionsPanel optionsPanel;
 
   public OptionsDialog(LauncherFrame frame) {
