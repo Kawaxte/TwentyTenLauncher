@@ -53,6 +53,8 @@ public final class LauncherManager {
   }
 
   public static File getWorkingDirectory() throws IOException {
+    LauncherManager.getWorkingDirectoryForPlatform();
+    
     EPlatform platformName = EPlatform.getPlatform();
 
     File workingDirectory = LauncherManager.WORKING_DIRECTORIES.get(platformName);
@@ -69,7 +71,7 @@ public final class LauncherManager {
     return workingDirectory;
   }
 
-  public static void getWorkingDirectoryForPlatform() {
+  private static void getWorkingDirectoryForPlatform() {
     File workingDirectoryForOsx = new File(
         String.format("%s/Library/Application Support", USER_HOME), "twentyten");
     WORKING_DIRECTORIES.put(EPlatform.OSX, workingDirectoryForOsx);
