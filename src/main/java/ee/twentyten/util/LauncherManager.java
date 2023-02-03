@@ -21,7 +21,7 @@ public final class LauncherManager {
   private static final String APPDATA;
   private static final Map<EPlatform, File> WORKING_DIRECTORIES;
   private static final String LATEST_RELEASE_API_URL;
-  public static String currentVersion = null;
+  private static String currentVersion = null;
 
   static {
     LATEST_RELEASE_URL = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
@@ -52,9 +52,9 @@ public final class LauncherManager {
     return formattedVersion;
   }
 
-  public static File getWorkingDirectory() throws IOException {
-    LauncherManager.getWorkingDirectoryForPlatform();
-    
+  public static File getWorkingDirectory() {
+    LauncherManager.defineWorkingDirectoryForPlatform();
+
     EPlatform platformName = EPlatform.getPlatform();
 
     File workingDirectory = LauncherManager.WORKING_DIRECTORIES.get(platformName);
@@ -63,18 +63,24 @@ public final class LauncherManager {
       DebugLoggingManager.logInfo(LauncherManager.class,
           String.format("\"%s\"", workingDirectory.getAbsolutePath()));
 
-      boolean created = workingDirectory.mkdirs();
-      if (!created) {
-        throw new IOException("Failed to create working directory");
+      try {
+        boolean created = workingDirectory.mkdirs();
+        if (!created) {
+          throw new IOException("Failed to create working directory");
+        }
+      } catch (IOException ioe) {
+        DebugLoggingManager.logError(LauncherManager.class, "Failed to create working directory",
+            ioe);
       }
+
     }
     return workingDirectory;
   }
 
-  private static void getWorkingDirectoryForPlatform() {
-    File workingDirectoryForOsx = new File(
+  private static void defineWorkingDirectoryForPlatform() {
+    File workingDirectoryForMacOsx = new File(
         String.format("%s/Library/Application Support", USER_HOME), "twentyten");
-    WORKING_DIRECTORIES.put(EPlatform.OSX, workingDirectoryForOsx);
+    WORKING_DIRECTORIES.put(EPlatform.MACOSX, workingDirectoryForMacOsx);
 
     File workingDirectoryForLinux = new File(USER_HOME, ".twentyten");
     WORKING_DIRECTORIES.put(EPlatform.LINUX, workingDirectoryForLinux);
@@ -88,10 +94,15 @@ public final class LauncherManager {
     try {
       String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
       UIManager.setLookAndFeel(lookAndFeel);
-    } catch (ReflectiveOperationException roe) {
-      DebugLoggingManager.logError(LauncherManager.class, "Failed to set look and feel", roe);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      DebugLoggingManager.logError(LauncherManager.class, "Can't look and feel class", ulafe);
+      DebugLoggingManager.logError(LauncherManager.class, "Failed to set look and feel", ulafe);
+    } catch (ClassNotFoundException cnfe) {
+      DebugLoggingManager.logError(LauncherManager.class, "Can't find look and feel class", cnfe);
+    } catch (InstantiationException ie) {
+      DebugLoggingManager.logError(LauncherManager.class, "Can't instantiate look and feel class",
+          ie);
+    } catch (IllegalAccessException iae) {
+      DebugLoggingManager.logError(LauncherManager.class, "Can't access look and feel class", iae);
     }
   }
 
