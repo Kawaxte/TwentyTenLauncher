@@ -4,7 +4,10 @@
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
     <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher">
   </a>
-  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
+  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases">
+    <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher?include_prereleases&label=pre-release">
+  </a>
+  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases">
     <img src="https://img.shields.io/github/downloads/sojlabjoi/AlphacraftLauncher/total.svg">
   </a>
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/blob/stable/LICENSE">
