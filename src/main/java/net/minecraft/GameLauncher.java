@@ -16,7 +16,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Transparency;
-import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -139,10 +139,10 @@ public class GameLauncher extends JApplet implements AppletStub {
     int gridHeight = ((panelHeight + imageHeight) - 1) >> 5;
 
     GraphicsConfiguration gc = ((Graphics2D) g).getDeviceConfiguration();
-    BufferedImage gcBufferedImage = gc.createCompatibleImage(panelWidth >> 1, panelHeight >> 1,
-        Transparency.TRANSLUCENT);
+    VolatileImage compatibleVolatileImage = gc.createCompatibleVolatileImage(panelWidth >> 1,
+        panelHeight >> 1, Transparency.TRANSLUCENT);
 
-    Graphics2D g2d = gcBufferedImage.createGraphics();
+    Graphics2D g2d = compatibleVolatileImage.createGraphics();
     try {
       for (int gridIndex = 0; gridIndex < (gridWidth * gridHeight); gridIndex++) {
         int gridX = imageWidth * (gridIndex % gridWidth);
@@ -172,7 +172,7 @@ public class GameLauncher extends JApplet implements AppletStub {
       g2d.dispose();
     }
 
-    g.drawImage(gcBufferedImage, 0, 0, panelWidth, panelHeight, 0, 0, panelWidth >> 1,
+    g.drawImage(compatibleVolatileImage, 0, 0, panelWidth, panelHeight, 0, 0, panelWidth >> 1,
         panelHeight >> 1, this);
   }
 
