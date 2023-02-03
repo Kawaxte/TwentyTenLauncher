@@ -4,11 +4,12 @@ import ee.twentyten.config.Config;
 import ee.twentyten.custom.CustomLinkedProperties;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.UUID;
 
 public final class ConfigManager {
-  
+
   private static final String DEFAULT_CLIENT_TOKEN;
   private static final String DEFAULT_ACCESS_TOKEN;
   private static final String DEFAULT_USERNAME;
@@ -36,31 +37,26 @@ public final class ConfigManager {
   }
 
   public static String getClientToken() {
-    try {
-      File configFile = new File(LauncherManager.getWorkingDirectory(), "twentyten.properties");
-      if (!configFile.exists()) {
-        return UUID.randomUUID().toString().replace("-", "");
-      }
-
-      CustomLinkedProperties properties = new CustomLinkedProperties();
-      try {
-        properties.load(Files.newInputStream(configFile.toPath()));
-      } catch (IOException ioe1) {
-        try {
-          properties.load(ConfigManager.class.getResourceAsStream("twentyten.properties"));
-        } catch (IOException ioe2) {
-          DebugLoggingManager.logError(ConfigManager.class,
-              String.format("Failed to load config file from %s", configFile.getAbsolutePath()),
-              ioe2);
-        }
-      }
-
-      String clientToken = UUID.randomUUID().toString().replace("-", "");
-      return properties.getProperty("client-token", clientToken);
-    } catch (IOException ioe) {
-      DebugLoggingManager.logError(ConfigManager.class, "Failed to get client token", ioe);
+    File configFile = new File(LauncherManager.getWorkingDirectory(), "twentyten.properties");
+    if (!configFile.exists()) {
+      return UUID.randomUUID().toString().replace("-", "");
     }
-    return null;
+
+    CustomLinkedProperties properties = new CustomLinkedProperties();
+    try (InputStream is = Files.newInputStream(configFile.toPath())) {
+      properties.load(is);
+    } catch (IOException ioe1) {
+      try (InputStream is = ConfigManager.class.getResourceAsStream("twentyten.properties")) {
+        properties.load(is);
+      } catch (IOException ioe2) {
+        DebugLoggingManager.logError(ConfigManager.class,
+            String.format("Failed to load config file from \"%s\"", configFile.getAbsolutePath()),
+            ioe2);
+      }
+    }
+
+    String clientToken = UUID.randomUUID().toString().replace("-", "");
+    return properties.getProperty("client-token", clientToken);
   }
 
   public static void initConfig() {
