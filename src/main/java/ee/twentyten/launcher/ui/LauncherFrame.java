@@ -37,7 +37,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
   private static String configClientToken;
 
   static {
-    PRE_RELEASE_VERSION = 1;
+    PRE_RELEASE_VERSION = 3;
     CURRENT_VERSION = LauncherManager.getCurrentVersion(PRE_RELEASE_VERSION, true);
   }
 
