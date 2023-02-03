@@ -12,11 +12,11 @@ import org.json.JSONObject;
 
 public final class OptionsManager {
 
-  public static final String[] TYPES;
-  public static final Map<String, List<String>> TYPES_TO_IDS;
-  public static final Map<String, List<String>> IDS_TO_PORTS;
-  public static final Map<String, String> FORMATTED_IDS;
+  private static final Map<String, List<String>> IDS_TO_PORTS;
+  private static final Map<String, List<String>> TYPES_TO_IDS;
+  private static final Map<String, String> FORMATTED_IDS;
   private static final String VERSIONS_JSON_URL;
+  public static String[] TYPES;
 
   static {
     TYPES = new String[]{"beta", "alpha", "infdev"};
@@ -35,7 +35,7 @@ public final class OptionsManager {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static void getVersionsFile() throws IOException {
+  public static void downloadVersionsFile() throws IOException {
     File workingDirectory = LauncherManager.getWorkingDirectory();
     if (!workingDirectory.exists()) {
       LauncherManager.getWorkingDirectory();
@@ -58,7 +58,7 @@ public final class OptionsManager {
     }
   }
 
-  public List<String> getIds(String type) throws IOException {
+  public static List<String> getIds(String type) throws IOException {
     List<String> ids = TYPES_TO_IDS.get(type);
     if (ids == null) {
       File versionsDirectory = new File(LauncherManager.getWorkingDirectory(), "versions");
@@ -82,7 +82,7 @@ public final class OptionsManager {
     return ids;
   }
 
-  public String getPortsFromIds(String id) throws IOException {
+  public static String getPortsFromIds(String id) throws IOException {
     File versionsDirectory = new File(LauncherManager.getWorkingDirectory(), "versions");
     File versionsFile = new File(versionsDirectory, "versions.json");
 
