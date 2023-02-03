@@ -9,15 +9,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
-public class HttpRequestImpl implements IHttpRequest {
+public class HttpRequestImpl implements IHttpRequestService {
 
   private HttpsURLConnection getResponse(HttpsURLConnection connection) throws IOException {
     int responseCode = connection.getResponseCode();
     String responseMessage = connection.getResponseMessage();
     String connectionUrl = connection.getURL().toString();
 
-    DebugLoggingManager.logInfo(this.getClass(),
-        String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
+    if (responseCode / 100 == 2) {
+      DebugLoggingManager.logInfo(this.getClass(),
+          String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
+    } else {
+      DebugLoggingManager.logError(this.getClass(),
+          String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
+    }
     return connection;
   }
 
