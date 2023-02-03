@@ -12,7 +12,7 @@
   </a>
 </p>
 
-<div align="center">A modern and polished remaster of the original Minecraft Launcher from June 29, 2010</div>
+<div align="center">A modern remaster of the original Minecraft Launcher from June 29, 2010</div>
 
 ----
 This repository was created to provide a modern and polished "Legacy" Minecraft experience. It
