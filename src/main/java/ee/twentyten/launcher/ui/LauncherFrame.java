@@ -19,9 +19,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Objects;
 import javax.swing.JFrame;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import net.minecraft.MinecraftLauncher;
-import net.minecraft.util.AuthManager;
+import net.minecraft.GameLauncher;
+import net.minecraft.util.YggdrasilManager;
 import org.json.JSONObject;
 
 
@@ -30,11 +31,10 @@ public class LauncherFrame extends JFrame implements ActionListener {
   private static final long serialVersionUID = 1L;
   private static final int PRE_RELEASE_VERSION;
   private static final String CURRENT_VERSION;
-  public static LauncherFrame instance;
+  public static boolean sessionValid;
+  private static LauncherFrame instance;
   private static String configAccessToken;
   private static String configClientToken;
-  private static String configUsername;
-  private static String configPassword;
 
   static {
     PRE_RELEASE_VERSION = 1;
@@ -45,6 +45,8 @@ public class LauncherFrame extends JFrame implements ActionListener {
   private String loginUsername;
   private String loginPassword;
   private boolean loginRememberPassword;
+  private boolean credentialsEmpty;
+  private boolean credentialsChanged;
   private LauncherPanel panel;
 
   public LauncherFrame(String title) {
@@ -54,20 +56,20 @@ public class LauncherFrame extends JFrame implements ActionListener {
     this.setMinimumSize(new Dimension(640, 480));
 
     this.panel = new LauncherPanel();
-    this.loginPanel = panel.getLauncherLoginPanel();
+    this.loginPanel = this.panel.getLauncherLoginPanel();
     this.loginPanel.getOptionsButton().addActionListener(this);
     this.loginPanel.getLinkLabel().addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent event) {
         try {
-          Desktop.getDesktop().browse(URI.create(loginPanel.getLinkUrls()));
+          Desktop.getDesktop().browse(URI.create(LauncherFrame.this.loginPanel.getLinkUrls()));
         } catch (IOException ioe1) {
           DebugLoggingManager.logError(this.getClass(), "Failed to launch default browser", ioe1);
 
           EPlatform platform = EPlatform.getPlatform();
           Objects.requireNonNull(platform, "platform");
           try {
-            CommandsManager.executeCommand(platform, loginPanel.getLinkUrls());
+            CommandsManager.executeCommand(platform, LauncherFrame.this.loginPanel.getLinkUrls());
           } catch (IOException ioe2) {
             DebugLoggingManager.logError(this.getClass(), "Failed to execute string command", ioe2);
           }
@@ -75,7 +77,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
       }
     });
     this.loginPanel.getLoginButton().addActionListener(this);
-    this.setContentPane(this.panel);
+    this.add(this.panel, SwingConstants.CENTER);
 
     this.pack();
 
@@ -86,7 +88,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
   public static void main(String[] args) {
     LauncherManager.setLookAndFeel();
     try {
-      OptionsManager.getVersionsFile();
+      OptionsManager.downloadVersionsFile();
     } catch (IOException ioe) {
       DebugLoggingManager.logError(LauncherFrame.class, "Failed to get versions file", ioe);
     }
@@ -98,10 +100,8 @@ public class LauncherFrame extends JFrame implements ActionListener {
 
     LauncherFrame.configClientToken = Config.instance.getClientToken();
     LauncherFrame.configAccessToken = Config.instance.getAccessToken();
-    LauncherFrame.configUsername = Config.instance.getUsername();
-    LauncherFrame.configPassword = Config.instance.getPassword();
     if (!LauncherFrame.configAccessToken.isEmpty() && !LauncherFrame.configClientToken.isEmpty()) {
-      AuthManager.checkYggdrasilSession(LauncherFrame.configAccessToken,
+      YggdrasilManager.checkYggdrasilSession(LauncherFrame.configAccessToken,
           LauncherFrame.configClientToken);
     }
 
@@ -123,92 +123,104 @@ public class LauncherFrame extends JFrame implements ActionListener {
       optionsDialog.setVisible(true);
     }
     if (source == LauncherFrame.this.loginPanel.getLoginButton()) {
+      String savedUsername = Config.instance.getUsername();
+      String savedPassword = Config.instance.getPassword();
       this.loginUsername = this.loginPanel.getUsernameField().getText();
       this.loginPassword = new String(this.loginPanel.getPasswordField().getPassword());
       this.loginRememberPassword = this.loginPanel.getRememberPasswordCheckBox().isSelected();
-      
-      final String[][] yggdrasilLogin = new String[1][2];
-      final String[] profileName = new String[1];
-      final String[] sessionId = new String[1];
+      this.credentialsEmpty = this.loginUsername.isEmpty() || this.loginPassword.isEmpty();
+      this.credentialsChanged =
+          !this.loginUsername.equals(savedUsername) || !this.loginPassword.equals(savedPassword);
 
-      Thread loginThread = ThreadManager.createWorkerThread("LoginThread", new Runnable() {
-        @Override
-        public void run() {
-          yggdrasilLogin[0] = LauncherFrame.this.loginWithYggdrasil();
-          Objects.requireNonNull(yggdrasilLogin[0], "yggdrasilLogin == null!");
-          profileName[0] = yggdrasilLogin[0][0];
-          sessionId[0] = yggdrasilLogin[0][1];
+      if (!sessionValid || credentialsChanged) {
+        Thread loginThread = ThreadManager.createWorkerThread("LoginWorker", new Runnable() {
+          @Override
+          public void run() {
+            LauncherFrame.this.loginWithMojang(LauncherFrame.this.loginUsername,
+                LauncherFrame.this.loginPassword, Config.instance.getClientToken());
+          }
+        });
+        loginThread.start();
+        try {
+          loginThread.join();
+        } catch (InterruptedException ie) {
+          DebugLoggingManager.logError(this.getClass(), "Failed to wait for thread to die", ie);
         }
-      });
-      loginThread.start();
-      try {
-        loginThread.join();
-      } catch (InterruptedException ie) {
-        DebugLoggingManager.logError(this.getClass(), "Failed to wait for thread to die", ie);
       }
-      if (yggdrasilLogin[0] != null) {
-        this.launchMinecraft(profileName[0], sessionId[0]);
-      }
+      LauncherFrame.this.loginWithSavedCredentials();
     }
   }
 
-  private String[] loginWithYggdrasil() {
-    JSONObject authenticate = AuthManager.authenticateWithYggdrasil(this.loginUsername,
-        this.loginPassword, LauncherFrame.configClientToken, true);
-    if (authenticate.has("error")) {
+  private void loginWithMojang(String username, String password, String clientToken) {
+    JSONObject result = YggdrasilManager.authenticateUser(username, password, clientToken, true);
+    if (result.has("error")) {
       this.panel.showError("Login failed");
-      return null;
+      return;
     }
 
-    String clientToken = authenticate.getString("clientToken");
-    String accessToken = authenticate.getString("accessToken");
-    Config.instance.setAccessToken(accessToken);
-    Config.instance.setClientToken(clientToken);
-    Config.instance.setUsername(this.loginUsername);
-    Config.instance.setPassword(this.loginRememberPassword ? this.loginPassword : null);
+    Config.instance.setUsername(username);
+    Config.instance.setPassword(this.loginRememberPassword ? password : null);
     Config.instance.setPasswordSaved(this.loginRememberPassword);
-    if (!this.loginUsername.equals(LauncherFrame.configUsername) || !this.loginPassword.equals(
-        LauncherFrame.configPassword) || !this.loginRememberPassword) {
-      Config.instance.save();
-    }
 
-    String profileUuid = authenticate.getJSONObject("selectedProfile").getString("id");
-    String profileName = authenticate.getJSONObject("selectedProfile").getString("name");
-    String sessionId = String.format("%s:%s:%s", clientToken, accessToken, profileUuid);
-    return new String[]{profileName, sessionId};
+    String accessToken = result.getString("accessToken");
+    Config.instance.setAccessToken(accessToken);
+
+    String profileId;
+    String profileName;
+    if (!result.has("selectedProfile")) {
+      profileId = "";
+      profileName = "Player";
+    } else {
+      profileId = result.getJSONObject("selectedProfile").getString("id");
+      profileName = result.getJSONObject("selectedProfile").getString("name");
+    }
+    Config.instance.setProfileId(profileId);
+    Config.instance.setProfileName(profileName);
+    Config.instance.save();
   }
 
-  private void launchMinecraft(String username, String sessionId) {
-    MinecraftLauncher launcher = new MinecraftLauncher();
-    launcher.parameters.put("username", username);
-    launcher.parameters.put("sessionid", sessionId);
+  private void loginWithSavedCredentials() {
+    if (this.credentialsEmpty || this.credentialsChanged) {
+      return;
+    }
+    String clientToken = Config.instance.getClientToken();
+    String accessToken = Config.instance.getAccessToken();
+    String profileId = Config.instance.getProfileId();
+    String profileName = Config.instance.getProfileName();
+    String sessionId = String.format("%s:%s:%s", clientToken, accessToken, profileId);
+    String hasPaid = String.valueOf(!profileId.isEmpty() && !profileName.isEmpty());
+    LauncherFrame.this.launchMinecraft(profileName, sessionId, hasPaid);
+  }
+
+  private void launchMinecraft(String name) {
+    GameLauncher launcher = new GameLauncher();
+    launcher.parameters.put("username", name);
     launcher.init();
 
     this.getContentPane().removeAll();
-    this.getContentPane().repaint();
-    this.add(launcher);
+    this.add(launcher, SwingConstants.CENTER);
 
     this.revalidate();
-    this.repaint();
 
     launcher.start();
-    this.panel = null;
     this.setTitle("Minecraft");
   }
 
-  private void launchMinecraftOffline() {
-    MinecraftLauncher launcher = new MinecraftLauncher();
-    launcher.parameters.put("username", "Player");
+  private void launchMinecraft(String username, String sessionId, String hasPaid) {
+    GameLauncher launcher = new GameLauncher();
+    launcher.parameters.put("username", username);
+    launcher.parameters.put("sessionid", sessionId);
+    launcher.parameters.put("haspaid", hasPaid);
     launcher.init();
 
     this.getContentPane().removeAll();
-    this.getContentPane().repaint();
-    this.add(launcher);
+    this.add(launcher, SwingConstants.CENTER);
 
     this.revalidate();
-    this.repaint();
 
     launcher.start();
+    this.panel = null;
+
     this.setTitle("Minecraft");
   }
 }
