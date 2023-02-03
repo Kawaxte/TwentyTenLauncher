@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
-public interface IHttpRequest {
+public interface IHttpRequestService {
 
   HttpsURLConnection sendRequest(URL url, String method, Map<String, String> headers)
       throws IOException;
