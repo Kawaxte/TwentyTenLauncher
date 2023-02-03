@@ -16,23 +16,39 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class LauncherLoginPanel extends CustomJPanel {
 
   private static final long serialVersionUID = 1L;
+
+  @Getter
   private String linkUrls;
+
   private boolean outdated;
+
+  @Getter
   private JLabel errorLabel;
+
   private JLabel usernameLabel;
+
+  @Getter
   private JTextField usernameField;
+
   private JLabel passwordLabel;
+
+  @Getter
   private JPasswordField passwordField;
+
+  @Getter
   private JButton optionsButton;
+
+  @Getter
   private JCheckBox rememberPasswordCheckBox;
+
+  @Getter
   private JLabel linkLabel;
+
+  @Getter
   private JButton loginButton;
 
   public LauncherLoginPanel() {
