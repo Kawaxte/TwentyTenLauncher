@@ -16,20 +16,23 @@ import lombok.Setter;
 public class Config {
 
   public static Config instance;
-  private String clientToken;
-  private String accessToken;
   private String username;
   private String password;
   private Boolean passwordSaved;
+  private String clientToken;
+  private String accessToken;
+  private String profileId;
+  private String profileName;
   private Boolean usingBeta;
   private Boolean usingAlpha;
   private Boolean usingInfdev;
   private String selectedVersion;
 
   public static Config load() {
-    Config c = null;
+    Config config = null;
+    File configFile = null;
     try {
-      File configFile = new File(LauncherManager.getWorkingDirectory(), "twentyten.properties");
+      configFile = new File(LauncherManager.getWorkingDirectory(), "twentyten.properties");
       if (!configFile.exists()) {
         boolean created = configFile.createNewFile();
         if (!created) {
@@ -41,54 +44,59 @@ public class Config {
         CustomLinkedProperties properties = new CustomLinkedProperties();
         properties.load(fis);
 
-        c = new Config();
-        c.clientToken = properties.getProperty("client-token");
-        c.accessToken = CipherManager.decryptValue(properties.getProperty("access-token"));
-        c.username = properties.getProperty("username");
-        c.password = CipherManager.decryptValue(properties.getProperty("password"));
-        c.passwordSaved = Boolean.parseBoolean(properties.getProperty("password-saved"));
-        c.usingBeta = Boolean.parseBoolean(properties.getProperty("using-beta"));
-        c.usingAlpha = Boolean.parseBoolean(properties.getProperty("using-alpha"));
-        c.usingInfdev = Boolean.parseBoolean(properties.getProperty("using-infdev"));
-        c.selectedVersion = properties.getProperty("selected-version");
-
-        DebugLoggingManager.logInfo(Config.class,
-            String.format("\"%s\"", configFile.getAbsolutePath()));
+        config = new Config();
+        config.username = properties.getProperty("username");
+        config.password = CipherManager.decryptValue(properties.getProperty("password"));
+        config.passwordSaved = Boolean.parseBoolean(properties.getProperty("password-saved"));
+        config.clientToken = properties.getProperty("client-token");
+        config.accessToken = CipherManager.decryptValue(properties.getProperty("access-token"));
+        config.profileId = properties.getProperty("profile-id");
+        config.profileName = properties.getProperty("profile-name");
+        config.usingBeta = Boolean.parseBoolean(properties.getProperty("using-beta"));
+        config.usingAlpha = Boolean.parseBoolean(properties.getProperty("using-alpha"));
+        config.usingInfdev = Boolean.parseBoolean(properties.getProperty("using-infdev"));
+        config.selectedVersion = properties.getProperty("selected-version");
       } catch (IOException ioe2) {
         DebugLoggingManager.logError(Config.class, "Failed to load config file", ioe2);
       }
-    } catch (IOException ioe3) {
-      DebugLoggingManager.logError(Config.class, "Failed to get working directory", ioe3);
+    } catch (IOException ioe1) {
+      DebugLoggingManager.logError(Config.class, "Failed to get working directory", ioe1);
     }
-    return c;
+    DebugLoggingManager.logInfo(Config.class,
+        String.format("\"%s\"", configFile.getAbsolutePath()));
+    return config;
   }
 
   public void save() {
-    CustomLinkedProperties properties = new CustomLinkedProperties();
-    properties.setProperty("client-token", this.clientToken != null ? this.clientToken : null);
-    properties.setProperty("access-token",
-        CipherManager.encryptValue(this.accessToken != null ? this.accessToken : null));
-    properties.setProperty("username", this.username != null ? this.username : null);
-    properties.setProperty("password",
+    CustomLinkedProperties general = new CustomLinkedProperties();
+    general.setProperty("username", this.username != null ? this.username : "");
+    general.setProperty("password",
         CipherManager.encryptValue(this.password != null ? this.password : null));
-    properties.setProperty("password-saved", String.valueOf(this.passwordSaved));
-    properties.setProperty("using-beta", String.valueOf(this.usingBeta));
-    properties.setProperty("using-alpha", String.valueOf(this.usingAlpha));
-    properties.setProperty("using-infdev", String.valueOf(this.usingInfdev));
-    properties.setProperty("selected-version", this.selectedVersion);
+    general.setProperty("password-saved", String.valueOf(this.passwordSaved));
 
-    try {
-      File configFile = new File(LauncherManager.getWorkingDirectory(), "twentyten.properties");
-      try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
-        properties.store(fos, "TwentyTen Launcher Properties File");
+    CustomLinkedProperties profile = new CustomLinkedProperties();
+    profile.setProperty("client-token", this.clientToken != null ? this.clientToken : "");
+    profile.setProperty("access-token",
+        CipherManager.encryptValue(this.accessToken != null ? this.accessToken : ""));
+    profile.setProperty("profile-id", this.profileId != null ? this.profileId : "");
+    profile.setProperty("profile-name", this.profileName != null ? this.profileName : "");
 
-        DebugLoggingManager.logInfo(Config.class,
-            String.format("\"%s\"", configFile.getAbsolutePath()));
-      } catch (IOException ioe1) {
-        DebugLoggingManager.logError(this.getClass(), "Failed to save config file", ioe1);
-      }
-    } catch (IOException ioe2) {
-      DebugLoggingManager.logError(this.getClass(), "Failed to get working directory", ioe2);
+    CustomLinkedProperties options = new CustomLinkedProperties();
+    options.setProperty("using-beta", String.valueOf(this.usingBeta));
+    options.setProperty("using-alpha", String.valueOf(this.usingAlpha));
+    options.setProperty("using-infdev", String.valueOf(this.usingInfdev));
+    options.setProperty("selected-version", this.selectedVersion);
+
+    File configFile = new File(LauncherManager.getWorkingDirectory(), "twentyten.properties");
+    try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
+      general.store(fos, "General");
+      profile.store(fos, "Profile");
+      options.store(fos, "Options");
+    } catch (IOException ioe) {
+      DebugLoggingManager.logError(this.getClass(), "Failed to save config file", ioe);
     }
+
+    DebugLoggingManager.logInfo(Config.class,
+        String.format("\"%s\"", configFile.getAbsolutePath()));
   }
 }
