@@ -53,19 +53,19 @@ public class YggdrasilManager {
   }
 
   public static void checkYggdrasilSession(String accessToken, String clientToken) {
-    JSONObject session = YggdrasilManager.validateAccessToken(accessToken, clientToken);
-    if (session.has("error")) {
-      session = YggdrasilManager.refreshAccessToken(accessToken, clientToken, true);
-      if (session.has("error")) {
-        throw new JSONException("Failed to validate or refresh session");
+    JSONObject validate = YggdrasilManager.validateAccessToken(accessToken, clientToken);
+    if (validate.has("error")) {
+      JSONObject refresh = YggdrasilManager.refreshAccessToken(accessToken, clientToken, true);
+      if (refresh.has("error")) {
+        throw new JSONException("Failed to refresh access token");
       }
-      String newAccessToken = session.getString("accessToken");
-      String newClientToken = session.getString("clientToken");
+      String newAccessToken = refresh.getString("accessToken");
+      String newClientToken = refresh.getString("clientToken");
       Config.instance.setAccessToken(newAccessToken);
       Config.instance.setClientToken(newClientToken);
       Config.instance.save();
-    } else {
-      LauncherFrame.sessionValid = true;
+      return;
     }
+    LauncherFrame.sessionValid = true;
   }
 }
