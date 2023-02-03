@@ -18,7 +18,7 @@ public final class CommandsManager {
   public static void executeCommand(EPlatform platform, String url) throws IOException {
     Objects.requireNonNull(platform, "platform == null!");
     switch (platform) {
-      case OSX:
+      case MACOSX:
         executeCommand("open", url);
         break;
       case LINUX:
@@ -36,7 +36,7 @@ public final class CommandsManager {
   public static void executeCommand(EPlatform platform, File f) throws IOException {
     Objects.requireNonNull(platform, "platform == null!");
     switch (platform) {
-      case OSX:
+      case MACOSX:
         executeCommand("open", f.getAbsolutePath());
         break;
       case LINUX:
