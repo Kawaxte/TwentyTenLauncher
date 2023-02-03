@@ -11,7 +11,7 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import org.json.JSONObject;
 
-public class JsonRequestImpl implements IJsonRequest {
+public class JsonRequestImpl implements IJsonRequestService {
 
   private JSONObject getResponse(HttpsURLConnection connection) throws IOException {
     int responseCode = connection.getResponseCode();
@@ -30,9 +30,19 @@ public class JsonRequestImpl implements IJsonRequest {
       response = sb.toString();
     }
 
-    DebugLoggingManager.logInfo(this.getClass(),
-        String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
-    return response.isEmpty() ? new JSONObject() : new JSONObject(response);
+    if (responseCode / 100 == 2) {
+      if (response.isEmpty()) {
+        DebugLoggingManager.logWarn(this.getClass(),
+            String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
+        return new JSONObject();
+      }
+      DebugLoggingManager.logInfo(this.getClass(),
+          String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
+    } else {
+      DebugLoggingManager.logError(this.getClass(),
+          String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
+    }
+    return response.charAt(0) != '{' ? new JSONObject() : new JSONObject(response);
   }
 
   @Override
@@ -61,7 +71,7 @@ public class JsonRequestImpl implements IJsonRequest {
     if (method.equals("POST") || method.equals("PUT")) {
       connection.setDoOutput(true);
       try (OutputStream os = connection.getOutputStream()) {
-        os.write(String.valueOf(data).getBytes());
+        os.write(String.valueOf(data).getBytes(StandardCharsets.UTF_8));
       }
     }
 
