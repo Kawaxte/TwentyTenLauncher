@@ -2,7 +2,7 @@ package ee.twentyten.config;
 
 import java.security.GeneralSecurityException;
 
-interface IConfigCipher {
+interface IConfigCipherService {
 
   String encrypt(String value) throws GeneralSecurityException;
 
