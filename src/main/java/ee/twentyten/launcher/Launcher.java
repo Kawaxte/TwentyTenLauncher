@@ -1,6 +1,7 @@
 package ee.twentyten.launcher;
 
 import ee.twentyten.launcher.ui.LauncherFrame;
+import ee.twentyten.util.DebugLoggingManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +39,15 @@ public class Launcher {
         JOptionPane.showMessageDialog(null,
             String.format("An error occurred while starting the process:%n%s", ioe.getMessage()),
             "Error", JOptionPane.ERROR_MESSAGE);
+
+        DebugLoggingManager.logError(Launcher.class, "Failed to start the process", ioe);
       } catch (InterruptedException ie) {
         JOptionPane.showMessageDialog(null,
             String.format("An error occurred while waiting for the process to terminate:%n%s",
                 ie.getMessage()), "Error", JOptionPane.ERROR_MESSAGE);
+
+        DebugLoggingManager.logError(Launcher.class, "Failed to wait for the process to terminate",
+            ie);
       }
     } else {
       LauncherFrame.main(args);
