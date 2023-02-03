@@ -38,6 +38,7 @@ public final class DebugLoggingManager {
   }
 
   public static void logError(Class<?> clazz, String message, Throwable t) {
+    t.printStackTrace();
     if (DEBUGGING) {
       StackTraceElement element = Thread.currentThread().getStackTrace()[2];
       String methodName = element.getMethodName();
