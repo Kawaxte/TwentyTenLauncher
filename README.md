@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
-    <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher">
+    <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher&label=latest">
   </a>
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases">
     <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher?include_prereleases&label=pre-release">
