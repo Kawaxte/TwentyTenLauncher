@@ -10,17 +10,18 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Transparency;
 import java.awt.image.VolatileImage;
 import javax.swing.JPanel;
 import lombok.Getter;
 
-@Getter
 public class LauncherPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
   private final Image bgImage;
+
+  @Getter
   private final LauncherLoginPanel launcherLoginPanel;
-  private VolatileImage gcVolatileBgImage;
 
   public LauncherPanel() {
     super(new GridBagLayout(), true);
@@ -32,19 +33,20 @@ public class LauncherPanel extends JPanel {
     this.add(this.launcherLoginPanel);
   }
 
-  private void getTitle(int pWidth, int pHeight, Graphics2D g2d) {
+  private void drawTitleString(String s, int pWidth, int pHeight, Graphics2D g2d) {
     g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
     g2d.setColor(Color.LIGHT_GRAY);
 
     FontMetrics fm = g2d.getFontMetrics();
-    int textWidth = fm.stringWidth("TwentyTen Launcher");
-    int textHeight = fm.getHeight();
+    int stringWidth = fm.stringWidth(s);
+    int stringHeight = fm.getHeight();
+    int stringX = (pWidth >> 1 >> 1) - (stringWidth >> 1);
+    int stringY = (pHeight >> 1 >> 1) - (stringHeight << 1);
 
-    g2d.drawString("TwentyTen Launcher", (pWidth >> 1 >> 1) - (textWidth >> 1),
-        (pHeight >> 1 >> 1) - ((textHeight) << 1));
+    g2d.drawString(s, stringX, stringY);
   }
 
-  void showError(String error) {
+  public void showError(String error) {
     this.removeAll();
 
     this.add(this.launcherLoginPanel);
@@ -66,22 +68,24 @@ public class LauncherPanel extends JPanel {
     int gridHeight = ((panelHeight + imageHeight) - 1) >> 5;
 
     GraphicsConfiguration gc = ((Graphics2D) g).getDeviceConfiguration();
-    this.gcVolatileBgImage = gc.createCompatibleVolatileImage(panelWidth >> 1,
-        panelHeight >> 1);
+    VolatileImage compatibleVolatileImage = gc.createCompatibleVolatileImage(panelWidth >> 1,
+        panelHeight >> 1, Transparency.TRANSLUCENT);
 
-    Graphics2D g2d = gcVolatileBgImage.createGraphics();
+    Graphics2D g2d = compatibleVolatileImage.createGraphics();
     try {
-      for (int index = 0; index < (gridWidth * gridHeight); index++) {
-        int gridx = imageWidth * (index % gridWidth);
-        int gridy = imageHeight * (index / gridWidth);
-        g2d.drawImage(this.bgImage, gridx, gridy, imageWidth, imageHeight, this);
+      for (int gridIndex = 0; gridIndex < (gridWidth * gridHeight); gridIndex++) {
+        int gridX = imageWidth * (gridIndex % gridWidth);
+        int gridY = imageHeight * (gridIndex / gridWidth);
+        g2d.drawImage(this.bgImage, gridX, gridY, imageWidth, imageHeight, this);
       }
-      this.getTitle(panelWidth, panelHeight, g2d);
+
+      String title = "TwentyTen Launcher";
+      this.drawTitleString(title, panelWidth, panelHeight, g2d);
     } finally {
       g2d.dispose();
     }
 
-    g.drawImage(this.gcVolatileBgImage, 0, 0, panelWidth, panelHeight, 0, 0, panelWidth >> 1,
+    g.drawImage(compatibleVolatileImage, 0, 0, panelWidth, panelHeight, 0, 0, panelWidth >> 1,
         panelHeight >> 1, this);
   }
 }
