@@ -40,12 +40,7 @@ public class GameLauncher extends JApplet implements AppletStub {
   }
 
   public static boolean isGameCached() {
-    try {
-      return GameUpdater.isCached();
-    } catch (IOException ioe) {
-      DebugLoggingManager.logError(GameLauncher.class, "Failed to check if game is cached", ioe);
-    }
-    return false;
+    return GameUpdater.packageCached();
   }
 
   private void drawTitleString(String s, int pWidth, int pHeight, Graphics2D g2d) {
