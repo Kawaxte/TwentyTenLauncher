@@ -3,7 +3,7 @@ package ee.twentyten.launcher;
 import java.util.Locale;
 
 public enum EPlatform {
-  OSX("mac", "darwin"),
+  MACOSX("mac", "darwin"),
   LINUX("nix", "nux", "aix"),
   WINDOWS("win");
 
