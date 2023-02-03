@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.Map;
 import org.json.JSONObject;
 
-public interface IJsonRequest {
+public interface IJsonRequestService {
 
   JSONObject sendRequest(URL url, String method, Map<String, String> headers)
       throws IOException;
