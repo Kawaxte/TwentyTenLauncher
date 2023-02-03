@@ -80,12 +80,30 @@ public class GameUpdater implements Runnable {
     this.totalPercentage = 0;
   }
 
-  static boolean isCached() throws IOException {
+  static boolean packageCached() {
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
 
-    //TODO: Check if the files are cached
-    return false;
+    File workingDirectory = FilesManager.workingDirectory;
+    File binDirectory = new File(workingDirectory, "bin");
+    File nativesDirectory = new File(binDirectory, "natives");
+    File versionsDirectory = new File(workingDirectory, "versions");
+    File clientJarDirectory = new File(versionsDirectory, CLIENT_JAR_NAME);
+    String[] nativeNames = platform == EPlatform.MACOSX ? LWJGL_NATIVE_DYLIB_NAMES
+        : platform == EPlatform.WINDOWS ? LWJGL_NATIVE_DLL_NAMES : LWJGL_NATIVE_SO_NAMES;
+    for (String jarName : LWJGL_JAR_NAMES) {
+      if (!new File(binDirectory, jarName).exists()) {
+        return false;
+      }
+    }
+    for (String nativeName : nativeNames) {
+      if (!new File(nativesDirectory, nativeName).exists()) {
+        return false;
+      }
+    }
+
+    String clientJarName = String.format("%s.jar", CLIENT_JAR_NAME);
+    return new File(clientJarDirectory, clientJarName).exists();
   }
 
   String getStateDescription() {
@@ -399,20 +417,19 @@ public class GameUpdater implements Runnable {
     this.totalPercentage = 5;
 
     try {
-      boolean cached = GameUpdater.isCached();
-      System.out.println("Cached: " + cached);
+      boolean cached = GameUpdater.packageCached();
       if (!cached) {
-        //this.determinePackages();
-        //this.downloadPackages();
-        //this.movePackages();
+        this.determinePackages();
+        this.downloadPackages();
+        this.movePackages();
       }
       this.updateClasspath();
 
       this.state = 7;
       this.totalPercentage = 95;
-    } catch (IOException ioe) {
+    } catch (Throwable t) {
       this.showError("Failed to run game updater");
-      DebugLoggingManager.logError(this.getClass(), "Failed to run game updater", ioe);
+      DebugLoggingManager.logError(this.getClass(), "Failed to run game updater", t);
     }
   }
 }
