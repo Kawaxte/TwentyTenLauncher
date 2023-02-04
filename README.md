@@ -1,5 +1,7 @@
 <h1 align="center">TwentyTen Launcher</h1>
-
+<a href="https://i.imgur.com/CjkKvnR.png">
+  <img src="https://i.imgur.com/CjkKvnR.png">
+</a>
 <p align="center">
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
     <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher?label=latest">
@@ -10,14 +12,17 @@
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases">
     <img src="https://img.shields.io/github/downloads/sojlabjoi/AlphacraftLauncher/total.svg">
   </a>
+  <a href="https://www.azul.com/downloads/?version=java-7-lts&package=jre">
+    <img src="https://img.shields.io/badge/Java-7%2B-blue.svg">
+  </a>
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/blob/stable/LICENSE">
     <img src="https://img.shields.io/github/license/sojlabjoi/AlphacraftLauncher">
   </a>
 </p>
+<div align="center">A remaster of the original Minecraft Launcher from June 29, 2010</div>
 
-<div align="center">A modern remaster of the original Minecraft Launcher from June 29, 2010</div>
+---
 
-----
 This repository was created to provide a modern and polished "Legacy" Minecraft experience. It
 covers a range of versions from _Indev 0.13 (20091223-2)_ to _1.5.2_, offering players the chance to
 uncover hidden treasures from the past. To further enhance the authentic experience, the launcher
@@ -30,14 +35,13 @@ original launcher, while _Beta 1.2_02_ was the final version to come with the or
 > Please be advised that this application requires a minimum of Java 7 or higher to run.
 
 <h2 align="center">Managing Issues and Contributions</h2>
-
 <p align="center">
-   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/issues">
-      <img src="https://img.shields.io/github/issues/sojlabjoi/AlphacraftLauncher">
-   </a>
-   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/pulls">
-      <img src="https://img.shields.io/github/issues-pr/sojlabjoi/AlphacraftLauncher">
-   </a>
+  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/issues">
+    <img src="https://img.shields.io/github/issues/sojlabjoi/AlphacraftLauncher">
+  </a>
+  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/pulls">
+    <img src="https://img.shields.io/github/issues-pr/sojlabjoi/AlphacraftLauncher">
+  </a>
 </p>
 
 We rely on the power of the community to help improve our launcher. That's why we use GitHub's issue
