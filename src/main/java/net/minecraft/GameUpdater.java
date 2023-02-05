@@ -2,8 +2,8 @@ package net.minecraft;
 
 import ee.twentyten.config.Config;
 import ee.twentyten.launcher.EPlatform;
-import ee.twentyten.util.DebugLoggingManager;
-import ee.twentyten.util.FilesManager;
+import ee.twentyten.util.FileManager;
+import ee.twentyten.util.LoggingManager;
 import ee.twentyten.util.OptionsManager;
 import ee.twentyten.util.RequestManager;
 import java.applet.Applet;
@@ -84,7 +84,7 @@ public class GameUpdater implements Runnable {
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
 
-    File workingDirectory = FilesManager.workingDirectory;
+    File workingDirectory = FileManager.workingDirectory;
     File binDirectory = new File(workingDirectory, "bin");
     File nativesDirectory = new File(binDirectory, "natives");
     File versionsDirectory = new File(workingDirectory, "versions");
@@ -137,13 +137,13 @@ public class GameUpdater implements Runnable {
     boolean isUsingInfdev = Config.instance.getUsingInfdev();
     String versionType = null;
     if (isUsingBeta) {
-      versionType = OptionsManager.TYPES[0];
+      versionType = OptionsManager.versionTypes[0];
     }
     if (isUsingAlpha) {
-      versionType = OptionsManager.TYPES[1];
+      versionType = OptionsManager.versionTypes[1];
     }
     if (isUsingInfdev) {
-      versionType = OptionsManager.TYPES[2];
+      versionType = OptionsManager.versionTypes[2];
     }
 
     EPlatform platform = EPlatform.getPlatform();
@@ -171,23 +171,25 @@ public class GameUpdater implements Runnable {
       urlList.add(new URL(clientJarUrl));
 
       this.urls = urlList.toArray(new URL[0]);
-      DebugLoggingManager.logInfo(this.getClass(), Arrays.toString(this.urls));
+      LoggingManager.logInfo(this.getClass(), Arrays.toString(this.urls));
     } catch (MalformedURLException mue) {
       if (lwjglJarUrl == null) {
-        this.showError("No lwjgl jar files found");
+        this.showError("Failed to find lwjgl jar files");
+        LoggingManager.logError(this.getClass(), "Failed to find lwjgl jar files", mue);
       }
       if (lwjglNativeUrl == null) {
-        this.showError("No lwjgl native files found");
+        this.showError("Failed to find lwjgl native files");
+        LoggingManager.logError(this.getClass(), "Failed to find lwjgl native files", mue);
       }
       if (clientJarUrl == null) {
-        this.showError("No client jar file found");
+        this.showError("Failed to find client jar file");
+        LoggingManager.logError(this.getClass(), "Failed to find client jar file", mue);
       }
-      DebugLoggingManager.logError(this.getClass(), "Failed to determine packages", mue);
+      LoggingManager.logError(this.getClass(), "Failed to determine packages", mue);
     }
   }
 
   private void downloadPackages() throws IOException {
-    this.subtaskMessage = "";
     this.state = 4;
 
     int currentPackageSize = 0;
@@ -217,13 +219,15 @@ public class GameUpdater implements Runnable {
       packageUrl = this.urls[urlIndex].toString();
       packageName = packageUrl.substring(packageUrl.lastIndexOf('/') + 1);
 
-      File tempDirectory = new File(FilesManager.workingDirectory, ".temp");
+      File tempDirectory = new File(FileManager.workingDirectory, ".temp");
       if (!tempDirectory.exists()) {
         boolean created = tempDirectory.mkdir();
         if (!created) {
-          throw new IOException("Failed to create temp directory");
+          this.showError("Failed to create temp directory");
+          LoggingManager.logError(this.getClass(), "Failed to create temp directory");
         }
       }
+
       File packageFile = new File(tempDirectory, packageName);
       connection = RequestManager.sendHttpRequest(packageUrl, "GET",
           RequestManager.X_WWW_FORM_HEADER);
@@ -232,7 +236,7 @@ public class GameUpdater implements Runnable {
           packageFile)) {
         long downloadStartTime = System.currentTimeMillis();
 
-        byte[] byteBuffer = new byte[1024];
+        byte[] byteBuffer = new byte[65536];
         int bytesRead;
         int packageSize = 0;
         while ((bytesRead = is.read(byteBuffer)) != -1) {
@@ -261,21 +265,21 @@ public class GameUpdater implements Runnable {
         }
       }
     }
+    this.subtaskMessage = "";
   }
 
   private void movePackages() throws IOException {
-    this.subtaskMessage = "";
     this.state = 5;
 
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
 
-    File binDirectory = this.createDirectory(FilesManager.workingDirectory, "bin");
+    File binDirectory = this.createDirectory(FileManager.workingDirectory, "bin");
     File nativesDirectory = this.createDirectory(binDirectory, "natives");
-    File versionsDirectory = this.createDirectory(FilesManager.workingDirectory, "versions");
+    File versionsDirectory = this.createDirectory(FileManager.workingDirectory, "versions");
     File selectedVersionDirectory = this.createDirectory(versionsDirectory, CLIENT_JAR_NAME);
 
-    File tempDirectory = this.createDirectory(FilesManager.workingDirectory, ".temp");
+    File tempDirectory = this.createDirectory(FileManager.workingDirectory, ".temp");
     File[] tempPackages = tempDirectory.listFiles();
     Objects.requireNonNull(tempPackages, "tempPackages == null!");
     int totalPackageSize = tempPackages.length;
@@ -314,17 +318,19 @@ public class GameUpdater implements Runnable {
     if (tempDirectory.exists()) {
       boolean deleted = tempDirectory.delete();
       if (!deleted) {
-        throw new IOException("Failed to delete temp directory");
+        this.showError("Failed to delete temp directory");
+        LoggingManager.logError(this.getClass(), "Failed to delete temp directory");
       }
     }
+    this.subtaskMessage = "";
   }
 
   private void updateClasspath() {
     this.state = 6;
 
-    File binDirectory = new File(FilesManager.workingDirectory, "bin");
+    File binDirectory = new File(FileManager.workingDirectory, "bin");
     File nativesDirectory = new File(binDirectory, "natives");
-    File versionsDirectory = new File(FilesManager.workingDirectory, "versions");
+    File versionsDirectory = new File(FileManager.workingDirectory, "versions");
     File selectedVersionDirectory = new File(versionsDirectory, CLIENT_JAR_NAME);
 
     String clientJarName = String.format("%s.jar", CLIENT_JAR_NAME);
@@ -339,10 +345,10 @@ public class GameUpdater implements Runnable {
       this.initialPercentage = 75 + (jarUrls.length * 15) / jarUrls.length;
       this.totalPercentage = this.initialPercentage;
     } catch (MalformedURLException mue) {
-      this.showError("Failed to update classpath");
-      DebugLoggingManager.logError(this.getClass(), "Failed to update classpath", mue);
+      this.showError("Failed to construct URL from URI");
+      LoggingManager.logError(this.getClass(), "Failed to construct URL from URI", mue);
     }
-    DebugLoggingManager.logInfo(this.getClass(), Arrays.toString(jarUrls));
+    LoggingManager.logInfo(this.getClass(), Arrays.toString(jarUrls));
 
     if (this.loader == null) {
       final URL[] finalJarUrls = jarUrls;
@@ -364,9 +370,11 @@ public class GameUpdater implements Runnable {
         Vector<?> loadedLibraryNames = (Vector<?>) nativesField.get(this.loader);
         loadedLibraryNames.clear();
       } catch (NoSuchFieldException nsfe) {
-        DebugLoggingManager.logError(getClass(), "Can't find declared field", nsfe);
+        this.showError("Failed to find declared field");
+        LoggingManager.logError(getClass(), "Failed to find declared field", nsfe);
       } catch (IllegalAccessException iae) {
-        DebugLoggingManager.logError(getClass(), "Can't access declared field", iae);
+        this.showError("Failed to access declared field");
+        LoggingManager.logError(getClass(), "Failed to access declared field", iae);
       }
     }
 
@@ -378,12 +386,13 @@ public class GameUpdater implements Runnable {
     this.nativesLoaded = true;
   }
 
-  private File createDirectory(File parent, String name) throws IOException {
+  private File createDirectory(File parent, String name) {
     File directory = new File(parent, name);
     if (!directory.exists()) {
       boolean created = directory.mkdir();
       if (!created) {
-        throw new IOException("Failed to create directory");
+        this.showError("Failed to create directory");
+        LoggingManager.logError(this.getClass(), "Failed to create directory");
       }
     }
     return directory;
@@ -395,11 +404,14 @@ public class GameUpdater implements Runnable {
       minecraftAppletClass = this.loader.loadClass("net.minecraft.client.MinecraftApplet");
       return (Applet) minecraftAppletClass.newInstance();
     } catch (ClassNotFoundException cnfe) {
-      DebugLoggingManager.logError(this.getClass(), "Failed to load MinecraftApplet class", cnfe);
+      this.showError("Can't find MinecraftApplet class");
+      LoggingManager.logError(this.getClass(), "Failed to load MinecraftApplet class", cnfe);
     } catch (InstantiationException ie) {
-      DebugLoggingManager.logError(this.getClass(), "Can't instantiate MinecraftApplet class", ie);
+      this.showError("Can't instantiate MinecraftApplet class");
+      LoggingManager.logError(this.getClass(), "Can't instantiate MinecraftApplet class", ie);
     } catch (IllegalAccessException iae) {
-      DebugLoggingManager.logError(this.getClass(), "Can't access MinecraftApplet class", iae);
+      this.showError("Failed to access MinecraftApplet class");
+      LoggingManager.logError(this.getClass(), "Failed to access MinecraftApplet class", iae);
     }
     return null;
   }
@@ -429,7 +441,7 @@ public class GameUpdater implements Runnable {
       this.totalPercentage = 95;
     } catch (Throwable t) {
       this.showError("Failed to run game updater");
-      DebugLoggingManager.logError(this.getClass(), "Failed to run game updater", t);
+      LoggingManager.logError(this.getClass(), "Failed to run game updater", t);
     }
   }
 }
