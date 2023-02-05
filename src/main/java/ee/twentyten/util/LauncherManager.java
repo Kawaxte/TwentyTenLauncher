@@ -2,7 +2,6 @@ package ee.twentyten.util;
 
 import ee.twentyten.launcher.EPlatform;
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,19 +59,14 @@ public final class LauncherManager {
     File workingDirectory = LauncherManager.WORKING_DIRECTORIES.get(platformName);
     Objects.requireNonNull(workingDirectory, "workingDirectory == null!");
     if (!workingDirectory.exists()) {
-      DebugLoggingManager.logInfo(LauncherManager.class,
+      LoggingManager.logInfo(LauncherManager.class,
           String.format("\"%s\"", workingDirectory.getAbsolutePath()));
 
-      try {
-        boolean created = workingDirectory.mkdirs();
-        if (!created) {
-          throw new IOException("Failed to create working directory");
-        }
-      } catch (IOException ioe) {
-        DebugLoggingManager.logError(LauncherManager.class, "Failed to create working directory",
-            ioe);
+      boolean created = workingDirectory.mkdirs();
+      if (!created) {
+        LoggingManager.logError(LauncherManager.class, "Failed to create working directory");
+        return null;
       }
-
     }
     return workingDirectory;
   }
@@ -95,14 +89,15 @@ public final class LauncherManager {
       String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
       UIManager.setLookAndFeel(lookAndFeel);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      DebugLoggingManager.logError(LauncherManager.class, "Failed to set look and feel", ulafe);
+      LoggingManager.logError(LauncherManager.class, "Failed to set look and feel", ulafe);
     } catch (ClassNotFoundException cnfe) {
-      DebugLoggingManager.logError(LauncherManager.class, "Can't find look and feel class", cnfe);
+      LoggingManager.logError(LauncherManager.class, "Can't find look and feel class", cnfe);
     } catch (InstantiationException ie) {
-      DebugLoggingManager.logError(LauncherManager.class, "Can't instantiate look and feel class",
+      LoggingManager.logError(LauncherManager.class, "Can't instantiate look and feel class",
           ie);
     } catch (IllegalAccessException iae) {
-      DebugLoggingManager.logError(LauncherManager.class, "Can't access look and feel class", iae);
+      LoggingManager.logError(LauncherManager.class, "Failed to access look and feel class",
+          iae);
     }
   }
 
@@ -122,10 +117,14 @@ public final class LauncherManager {
       return worker.get();
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
+
+      LoggingManager.logError(LauncherManager.class, "Failed to interrupt current thread", ie);
     } catch (ExecutionException ee) {
       JOptionPane.showMessageDialog(null,
           String.format("An error occurred while checking for updates:%n%s", ee.getMessage()),
           "Error", JOptionPane.ERROR_MESSAGE);
+
+      LoggingManager.logError(LauncherManager.class, "Failed to check for updates", ee);
     }
     return false;
   }
