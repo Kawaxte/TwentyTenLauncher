@@ -49,7 +49,7 @@ public final class RequestManager {
       URL requestUrl = new URL(url);
       return HTTP_REQUEST.sendRequest(requestUrl, method, headers);
     } catch (IOException ioe) {
-      DebugLoggingManager.logError(RequestManager.class, "Failed to send HTTP request", ioe);
+      LoggingManager.logError(RequestManager.class, "Failed to send HTTP request", ioe);
     }
     return null;
   }
@@ -60,7 +60,7 @@ public final class RequestManager {
       URL requestUrl = new URL(url);
       return HTTP_REQUEST.sendRequest(requestUrl, method, headers, data);
     } catch (IOException ioe) {
-      DebugLoggingManager.logError(RequestManager.class, "Failed to send HTTP request", ioe);
+      LoggingManager.logError(RequestManager.class, "Failed to send HTTP request", ioe);
     }
     return null;
   }
@@ -70,7 +70,7 @@ public final class RequestManager {
       URL requestUrl = new URL(url);
       return JSON_REQUEST.sendRequest(requestUrl, method, headers);
     } catch (IOException ioe) {
-      DebugLoggingManager.logError(RequestManager.class, "Failed to send JSON request", ioe);
+      LoggingManager.logError(RequestManager.class, "Failed to send JSON request", ioe);
     }
     return null;
   }
@@ -81,7 +81,7 @@ public final class RequestManager {
       URL requestUrl = new URL(url);
       return JSON_REQUEST.sendRequest(requestUrl, method, headers, data);
     } catch (IOException ioe) {
-      DebugLoggingManager.logError(RequestManager.class, "Failed to send JSON request", ioe);
+      LoggingManager.logError(RequestManager.class, "Failed to send JSON request", ioe);
     }
     return null;
   }
@@ -93,7 +93,7 @@ public final class RequestManager {
 
       connection.setSSLSocketFactory(context.getSocketFactory());
     } catch (GeneralSecurityException gse) {
-      DebugLoggingManager.logError(RequestManager.class, "Failed to enforce protocol", gse);
+      LoggingManager.logError(RequestManager.class, "Failed to enforce protocol", gse);
     }
   }
 }
