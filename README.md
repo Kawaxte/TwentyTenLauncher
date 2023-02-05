@@ -1,7 +1,4 @@
 <h1 align="center">TwentyTen Launcher</h1>
-<a href="https://i.imgur.com/CjkKvnR.png">
-  <img src="https://i.imgur.com/CjkKvnR.png">
-</a>
 <p align="center">
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
     <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher?label=latest">
@@ -12,14 +9,17 @@
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases">
     <img src="https://img.shields.io/github/downloads/sojlabjoi/AlphacraftLauncher/total.svg">
   </a>
-  <a href="https://www.azul.com/downloads/?version=java-7-lts&package=jre">
-    <img src="https://img.shields.io/badge/Java-7%2B-blue.svg">
-  </a>
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/blob/stable/LICENSE">
     <img src="https://img.shields.io/github/license/sojlabjoi/AlphacraftLauncher">
   </a>
+  <a href="https://www.azul.com/downloads/?version=java-7-lts&package=jre">
+    <img src="https://img.shields.io/badge/Java-7%2B-blue.svg">
+  </a>
 </p>
 <div align="center">A remaster of the original Minecraft Launcher from June 29, 2010</div>
+  <a href="https://i.imgur.com/CjkKvnR.png">
+    <img src="https://i.imgur.com/CjkKvnR.png">
+  </a>
 
 ---
 
