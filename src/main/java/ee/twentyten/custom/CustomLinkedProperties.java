@@ -1,6 +1,6 @@
 package ee.twentyten.custom;
 
-import ee.twentyten.util.DebugLoggingManager;
+import ee.twentyten.util.LoggingManager;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -53,7 +53,7 @@ public class CustomLinkedProperties extends Properties {
         out.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
       }
     } catch (IOException ioe) {
-      DebugLoggingManager.logError(this.getClass(), "Failed to store properties", ioe);
+      LoggingManager.logError(this.getClass(), "Failed to store properties", ioe);
     }
   }
 }
