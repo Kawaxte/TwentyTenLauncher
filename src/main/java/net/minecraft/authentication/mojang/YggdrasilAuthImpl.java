@@ -40,7 +40,7 @@ public class YggdrasilAuthImpl implements IYggdrasilAuthService {
     JSONObject payload = new JSONObject();
     payload.put("accessToken", accessToken);
     payload.put("clientToken", clientToken);
-    payload.put("selectedProfile", selectedProfile);
+    //payload.put("selectedProfile", selectedProfile);
     payload.put("requestUser", requestUser);
     return RequestManager.sendJsonRequest(
         String.format(YggdrasilManager.YGGDRASIL_AUTH_URL, "refresh"), "POST",
