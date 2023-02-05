@@ -2,7 +2,6 @@ package ee.twentyten.util;
 
 import java.awt.Image;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -13,7 +12,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.json.JSONObject;
 
-public final class FilesManager {
+public final class FileManager {
 
   public static final long CACHE_EXPIRATION_TIME;
   public static File workingDirectory;
@@ -24,7 +23,7 @@ public final class FilesManager {
     workingDirectory = LauncherManager.getWorkingDirectory();
   }
 
-  private FilesManager() {
+  private FileManager() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
@@ -32,18 +31,28 @@ public final class FilesManager {
     URL input = clazz.getClassLoader().getResource(name);
     Objects.requireNonNull(input);
     try {
+      LoggingManager.logInfo(FileManager.class, String.format("\"%s\"", input));
       return ImageIO.read(input);
     } catch (IOException ioe) {
+      LoggingManager.logError(FileManager.class,
+          String.format("Failed to read image from \"%s\"", input), ioe);
       return new ImageIcon(new byte[768]).getImage();
     }
   }
 
-  public static JSONObject readJsonFile(File src) throws IOException {
+  public static JSONObject readJsonFile(File src) {
     if (!src.exists() || !src.isFile()) {
-      throw new FileNotFoundException(String.format("Can't find file in \"%s\"", src));
+      LoggingManager.logError(FileManager.class,
+          String.format("File \"%s\" doesn't exist or isn't a file", src.getAbsolutePath()));
     }
 
-    byte[] bytes = Files.readAllBytes(src.toPath());
+    byte[] bytes;
+    try {
+      bytes = Files.readAllBytes(src.toPath());
+    } catch (IOException ioe) {
+      LoggingManager.logError(FileManager.class, "Failed to read bytes from file", ioe);
+      return new JSONObject();
+    }
     String json = new String(bytes, StandardCharsets.UTF_8);
     return new JSONObject(json);
   }
@@ -54,10 +63,10 @@ public final class FilesManager {
         .getInputStream()) {
       Files.copy(is, src.toPath());
 
-      DebugLoggingManager.logInfo(FilesManager.class,
+      LoggingManager.logInfo(FileManager.class,
           String.format("\"%s\"", src.getAbsolutePath()));
     } catch (IOException ioe) {
-      DebugLoggingManager.logError(FilesManager.class,
+      LoggingManager.logError(FileManager.class,
           String.format("Failed to download file from \"%s\"", url), ioe);
     }
   }
