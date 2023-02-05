@@ -1,6 +1,6 @@
 package ee.twentyten.request;
 
-import ee.twentyten.util.DebugLoggingManager;
+import ee.twentyten.util.LoggingManager;
 import ee.twentyten.util.RequestManager;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,14 +32,14 @@ public class JsonRequestImpl implements IJsonRequestService {
 
     if (responseCode / 100 == 2) {
       if (response.isEmpty()) {
-        DebugLoggingManager.logWarn(this.getClass(),
+        LoggingManager.logWarn(this.getClass(),
             String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
         return new JSONObject();
       }
-      DebugLoggingManager.logInfo(this.getClass(),
+      LoggingManager.logInfo(this.getClass(),
           String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
     } else {
-      DebugLoggingManager.logError(this.getClass(),
+      LoggingManager.logError(this.getClass(),
           String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
     }
     return response.charAt(0) != '{' ? new JSONObject() : new JSONObject(response);
@@ -54,7 +54,7 @@ public class JsonRequestImpl implements IJsonRequestService {
       connection.setRequestProperty(header.getKey(), header.getValue());
     }
 
-    DebugLoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
+    LoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
 
     RequestManager.enforceProtocol(connection);
     return this.getResponse(connection);
@@ -75,7 +75,7 @@ public class JsonRequestImpl implements IJsonRequestService {
       }
     }
 
-    DebugLoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
+    LoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
 
     RequestManager.enforceProtocol(connection);
     return this.getResponse(connection);
