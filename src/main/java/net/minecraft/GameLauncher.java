@@ -1,8 +1,8 @@
 package net.minecraft;
 
 import ee.twentyten.config.Config;
-import ee.twentyten.util.DebugLoggingManager;
-import ee.twentyten.util.FilesManager;
+import ee.twentyten.util.FileManager;
+import ee.twentyten.util.LoggingManager;
 import ee.twentyten.util.OptionsManager;
 import ee.twentyten.util.ThreadManager;
 import java.applet.Applet;
@@ -22,9 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JApplet;
 
-public class GameLauncher extends JApplet implements AppletStub {
+public class GameLauncher extends Applet implements AppletStub {
 
   private static final long serialVersionUID = 1L;
   public final Map<String, String> parameters;
@@ -36,7 +35,7 @@ public class GameLauncher extends JApplet implements AppletStub {
 
   public GameLauncher() {
     this.parameters = new HashMap<>();
-    this.bgImage = FilesManager.readImageFile(GameLauncher.class, "icon/dirt.png");
+    this.bgImage = FileManager.readImageFile(GameLauncher.class, "icon/dirt.png");
   }
 
   public static boolean isGameCached() {
@@ -104,7 +103,7 @@ public class GameLauncher extends JApplet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException mue) {
-      DebugLoggingManager.logError(this.getClass(), "Failed to create URL object", mue);
+      LoggingManager.logError(this.getClass(), "Failed to create URL object", mue);
     }
     return null;
   }
@@ -177,7 +176,7 @@ public class GameLauncher extends JApplet implements AppletStub {
     this.parameters.put("haspaid", hasPaid);
 
     String formattedParameters = String.format("%s:%s:%s", username, sessionId, hasPaid);
-    DebugLoggingManager.logInfo(this.getClass(), formattedParameters);
+    LoggingManager.logInfo(this.getClass(), formattedParameters);
 
     String selectedVersion = Config.instance.getSelectedVersion();
     try {
@@ -188,7 +187,9 @@ public class GameLauncher extends JApplet implements AppletStub {
       }
       System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     } catch (IOException ioe) {
-      DebugLoggingManager.logError(this.getClass(), "Failed to get proxy port", ioe);
+      System.setProperty("http.proxyPort", "80");
+
+      LoggingManager.logError(this.getClass(), "Failed to get proxy port", ioe);
     }
 
     String httpProxyHost = System.getProperty("http.proxyHost");
@@ -196,7 +197,7 @@ public class GameLauncher extends JApplet implements AppletStub {
     String legacyMergeSort = System.getProperty("java.util.Arrays.useLegacyMergeSort");
     String formattedSystemProperties = String.format("%s:%s:%s", httpProxyHost, httpProxyPort,
         legacyMergeSort);
-    DebugLoggingManager.logInfo(this.getClass(), formattedSystemProperties);
+    LoggingManager.logInfo(this.getClass(), formattedSystemProperties);
 
     this.updater = new GameUpdater();
   }
@@ -241,7 +242,7 @@ public class GameLauncher extends JApplet implements AppletStub {
         try {
           Thread.sleep(10L);
         } catch (InterruptedException ie) {
-          DebugLoggingManager.logError(this.getClass(),
+          LoggingManager.logError(this.getClass(),
               "Failed to temporarily cease thread execution", ie);
         }
       }
