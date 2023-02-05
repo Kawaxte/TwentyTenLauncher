@@ -31,7 +31,7 @@ public final class CipherManager {
     try {
       return AES_CIPHER.encrypt(value);
     } catch (GeneralSecurityException gse) {
-      DebugLoggingManager.logError(CipherManager.class, "Failed to encrypt value", gse);
+      LoggingManager.logError(CipherManager.class, "Failed to encrypt value", gse);
     }
     return value;
   }
@@ -40,7 +40,7 @@ public final class CipherManager {
     try {
       return AES_CIPHER.decrypt(value);
     } catch (GeneralSecurityException gse) {
-      DebugLoggingManager.logError(CipherManager.class, "Failed to decrypt value", gse);
+      LoggingManager.logError(CipherManager.class, "Failed to decrypt value", gse);
     }
     return value;
   }
