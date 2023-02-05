@@ -49,7 +49,7 @@ public final class ConfigManager {
       try (InputStream is = ConfigManager.class.getResourceAsStream("twentyten.properties")) {
         properties.load(is);
       } catch (IOException ioe2) {
-        DebugLoggingManager.logError(ConfigManager.class,
+        LoggingManager.logError(ConfigManager.class,
             String.format("Failed to load config file from \"%s\"", configFile.getAbsolutePath()),
             ioe2);
       }
