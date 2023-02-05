@@ -1,6 +1,6 @@
 package ee.twentyten.request;
 
-import ee.twentyten.util.DebugLoggingManager;
+import ee.twentyten.util.LoggingManager;
 import ee.twentyten.util.RequestManager;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,10 +17,10 @@ public class HttpRequestImpl implements IHttpRequestService {
     String connectionUrl = connection.getURL().toString();
 
     if (responseCode / 100 == 2) {
-      DebugLoggingManager.logInfo(this.getClass(),
+      LoggingManager.logInfo(this.getClass(),
           String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
     } else {
-      DebugLoggingManager.logError(this.getClass(),
+      LoggingManager.logError(this.getClass(),
           String.format("%d %s (%s)", responseCode, responseMessage, connectionUrl));
     }
     return connection;
@@ -35,7 +35,7 @@ public class HttpRequestImpl implements IHttpRequestService {
       connection.setRequestProperty(header.getKey(), header.getValue());
     }
 
-    DebugLoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
+    LoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
 
     RequestManager.enforceProtocol(connection);
     return this.getResponse(connection);
@@ -57,7 +57,7 @@ public class HttpRequestImpl implements IHttpRequestService {
       }
     }
 
-    DebugLoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
+    LoggingManager.logInfo(this.getClass(), String.format("%s (%s)", method, url));
 
     RequestManager.enforceProtocol(connection);
     return this.getResponse(connection);
