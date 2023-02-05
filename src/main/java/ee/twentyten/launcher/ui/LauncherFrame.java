@@ -2,13 +2,12 @@ package ee.twentyten.launcher.ui;
 
 import ee.twentyten.config.Config;
 import ee.twentyten.launcher.EPlatform;
-import ee.twentyten.util.CommandsManager;
+import ee.twentyten.util.CommandManager;
 import ee.twentyten.util.ConfigManager;
-import ee.twentyten.util.DebugLoggingManager;
-import ee.twentyten.util.FilesManager;
+import ee.twentyten.util.FileManager;
 import ee.twentyten.util.LauncherManager;
+import ee.twentyten.util.LoggingManager;
 import ee.twentyten.util.OptionsManager;
-import ee.twentyten.util.ThreadManager;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -37,22 +36,18 @@ public class LauncherFrame extends JFrame implements ActionListener {
   private static String configClientToken;
 
   static {
-    PRE_RELEASE_VERSION = 3;
+    PRE_RELEASE_VERSION = 1;
     CURRENT_VERSION = LauncherManager.getCurrentVersion(PRE_RELEASE_VERSION, true);
   }
 
   private final LauncherLoginPanel loginPanel;
-  private String loginUsername;
-  private String loginPassword;
   private boolean loginRememberPassword;
-  private boolean credentialsEmpty;
-  private boolean credentialsChanged;
   private LauncherPanel panel;
 
   public LauncherFrame(String title) {
     super(title);
 
-    this.setIconImage(FilesManager.readImageFile(LauncherFrame.class, "icon/favicon.png"));
+    this.setIconImage(FileManager.readImageFile(LauncherFrame.class, "icon/favicon.png"));
     this.setMinimumSize(new Dimension(640, 480));
 
     this.panel = new LauncherPanel();
@@ -64,14 +59,14 @@ public class LauncherFrame extends JFrame implements ActionListener {
         try {
           Desktop.getDesktop().browse(URI.create(LauncherFrame.this.loginPanel.getLinkUrls()));
         } catch (IOException ioe1) {
-          DebugLoggingManager.logError(this.getClass(), "Failed to launch default browser", ioe1);
+          LoggingManager.logError(this.getClass(), "Failed to launch default browser", ioe1);
 
           EPlatform platform = EPlatform.getPlatform();
           Objects.requireNonNull(platform, "platform");
           try {
-            CommandsManager.executeCommand(platform, LauncherFrame.this.loginPanel.getLinkUrls());
+            CommandManager.executeCommand(platform, LauncherFrame.this.loginPanel.getLinkUrls());
           } catch (IOException ioe2) {
-            DebugLoggingManager.logError(this.getClass(), "Failed to execute string command", ioe2);
+            LoggingManager.logError(this.getClass(), "Failed to execute string command", ioe2);
           }
         }
       }
@@ -90,11 +85,12 @@ public class LauncherFrame extends JFrame implements ActionListener {
     try {
       OptionsManager.downloadVersionsFile();
     } catch (IOException ioe) {
-      DebugLoggingManager.logError(LauncherFrame.class, "Failed to get versions file", ioe);
+      LoggingManager.logError(LauncherFrame.class, "Failed to get versions file", ioe);
     }
 
     Config.instance = Config.load();
-    if (Config.instance.getClientToken() == null) {
+    Objects.requireNonNull(Config.instance, "config == null!");
+    if (Config.instance.getClientToken() == null || Config.instance.getClientToken().isEmpty()) {
       ConfigManager.initConfig();
     }
 
@@ -123,47 +119,40 @@ public class LauncherFrame extends JFrame implements ActionListener {
       optionsDialog.setVisible(true);
     }
     if (source == LauncherFrame.this.loginPanel.getLoginButton()) {
+      String loginUsername = this.loginPanel.getUsernameField().getText();
+      String loginPassword = new String(this.loginPanel.getPasswordField().getPassword());
+      this.loginRememberPassword = this.loginPanel.getRememberPasswordCheckBox().isSelected();
+
       String savedUsername = Config.instance.getUsername();
       String savedPassword = Config.instance.getPassword();
-      this.loginUsername = this.loginPanel.getUsernameField().getText();
-      this.loginPassword = new String(this.loginPanel.getPasswordField().getPassword());
-      this.loginRememberPassword = this.loginPanel.getRememberPasswordCheckBox().isSelected();
-      this.credentialsEmpty = this.loginUsername.isEmpty() || this.loginPassword.isEmpty();
-      this.credentialsChanged =
-          !this.loginUsername.equals(savedUsername) || !this.loginPassword.equals(savedPassword);
-
-      if (!sessionValid || credentialsChanged) {
-        Thread loginThread = ThreadManager.createWorkerThread("LoginWorker", new Runnable() {
-          @Override
-          public void run() {
-            LauncherFrame.this.loginWithMojang(LauncherFrame.this.loginUsername,
-                LauncherFrame.this.loginPassword, Config.instance.getClientToken());
-          }
-        });
-        loginThread.start();
-        try {
-          loginThread.join();
-        } catch (InterruptedException ie) {
-          DebugLoggingManager.logError(this.getClass(), "Failed to wait for thread to die", ie);
-        }
+      boolean credentialsEmpty = loginUsername.isEmpty() || loginPassword.isEmpty();
+      boolean credentialsChanged = !savedUsername.equals(loginUsername)
+          || !savedPassword.equals(loginPassword);
+      if (!sessionValid || credentialsChanged || credentialsEmpty) {
+        this.loginWithMojang(loginUsername, loginPassword,
+            Config.instance.getClientToken());
+      } else {
+        this.loginWithSavedCredentials();
       }
-      LauncherFrame.this.loginWithSavedCredentials();
     }
   }
 
-  private void loginWithMojang(String username, String password, String clientToken) {
-    JSONObject result = YggdrasilManager.authenticateUser(username, password, clientToken, true);
+  private void loginWithMojang(String username, String password, String token) {
+    JSONObject result = YggdrasilManager.login(username, password, token,
+        true);
     if (result.has("error")) {
-      this.panel.showError("Login failed");
+      LauncherFrame.this.panel.showError("Login failed");
       return;
     }
 
     Config.instance.setUsername(username);
-    Config.instance.setPassword(this.loginRememberPassword ? password : null);
-    Config.instance.setPasswordSaved(this.loginRememberPassword);
+    Config.instance.setPassword(LauncherFrame.this.loginRememberPassword ? password : null);
+    Config.instance.setPasswordSaved(LauncherFrame.this.loginRememberPassword);
 
     String accessToken = result.getString("accessToken");
+    String clientToken = result.getString("clientToken");
     Config.instance.setAccessToken(accessToken);
+    Config.instance.setClientToken(clientToken);
 
     String profileId;
     String profileName;
@@ -177,12 +166,11 @@ public class LauncherFrame extends JFrame implements ActionListener {
     Config.instance.setProfileId(profileId);
     Config.instance.setProfileName(profileName);
     Config.instance.save();
+
+    this.loginWithSavedCredentials();
   }
 
   private void loginWithSavedCredentials() {
-    if (this.credentialsEmpty || this.credentialsChanged) {
-      return;
-    }
     String clientToken = Config.instance.getClientToken();
     String accessToken = Config.instance.getAccessToken();
     String profileId = Config.instance.getProfileId();
