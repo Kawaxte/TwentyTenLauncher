@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public final class CommandsManager {
+public final class CommandManager {
 
-  private CommandsManager() {
+  private CommandManager() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
@@ -28,8 +28,7 @@ public final class CommandsManager {
         executeCommand("rundll32 url.dll,FileProtocolHandler", url);
         break;
       default:
-        throw new UnsupportedOperationException(
-            String.format("Can't execute string command on %s", platform));
+        throw new UnsupportedOperationException("Can't execute string command");
     }
   }
 
@@ -46,8 +45,7 @@ public final class CommandsManager {
         executeCommand("explorer.exe", f.getAbsolutePath());
         break;
       default:
-        throw new UnsupportedOperationException(
-            String.format("Can't execute string command on %s", platform));
+        throw new UnsupportedOperationException("Can't execute string command");
     }
   }
 }
