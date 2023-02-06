@@ -1,8 +1,7 @@
 package ee.twentyten.util;
 
-import ee.twentyten.launcher.EPlatform;
+import ee.twentyten.EPlatform;
 import java.io.File;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -12,15 +11,15 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-public final class LauncherManager {
+public final class LauncherHelper {
 
   public static final String LATEST_RELEASE_URL;
   public static final String ACCOUNT_SIGNUP_URL;
+  public static final String CURRENT_VERSION;
   private static final String USER_HOME;
   private static final String APPDATA;
   private static final Map<EPlatform, File> WORKING_DIRECTORIES;
   private static final String LATEST_RELEASE_API_URL;
-  private static String currentVersion = null;
 
   static {
     LATEST_RELEASE_URL = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
@@ -29,42 +28,45 @@ public final class LauncherManager {
     APPDATA = System.getenv("APPDATA");
     WORKING_DIRECTORIES = new HashMap<>();
     LATEST_RELEASE_API_URL = "https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest";
+
+    CURRENT_VERSION = getCurrentVersion(1, 2, 6, 22, true, 1);
   }
 
-  private LauncherManager() {
+  private LauncherHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static String getCurrentVersion(int value, boolean isDevBuild) {
-    Calendar calendar = Calendar.getInstance();
-    int year = calendar.get(Calendar.YEAR);
-    int month = calendar.get(Calendar.MONTH) + 1;
-    int day = calendar.get(Calendar.DAY_OF_MONTH);
-    int milestone = (year - 2022) % 10;
 
-    String formattedYear = String.format("%02d", year % 100);
-    String formattedMonth = String.format("%02d", month);
-    String formattedDay = String.format("%02d", day);
-    String formattedVersion = String.format("%d.%s.%s%s%s", milestone, formattedMonth, formattedDay,
-        formattedYear, isDevBuild ? String.format("_pre%d", value) : "");
-    LauncherManager.currentVersion = formattedVersion;
-    return formattedVersion;
+  public static String getCurrentVersion(int milestone, int month, int day, int year,
+      boolean preRelease, int preVersion) {
+    if (month < 1 || month > 12) {
+      throw new IllegalArgumentException("month < 1 || month > 12");
+    }
+    if (day < 1 || day > 31) {
+      throw new IllegalArgumentException("day < 1 || day > 31");
+    }
+    if (preRelease && preVersion < 0) {
+      throw new IllegalArgumentException("preVersion < 0");
+    }
+
+    return String.format("%d.%01d.%02d%02d%s", milestone, month, day, year,
+        preRelease ? String.format("_pre%d", preVersion) : "");
   }
 
   public static File getWorkingDirectory() {
-    LauncherManager.defineWorkingDirectoryForPlatform();
+    LauncherHelper.defineWorkingDirectoryForPlatform();
 
     EPlatform platformName = EPlatform.getPlatform();
 
-    File workingDirectory = LauncherManager.WORKING_DIRECTORIES.get(platformName);
+    File workingDirectory = LauncherHelper.WORKING_DIRECTORIES.get(platformName);
     Objects.requireNonNull(workingDirectory, "workingDirectory == null!");
     if (!workingDirectory.exists()) {
-      LoggingManager.logInfo(LauncherManager.class,
+      LogHelper.logInfo(LauncherHelper.class,
           String.format("\"%s\"", workingDirectory.getAbsolutePath()));
 
       boolean created = workingDirectory.mkdirs();
       if (!created) {
-        LoggingManager.logError(LauncherManager.class, "Failed to create working directory");
+        LogHelper.logError(LauncherHelper.class, "Failed to create working directory");
         return null;
       }
     }
@@ -89,15 +91,13 @@ public final class LauncherManager {
       String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
       UIManager.setLookAndFeel(lookAndFeel);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      LoggingManager.logError(LauncherManager.class, "Failed to set look and feel", ulafe);
+      LogHelper.logError(LauncherHelper.class, "Failed to set look and feel", ulafe);
     } catch (ClassNotFoundException cnfe) {
-      LoggingManager.logError(LauncherManager.class, "Can't find look and feel class", cnfe);
+      LogHelper.logError(LauncherHelper.class, "Can't find look and feel class", cnfe);
     } catch (InstantiationException ie) {
-      LoggingManager.logError(LauncherManager.class, "Can't instantiate look and feel class",
-          ie);
+      LogHelper.logError(LauncherHelper.class, "Can't instantiate look and feel class", ie);
     } catch (IllegalAccessException iae) {
-      LoggingManager.logError(LauncherManager.class, "Failed to access look and feel class",
-          iae);
+      LogHelper.logError(LauncherHelper.class, "Failed to access look and feel class", iae);
     }
   }
 
@@ -105,10 +105,11 @@ public final class LauncherManager {
     SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
       @Override
       protected Boolean doInBackground() {
-        String latestVersion = Objects.requireNonNull(
-            RequestManager.sendJsonRequest(LATEST_RELEASE_API_URL, "GET",
-                RequestManager.JSON_HEADER)).get("tag_name").toString();
-        return !currentVersion.equals(latestVersion);
+        RequestHelper.performJsonRequest(LATEST_RELEASE_API_URL, "GET",
+            RequestHelper.jsonHeader, true);
+
+        String latestVersion = RequestHelper.jsonHeader.get("tag_name");
+        return !CURRENT_VERSION.equals(latestVersion);
       }
     };
     worker.execute();
@@ -118,13 +119,13 @@ public final class LauncherManager {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LoggingManager.logError(LauncherManager.class, "Failed to interrupt current thread", ie);
+      LogHelper.logError(LauncherHelper.class, "Failed to interrupt current thread", ie);
     } catch (ExecutionException ee) {
       JOptionPane.showMessageDialog(null,
           String.format("An error occurred while checking for updates:%n%s", ee.getMessage()),
           "Error", JOptionPane.ERROR_MESSAGE);
 
-      LoggingManager.logError(LauncherManager.class, "Failed to check for updates", ee);
+      LogHelper.logError(LauncherHelper.class, "Failed to check for updates", ee);
     }
     return false;
   }
