@@ -100,9 +100,8 @@ public class LauncherFrame extends JFrame implements ActionListener {
     }
     if (!LauncherConfig.instance.getAccessToken().isEmpty()
         && !LauncherConfig.instance.getClientToken().isEmpty()) {
-      boolean session = YggdrasilHelper.isSessionExpired(LauncherConfig.instance.getAccessToken(),
+      YggdrasilHelper.isSessionExpired(LauncherConfig.instance.getAccessToken(),
           LauncherConfig.instance.getClientToken());
-      System.out.println("Session: " + session);
     }
 
     SwingUtilities.invokeLater(new Runnable() {
