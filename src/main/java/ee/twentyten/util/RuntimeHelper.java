@@ -1,13 +1,13 @@
 package ee.twentyten.util;
 
-import ee.twentyten.launcher.EPlatform;
+import ee.twentyten.EPlatform;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public final class CommandManager {
+public final class RuntimeHelper {
 
-  private CommandManager() {
+  private RuntimeHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
