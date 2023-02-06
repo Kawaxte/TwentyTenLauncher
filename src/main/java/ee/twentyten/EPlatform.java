@@ -1,4 +1,4 @@
-package ee.twentyten.launcher;
+package ee.twentyten;
 
 import java.util.Locale;
 
