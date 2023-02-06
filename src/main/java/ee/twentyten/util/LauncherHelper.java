@@ -29,7 +29,7 @@ public final class LauncherHelper {
     WORKING_DIRECTORIES = new HashMap<>();
     LATEST_RELEASE_API_URL = "https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest";
 
-    CURRENT_VERSION = getCurrentVersion(1, 2, 6, 23, true, 1);
+    CURRENT_VERSION = getCurrentVersion(1, 2, 6, 23, true, 2);
   }
 
   private LauncherHelper() {
