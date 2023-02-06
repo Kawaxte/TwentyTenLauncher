@@ -30,8 +30,8 @@ public class LauncherFrame extends JFrame implements ActionListener {
 
   private static final long serialVersionUID = 1L;
   private static final Class<LauncherFrame> CLASS_REF;
-  public static boolean sessionExpired;
   private static LauncherFrame instance;
+  private static boolean sessionExpired;
 
   static {
     CLASS_REF = LauncherFrame.class;
@@ -100,7 +100,8 @@ public class LauncherFrame extends JFrame implements ActionListener {
     }
     if (!LauncherConfig.instance.getAccessToken().isEmpty()
         && !LauncherConfig.instance.getClientToken().isEmpty()) {
-      YggdrasilHelper.isSessionExpired(LauncherConfig.instance.getAccessToken(),
+      LauncherFrame.sessionExpired = YggdrasilHelper.isSessionExpired(
+          LauncherConfig.instance.getAccessToken(),
           LauncherConfig.instance.getClientToken());
     }
 
