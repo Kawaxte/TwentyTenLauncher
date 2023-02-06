@@ -1,6 +1,6 @@
 package ee.twentyten.custom;
 
-import ee.twentyten.util.LoggingManager;
+import ee.twentyten.util.LogHelper;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -14,6 +14,12 @@ import lombok.EqualsAndHashCode;
 public class CustomLinkedProperties extends Properties {
 
   private static final long serialVersionUID = 1L;
+  private static final Class<CustomLinkedProperties> CLASS_REF;
+
+  static {
+    CLASS_REF = CustomLinkedProperties.class;
+  }
+
   private final LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
 
   @Override
@@ -53,7 +59,7 @@ public class CustomLinkedProperties extends Properties {
         out.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
       }
     } catch (IOException ioe) {
-      LoggingManager.logError(this.getClass(), "Failed to store properties", ioe);
+      LogHelper.logError(CLASS_REF, "Failed to store properties", ioe);
     }
   }
 }
