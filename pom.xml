@@ -2,7 +2,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>AlphacraftLauncher</artifactId>
+  <artifactId>TwentyTen</artifactId>
 
   <build>
     <plugins>
@@ -11,7 +11,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>ee.twentyten.launcher.Launcher</mainClass>
+              <mainClass>ee.twentyten.Launcher</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
@@ -67,6 +67,6 @@
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
-  <version>1.0-SNAPSHOT</version>
+  <version>20230602_2</version>
 
 </project>
