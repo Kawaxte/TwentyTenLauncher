@@ -2,11 +2,10 @@ package com.mojang.util;
 
 import com.mojang.YggdrasilAuthenticationImpl;
 import ee.twentyten.config.LauncherConfig;
-import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.util.LogHelper;
 import org.json.JSONObject;
 
-public class YggdrasilHelper {
+public final class YggdrasilHelper {
 
   public static final String YGGDRASIL_AUTH_URL;
   private static final YggdrasilAuthenticationImpl AUTHENTICATION_IMPL;
@@ -28,8 +27,6 @@ public class YggdrasilHelper {
       LogHelper.logError(CLASS_REF, result.toString());
       return result;
     }
-
-    LauncherFrame.sessionExpired = true;
 
     LogHelper.logInfo(CLASS_REF, result.toString());
     return result;
