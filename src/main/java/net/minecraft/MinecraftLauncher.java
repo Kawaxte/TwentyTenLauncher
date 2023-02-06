@@ -1,10 +1,9 @@
 package net.minecraft;
 
-import ee.twentyten.config.Config;
-import ee.twentyten.util.FileManager;
-import ee.twentyten.util.LoggingManager;
-import ee.twentyten.util.OptionsManager;
-import ee.twentyten.util.ThreadManager;
+import ee.twentyten.config.LauncherConfig;
+import ee.twentyten.util.FileHelper;
+import ee.twentyten.util.LogHelper;
+import ee.twentyten.util.OptionsHelper;
 import java.applet.Applet;
 import java.applet.AppletStub;
 import java.awt.BorderLayout;
@@ -22,24 +21,32 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.update.EState;
+import net.minecraft.update.MinecraftUpdateImpl;
 
-public class GameLauncher extends Applet implements AppletStub {
+public class MinecraftLauncher extends Applet implements AppletStub {
 
   private static final long serialVersionUID = 1L;
-  public final Map<String, String> parameters;
-  private final Image bgImage;
-  private GameUpdater updater;
-  private Applet applet;
-  private boolean updating;
-  private boolean active;
+  private static final Class<MinecraftLauncher> CLASS_REF;
 
-  public GameLauncher() {
-    this.parameters = new HashMap<>();
-    this.bgImage = FileManager.readImageFile(GameLauncher.class, "icon/dirt.png");
+  static {
+    CLASS_REF = MinecraftLauncher.class;
   }
 
-  public static boolean isGameCached() {
-    return GameUpdater.packageCached();
+  public final Map<String, String> parameters;
+  private final Image bgImage;
+  private MinecraftUpdateImpl update;
+  private Applet applet;
+  private boolean updateStarted;
+  private boolean active;
+
+  public MinecraftLauncher() {
+    this.parameters = new HashMap<>();
+    this.bgImage = FileHelper.readImageFile(MinecraftLauncher.class, "icon/dirt.png");
+  }
+
+  public static boolean isMinecraftCached() {
+    return MinecraftUpdateImpl.packageCached();
   }
 
   private void drawTitleString(String s, int pWidth, int pHeight, Graphics2D g2d) {
@@ -85,7 +92,7 @@ public class GameLauncher extends Applet implements AppletStub {
     int rectX = 64;
     int rectY = (pHeight >> 1) - rectX;
     int rectWidth = (pWidth >> 1) - 128;
-    int rectWidthPercentage = (this.updater.getTotalPercentage() * rectWidth) / 100;
+    int rectWidthPercentage = (this.update.getTotalPercentage() * rectWidth) / 100;
     int rectHeight = 5;
 
     g2d.setColor(Color.BLACK);
@@ -103,7 +110,7 @@ public class GameLauncher extends Applet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException mue) {
-      LoggingManager.logError(this.getClass(), "Failed to create URL object", mue);
+      LogHelper.logError(CLASS_REF, "Failed to create URL object", mue);
     }
     return null;
   }
@@ -145,27 +152,26 @@ public class GameLauncher extends Applet implements AppletStub {
       }
 
       String title = "Updating Minecraft";
-      if (this.updater.isFatalErrorOccurred()) {
+      if (this.update.isFatalErrorOccurred()) {
         title = "Failed to launch";
       }
       this.drawTitleString(title, panelWidth, panelHeight, g2d);
 
-      String state = this.updater.getStateDescription();
-      if (this.updater.isFatalErrorOccurred()) {
-        state = this.updater.getErrorMessage();
+      String state = EState.getState().getMessage();
+      if (this.update.isFatalErrorOccurred()) {
+        state = this.update.getFatalErrorMessage();
       }
       this.drawStateString(state, panelWidth, panelHeight, g2d);
 
-      String subtaskMessage = this.updater.getSubtaskMessage();
+      String subtaskMessage = this.update.getSubtaskMessage();
       this.drawSubtaskMessageString(subtaskMessage, panelWidth, panelHeight, g2d);
 
-      if (!this.updater.isFatalErrorOccurred()) {
+      if (!this.update.isFatalErrorOccurred()) {
         this.drawPercentageRect(panelWidth, panelHeight, g2d);
       }
     } finally {
       g2d.dispose();
     }
-
     g.drawImage(compatibleVolatileImage, 0, 0, panelWidth, panelHeight, 0, 0, panelWidth >> 1,
         panelHeight >> 1, this);
   }
@@ -176,11 +182,11 @@ public class GameLauncher extends Applet implements AppletStub {
     this.parameters.put("haspaid", hasPaid);
 
     String formattedParameters = String.format("%s:%s:%s", username, sessionId, hasPaid);
-    LoggingManager.logInfo(this.getClass(), formattedParameters);
+    LogHelper.logInfo(CLASS_REF, formattedParameters);
 
-    String selectedVersion = Config.instance.getSelectedVersion();
+    String selectedVersion = LauncherConfig.instance.getSelectedVersion();
     try {
-      String proxyPort = OptionsManager.getPortsFromIds(selectedVersion);
+      String proxyPort = OptionsHelper.getPortsFromIds(selectedVersion);
       if (proxyPort != null) {
         System.setProperty("http.proxyHost", "betacraft.uk");
         System.setProperty("http.proxyPort", proxyPort);
@@ -189,7 +195,7 @@ public class GameLauncher extends Applet implements AppletStub {
     } catch (IOException ioe) {
       System.setProperty("http.proxyPort", "80");
 
-      LoggingManager.logError(this.getClass(), "Failed to get proxy port", ioe);
+      LogHelper.logError(CLASS_REF, "Failed to set proxy port", ioe);
     }
 
     String httpProxyHost = System.getProperty("http.proxyHost");
@@ -197,9 +203,9 @@ public class GameLauncher extends Applet implements AppletStub {
     String legacyMergeSort = System.getProperty("java.util.Arrays.useLegacyMergeSort");
     String formattedSystemProperties = String.format("%s:%s:%s", httpProxyHost, httpProxyPort,
         legacyMergeSort);
-    LoggingManager.logInfo(this.getClass(), formattedSystemProperties);
+    LogHelper.logInfo(CLASS_REF, formattedSystemProperties);
 
-    this.updater = new GameUpdater();
+    this.update = new MinecraftUpdateImpl();
   }
 
   @Override
@@ -218,38 +224,39 @@ public class GameLauncher extends Applet implements AppletStub {
       this.applet.start();
       return;
     }
-    if (this.updating) {
+    if (this.updateStarted) {
       return;
     }
 
-    Thread updateThread = ThreadManager.createDaemonThread("UpdateDaemon", new Runnable() {
+    Thread updateThread = new Thread(new Runnable() {
       @Override
       public void run() {
-        GameLauncher.this.updater.run();
-        if (!GameLauncher.this.updater.isFatalErrorOccurred()) {
-          Applet instance = GameLauncher.this.updater.createAppletInstance();
-          GameLauncher.this.replace(instance);
+        MinecraftLauncher.this.update.run();
+        if (!MinecraftLauncher.this.update.isFatalErrorOccurred()) {
+          Applet instance = MinecraftLauncher.this.update.createAppletInstance();
+          MinecraftLauncher.this.replace(instance);
         }
       }
-    });
+    }, "UpdateDaemon");
+    updateThread.setDaemon(true);
     updateThread.start();
-    updateThread = ThreadManager.createDaemonThread("PaintDaemon", new Runnable() {
+    updateThread = new Thread(new Runnable() {
       @Override
       public void run() {
-        while (GameLauncher.this.applet == null) {
-          GameLauncher.this.repaint();
+        while (MinecraftLauncher.this.applet == null) {
+          MinecraftLauncher.this.repaint();
         }
         try {
           Thread.sleep(10L);
         } catch (InterruptedException ie) {
-          LoggingManager.logError(this.getClass(),
-              "Failed to temporarily cease thread execution", ie);
+          LogHelper.logError(CLASS_REF, "Failed to cause thread to sleep", ie);
         }
       }
-    });
+    }, "PaintDaemon");
+    updateThread.setDaemon(true);
     updateThread.start();
 
-    this.updating = true;
+    this.updateStarted = true;
   }
 
   @Override
