@@ -23,7 +23,7 @@
 
 ---
 
-This repository was created to provide a modern and polished "Legacy" Minecraft experience. It
+This repository was created to provide a modern and furbished "Legacy" Minecraft experience. It
 covers a range of versions from _Indev 0.13 (20091223-2)_ to _1.5.2_, offering players the chance to
 uncover hidden treasures from the past. To further enhance the authentic experience, the launcher
 also supports _Infdev (20100629)_ to _Beta 1.2_02_ natively.
