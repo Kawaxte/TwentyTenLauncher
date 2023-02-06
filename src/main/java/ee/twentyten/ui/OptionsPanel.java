@@ -1,4 +1,4 @@
-package ee.twentyten.launcher.ui;
+package ee.twentyten.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
