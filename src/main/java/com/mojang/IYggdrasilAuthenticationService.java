@@ -1,8 +1,8 @@
-package net.minecraft.authentication.mojang;
+package com.mojang;
 
 import org.json.JSONObject;
 
-public interface IYggdrasilAuthService {
+public interface IYggdrasilAuthenticationService {
 
   JSONObject authenticate(String username, String password, String clientToken,
       boolean requestUser);
