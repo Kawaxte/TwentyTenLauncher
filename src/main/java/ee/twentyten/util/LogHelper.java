@@ -4,7 +4,7 @@ import java.lang.management.ManagementFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class LoggingManager {
+public final class LogHelper {
 
   public static final boolean DEBUGGING;
 
@@ -13,7 +13,7 @@ public final class LoggingManager {
         .contains("-agentlib:jdwp");
   }
 
-  private LoggingManager() {
+  private LogHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
