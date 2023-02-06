@@ -1,6 +1,6 @@
-package ee.twentyten.launcher.ui;
+package ee.twentyten.ui;
 
-import ee.twentyten.config.Config;
+import ee.twentyten.config.LauncherConfig;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.BorderFactory;
@@ -32,13 +32,13 @@ public class OptionsVersionsPanel extends JPanel {
   private void initComponents() {
     this.showBetaVersionsCheckBox = new JCheckBox(
         "Show \"Beta\" versions of Minecraft (2010-12-20 -> 2011-01-21)",
-        Config.instance.getUsingBeta());
+        LauncherConfig.instance.getUsingBeta());
     this.showAlphaVersionsCheckBox = new JCheckBox(
         "Show \"Alpha\" versions of Minecraft (2010-07-02 -> 2010-12-03)",
-        Config.instance.getUsingAlpha());
+        LauncherConfig.instance.getUsingAlpha());
     this.showInfdevVersionsCheckBox = new JCheckBox(
         "Show \"Infdev\" versions of Minecraft (2010-06-29 -> 2010-06-30)",
-        Config.instance.getUsingInfdev());
+        LauncherConfig.instance.getUsingInfdev());
     this.createMiddlePanel();
 
     this.useVersionLabel = new JLabel("Use version:", SwingConstants.RIGHT);
