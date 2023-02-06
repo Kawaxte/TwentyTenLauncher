@@ -1,6 +1,6 @@
-package ee.twentyten.launcher.ui;
+package ee.twentyten.ui;
 
-import ee.twentyten.util.FileManager;
+import ee.twentyten.util.FileHelper;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -21,16 +21,49 @@ public class LauncherPanel extends JPanel {
   private final Image bgImage;
 
   @Getter
-  private final LauncherLoginPanel launcherLoginPanel;
+  private final LauncherLoginPanel loginPanel;
+
+  @Getter
+  private final LauncherOfflinePanel offlinePanel;
 
   public LauncherPanel() {
     super(new GridBagLayout(), true);
 
-    this.bgImage = FileManager.readImageFile(LauncherPanel.class, "icon/dirt.png");
+    this.bgImage = FileHelper.readImageFile(LauncherPanel.class, "icon/dirt.png");
     this.setPreferredSize(new Dimension(854, 480));
 
-    this.launcherLoginPanel = new LauncherLoginPanel();
-    this.add(this.launcherLoginPanel);
+    this.loginPanel = new LauncherLoginPanel();
+    this.offlinePanel = new LauncherOfflinePanel();
+    this.add(this.loginPanel);
+  }
+
+  public void showError(String error) {
+    this.removeAll();
+
+    this.add(this.loginPanel);
+    this.loginPanel.getErrorLabel().setText(error);
+
+    this.revalidate();
+    this.repaint();
+  }
+
+  public void showNoNetwork() {
+    this.removeAll();
+
+    this.add(this.offlinePanel);
+
+    this.revalidate();
+    this.repaint();
+  }
+
+  public void showNoNetworkError(String error) {
+    this.removeAll();
+
+    this.add(this.offlinePanel);
+    this.offlinePanel.getErrorLabel().setText(error);
+
+    this.revalidate();
+    this.repaint();
   }
 
   private void drawTitleString(String s, int pWidth, int pHeight, Graphics2D g2d) {
@@ -44,16 +77,6 @@ public class LauncherPanel extends JPanel {
     int stringY = (pHeight >> 1 >> 1) - (stringHeight << 1);
 
     g2d.drawString(s, stringX, stringY);
-  }
-
-  public void showError(String error) {
-    this.removeAll();
-
-    this.add(this.launcherLoginPanel);
-    this.launcherLoginPanel.getErrorLabel().setText(error);
-
-    this.revalidate();
-    this.repaint();
   }
 
   @Override
@@ -84,7 +107,6 @@ public class LauncherPanel extends JPanel {
     } finally {
       g2d.dispose();
     }
-
     g.drawImage(compatibleVolatileImage, 0, 0, panelWidth, panelHeight, 0, 0, panelWidth >> 1,
         panelHeight >> 1, this);
   }
