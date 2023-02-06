@@ -1,6 +1,6 @@
 package ee.twentyten.util;
 
-import ee.twentyten.config.Config;
+import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.custom.CustomLinkedProperties;
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.UUID;
 
-public final class ConfigManager {
+public final class ConfigHelper {
 
   private static final String DEFAULT_CLIENT_TOKEN;
   private static final String DEFAULT_ACCESS_TOKEN;
@@ -32,12 +32,12 @@ public final class ConfigManager {
     DEFAULT_VERSION_ID = "b1.1_02";
   }
 
-  private ConfigManager() {
+  private ConfigHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
   public static String getClientToken() {
-    File configFile = new File(LauncherManager.getWorkingDirectory(), "twentyten.properties");
+    File configFile = new File(LauncherHelper.getWorkingDirectory(), "twentyten.properties");
     if (!configFile.exists()) {
       return UUID.randomUUID().toString().replace("-", "");
     }
@@ -46,10 +46,10 @@ public final class ConfigManager {
     try (InputStream is = Files.newInputStream(configFile.toPath())) {
       properties.load(is);
     } catch (IOException ioe1) {
-      try (InputStream is = ConfigManager.class.getResourceAsStream("twentyten.properties")) {
+      try (InputStream is = ConfigHelper.class.getResourceAsStream("twentyten.properties")) {
         properties.load(is);
       } catch (IOException ioe2) {
-        LoggingManager.logError(ConfigManager.class,
+        LogHelper.logError(ConfigHelper.class,
             String.format("Failed to load config file from \"%s\"", configFile.getAbsolutePath()),
             ioe2);
       }
@@ -60,15 +60,15 @@ public final class ConfigManager {
   }
 
   public static void initConfig() {
-    Config.instance.setClientToken(DEFAULT_CLIENT_TOKEN);
-    Config.instance.setAccessToken(DEFAULT_ACCESS_TOKEN);
-    Config.instance.setUsername(DEFAULT_USERNAME);
-    Config.instance.setPassword(DEFAULT_PASSWORD);
-    Config.instance.setPasswordSaved(DEFAULT_REMEMBER_PASSWORD);
-    Config.instance.setUsingBeta(DEFAULT_BETA_VERSION);
-    Config.instance.setUsingAlpha(DEFAULT_ALPHA_VERSION);
-    Config.instance.setUsingInfdev(DEFAULT_INFDEV_VERSION);
-    Config.instance.setSelectedVersion(DEFAULT_VERSION_ID);
-    Config.instance.save();
+    LauncherConfig.instance.setClientToken(DEFAULT_CLIENT_TOKEN);
+    LauncherConfig.instance.setAccessToken(DEFAULT_ACCESS_TOKEN);
+    LauncherConfig.instance.setUsername(DEFAULT_USERNAME);
+    LauncherConfig.instance.setPassword(DEFAULT_PASSWORD);
+    LauncherConfig.instance.setPasswordSaved(DEFAULT_REMEMBER_PASSWORD);
+    LauncherConfig.instance.setUsingBeta(DEFAULT_BETA_VERSION);
+    LauncherConfig.instance.setUsingAlpha(DEFAULT_ALPHA_VERSION);
+    LauncherConfig.instance.setUsingInfdev(DEFAULT_INFDEV_VERSION);
+    LauncherConfig.instance.setSelectedVersion(DEFAULT_VERSION_ID);
+    LauncherConfig.instance.save();
   }
 }
