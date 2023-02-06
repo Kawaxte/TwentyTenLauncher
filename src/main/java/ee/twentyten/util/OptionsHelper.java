@@ -11,7 +11,7 @@ import java.util.Objects;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public final class OptionsManager {
+public final class OptionsHelper {
 
   private static final Map<String, List<String>> IDS_TO_PORTS;
   private static final Map<String, List<String>> TYPES_TO_IDS;
@@ -24,26 +24,26 @@ public final class OptionsManager {
     TYPES_TO_IDS = new HashMap<>();
     IDS_TO_PORTS = new HashMap<>();
 
+    VERSIONS_JSON_URL = "https://raw.githubusercontent.com/sojlabjoi/AlphacraftLauncher/master/versions.json";
+    
     versionTypes = new String[]{"beta", "alpha", "infdev"};
     formattedVersionIds = new HashMap<>();
     formattedVersionIds.put(versionTypes[0], "Beta %s");
     formattedVersionIds.put(versionTypes[1], "Alpha v%s");
     formattedVersionIds.put(versionTypes[2], "Infdev (%s)");
-
-    VERSIONS_JSON_URL = "https://raw.githubusercontent.com/sojlabjoi/AlphacraftLauncher/master/versions.json";
   }
 
-  private OptionsManager() {
+  private OptionsHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
   public static List<String> getVersionIds(String type) {
     List<String> ids = TYPES_TO_IDS.get(type);
     if (ids == null) {
-      File versionsDirectory = new File(LauncherManager.getWorkingDirectory(), "versions");
+      File versionsDirectory = FileHelper.createDirectory(FileHelper.workingDirectory, "versions");
       File versionsFile = new File(versionsDirectory, "versions.json");
 
-      JSONObject data = FileManager.readJsonFile(versionsFile);
+      JSONObject data = FileHelper.readJsonFile(versionsFile);
       JSONArray array = data.getJSONArray(type);
       if (array == null) {
         return Collections.emptyList();
@@ -62,10 +62,10 @@ public final class OptionsManager {
   }
 
   public static String getPortsFromIds(String id) throws IOException {
-    File versionsDirectory = new File(LauncherManager.getWorkingDirectory(), "versions");
+    File versionsDirectory = new File(LauncherHelper.getWorkingDirectory(), "versions");
     File versionsFile = new File(versionsDirectory, "versions.json");
 
-    JSONObject data = FileManager.readJsonFile(versionsFile);
+    JSONObject data = FileHelper.readJsonFile(versionsFile);
     for (String type : versionTypes) {
       JSONArray array = data.getJSONArray(type);
       for (int i = 0; i < array.length(); i++) {
@@ -80,25 +80,25 @@ public final class OptionsManager {
   }
 
   public static void downloadVersionsFile() throws IOException {
-    File workingDirectory = LauncherManager.getWorkingDirectory();
+    File workingDirectory = LauncherHelper.getWorkingDirectory();
     Objects.requireNonNull(workingDirectory, "workingDirectory == null!");
     if (!workingDirectory.exists()) {
-      LauncherManager.getWorkingDirectory();
+      LauncherHelper.getWorkingDirectory();
     }
 
     File versionsDirectory = new File(workingDirectory, "versions");
     if (!versionsDirectory.exists()) {
       boolean created = versionsDirectory.mkdirs();
       if (!created) {
-        LoggingManager.logError(OptionsManager.class, "Failed to create versions directory");
+        LogHelper.logError(OptionsHelper.class, "Failed to create versions directory");
       }
     }
 
     File versionsFile = new File(versionsDirectory, "versions.json");
     if (!versionsFile.exists()) {
       long lastModified = System.currentTimeMillis() - versionsFile.lastModified();
-      if (lastModified > FileManager.CACHE_EXPIRATION_TIME) {
-        FileManager.downloadFile(VERSIONS_JSON_URL, versionsFile);
+      if (lastModified > FileHelper.CACHE_EXPIRATION_TIME) {
+        FileHelper.downloadFile(VERSIONS_JSON_URL, versionsFile);
       }
     }
   }
