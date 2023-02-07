@@ -44,7 +44,7 @@ public final class LogHelper {
       String methodName = element.getMethodName();
 
       Logger logger = LoggerFactory.getLogger(clazz);
-      logger.error(String.format("%s: %s", methodName, message), t);
+      logger.error(String.format("%s: %s", methodName, message), t.getCause());
     }
   }
 
