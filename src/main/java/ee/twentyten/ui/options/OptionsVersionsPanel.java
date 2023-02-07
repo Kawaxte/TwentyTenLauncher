@@ -1,4 +1,4 @@
-package ee.twentyten.ui;
+package ee.twentyten.ui.options;
 
 import ee.twentyten.config.LauncherConfig;
 import java.awt.BorderLayout;
