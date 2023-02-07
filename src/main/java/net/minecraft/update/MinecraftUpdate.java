@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public abstract class MinecraftUpdate {
 
-  abstract void determinePackage();
+  abstract void loadPackage();
 
   abstract void downloadPackage() throws IOException;
 
