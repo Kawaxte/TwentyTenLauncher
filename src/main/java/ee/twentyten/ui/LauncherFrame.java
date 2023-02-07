@@ -3,6 +3,9 @@ package ee.twentyten.ui;
 import com.mojang.util.YggdrasilHelper;
 import ee.twentyten.EPlatform;
 import ee.twentyten.config.LauncherConfig;
+import ee.twentyten.ui.launcher.LauncherLoginPanel;
+import ee.twentyten.ui.launcher.LauncherOfflinePanel;
+import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigHelper;
 import ee.twentyten.util.FileHelper;
 import ee.twentyten.util.LauncherHelper;
@@ -45,7 +48,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
   public LauncherFrame(String title) {
     super(title);
 
-    this.setIconImage(FileHelper.readImageFile(LauncherFrame.class, "icon/favicon.png"));
+    this.setIconImage(FileHelper.readImageFile(CLASS_REF, "icon/favicon.png"));
     this.setMinimumSize(new Dimension(640, 480));
 
     this.panel = new LauncherPanel();
@@ -88,8 +91,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
     try {
       OptionsHelper.downloadVersionsFile();
     } catch (IOException ioe) {
-      LogHelper.logError(LauncherFrame.class, "Failed to get versions file", ioe);
-      return;
+      LogHelper.logError(CLASS_REF, "Failed to get versions file", ioe);
     }
 
     LauncherConfig.instance = LauncherConfig.load();
@@ -132,8 +134,8 @@ public class LauncherFrame extends JFrame implements ActionListener {
         JOptionPane.showMessageDialog(this,
             "You can't launch the game without selecting a version!", "Error",
             JOptionPane.ERROR_MESSAGE);
-        return;
       }
+      
       boolean credentialsEmpty = loginUsername.isEmpty() || loginPassword.isEmpty();
       boolean credentialsChanged = !LauncherConfig.instance.getUsername().equals(loginUsername)
           || !LauncherConfig.instance.getPassword().equals(loginPassword);
