@@ -75,6 +75,8 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
   }
 
   public static boolean packageCached() {
+    EState.setState(EState.CACHE_STATE);
+
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
 
@@ -101,26 +103,30 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
     return new File(clientJarDirectory, clientJarName).exists();
   }
 
-  private int getTotalPackageSize(int size, int[] sizes) {
-    EState.setState(EState.RETRIEVE_STATE);
+  private int getTotalPackageSize(int[] sizes, int size) {
     for (int urlIndex = 0; urlIndex < this.packageUrls.length; urlIndex++) {
       String url = this.packageUrls[urlIndex].toString();
       String name = url.substring(url.lastIndexOf('/') + 1);
 
-      HttpsURLConnection connection = RequestHelper.performRequest(url, "HEAD",
+      HttpsURLConnection connection = RequestHelper.performRequest(url, "GET",
           RequestHelper.xWwwFormHeader, false);
-      Objects.requireNonNull(connection, "connection == null");
-      sizes[urlIndex] = connection.getContentLength();
-      size += sizes[urlIndex];
+      Objects.requireNonNull(connection, "connection == null!");
+      try {
+        sizes[urlIndex] = connection.getContentLength();
+        size += sizes[urlIndex];
 
-      this.subtaskMessage = String.format("Retrieving: %s", name);
-      this.totalPercentage = 5 + (((urlIndex + 1) * 5) / this.packageUrls.length);
+        this.subtaskMessage = String.format("Retrieving: %s", name);
+        this.totalPercentage = 5 + (((urlIndex + 1) * 5) / this.packageUrls.length);
+      } finally {
+        connection.disconnect();
+      }
     }
-    this.subtaskMessage = "";
     return size;
   }
 
   private void updateClasspath() {
+    EState.setState(EState.CLASSPATH_STATE);
+
     String clientJarName = String.format("%s.jar", LauncherConfig.instance.getSelectedVersion());
 
     File binDirectory = new File(FileHelper.workingDirectory, "bin");
@@ -131,8 +137,6 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
     File clientJarFile = new File(selectedVersionDirectory, clientJarName);
 
     URL[] jarUrls = new URL[LWJGL_JAR_NAMES.length + 1];
-    
-    EState.setState(EState.CLASSPATH_STATE);
     try {
       for (int i = 0; i < LWJGL_JAR_NAMES.length; i++) {
         jarUrls[i] = new File(binDirectory, LWJGL_JAR_NAMES[i]).toURI().toURL();
@@ -160,7 +164,10 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
 
     boolean loaded = this.nativesLoaded(nativesDirectory);
     if (!loaded) {
-      LogHelper.logError(CLASS_REF, "Failed to load natives");
+      Throwable t = new Throwable("Failed to load natives");
+
+      LogHelper.logError(CLASS_REF, t.getCause().getMessage(), t);
+      return;
     }
 
     LogHelper.logInfo(CLASS_REF, Arrays.toString(jarUrls));
@@ -204,82 +211,104 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
     return null;
   }
 
-  private void showFatalError(String error, Throwable t) {
+  private void showFatalError(String message, Throwable t) {
     this.fatalErrorOccurred = true;
 
     int state = EState.getState().ordinal();
-    this.fatalErrorMessage = String.format("Fatal error occurred (%s): %s", state, error);
+    this.fatalErrorMessage = String.format("Fatal error occurred (%s): %s", state, message);
 
     LogHelper.logError(CLASS_REF, this.fatalErrorMessage, t);
   }
 
   @Override
-  void determinePackage() {
+  void loadPackage() {
     EState.setState(EState.DETERMINE_STATE);
-    this.totalPercentage = 5;
-
-    boolean isUsingBeta = LauncherConfig.instance.getUsingBeta();
-    boolean isUsingAlpha = LauncherConfig.instance.getUsingAlpha();
-    boolean isUsingInfdev = LauncherConfig.instance.getUsingInfdev();
-    String versionType = null;
-    if (isUsingBeta) {
-      versionType = OptionsHelper.versionTypes[0];
-    }
-    if (isUsingAlpha) {
-      versionType = OptionsHelper.versionTypes[1];
-    }
-    if (isUsingInfdev) {
-      versionType = OptionsHelper.versionTypes[2];
-    }
-
-    EPlatform platform = EPlatform.getPlatform();
-    Objects.requireNonNull(platform, "platform == null!");
 
     String lwjglJarUrl = null;
     String lwjglNativeUrl = null;
     String clientJarUrl = null;
-    String platformName = platform.name().toLowerCase(Locale.getDefault());
-    String versionId = String.format("%s.jar", LauncherConfig.instance.getSelectedVersion());
-    try {
-      List<URL> urlList = new ArrayList<>();
 
-      String[] lwjglNative = platform == EPlatform.MACOSX ? LWJGL_NATIVE_DYLIB_NAMES
+    try {
+      EPlatform platform = EPlatform.getPlatform();
+      Objects.requireNonNull(platform, "platform == null!");
+
+      String platformName = platform.name().toLowerCase(Locale.getDefault());
+      String clientJarName = String.format("%s.jar", LauncherConfig.instance.getSelectedVersion());
+      String[] lwjglNativeNames = platform == EPlatform.MACOSX ? LWJGL_NATIVE_DYLIB_NAMES
           : platform == EPlatform.LINUX ? LWJGL_NATIVE_SO_NAMES : LWJGL_NATIVE_DLL_NAMES;
+
+      File binDirectory = new File(FileHelper.workingDirectory, "bin");
+      File nativesDirectory = new File(binDirectory, "natives");
+      File versionsDirectory = new File(FileHelper.workingDirectory, "versions");
+      File selectedVersionDirectory = new File(versionsDirectory,
+          LauncherConfig.instance.getSelectedVersion());
+      File clientJarFile = new File(selectedVersionDirectory, clientJarName);
+
+      String versionType = null;
+      boolean isUsingBeta = LauncherConfig.instance.getUsingBeta();
+      boolean isUsingAlpha = LauncherConfig.instance.getUsingAlpha();
+      boolean isUsingInfdev = LauncherConfig.instance.getUsingInfdev();
+      if (isUsingBeta) {
+        versionType = OptionsHelper.versionTypes[0];
+      }
+      if (isUsingAlpha) {
+        versionType = OptionsHelper.versionTypes[1];
+      }
+      if (isUsingInfdev) {
+        versionType = OptionsHelper.versionTypes[2];
+      }
+
+      List<URL> urlList = new ArrayList<>();
       for (String lwjglJar : LWJGL_JAR_NAMES) {
         lwjglJarUrl = String.format(LWJGL_JAR_URL, lwjglJar);
-        urlList.add(new URL(lwjglJarUrl));
+
+        File lwjglJarFile = new File(binDirectory, lwjglJar);
+        if (!lwjglJarFile.exists()) {
+          urlList.add(new URL(lwjglJarUrl));
+        }
       }
-      for (String lwjgl : lwjglNative) {
+      for (String lwjgl : lwjglNativeNames) {
         lwjglNativeUrl = String.format(LWJGL_NATIVE_URL, platformName, lwjgl);
-        urlList.add(new URL(lwjglNativeUrl));
+
+        File lwjglNativeFile = new File(nativesDirectory, lwjgl);
+        if (!lwjglNativeFile.exists()) {
+          urlList.add(new URL(lwjglNativeUrl));
+        }
       }
-      clientJarUrl = String.format(CLIENT_JAR_URL, versionType, versionId);
-      urlList.add(new URL(clientJarUrl));
+      clientJarUrl = String.format(CLIENT_JAR_URL, versionType, clientJarName);
+      if (!clientJarFile.exists()) {
+        urlList.add(new URL(clientJarUrl));
+      }
 
       this.packageUrls = urlList.toArray(new URL[0]);
+      this.totalPercentage = 5;
 
       LogHelper.logInfo(CLASS_REF, Arrays.toString(this.packageUrls));
-    } catch (MalformedURLException mue) {
+    } catch (MalformedURLException murle) {
       if (lwjglJarUrl == null) {
-        this.showFatalError("Can't find lwjgl jar files", mue);
+        this.showFatalError("Can't find lwjgl jar files", murle);
+        return;
       }
       if (lwjglNativeUrl == null) {
-        this.showFatalError("Can't find lwjgl native files", mue);
+        this.showFatalError("Can't find lwjgl native files", murle);
+        return;
       }
       if (clientJarUrl == null) {
-        this.showFatalError("Can't find client jar file", mue);
+        this.showFatalError("Can't find client jar file", murle);
+        return;
       }
-      this.showFatalError("Can't find package files", mue);
+      this.showFatalError("Can't find package files", murle);
     }
   }
 
   @Override
   void downloadPackage() {
+    EState.setState(EState.DOWNLOAD_STATE);
+
     int[] packageSizes = new int[this.packageUrls.length];
     int currentPackageSize = 0;
-    int totalPackageSize = this.getTotalPackageSize(currentPackageSize, packageSizes);
+    int totalPackageSize = this.getTotalPackageSize(packageSizes, currentPackageSize);
 
-    EState.setState(EState.DOWNLOAD_STATE);
     for (int urlIndex = 0; urlIndex < this.packageUrls.length; urlIndex++) {
       String packageUrl = this.packageUrls[urlIndex].toString();
       String packageName = packageUrl.substring(packageUrl.lastIndexOf('/') + 1);
@@ -300,15 +329,19 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
           packageSize += bytesRead;
           currentPackageSize += bytesRead;
 
-          int packagePercentage = (int) (((packageSize * 1.0d) / packageSizes[urlIndex]) * 100.d);
+          int packagePercentage = (int) (((packageSize * 1.0d) / packageSizes[urlIndex]) * 100.0d);
           this.subtaskMessage = String.format("Downloading: %s %d%%", packageName,
               packagePercentage);
           this.totalPercentage = 10 + ((currentPackageSize * 45) / totalPackageSize);
         }
       } catch (FileNotFoundException fnfe) {
         this.showFatalError("Can't find package file", fnfe);
+        return;
       } catch (IOException ioe) {
         this.showFatalError("Can't download package file", ioe);
+        return;
+      } finally {
+        connection.disconnect();
       }
     }
     this.subtaskMessage = "";
@@ -316,6 +349,8 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
 
   @Override
   void movePackage() throws IOException {
+    EState.setState(EState.MOVE_STATE);
+
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
 
@@ -326,7 +361,6 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
     int totalPackageSize = tempPackages.length;
     int movedPackages = 0;
 
-    EState.setState(EState.MOVE_STATE);
     for (File tempPackage : tempPackages) {
 
       File binDirectory = FileHelper.createDirectory(FileHelper.workingDirectory, "bin");
@@ -336,16 +370,17 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
           LauncherConfig.instance.getSelectedVersion());
 
       String tempPackageName = tempPackage.getName();
+
       String clientJarName = String.format("%s.jar", LauncherConfig.instance.getSelectedVersion());
-      String[] lwjglNativeNames = platform == EPlatform.MACOSX ? LWJGL_NATIVE_DYLIB_NAMES
-          : platform == EPlatform.WINDOWS ? LWJGL_NATIVE_DLL_NAMES
-              : platform == EPlatform.LINUX ? LWJGL_NATIVE_SO_NAMES : null;
       if (tempPackageName.equals(clientJarName)) {
         Files.move(tempPackage.toPath(),
             new File(selectedVersionDirectory, tempPackageName).toPath(),
             StandardCopyOption.REPLACE_EXISTING);
       }
 
+      String[] lwjglNativeNames = platform == EPlatform.MACOSX ? LWJGL_NATIVE_DYLIB_NAMES
+          : platform == EPlatform.WINDOWS ? LWJGL_NATIVE_DLL_NAMES
+              : platform == EPlatform.LINUX ? LWJGL_NATIVE_SO_NAMES : null;
       for (String lwjglNative : lwjglNativeNames) {
         if (tempPackageName.equals(lwjglNative)) {
           Files.move(tempPackage.toPath(), new File(nativesDirectory, tempPackageName).toPath(),
@@ -377,13 +412,17 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
     try {
       boolean cached = MinecraftUpdateImpl.packageCached();
       if (!cached) {
-        this.determinePackage();
+        this.loadPackage();
         this.downloadPackage();
         this.movePackage();
       }
+
       this.updateClasspath();
     } catch (Throwable t) {
-      this.showFatalError(t.getMessage(), t);
+      this.showFatalError(t.getCause().getMessage(), t);
     }
+
+    EState.setState(EState.DONE_STATE);
+    this.totalPercentage = 95;
   }
 }
