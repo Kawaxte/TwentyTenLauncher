@@ -1,4 +1,4 @@
-package ee.twentyten.ui;
+package ee.twentyten.ui.launcher;
 
 import ee.twentyten.custom.CustomJPanel;
 import java.awt.BorderLayout;

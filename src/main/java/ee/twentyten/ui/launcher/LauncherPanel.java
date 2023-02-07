@@ -1,4 +1,4 @@
-package ee.twentyten.ui;
+package ee.twentyten.ui.launcher;
 
 import ee.twentyten.util.FileHelper;
 import java.awt.Color;
@@ -18,18 +18,22 @@ import lombok.Getter;
 public class LauncherPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  private final Image bgImage;
+  private static final Class<LauncherPanel> CLASS_REF;
 
+  static {
+    CLASS_REF = LauncherPanel.class;
+  }
+
+  private final Image bgImage;
   @Getter
   private final LauncherLoginPanel loginPanel;
-
   @Getter
   private final LauncherOfflinePanel offlinePanel;
 
   public LauncherPanel() {
     super(new GridBagLayout(), true);
 
-    this.bgImage = FileHelper.readImageFile(LauncherPanel.class, "icon/dirt.png");
+    this.bgImage = FileHelper.readImageFile(CLASS_REF, "icon/dirt.png");
     this.setPreferredSize(new Dimension(854, 480));
 
     this.loginPanel = new LauncherLoginPanel();
@@ -37,11 +41,11 @@ public class LauncherPanel extends JPanel {
     this.add(this.loginPanel);
   }
 
-  public void showError(String error) {
+  public void showError(String message) {
     this.removeAll();
 
     this.add(this.loginPanel);
-    this.loginPanel.getErrorLabel().setText(error);
+    this.loginPanel.getErrorLabel().setText(message);
 
     this.revalidate();
     this.repaint();
@@ -56,11 +60,11 @@ public class LauncherPanel extends JPanel {
     this.repaint();
   }
 
-  public void showNoNetworkError(String error) {
+  public void showNoNetworkError(String message) {
     this.removeAll();
 
     this.add(this.offlinePanel);
-    this.offlinePanel.getErrorLabel().setText(error);
+    this.offlinePanel.getErrorLabel().setText(message);
 
     this.revalidate();
     this.repaint();
