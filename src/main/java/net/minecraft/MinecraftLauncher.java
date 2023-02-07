@@ -105,12 +105,27 @@ public class MinecraftLauncher extends Applet implements AppletStub {
     g2d.fillRect(rectX, rectY + 1, rectWidthPercentage - 2, rectHeight - 4);
   }
 
+  private void replace(Applet applet) {
+    this.applet = applet;
+
+    applet.setStub(this);
+    applet.setSize(this.getWidth(), this.getHeight());
+    this.setLayout(new BorderLayout());
+    this.add(applet, BorderLayout.CENTER);
+
+    applet.init();
+    this.active = true;
+    applet.start();
+
+    this.revalidate();
+  }
+
   @Override
   public URL getDocumentBase() {
     try {
       return new URL("http://www.minecraft.net/game/");
-    } catch (MalformedURLException mue) {
-      LogHelper.logError(CLASS_REF, "Failed to create URL object", mue);
+    } catch (MalformedURLException murle) {
+      LogHelper.logError(CLASS_REF, "Failed to create URL object", murle);
     }
     return null;
   }
@@ -246,6 +261,7 @@ public class MinecraftLauncher extends Applet implements AppletStub {
         while (MinecraftLauncher.this.applet == null) {
           MinecraftLauncher.this.repaint();
         }
+        
         try {
           Thread.sleep(10L);
         } catch (InterruptedException ie) {
@@ -281,20 +297,5 @@ public class MinecraftLauncher extends Applet implements AppletStub {
       return;
     }
     this.setSize(width, height);
-  }
-
-  private void replace(Applet applet) {
-    this.applet = applet;
-
-    applet.setStub(this);
-    applet.setSize(this.getWidth(), this.getHeight());
-    this.setLayout(new BorderLayout());
-    this.add(applet, BorderLayout.CENTER);
-
-    applet.init();
-    this.active = true;
-    applet.start();
-
-    this.revalidate();
   }
 }
