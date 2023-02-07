@@ -20,6 +20,7 @@ public final class LauncherHelper {
   private static final String APPDATA;
   private static final Map<EPlatform, File> WORKING_DIRECTORIES;
   private static final String LATEST_RELEASE_API_URL;
+  private static final Class<LauncherHelper> CLASS_REF;
 
   static {
     LATEST_RELEASE_URL = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
@@ -29,7 +30,9 @@ public final class LauncherHelper {
     WORKING_DIRECTORIES = new HashMap<>();
     LATEST_RELEASE_API_URL = "https://api.github.com/repos/sojlabjoi/AlphacraftLauncher/releases/latest";
 
-    CURRENT_VERSION = getCurrentVersion(1, 2, 6, 23, true, 2);
+    CLASS_REF = LauncherHelper.class;
+
+    CURRENT_VERSION = getCurrentVersion(1, 2, 7, 23, true, 1);
   }
 
   private LauncherHelper() {
@@ -53,27 +56,7 @@ public final class LauncherHelper {
         preRelease ? String.format("_pre%d", preVersion) : "");
   }
 
-  public static File getWorkingDirectory() {
-    LauncherHelper.defineWorkingDirectoryForPlatform();
-
-    EPlatform platformName = EPlatform.getPlatform();
-
-    File workingDirectory = LauncherHelper.WORKING_DIRECTORIES.get(platformName);
-    Objects.requireNonNull(workingDirectory, "workingDirectory == null!");
-    if (!workingDirectory.exists()) {
-      LogHelper.logInfo(LauncherHelper.class,
-          String.format("\"%s\"", workingDirectory.getAbsolutePath()));
-
-      boolean created = workingDirectory.mkdirs();
-      if (!created) {
-        LogHelper.logError(LauncherHelper.class, "Failed to create working directory");
-        return null;
-      }
-    }
-    return workingDirectory;
-  }
-
-  private static void defineWorkingDirectoryForPlatform() {
+  private static void getWorkingDirectoryForPlatform() {
     File workingDirectoryForMacOsx = new File(
         String.format("%s/Library/Application Support", USER_HOME), "twentyten");
     WORKING_DIRECTORIES.put(EPlatform.MACOSX, workingDirectoryForMacOsx);
@@ -86,18 +69,38 @@ public final class LauncherHelper {
     WORKING_DIRECTORIES.put(EPlatform.WINDOWS, workingDirectoryForWindows);
   }
 
+  public static File getWorkingDirectory() {
+    LauncherHelper.getWorkingDirectoryForPlatform();
+
+    EPlatform platformName = EPlatform.getPlatform();
+
+    File workingDirectory = LauncherHelper.WORKING_DIRECTORIES.get(platformName);
+    Objects.requireNonNull(workingDirectory, "workingDirectory == null!");
+    if (!workingDirectory.exists()) {
+      LogHelper.logInfo(CLASS_REF, String.format("\"%s\"", workingDirectory.getAbsolutePath()));
+
+      boolean created = workingDirectory.mkdirs();
+      if (!created) {
+        Throwable t = new Throwable("Failed to create working directory");
+
+        LogHelper.logError(CLASS_REF, t.getCause().getMessage(), t);
+        return null;
+      }
+    }
+    return workingDirectory;
+  }
+
   public static void setLookAndFeel() {
     try {
-      String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
-      UIManager.setLookAndFeel(lookAndFeel);
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (UnsupportedLookAndFeelException ulafe) {
-      LogHelper.logError(LauncherHelper.class, "Failed to set look and feel", ulafe);
+      LogHelper.logError(CLASS_REF, "Failed to set look and feel", ulafe);
     } catch (ClassNotFoundException cnfe) {
-      LogHelper.logError(LauncherHelper.class, "Can't find look and feel class", cnfe);
+      LogHelper.logError(CLASS_REF, "Can't find look and feel class", cnfe);
     } catch (InstantiationException ie) {
-      LogHelper.logError(LauncherHelper.class, "Can't instantiate look and feel class", ie);
+      LogHelper.logError(CLASS_REF, "Can't instantiate look and feel class", ie);
     } catch (IllegalAccessException iae) {
-      LogHelper.logError(LauncherHelper.class, "Failed to access look and feel class", iae);
+      LogHelper.logError(CLASS_REF, "Failed to access look and feel class", iae);
     }
   }
 
@@ -105,8 +108,8 @@ public final class LauncherHelper {
     SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
       @Override
       protected Boolean doInBackground() {
-        RequestHelper.performJsonRequest(LATEST_RELEASE_API_URL, "GET",
-            RequestHelper.jsonHeader, true);
+        RequestHelper.performJsonRequest(LATEST_RELEASE_API_URL, "GET", RequestHelper.jsonHeader,
+            true);
 
         String latestVersion = RequestHelper.jsonHeader.get("tag_name");
         return !CURRENT_VERSION.equals(latestVersion);
@@ -119,13 +122,13 @@ public final class LauncherHelper {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LogHelper.logError(LauncherHelper.class, "Failed to interrupt current thread", ie);
+      LogHelper.logError(CLASS_REF, "Failed to interrupt current thread", ie);
     } catch (ExecutionException ee) {
       JOptionPane.showMessageDialog(null,
           String.format("An error occurred while checking for updates:%n%s", ee.getMessage()),
           "Error", JOptionPane.ERROR_MESSAGE);
 
-      LogHelper.logError(LauncherHelper.class, "Failed to check for updates", ee);
+      LogHelper.logError(CLASS_REF, "Failed to check for updates", ee);
     }
     return false;
   }
