@@ -6,13 +6,10 @@ public enum EState {
   INIT_STATE("Initialising loader"),
   CACHE_STATE("Checking cache for existing files"),
   DETERMINE_STATE("Determining packages"),
-  RETRIEVE_STATE("Retrieving packages"),
   DOWNLOAD_STATE("Downloading packages"),
-  MOVE_STATE("Moving packages"),
+  MOVE_STATE("Moving downloaded packages"),
   CLASSPATH_STATE("Updating classpath"),
   DONE_STATE("Done loading");
-
-  private static final EState[] values = values();
 
   @Getter
   private static EState state;
