@@ -2,8 +2,9 @@ package ee.twentyten.ui;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.config.LauncherConfig;
+import ee.twentyten.ui.options.OptionsPanel;
+import ee.twentyten.ui.options.OptionsVersionsPanel;
 import ee.twentyten.util.FileHelper;
-import ee.twentyten.util.LauncherHelper;
 import ee.twentyten.util.LogHelper;
 import ee.twentyten.util.OptionsHelper;
 import ee.twentyten.util.RuntimeHelper;
@@ -74,10 +75,8 @@ public class OptionsDialog extends JDialog implements ActionListener {
           String clientJarName = String.format("%s.jar", id);
           if (versionFile.getName().equals(clientJarName)) {
             formattedId = String.format("%s (installed)", formattedId);
-            break;
           }
         }
-        break;
       }
     }
     return formattedId;
@@ -159,29 +158,27 @@ public class OptionsDialog extends JDialog implements ActionListener {
     }
     if (source == this.optionsPanel.getOpenGameDirectoryButton()) {
       try {
-        Desktop.getDesktop().open(LauncherHelper.getWorkingDirectory());
+        Desktop.getDesktop().open(FileHelper.workingDirectory);
       } catch (IOException ioe1) {
         LogHelper.logError(CLASS_REF, "Failed to open working directory", ioe1);
 
         EPlatform platform = EPlatform.getPlatform();
         try {
-          RuntimeHelper.executeCommand(platform, LauncherHelper.getWorkingDirectory());
+          RuntimeHelper.executeCommand(platform, FileHelper.workingDirectory);
         } catch (IOException ioe2) {
           LogHelper.logError(CLASS_REF, "Failed to execute string command", ioe2);
         }
       }
     }
     if (source == this.optionsPanel.getSaveOptionsButton()) {
+      String selectedFormattedId = (String) this.optionsVersionsPanel.getVersionComboBox()
+          .getSelectedItem();
+      if (selectedFormattedId != null) {
+        LauncherConfig.instance.setSelectedVersion(
+            OptionsHelper.versionIds.get(selectedFormattedId));
+      }
+
       LauncherConfig.instance.save();
-
-      this.dispose();
-    }
-
-    String selectedFormattedId = (String) this.optionsVersionsPanel.getVersionComboBox()
-        .getSelectedItem();
-    if (selectedFormattedId != null) {
-      LauncherConfig.instance.setSelectedVersion(
-          OptionsHelper.versionIds.get(selectedFormattedId));
     }
   }
 }
