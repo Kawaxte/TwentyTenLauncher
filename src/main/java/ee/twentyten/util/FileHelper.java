@@ -34,25 +34,28 @@ public final class FileHelper {
     URL input = clazz.getClassLoader().getResource(name);
     Objects.requireNonNull(input);
     try {
-      LogHelper.logInfo(FileHelper.class, String.format("\"%s\"", input));
+      LogHelper.logInfo(CLASS_REF, String.format("\"%s\"", input));
       return ImageIO.read(input);
     } catch (IOException ioe) {
-      LogHelper.logError(FileHelper.class, "Failed to read image", ioe);
+      LogHelper.logError(CLASS_REF, "Failed to read image", ioe);
       return new ImageIcon(new byte[768]).getImage();
     }
   }
 
   public static JSONObject readJsonFile(File src) {
     if (!src.exists() || !src.isFile()) {
-      LogHelper.logError(FileHelper.class,
-          String.format("File \"%s\" doesn't exist or isn't a file", src.getAbsolutePath()));
+      Throwable t = new Throwable(String.format("File \"%s\" doesn't exist or isn't a file",
+          src.getAbsolutePath()));
+
+      LogHelper.logError(CLASS_REF, t.getCause().getMessage(), t);
+      return null;
     }
 
     byte[] bytes;
     try {
       bytes = Files.readAllBytes(src.toPath());
     } catch (IOException ioe) {
-      LogHelper.logError(FileHelper.class, "Failed to read bytes from file", ioe);
+      LogHelper.logError(CLASS_REF, "Failed to read bytes from file", ioe);
       return new JSONObject();
     }
 
@@ -68,9 +71,9 @@ public final class FileHelper {
     try (InputStream is = connection.getInputStream()) {
       Files.copy(is, src.toPath());
 
-      LogHelper.logInfo(FileHelper.class, String.format("\"%s\"", src.getAbsolutePath()));
+      LogHelper.logInfo(CLASS_REF, String.format("\"%s\"", src.getAbsolutePath()));
     } catch (IOException ioe) {
-      LogHelper.logError(FileHelper.class, "Failed to download file", ioe);
+      LogHelper.logError(CLASS_REF, "Failed to download file", ioe);
     }
   }
 
@@ -79,7 +82,10 @@ public final class FileHelper {
     if (!directory.exists()) {
       boolean created = directory.mkdir();
       if (!created) {
-        LogHelper.logError(CLASS_REF, "Failed to create directory");
+        Throwable t = new Throwable("Failed to create directory");
+
+        LogHelper.logError(CLASS_REF, t.getCause().getMessage(), t);
+        return null;
       }
     }
     return directory;
@@ -95,7 +101,10 @@ public final class FileHelper {
           } else {
             boolean deleted = file.delete();
             if (!deleted) {
-              LogHelper.logError(CLASS_REF, "Failed to delete file");
+              Throwable t = new Throwable("Failed to delete file");
+
+              LogHelper.logError(CLASS_REF, t.getCause().getMessage(), t);
+              return;
             }
           }
         }
@@ -103,7 +112,9 @@ public final class FileHelper {
 
       boolean deleted = directory.delete();
       if (!deleted) {
-        LogHelper.logError(CLASS_REF, "Failed to delete directory");
+        Throwable t = new Throwable("Failed to delete directory");
+
+        LogHelper.logError(CLASS_REF, t.getCause().getMessage(), t);
       }
     }
   }
