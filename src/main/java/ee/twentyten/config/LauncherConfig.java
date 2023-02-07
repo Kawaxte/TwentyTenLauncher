@@ -1,7 +1,7 @@
 package ee.twentyten.config;
 
 import ee.twentyten.custom.CustomLinkedProperties;
-import ee.twentyten.util.LauncherHelper;
+import ee.twentyten.util.FileHelper;
 import ee.twentyten.util.LogHelper;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,11 +37,13 @@ public class LauncherConfig extends LauncherCipher {
     LauncherConfig config;
     File configFile;
     try {
-      configFile = new File(LauncherHelper.getWorkingDirectory(), "twentyten.properties");
+      configFile = new File(FileHelper.workingDirectory, "twentyten.properties");
       if (!configFile.exists()) {
         boolean created = configFile.createNewFile();
         if (!created) {
-          LogHelper.logError(LauncherConfig.class, "Failed to create config file");
+          Throwable t = new Throwable("Failed to create config file");
+
+          LogHelper.logError(CLASS_REF, t.getCause().getMessage(), t);
           return null;
         }
       }
@@ -65,14 +67,13 @@ public class LauncherConfig extends LauncherCipher {
         config.usingInfdev = Boolean.parseBoolean(properties.getProperty("using-infdev"));
         config.selectedVersion = properties.getProperty("selected-version");
 
-        LogHelper.logInfo(LauncherConfig.class,
-            String.format("\"%s\"", configFile.getAbsolutePath()));
+        LogHelper.logInfo(CLASS_REF, String.format("\"%s\"", configFile.getAbsolutePath()));
       } catch (IOException ioe2) {
-        LogHelper.logError(LauncherConfig.class, "Failed to load config file", ioe2);
+        LogHelper.logError(CLASS_REF, "Failed to load config file", ioe2);
         return null;
       }
     } catch (IOException ioe1) {
-      LogHelper.logError(LauncherConfig.class, "Failed to get working directory", ioe1);
+      LogHelper.logError(CLASS_REF, "Failed to get working directory", ioe1);
       return null;
     }
     return config;
@@ -108,7 +109,7 @@ public class LauncherConfig extends LauncherCipher {
     options.setProperty("using-infdev", usingInfdev);
     options.setProperty("selected-version", selectedVersion);
 
-    File configFile = new File(LauncherHelper.getWorkingDirectory(), "twentyten.properties");
+    File configFile = new File(FileHelper.workingDirectory, "twentyten.properties");
     try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
       String configFileHeader = "##################################################\n"
           + "##    TwentyTen Launcher Configuration File     ##\n"
@@ -121,8 +122,7 @@ public class LauncherConfig extends LauncherCipher {
       profile.store(fos, "PROFILE");
       options.store(fos, "OPTIONS");
 
-      LogHelper.logInfo(LauncherConfig.class,
-          String.format("\"%s\"", configFile.getAbsolutePath()));
+      LogHelper.logInfo(CLASS_REF, String.format("\"%s\"", configFile.getAbsolutePath()));
     } catch (IOException ioe) {
       LogHelper.logError(CLASS_REF, "Failed to save config file", ioe);
     }
