@@ -25,7 +25,7 @@ public final class OptionsHelper {
     IDS_TO_PORTS = new HashMap<>();
 
     VERSIONS_JSON_URL = "https://raw.githubusercontent.com/sojlabjoi/AlphacraftLauncher/master/versions.json";
-    
+
     versionTypes = new String[]{"beta", "alpha", "infdev"};
     formattedVersionIds = new HashMap<>();
     formattedVersionIds.put(versionTypes[0], "Beta %s");
@@ -44,6 +44,8 @@ public final class OptionsHelper {
       File versionsFile = new File(versionsDirectory, "versions.json");
 
       JSONObject data = FileHelper.readJsonFile(versionsFile);
+      Objects.requireNonNull(data, "data == null!");
+
       JSONArray array = data.getJSONArray(type);
       if (array == null) {
         return Collections.emptyList();
@@ -62,10 +64,11 @@ public final class OptionsHelper {
   }
 
   public static String getPortsFromIds(String id) throws IOException {
-    File versionsDirectory = new File(LauncherHelper.getWorkingDirectory(), "versions");
+    File versionsDirectory = new File(FileHelper.workingDirectory, "versions");
     File versionsFile = new File(versionsDirectory, "versions.json");
 
     JSONObject data = FileHelper.readJsonFile(versionsFile);
+    Objects.requireNonNull(data, "data == null!");
     for (String type : versionTypes) {
       JSONArray array = data.getJSONArray(type);
       for (int i = 0; i < array.length(); i++) {
@@ -80,17 +83,13 @@ public final class OptionsHelper {
   }
 
   public static void downloadVersionsFile() throws IOException {
-    File workingDirectory = LauncherHelper.getWorkingDirectory();
-    Objects.requireNonNull(workingDirectory, "workingDirectory == null!");
-    if (!workingDirectory.exists()) {
-      LauncherHelper.getWorkingDirectory();
-    }
-
-    File versionsDirectory = new File(workingDirectory, "versions");
+    File versionsDirectory = new File(FileHelper.workingDirectory, "versions");
     if (!versionsDirectory.exists()) {
       boolean created = versionsDirectory.mkdirs();
       if (!created) {
-        LogHelper.logError(OptionsHelper.class, "Failed to create versions directory");
+        Throwable t = new Throwable("Failed to create versions directory");
+
+        LogHelper.logError(OptionsHelper.class, t.getCause().getMessage(), t);
       }
     }
 
