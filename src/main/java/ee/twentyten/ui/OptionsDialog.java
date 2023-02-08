@@ -5,7 +5,7 @@ import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.ui.options.OptionsPanel;
 import ee.twentyten.ui.options.OptionsVersionsPanel;
 import ee.twentyten.util.FileHelper;
-import ee.twentyten.util.LogHelper;
+import ee.twentyten.util.LoggerHelper;
 import ee.twentyten.util.OptionsHelper;
 import ee.twentyten.util.RuntimeHelper;
 import java.awt.Desktop;
@@ -23,12 +23,6 @@ import javax.swing.JDialog;
 public class OptionsDialog extends JDialog implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private static final Class<OptionsDialog> CLASS_REF;
-
-  static {
-    CLASS_REF = OptionsDialog.class;
-  }
-
   private final OptionsPanel optionsPanel;
   private final OptionsVersionsPanel optionsVersionsPanel;
 
@@ -160,13 +154,13 @@ public class OptionsDialog extends JDialog implements ActionListener {
       try {
         Desktop.getDesktop().open(FileHelper.workingDirectory);
       } catch (IOException ioe1) {
-        LogHelper.logError(CLASS_REF, "Failed to open working directory", ioe1);
+        LoggerHelper.logError("Failed to open working directory", ioe1, true);
 
         EPlatform platform = EPlatform.getPlatform();
         try {
-          RuntimeHelper.executeCommand(platform, FileHelper.workingDirectory);
+          RuntimeHelper.executeFile(platform, FileHelper.workingDirectory);
         } catch (IOException ioe2) {
-          LogHelper.logError(CLASS_REF, "Failed to execute string command", ioe2);
+          LoggerHelper.logError("Failed to execute string command", ioe2, true);
         }
       }
     }
