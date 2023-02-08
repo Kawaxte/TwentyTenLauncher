@@ -1,13 +1,11 @@
 package com.mojang;
 
 import com.mojang.util.YggdrasilHelper;
-import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.util.RequestHelper;
 import org.json.JSONObject;
 
 public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
 
-  @Override
   public JSONObject getAgent() {
     JSONObject agent = new JSONObject();
     agent.put("name", "Minecraft");
@@ -25,10 +23,9 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     payload.put("clientToken", clientToken);
     payload.put("requestUser", requestUser);
 
-    String authenticate = String.format(YggdrasilHelper.YGGDRASIL_AUTH_URL,
-        "authenticate");
-    return RequestHelper.performJsonRequest(authenticate, "POST",
-        RequestHelper.jsonHeader, true, payload);
+    String authenticate = String.format(YggdrasilHelper.YGGDRASIL_AUTH_URL, "authenticate");
+    return RequestHelper.performJsonRequest(authenticate, "POST", RequestHelper.jsonHeader, true,
+        payload);
   }
 
   @Override
@@ -38,24 +35,19 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     payload.put("clientToken", clientToken);
 
     String validate = String.format(YggdrasilHelper.YGGDRASIL_AUTH_URL, "validate");
-    return RequestHelper.performJsonRequest(validate, "POST",
-        RequestHelper.jsonHeader, true, payload);
+    return RequestHelper.performJsonRequest(validate, "POST", RequestHelper.jsonHeader, true,
+        payload);
   }
 
   @Override
   public JSONObject refresh(String accessToken, String clientToken, boolean requestUser) {
-    JSONObject selectedProfile = new JSONObject();
-    selectedProfile.put("id", LauncherConfig.instance.getProfileId());
-    selectedProfile.put("name", LauncherConfig.instance.getProfileName());
-
     JSONObject payload = new JSONObject();
     payload.put("accessToken", accessToken);
     payload.put("clientToken", clientToken);
-    //payload.put("selectedProfile", selectedProfile);
     payload.put("requestUser", requestUser);
 
     String refresh = String.format(YggdrasilHelper.YGGDRASIL_AUTH_URL, "refresh");
-    return RequestHelper.performJsonRequest(refresh, "POST",
-        RequestHelper.jsonHeader, true, payload);
+    return RequestHelper.performJsonRequest(refresh, "POST", RequestHelper.jsonHeader, true,
+        payload);
   }
 }
