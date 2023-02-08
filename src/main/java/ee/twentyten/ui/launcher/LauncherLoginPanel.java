@@ -20,6 +20,8 @@ import lombok.Getter;
 public class LauncherLoginPanel extends CustomJPanel {
 
   private static final long serialVersionUID = 1L;
+  private final String latestReleaseUrl;
+  private final String accountSignupUrl;
   @Getter
   private JLabel errorLabel;
   @Getter
@@ -38,6 +40,11 @@ public class LauncherLoginPanel extends CustomJPanel {
   @Getter
   private JButton loginButton;
 
+  {
+    latestReleaseUrl = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
+    accountSignupUrl = "https://signup.live.com/signup?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&client_id=00000000402b5328&lic=1";
+  }
+
   public LauncherLoginPanel() {
     super(new BorderLayout(0, 8), true);
 
@@ -47,8 +54,7 @@ public class LauncherLoginPanel extends CustomJPanel {
   }
 
   private void initComponents() {
-    this.linkUrls =
-        this.outdated ? LauncherHelper.LATEST_RELEASE_URL : LauncherHelper.ACCOUNT_SIGNUP_URL;
+    this.linkUrls = this.outdated ? latestReleaseUrl : accountSignupUrl;
     this.outdated = LauncherHelper.isOutdated();
 
     this.errorLabel = new JLabel("\u00A0", SwingConstants.CENTER);
@@ -100,10 +106,9 @@ public class LauncherLoginPanel extends CustomJPanel {
     this.add(bottomPanel, BorderLayout.SOUTH);
 
     this.linkLabel = new JLabel(this.outdated ? String.format(
-        "<html><a href='%s'>You need to update the launcher!</a></html>",
-        LauncherHelper.LATEST_RELEASE_URL)
-        : String.format("<html><a href='%s'>Need account?</a></html>",
-            LauncherHelper.ACCOUNT_SIGNUP_URL), SwingConstants.LEFT);
+        "<html><a href='%s'>You need to update the launcher!</a></html>", latestReleaseUrl)
+        : String.format("<html><a href='%s'>Need account?</a></html>", accountSignupUrl),
+        SwingConstants.LEFT);
     this.linkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
     this.linkLabel.setForeground(Color.BLUE);
     bottomPanel.add(this.linkLabel, BorderLayout.WEST);
