@@ -12,7 +12,6 @@ import org.json.JSONObject;
 public final class RequestHelper {
 
   private static final HttpsConnectionImpl CONNECTION_IMPL;
-  private static final Class<RequestHelper> CLASS_REF;
   public static Map<String, String> xWwwFormHeader;
   public static Map<String, String> jsonHeader;
 
@@ -25,8 +24,6 @@ public final class RequestHelper {
     }});
 
     CONNECTION_IMPL = new HttpsConnectionImpl();
-    
-    CLASS_REF = RequestHelper.class;
   }
 
   private RequestHelper() {
@@ -38,7 +35,7 @@ public final class RequestHelper {
     try {
       return CONNECTION_IMPL.performRequest(new URL(url), method, headers, cached);
     } catch (MalformedURLException murle) {
-      LogHelper.logError(CLASS_REF, "Failed to create URL", murle);
+      LoggerHelper.logError("Failed to create URL", murle, true);
     }
     return null;
   }
@@ -48,7 +45,7 @@ public final class RequestHelper {
     try {
       return CONNECTION_IMPL.performRequest(new URL(url), method, headers, cached, data);
     } catch (MalformedURLException murle) {
-      LogHelper.logError(CLASS_REF, "Failed to perform Https request", murle);
+      LoggerHelper.logError("Failed to perform Https request", murle, true);
     }
     return null;
   }
@@ -58,7 +55,7 @@ public final class RequestHelper {
     try {
       CONNECTION_IMPL.performJsonRequest(new URL(url), method, headers, cached);
     } catch (MalformedURLException murle) {
-      LogHelper.logError(CLASS_REF, "Failed to perform JSON request", murle);
+      LoggerHelper.logError("Failed to perform JSON request", murle, true);
     }
   }
 
@@ -67,7 +64,7 @@ public final class RequestHelper {
     try {
       return CONNECTION_IMPL.performJsonRequest(new URL(url), method, headers, cached, data);
     } catch (MalformedURLException murle) {
-      LogHelper.logError(CLASS_REF, "Failed to perform JSON request", murle);
+      LoggerHelper.logError("Failed to perform JSON request", murle, true);
     }
     return null;
   }
