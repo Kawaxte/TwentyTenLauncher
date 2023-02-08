@@ -7,8 +7,12 @@ public enum EPlatform {
   LINUX("nix", "nux", "aix"),
   WINDOWS("win");
 
-  private static final String OS_NAME = System.getProperty("os.name", "generic")
-      .toLowerCase(Locale.getDefault());
+  public static final String OS_NAME;
+
+  static {
+    OS_NAME = System.getProperty("os.name", "generic");
+  }
+
   private final String[] osNames;
 
   EPlatform(String... osNames) {
@@ -19,7 +23,7 @@ public enum EPlatform {
     EPlatform platform = null;
     for (EPlatform p : values()) {
       for (String os : p.osNames) {
-        if (OS_NAME.contains(os)) {
+        if (OS_NAME.toLowerCase(Locale.ROOT).contains(os)) {
           platform = p;
           break;
         }
