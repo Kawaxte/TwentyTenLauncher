@@ -19,7 +19,6 @@ public final class ConfigHelper {
   private static final boolean DEFAULT_ALPHA_VERSION;
   private static final boolean DEFAULT_INFDEV_VERSION;
   private static final String DEFAULT_VERSION_ID;
-  private static final Class<ConfigHelper> CLASS_REF;
 
   static {
     DEFAULT_CLIENT_TOKEN = getClientToken();
@@ -31,8 +30,6 @@ public final class ConfigHelper {
     DEFAULT_ALPHA_VERSION = false;
     DEFAULT_INFDEV_VERSION = false;
     DEFAULT_VERSION_ID = "b1.1_02";
-
-    CLASS_REF = ConfigHelper.class;
   }
 
   private ConfigHelper() {
@@ -52,9 +49,9 @@ public final class ConfigHelper {
       try (InputStream is = ConfigHelper.class.getResourceAsStream("twentyten.properties")) {
         properties.load(is);
       } catch (IOException ioe2) {
-        LogHelper.logError(CLASS_REF,
+        LoggerHelper.logError(
             String.format("Failed to load config file from \"%s\"", configFile.getAbsolutePath()),
-            ioe2);
+            ioe2, true);
       }
     }
 
