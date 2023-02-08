@@ -2,7 +2,7 @@ package net.minecraft;
 
 import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.util.FileHelper;
-import ee.twentyten.util.LogHelper;
+import ee.twentyten.util.LoggerHelper;
 import ee.twentyten.util.OptionsHelper;
 import java.applet.Applet;
 import java.applet.AppletStub;
@@ -27,12 +27,6 @@ import net.minecraft.update.MinecraftUpdateImpl;
 public class MinecraftLauncher extends Applet implements AppletStub {
 
   private static final long serialVersionUID = 1L;
-  private static final Class<MinecraftLauncher> CLASS_REF;
-
-  static {
-    CLASS_REF = MinecraftLauncher.class;
-  }
-
   public final Map<String, String> parameters;
   private final Image bgImage;
   private MinecraftUpdateImpl update;
@@ -125,7 +119,7 @@ public class MinecraftLauncher extends Applet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException murle) {
-      LogHelper.logError(CLASS_REF, "Failed to create URL object", murle);
+      LoggerHelper.logError("Failed to create URL object", murle, true);
     }
     return null;
   }
@@ -197,7 +191,7 @@ public class MinecraftLauncher extends Applet implements AppletStub {
     this.parameters.put("haspaid", hasPaid);
 
     String formattedParameters = String.format("%s:%s:%s", username, sessionId, hasPaid);
-    LogHelper.logInfo(CLASS_REF, formattedParameters);
+    LoggerHelper.logInfo(formattedParameters, false);
 
     String selectedVersion = LauncherConfig.instance.getSelectedVersion();
     try {
@@ -210,7 +204,7 @@ public class MinecraftLauncher extends Applet implements AppletStub {
     } catch (IOException ioe) {
       System.setProperty("http.proxyPort", "80");
 
-      LogHelper.logError(CLASS_REF, "Failed to set proxy port", ioe);
+      LoggerHelper.logError("Failed to set proxy port", ioe, true);
     }
 
     String httpProxyHost = System.getProperty("http.proxyHost");
@@ -218,7 +212,7 @@ public class MinecraftLauncher extends Applet implements AppletStub {
     String legacyMergeSort = System.getProperty("java.util.Arrays.useLegacyMergeSort");
     String formattedSystemProperties = String.format("%s:%s:%s", httpProxyHost, httpProxyPort,
         legacyMergeSort);
-    LogHelper.logInfo(CLASS_REF, formattedSystemProperties);
+    LoggerHelper.logInfo(formattedSystemProperties, false);
 
     this.update = new MinecraftUpdateImpl();
   }
@@ -261,11 +255,11 @@ public class MinecraftLauncher extends Applet implements AppletStub {
         while (MinecraftLauncher.this.applet == null) {
           MinecraftLauncher.this.repaint();
         }
-        
+
         try {
           Thread.sleep(10L);
         } catch (InterruptedException ie) {
-          LogHelper.logError(CLASS_REF, "Failed to cause thread to sleep", ie);
+          LoggerHelper.logError("Failed to cause thread to sleep", ie, true);
         }
       }
     }, "PaintDaemon");
