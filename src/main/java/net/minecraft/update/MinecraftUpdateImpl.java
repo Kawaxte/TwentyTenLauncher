@@ -3,7 +3,7 @@ package net.minecraft.update;
 import ee.twentyten.EPlatform;
 import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.util.FileHelper;
-import ee.twentyten.util.LogHelper;
+import ee.twentyten.util.LoggerHelper;
 import ee.twentyten.util.OptionsHelper;
 import ee.twentyten.util.RequestHelper;
 import java.applet.Applet;
@@ -38,7 +38,6 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
   private static final String[] LWJGL_NATIVE_DYLIB_NAMES;
   private static final String[] LWJGL_NATIVE_SO_NAMES;
   private static final String[] LWJGL_NATIVE_DLL_NAMES;
-  private static final Class<MinecraftUpdateImpl> CLASS_REF;
 
   static {
     LWJGL_JAR_URL = "https://archive.org/download/lwjgl-2/lwjgl-2.9.3/jar/%s";
@@ -52,8 +51,6 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
         "openal.dylib"};
     LWJGL_NATIVE_DLL_NAMES = new String[]{"OpenAL32.dll", "OpenAL64.dll", "jinput-dx8.dll",
         "jinput-dx8_64.dll", "jinput-raw.dll", "jinput-raw_64.dll", "lwjgl.dll", "lwjgl64.dll"};
-
-    CLASS_REF = MinecraftUpdateImpl.class;
   }
 
   @Getter
@@ -114,8 +111,7 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
       try {
         sizes[urlIndex] = connection.getContentLength();
         size += sizes[urlIndex];
-
-        this.subtaskMessage = String.format("Retrieving: %s", name);
+        
         this.totalPercentage = 5 + (((urlIndex + 1) * 5) / this.packageUrls.length);
       } finally {
         connection.disconnect();
@@ -166,11 +162,11 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
     if (!loaded) {
       Throwable t = new Throwable("Failed to load natives");
 
-      LogHelper.logError(CLASS_REF, t.getCause().getMessage(), t);
+      LoggerHelper.logError(t.getMessage(), t, true);
       return;
     }
 
-    LogHelper.logInfo(CLASS_REF, Arrays.toString(jarUrls));
+    LoggerHelper.logInfo(Arrays.toString(jarUrls), true);
   }
 
   private boolean nativesLoaded(File nativesDirectory) {
@@ -217,7 +213,7 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
     int state = EState.getState().ordinal();
     this.fatalErrorMessage = String.format("Fatal error occurred (%s): %s", state, message);
 
-    LogHelper.logError(CLASS_REF, this.fatalErrorMessage, t);
+    LoggerHelper.logError(this.fatalErrorMessage, t, true);
   }
 
   @Override
@@ -283,7 +279,7 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
       this.packageUrls = urlList.toArray(new URL[0]);
       this.totalPercentage = 5;
 
-      LogHelper.logInfo(CLASS_REF, Arrays.toString(this.packageUrls));
+      LoggerHelper.logInfo(Arrays.toString(this.packageUrls), true);
     } catch (MalformedURLException murle) {
       if (lwjglJarUrl == null) {
         this.showFatalError("Can't find lwjgl jar files", murle);
@@ -419,7 +415,7 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
 
       this.updateClasspath();
     } catch (Throwable t) {
-      this.showFatalError(t.getCause().getMessage(), t);
+      this.showFatalError(t.getMessage(), t);
     }
 
     EState.setState(EState.DONE_STATE);
