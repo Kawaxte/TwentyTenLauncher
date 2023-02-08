@@ -9,7 +9,7 @@ import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigHelper;
 import ee.twentyten.util.FileHelper;
 import ee.twentyten.util.LauncherHelper;
-import ee.twentyten.util.LogHelper;
+import ee.twentyten.util.LoggerHelper;
 import ee.twentyten.util.OptionsHelper;
 import ee.twentyten.util.RuntimeHelper;
 import java.awt.Desktop;
@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URI;
 import java.util.Objects;
 import javax.swing.JFrame;
@@ -32,12 +33,13 @@ import org.json.JSONObject;
 public class LauncherFrame extends JFrame implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private static final Class<LauncherFrame> CLASS_REF;
-  private static LauncherFrame instance;
+  public static String version;
+  public static LauncherFrame instance;
   private static boolean sessionExpired;
 
   static {
-    CLASS_REF = LauncherFrame.class;
+    LauncherHelper.getCurrentVersion(1, 2, 8, 23, true, 1);
+    LauncherFrame.version = System.getProperty("ee.twentyten.version");
   }
 
   private final LauncherLoginPanel loginPanel;
@@ -48,7 +50,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
   public LauncherFrame(String title) {
     super(title);
 
-    this.setIconImage(FileHelper.readImageFile(CLASS_REF, "icon/favicon.png"));
+    this.setIconImage(FileHelper.readImageFile(LauncherFrame.class, "icon/favicon.png"));
     this.setMinimumSize(new Dimension(640, 480));
 
     this.panel = new LauncherPanel();
@@ -62,14 +64,14 @@ public class LauncherFrame extends JFrame implements ActionListener {
         try {
           Desktop.getDesktop().browse(URI.create(LauncherFrame.this.loginPanel.getLinkUrls()));
         } catch (IOException ioe1) {
-          LogHelper.logError(CLASS_REF, "Failed to launch default browser", ioe1);
+          LoggerHelper.logError("Failed to launch default browser", ioe1, true);
 
           EPlatform platform = EPlatform.getPlatform();
-          Objects.requireNonNull(platform, "platform");
+          Objects.requireNonNull(platform, "platform == null!");
           try {
-            RuntimeHelper.executeCommand(platform, LauncherFrame.this.loginPanel.getLinkUrls());
+            RuntimeHelper.executeUrl(platform, LauncherFrame.this.loginPanel.getLinkUrls());
           } catch (IOException ioe2) {
-            LogHelper.logError(CLASS_REF, "Failed to execute string command", ioe2);
+            LoggerHelper.logError("Failed to execute string command", ioe2, true);
           }
         }
       }
@@ -91,7 +93,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
     try {
       OptionsHelper.downloadVersionsFile();
     } catch (IOException ioe) {
-      LogHelper.logError(CLASS_REF, "Failed to get versions file", ioe);
+      LoggerHelper.logError("Failed to get versions file", ioe, true);
     }
 
     LauncherConfig.instance = LauncherConfig.load();
@@ -111,7 +113,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
       @Override
       public void run() {
         LauncherFrame.instance = new LauncherFrame(
-            String.format("TwentyTen Launcher %s", LauncherHelper.CURRENT_VERSION));
+            String.format("TwentyTen Launcher %s", version));
         LauncherFrame.instance.setVisible(true);
       }
     });
@@ -132,20 +134,29 @@ public class LauncherFrame extends JFrame implements ActionListener {
       if (!LauncherConfig.instance.getUsingBeta() && !LauncherConfig.instance.getUsingAlpha()
           && !LauncherConfig.instance.getUsingInfdev()) {
         JOptionPane.showMessageDialog(this,
-            "You can't launch the game without selecting a version!", "Error",
+            "Can't launch the game without selecting a version!", "Error",
             JOptionPane.ERROR_MESSAGE);
       }
-      
-      boolean credentialsEmpty = loginUsername.isEmpty() || loginPassword.isEmpty();
-      boolean credentialsChanged = !LauncherConfig.instance.getUsername().equals(loginUsername)
-          || !LauncherConfig.instance.getPassword().equals(loginPassword);
-      if (!LauncherFrame.sessionExpired || credentialsChanged || credentialsEmpty) {
-        this.loginWithYggdrasil(loginUsername, loginPassword,
-            LauncherConfig.instance.getClientToken());
-      } else {
-        this.loginWithSession();
+
+      try {
+        InetAddress address = InetAddress.getByName("minecraft.net");
+        if (address != null) {
+          boolean credentialsEmpty = loginUsername.isEmpty() || loginPassword.isEmpty();
+          boolean credentialsChanged = !LauncherConfig.instance.getUsername().equals(loginUsername)
+              || !LauncherConfig.instance.getPassword().equals(loginPassword);
+          if (!LauncherFrame.sessionExpired || credentialsChanged || credentialsEmpty) {
+            this.loginWithYggdrasil(loginUsername, loginPassword,
+                LauncherConfig.instance.getClientToken());
+          }
+          this.loginWithSession();
+        }
+        return;
+      } catch (IOException uhe) {
+        this.panel.showNoNetwork("Can't connect to minecraft.net");
+        return;
       }
     }
+
     if (source == LauncherFrame.this.offlinePanel.getPlayOfflineButton()) {
       this.launchMinecraft();
     }
