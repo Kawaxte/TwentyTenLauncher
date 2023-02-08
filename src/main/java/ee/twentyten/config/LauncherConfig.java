@@ -2,7 +2,7 @@ package ee.twentyten.config;
 
 import ee.twentyten.custom.CustomLinkedProperties;
 import ee.twentyten.util.FileHelper;
-import ee.twentyten.util.LogHelper;
+import ee.twentyten.util.LoggerHelper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,13 +14,7 @@ import lombok.Setter;
 @Setter
 public class LauncherConfig extends LauncherCipher {
 
-  private static final Class<LauncherConfig> CLASS_REF;
   public static LauncherConfig instance;
-
-  static {
-    CLASS_REF = LauncherConfig.class;
-  }
-
   private String username;
   private String password;
   private Boolean passwordSaved;
@@ -43,7 +37,7 @@ public class LauncherConfig extends LauncherCipher {
         if (!created) {
           Throwable t = new Throwable("Failed to create config file");
 
-          LogHelper.logError(CLASS_REF, t.getCause().getMessage(), t);
+          LoggerHelper.logError(t.getMessage(), t, true);
           return null;
         }
       }
@@ -67,13 +61,13 @@ public class LauncherConfig extends LauncherCipher {
         config.usingInfdev = Boolean.parseBoolean(properties.getProperty("using-infdev"));
         config.selectedVersion = properties.getProperty("selected-version");
 
-        LogHelper.logInfo(CLASS_REF, String.format("\"%s\"", configFile.getAbsolutePath()));
+        LoggerHelper.logInfo(String.format("\"%s\"", configFile.getAbsolutePath()), true);
       } catch (IOException ioe2) {
-        LogHelper.logError(CLASS_REF, "Failed to load config file", ioe2);
+        LoggerHelper.logError("Failed to load config file", ioe2, true);
         return null;
       }
     } catch (IOException ioe1) {
-      LogHelper.logError(CLASS_REF, "Failed to get working directory", ioe1);
+      LoggerHelper.logError("Failed to get working directory", ioe1, true);
       return null;
     }
     return config;
@@ -122,9 +116,9 @@ public class LauncherConfig extends LauncherCipher {
       profile.store(fos, "PROFILE");
       options.store(fos, "OPTIONS");
 
-      LogHelper.logInfo(CLASS_REF, String.format("\"%s\"", configFile.getAbsolutePath()));
+      LoggerHelper.logInfo(String.format("\"%s\"", configFile.getAbsolutePath()), true);
     } catch (IOException ioe) {
-      LogHelper.logError(CLASS_REF, "Failed to save config file", ioe);
+      LoggerHelper.logError("Failed to save config file", ioe, true);
     }
   }
 }
