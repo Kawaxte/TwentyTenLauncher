@@ -1,6 +1,7 @@
 package ee.twentyten.ui.launcher;
 
 import ee.twentyten.util.FileHelper;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -14,16 +15,11 @@ import java.awt.Transparency;
 import java.awt.image.VolatileImage;
 import javax.swing.JPanel;
 import lombok.Getter;
+import net.minecraft.MinecraftLauncher;
 
 public class LauncherPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  private static final Class<LauncherPanel> CLASS_REF;
-
-  static {
-    CLASS_REF = LauncherPanel.class;
-  }
-
   private final Image bgImage;
   @Getter
   private final LauncherLoginPanel loginPanel;
@@ -33,7 +29,7 @@ public class LauncherPanel extends JPanel {
   public LauncherPanel() {
     super(new GridBagLayout(), true);
 
-    this.bgImage = FileHelper.readImageFile(CLASS_REF, "icon/dirt.png");
+    this.bgImage = FileHelper.readImageFile(LauncherPanel.class, "icon/dirt.png");
     this.setPreferredSize(new Dimension(854, 480));
 
     this.loginPanel = new LauncherLoginPanel();
@@ -51,20 +47,18 @@ public class LauncherPanel extends JPanel {
     this.repaint();
   }
 
-  public void showNoNetwork() {
-    this.removeAll();
-
-    this.add(this.offlinePanel);
-
-    this.revalidate();
-    this.repaint();
-  }
-
-  public void showNoNetworkError(String message) {
+  public void showNoNetwork(String message) {
     this.removeAll();
 
     this.add(this.offlinePanel);
     this.offlinePanel.getErrorLabel().setText(message);
+
+    if (!MinecraftLauncher.isMinecraftCached()) {
+      this.offlinePanel.add(this.offlinePanel.getPlayOnlineLabel(), BorderLayout.CENTER);
+    } else {
+      this.offlinePanel.remove(this.offlinePanel.getPlayOnlineLabel());
+    }
+    this.offlinePanel.getPlayOfflineButton().setEnabled(MinecraftLauncher.isMinecraftCached());
 
     this.revalidate();
     this.repaint();
