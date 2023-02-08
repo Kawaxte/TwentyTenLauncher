@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import lombok.Getter;
-import net.minecraft.MinecraftLauncher;
 
 public class LauncherOfflinePanel extends CustomJPanel {
 
@@ -39,10 +38,7 @@ public class LauncherOfflinePanel extends CustomJPanel {
     this.errorLabel.setForeground(Color.RED.darker());
     this.add(this.errorLabel, BorderLayout.NORTH);
 
-    if (!MinecraftLauncher.isMinecraftCached()) {
-      this.playOnlineLabel = new JLabel("Play online once to enable offline", SwingConstants.LEFT);
-      this.add(this.playOnlineLabel, BorderLayout.CENTER);
-    }
+    this.playOnlineLabel = new JLabel("Play online once to enable offline", SwingConstants.LEFT);
 
     this.createBottomPanel();
   }
