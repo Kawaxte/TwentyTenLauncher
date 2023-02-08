@@ -1,6 +1,6 @@
 package ee.twentyten.request;
 
-import ee.twentyten.util.LogHelper;
+import ee.twentyten.util.LoggerHelper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,12 +9,6 @@ import javax.net.ssl.HttpsURLConnection;
 import org.json.JSONObject;
 
 class HttpsConnectionResponse {
-
-  private static final Class<HttpsConnectionResponse> CLASS_REF;
-
-  static {
-    CLASS_REF = HttpsConnectionResponse.class;
-  }
 
   private int responseCode;
   private String responseMessage;
@@ -29,12 +23,12 @@ class HttpsConnectionResponse {
       String formattedResponse = String.format("%d %s (%s)", this.responseCode,
           this.responseMessage, this.connectionUrl);
       if (this.responseCode / 100 == 2) {
-        LogHelper.logInfo(CLASS_REF, formattedResponse);
+        LoggerHelper.logInfo(formattedResponse, true);
       } else {
-        LogHelper.logError(CLASS_REF, formattedResponse);
+        LoggerHelper.logError(formattedResponse, true);
       }
     } catch (IOException ioe) {
-      LogHelper.logError(CLASS_REF, "Failed to get Https response", ioe);
+      LoggerHelper.logError("Failed to get Https response", ioe, true);
       return null;
     }
     return connection;
@@ -61,13 +55,13 @@ class HttpsConnectionResponse {
       String formattedResponse = String.format("%d %s (%s)", this.responseCode,
           this.responseMessage, this.connectionUrl);
       if (this.responseCode / 100 == 2) {
-        LogHelper.logInfo(CLASS_REF, formattedResponse);
+        LoggerHelper.logInfo(formattedResponse, true);
       } else {
-        LogHelper.logError(CLASS_REF, formattedResponse);
+        LoggerHelper.logError(formattedResponse, true);
       }
       return response.isEmpty() ? new JSONObject() : new JSONObject(response);
     } catch (IOException ioe) {
-      LogHelper.logError(CLASS_REF, "Failed to get JSON response", ioe);
+      LoggerHelper.logError("Failed to get JSON response", ioe, true);
     }
     return null;
   }
