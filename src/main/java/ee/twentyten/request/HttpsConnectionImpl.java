@@ -1,6 +1,6 @@
 package ee.twentyten.request;
 
-import ee.twentyten.util.LogHelper;
+import ee.twentyten.util.LoggerHelper;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ProtocolException;
@@ -17,12 +17,6 @@ import org.json.JSONObject;
 
 public class HttpsConnectionImpl extends HttpsConnectionManager {
 
-  private static final Class<HttpsConnectionImpl> CLASS_REF;
-
-  static {
-    CLASS_REF = HttpsConnectionImpl.class;
-  }
-
   private final HttpsConnectionResponse connectionResponse;
 
   {
@@ -36,9 +30,9 @@ public class HttpsConnectionImpl extends HttpsConnectionManager {
 
       connection.setSSLSocketFactory(context.getSocketFactory());
     } catch (NoSuchAlgorithmException nsae) {
-      LogHelper.logError(CLASS_REF, "Failed to get instance of SSLContext", nsae);
+      LoggerHelper.logError("Failed to get instance of SSLContext", nsae, true);
     } catch (KeyManagementException kme) {
-      LogHelper.logError(CLASS_REF, "Failed to initialise SSLContext", kme);
+      LoggerHelper.logError("Failed to initialise SSLContext", kme, true);
     }
   }
 
@@ -52,7 +46,7 @@ public class HttpsConnectionImpl extends HttpsConnectionManager {
 
       this.enforceProtocol(connection);
     } catch (IOException ioe) {
-      LogHelper.logError(CLASS_REF, "Failed to open connection", ioe);
+      LoggerHelper.logError("Failed to open connection", ioe, true);
       return null;
     }
     return connection;
@@ -79,7 +73,7 @@ public class HttpsConnectionImpl extends HttpsConnectionManager {
         connection.addRequestProperty("Pragma", "no-cache");
       }
     } catch (ProtocolException pe) {
-      LogHelper.logError(CLASS_REF, "Failed to set request method", pe);
+      LoggerHelper.logError("Failed to set request method", pe, true);
       return null;
     }
     return this.connectionResponse.getResponse(connection);
@@ -114,12 +108,13 @@ public class HttpsConnectionImpl extends HttpsConnectionManager {
         }
       }
     } catch (ProtocolException pe) {
-      LogHelper.logError(CLASS_REF, "Failed to set request method", pe);
+      LoggerHelper.logError("Failed to set request method", pe, true);
       return null;
     } catch (IOException ioe) {
-      LogHelper.logError(CLASS_REF, "Failed to write to output stream", ioe);
+      LoggerHelper.logError("Failed to write to output stream", ioe, true);
       return null;
     }
+
     return this.connectionResponse.getResponse(connection);
   }
 
@@ -144,7 +139,7 @@ public class HttpsConnectionImpl extends HttpsConnectionManager {
         connection.addRequestProperty("Pragma", "no-cache");
       }
     } catch (IOException ioe) {
-      LogHelper.logError(CLASS_REF, "Failed to open Https connection", ioe);
+      LoggerHelper.logError("Failed to open Https connection", ioe, true);
       return null;
     }
     return this.connectionResponse.getJsonResponse(connection);
@@ -179,9 +174,9 @@ public class HttpsConnectionImpl extends HttpsConnectionManager {
         }
       }
     } catch (ProtocolException pe) {
-      LogHelper.logError(CLASS_REF, "Failed to set request method", pe);
+      LoggerHelper.logError("Failed to set request method", pe, true);
     } catch (IOException ioe) {
-      LogHelper.logError(CLASS_REF, "Failed to write to output stream", ioe);
+      LoggerHelper.logError("Failed to write to output stream", ioe, true);
     }
     return this.connectionResponse.getJsonResponse(connection);
   }
