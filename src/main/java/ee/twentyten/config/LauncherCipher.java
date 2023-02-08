@@ -1,6 +1,6 @@
 package ee.twentyten.config;
 
-import ee.twentyten.util.LogHelper;
+import ee.twentyten.util.LoggerHelper;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -19,19 +19,13 @@ import org.apache.commons.codec.binary.Base64;
 
 abstract class LauncherCipher {
 
-  private static final Class<LauncherCipher> CLASS_REF;
-
-  static {
-    CLASS_REF = LauncherCipher.class;
-  }
-
   private static SecretKey generateSecretKey() {
     try {
       KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
       keyGenerator.init(128, new SecureRandom("passwordfile".getBytes(StandardCharsets.UTF_8)));
       return new SecretKeySpec(keyGenerator.generateKey().getEncoded(), "AES");
     } catch (NoSuchAlgorithmException nsae) {
-      LogHelper.logError(CLASS_REF, "Failed to get instance of KeyGenerator", nsae);
+      LoggerHelper.logError("Failed to get instance of KeyGenerator", nsae, true);
     }
     return null;
   }
@@ -52,11 +46,11 @@ abstract class LauncherCipher {
       byte[] encryptedByte = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
       return Base64.encodeBase64String(encryptedByte);
     } catch (NoSuchAlgorithmException | NoSuchPaddingException two_e1) {
-      LogHelper.logError(CLASS_REF, "Failed to get instance of Cipher", two_e1);
+      LoggerHelper.logError("Failed to get instance of Cipher", two_e1, true);
     } catch (InvalidKeyException | InvalidAlgorithmParameterException two_e2) {
-      LogHelper.logError(CLASS_REF, "Failed to initialise Cipher", two_e2);
+      LoggerHelper.logError("Failed to initialise Cipher", two_e2, true);
     } catch (IllegalBlockSizeException | BadPaddingException two_e3) {
-      LogHelper.logError(CLASS_REF, "Failed to encrypt value", two_e3);
+      LoggerHelper.logError("Failed to encrypt value", two_e3, true);
     }
     return null;
   }
@@ -78,11 +72,11 @@ abstract class LauncherCipher {
       byte[] decryptedByte = cipher.doFinal(decodedBytes);
       return new String(decryptedByte, StandardCharsets.UTF_8);
     } catch (NoSuchAlgorithmException | NoSuchPaddingException two_e1) {
-      LogHelper.logError(CLASS_REF, "Failed to get instance of Cipher", two_e1);
+      LoggerHelper.logError("Failed to get instance of Cipher", two_e1, true);
     } catch (InvalidKeyException | InvalidAlgorithmParameterException two_e2) {
-      LogHelper.logError(CLASS_REF, "Failed to initialise Cipher", two_e2);
+      LoggerHelper.logError("Failed to initialise Cipher", two_e2, true);
     } catch (IllegalBlockSizeException | BadPaddingException two_e3) {
-      LogHelper.logError(CLASS_REF, "Failed to encrypt value", two_e3);
+      LoggerHelper.logError("Failed to encrypt value", two_e3, true);
     }
     return null;
   }
