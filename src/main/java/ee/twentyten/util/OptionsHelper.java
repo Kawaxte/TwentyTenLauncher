@@ -89,7 +89,7 @@ public final class OptionsHelper {
       if (!created) {
         Throwable t = new Throwable("Failed to create versions directory");
 
-        LogHelper.logError(OptionsHelper.class, t.getCause().getMessage(), t);
+        LoggerHelper.logError(t.getMessage(), t, true);
       }
     }
 
