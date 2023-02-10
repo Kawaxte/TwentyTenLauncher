@@ -41,7 +41,7 @@ public final class RuntimeHelper {
     try {
       process.waitFor();
     } catch (InterruptedException ie) {
-      LoggerHelper.logError("Failed to wait for process to terminate", ie, true);
+      LoggerHelper.logError("Failed to interrupt current thread", ie, true);
     }
     return process;
   }
