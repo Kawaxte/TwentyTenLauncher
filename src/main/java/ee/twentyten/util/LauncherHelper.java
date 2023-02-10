@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -122,10 +121,6 @@ public final class LauncherHelper {
 
       LoggerHelper.logError("Failed to interrupt current thread", ie, true);
     } catch (ExecutionException ee) {
-      JOptionPane.showMessageDialog(null,
-          String.format("An error occurred while checking for updates:%n%s", ee.getMessage()),
-          "Error", JOptionPane.ERROR_MESSAGE);
-
       LoggerHelper.logError("Failed to check for updates", ee, true);
     }
     return false;
