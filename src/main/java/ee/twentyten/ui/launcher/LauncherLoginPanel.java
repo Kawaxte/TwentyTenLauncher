@@ -2,6 +2,7 @@ package ee.twentyten.ui.launcher;
 
 import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.custom.CustomJPanel;
+import ee.twentyten.util.LanguageHelper;
 import ee.twentyten.util.LauncherHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -20,12 +21,20 @@ import lombok.Getter;
 public class LauncherLoginPanel extends CustomJPanel {
 
   private static final long serialVersionUID = 1L;
+  private final String usernameLabelText;
+  private final String passwordLabelText;
+  private final String optionsButtonText;
+  private final String rememberPasswordCheckBoxText;
+  private final String linkLabelText;
+  private final String linkLabelOutdatedText;
+  private final String loginButtonText;
   private final String latestReleaseUrl;
   private final String accountSignupUrl;
   @Getter
   private JLabel errorLabel;
   @Getter
   private String linkUrls;
+  @Getter
   private boolean outdated;
   @Getter
   private JTextField usernameField;
@@ -41,8 +50,19 @@ public class LauncherLoginPanel extends CustomJPanel {
   private JButton loginButton;
 
   {
-    latestReleaseUrl = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
-    accountSignupUrl = "https://signup.live.com/signup?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&client_id=00000000402b5328&lic=1";
+    this.usernameLabelText = LanguageHelper.getString("llp.label.usernameLabel.text");
+    this.passwordLabelText = LanguageHelper.getString("llp.label.passwordLabel.text");
+    this.optionsButtonText = LanguageHelper.getString("llp.button.optionsButton.text");
+    this.rememberPasswordCheckBoxText = LanguageHelper.getString(
+        "llp.checkbox.rememberPasswordCheckBox.text");
+    this.linkLabelText = LanguageHelper.getString("llp.label.linkLabel.text");
+    this.linkLabelOutdatedText = LanguageHelper.getString("llp.label.linkLabel.outdated.text");
+    this.loginButtonText = LanguageHelper.getString("llp.button.loginButton.text");
+  }
+
+  {
+    this.latestReleaseUrl = "https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest";
+    this.accountSignupUrl = "https://signup.live.com/signup?cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&client_id=00000000402b5328&lic=1";
   }
 
   public LauncherLoginPanel() {
@@ -73,13 +93,13 @@ public class LauncherLoginPanel extends CustomJPanel {
     middlePanel1.setBackground(Color.GRAY);
     this.add(middlePanel1, BorderLayout.WEST);
 
-    JLabel usernameLabel = new JLabel("Username:", SwingConstants.RIGHT);
+    JLabel usernameLabel = new JLabel(this.usernameLabelText, SwingConstants.RIGHT);
     middlePanel1.add(usernameLabel, 0);
 
-    JLabel passwordLabel = new JLabel("Password:", SwingConstants.RIGHT);
+    JLabel passwordLabel = new JLabel(this.passwordLabelText, SwingConstants.RIGHT);
     middlePanel1.add(passwordLabel, 1);
 
-    this.optionsButton = new JButton("Options");
+    this.optionsButton = new JButton(this.optionsButtonText);
     middlePanel1.add(this.optionsButton, 2);
 
     JPanel middlePanel2 = new JPanel(gl, true);
@@ -94,7 +114,7 @@ public class LauncherLoginPanel extends CustomJPanel {
     this.passwordField.setText(LauncherConfig.instance.getPassword());
     middlePanel2.add(this.passwordField, 1);
 
-    this.rememberPasswordCheckBox = new JCheckBox("Remember Password");
+    this.rememberPasswordCheckBox = new JCheckBox(this.rememberPasswordCheckBoxText);
     this.rememberPasswordCheckBox.setContentAreaFilled(false);
     this.rememberPasswordCheckBox.setSelected(LauncherConfig.instance.getPasswordSaved());
     middlePanel2.add(this.rememberPasswordCheckBox, 2);
@@ -105,15 +125,16 @@ public class LauncherLoginPanel extends CustomJPanel {
     bottomPanel.setBackground(Color.GRAY);
     this.add(bottomPanel, BorderLayout.SOUTH);
 
-    this.linkLabel = new JLabel(this.outdated ? String.format(
-        "<html><a href='%s'>You need to update the launcher!</a></html>", latestReleaseUrl)
-        : String.format("<html><a href='%s'>Need account?</a></html>", accountSignupUrl),
-        SwingConstants.LEFT);
+    this.linkLabel = new JLabel(
+        this.outdated ? String.format("<html><a href=\"%s\">%s</a></html>", this.latestReleaseUrl,
+            this.linkLabelOutdatedText)
+            : String.format("<html><a href=\"%s\">%s</a></html>", this.accountSignupUrl,
+                this.linkLabelText), SwingConstants.LEFT);
     this.linkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
     this.linkLabel.setForeground(Color.BLUE);
     bottomPanel.add(this.linkLabel, BorderLayout.WEST);
 
-    this.loginButton = new JButton("Login");
+    this.loginButton = new JButton(this.loginButtonText);
     bottomPanel.add(this.loginButton, BorderLayout.EAST);
   }
 }
