@@ -66,7 +66,7 @@ public final class YggdrasilHelper {
       String newClientToken = session.getString("clientToken");
       LauncherConfig.instance.setAccessToken(newAccessToken);
       LauncherConfig.instance.setClientToken(newClientToken);
-      LauncherConfig.instance.save();
+      LauncherConfig.instance.saveConfig();
     }
     return true;
   }
