@@ -2,9 +2,12 @@ package ee.twentyten.ui;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.config.LauncherConfig;
+import ee.twentyten.lang.ELanguage;
+import ee.twentyten.ui.options.OptionsLanguagePanel;
 import ee.twentyten.ui.options.OptionsPanel;
-import ee.twentyten.ui.options.OptionsVersionsPanel;
+import ee.twentyten.ui.options.OptionsVersionPanel;
 import ee.twentyten.util.FileHelper;
+import ee.twentyten.util.LanguageHelper;
 import ee.twentyten.util.LoggerHelper;
 import ee.twentyten.util.OptionsHelper;
 import ee.twentyten.util.RuntimeHelper;
@@ -15,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import javax.swing.DefaultComboBoxModel;
@@ -24,10 +28,16 @@ public class OptionsDialog extends JDialog implements ActionListener {
 
   private static final long serialVersionUID = 1L;
   private final OptionsPanel optionsPanel;
-  private final OptionsVersionsPanel optionsVersionsPanel;
+  private final OptionsVersionPanel optionsVersionPanel;
+  private final OptionsLanguagePanel optionsLanguagePanel;
+  private final String installedText;
 
-  public OptionsDialog(LauncherFrame frame) {
-    super(frame, "Launcher Options", true);
+  {
+    this.installedText = LanguageHelper.getString("od.string.installed.text");
+  }
+
+  public OptionsDialog(String title, LauncherFrame frame) {
+    super(frame, title, true);
 
     this.optionsPanel = new OptionsPanel();
     this.optionsPanel.getCancelButton().addActionListener(this);
@@ -35,10 +45,12 @@ public class OptionsDialog extends JDialog implements ActionListener {
     this.optionsPanel.getSaveOptionsButton().addActionListener(this);
     this.setContentPane(this.optionsPanel);
 
-    this.optionsVersionsPanel = this.optionsPanel.getOptionsVersionsPanel();
-    this.optionsVersionsPanel.getShowBetaVersionsCheckBox().addActionListener(this);
-    this.optionsVersionsPanel.getShowAlphaVersionsCheckBox().addActionListener(this);
-    this.optionsVersionsPanel.getShowInfdevVersionsCheckBox().addActionListener(this);
+    this.optionsVersionPanel = this.optionsPanel.getOptionsVersionPanel();
+    this.optionsVersionPanel.getShowBetaVersionsCheckBox().addActionListener(this);
+    this.optionsVersionPanel.getShowAlphaVersionsCheckBox().addActionListener(this);
+    this.optionsVersionPanel.getShowInfdevVersionsCheckBox().addActionListener(this);
+
+    this.optionsLanguagePanel = this.optionsPanel.getOptionsLanguagePanel();
 
     this.pack();
     this.setResizable(false);
@@ -47,6 +59,7 @@ public class OptionsDialog extends JDialog implements ActionListener {
     this.setLocation(frame.getX(), frame.getY());
 
     this.updateUseVersionList();
+    this.updateSetLanguageList();
   }
 
   private String getFormattedVersionId(String type, String id) {
@@ -61,14 +74,16 @@ public class OptionsDialog extends JDialog implements ActionListener {
     File versionsDirectory = new File(FileHelper.workingDirectory, "versions");
     File[] versionDirectories = versionsDirectory.listFiles();
     Objects.requireNonNull(versionDirectories, "versionDirectories == null!");
+
     for (File versionDirectory : versionDirectories) {
       if (versionDirectory.getName().equals(id)) {
         File[] versionFiles = versionDirectory.listFiles();
         Objects.requireNonNull(versionFiles, "versionFiles == null!");
+
         for (File versionFile : versionFiles) {
           String clientJarName = String.format("%s.jar", id);
           if (versionFile.getName().equals(clientJarName)) {
-            formattedId = String.format("%s (installed)", formattedId);
+            formattedId = String.format("%s %s", formattedId, this.installedText);
           }
         }
       }
@@ -79,12 +94,12 @@ public class OptionsDialog extends JDialog implements ActionListener {
   private void updateUseVersionList() {
     OptionsHelper.versionIds = new HashMap<>();
 
-    String formattedVersionId;
-    String versionId;
-    List<String> versionIds;
-
     DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
     for (String type : OptionsHelper.versionTypes) {
+      String formattedVersionId;
+      String versionId;
+      List<String> versionIds;
+
       if (LauncherConfig.instance.getUsingBeta() && type.equals("beta")) {
         versionIds = OptionsHelper.getVersionIds(type);
         for (int idIndex = versionIds.size() - 1; idIndex >= 0; idIndex--) {
@@ -124,27 +139,50 @@ public class OptionsDialog extends JDialog implements ActionListener {
         break;
       }
     }
-    this.optionsVersionsPanel.getVersionComboBox().setModel(model);
+    this.optionsVersionPanel.getUseVersionComboBox().setModel(model);
+  }
+
+  private void updateSetLanguageList() {
+    OptionsHelper.languages = new HashMap<>();
+
+    //it will set the enum constant name as the "languages" id, but the name within the enum constant as the display.
+    DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+    for (ELanguage language : ELanguage.values()) {
+      String languageName = language.getName();
+      String languageValue = language.toString().substring(9);
+      model.addElement(languageName);
+
+      OptionsHelper.languages.put(languageName, languageValue.toLowerCase(Locale.ROOT));
+    }
+
+    String selectedLanguage = LauncherConfig.instance.getSelectedLanguage();
+    for (Map.Entry<String, String> entry : OptionsHelper.languages.entrySet()) {
+      if (entry.getValue().equals(selectedLanguage)) {
+        model.setSelectedItem(entry.getKey());
+        break;
+      }
+    }
+    this.optionsLanguagePanel.getSetLanguageComboBox().setModel(model);
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
-    if (source == this.optionsVersionsPanel.getShowBetaVersionsCheckBox()) {
+    if (source == this.optionsVersionPanel.getShowBetaVersionsCheckBox()) {
       LauncherConfig.instance.setUsingBeta(
-          this.optionsVersionsPanel.getShowBetaVersionsCheckBox().isSelected());
+          this.optionsVersionPanel.getShowBetaVersionsCheckBox().isSelected());
     }
-    if (source == this.optionsVersionsPanel.getShowAlphaVersionsCheckBox()) {
+    if (source == this.optionsVersionPanel.getShowAlphaVersionsCheckBox()) {
       LauncherConfig.instance.setUsingAlpha(
-          this.optionsVersionsPanel.getShowAlphaVersionsCheckBox().isSelected());
+          this.optionsVersionPanel.getShowAlphaVersionsCheckBox().isSelected());
     }
-    if (source == this.optionsVersionsPanel.getShowInfdevVersionsCheckBox()) {
+    if (source == this.optionsVersionPanel.getShowInfdevVersionsCheckBox()) {
       LauncherConfig.instance.setUsingInfdev(
-          this.optionsVersionsPanel.getShowInfdevVersionsCheckBox().isSelected());
+          this.optionsVersionPanel.getShowInfdevVersionsCheckBox().isSelected());
     }
-    if (source == this.optionsVersionsPanel.getShowBetaVersionsCheckBox()
-        || source == this.optionsVersionsPanel.getShowAlphaVersionsCheckBox()
-        || source == this.optionsVersionsPanel.getShowInfdevVersionsCheckBox()) {
+    if (source == this.optionsVersionPanel.getShowBetaVersionsCheckBox()
+        || source == this.optionsVersionPanel.getShowAlphaVersionsCheckBox()
+        || source == this.optionsVersionPanel.getShowInfdevVersionsCheckBox()) {
       this.updateUseVersionList();
     }
     if (source == this.optionsPanel.getCancelButton()) {
@@ -165,14 +203,22 @@ public class OptionsDialog extends JDialog implements ActionListener {
       }
     }
     if (source == this.optionsPanel.getSaveOptionsButton()) {
-      String selectedFormattedId = (String) this.optionsVersionsPanel.getVersionComboBox()
+      String selectedVersion = (String) this.optionsVersionPanel.getUseVersionComboBox()
           .getSelectedItem();
-      if (selectedFormattedId != null) {
-        LauncherConfig.instance.setSelectedVersion(
-            OptionsHelper.versionIds.get(selectedFormattedId));
+      String selectedLanguage = (String) this.optionsLanguagePanel.getSetLanguageComboBox()
+          .getSelectedItem();
+      if (selectedVersion != null) {
+        LauncherConfig.instance.setSelectedVersion(OptionsHelper.versionIds.get(selectedVersion));
+      }
+      if (selectedLanguage != null) {
+        LauncherConfig.instance.setSelectedLanguage(OptionsHelper.languages.get(selectedLanguage));
       }
 
-      LauncherConfig.instance.save();
+      LauncherConfig.instance.saveConfig();
+
+      if (selectedLanguage != null) {
+        LauncherFrame.instance.dispose();
+      }
     }
   }
 }
