@@ -3,6 +3,7 @@ package net.minecraft.update;
 import ee.twentyten.EPlatform;
 import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.util.FileHelper;
+import ee.twentyten.util.LanguageHelper;
 import ee.twentyten.util.LoggerHelper;
 import ee.twentyten.util.OptionsHelper;
 import ee.twentyten.util.RequestHelper;
@@ -53,6 +54,17 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
         "jinput-dx8_64.dll", "jinput-raw.dll", "jinput-raw_64.dll", "lwjgl.dll", "lwjgl64.dll"};
   }
 
+  private final String fieldNotFoundText;
+  private final String classNotFoundText;
+  private final String classInstantiationText;
+  private final String illegalFieldAccessText;
+  private final String illegalClassAccessText;
+  private final String fileNotFoundText;
+  private final String packageNotFoundText;
+  private final String packageDownloadErrorText;
+  private final String packageMoveErrorText;
+  private final String fatalErrorMessageText;
+  private final String subtaskDownloadText;
   @Getter
   protected String fatalErrorMessage;
   @Getter
@@ -63,6 +75,21 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
   private ClassLoader loader;
   @Getter
   private boolean fatalErrorOccurred;
+
+  {
+    this.fieldNotFoundText = LanguageHelper.getString("mui.string.fieldNotFound.text");
+    this.classNotFoundText = LanguageHelper.getString("mui.string.classNotFound.text");
+    this.classInstantiationText = LanguageHelper.getString("mui.string.classInstantiation.text");
+    this.illegalFieldAccessText = LanguageHelper.getString("mui.string.illegalFieldAccess.text");
+    this.illegalClassAccessText = LanguageHelper.getString("mui.string.illegalClassAccess.text");
+    this.fileNotFoundText = LanguageHelper.getString("mui.string.fileNotFound.text");
+    this.packageNotFoundText = LanguageHelper.getString("mui.string.packageNotFound.text");
+    this.packageDownloadErrorText = LanguageHelper.getString(
+        "mui.string.packageDownloadError.text");
+    this.packageMoveErrorText = LanguageHelper.getString("mui.string.packageMoveError.text");
+    this.fatalErrorMessageText = LanguageHelper.getString("mui.string.fatalErrorMessage.text");
+    this.subtaskDownloadText = LanguageHelper.getString("mui.string.subtaskDownload.text");
+  }
 
   public MinecraftUpdateImpl() {
     this.subtaskMessage = "";
@@ -96,14 +123,15 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
       }
     }
 
-    String clientJarName = String.format("%s.jar", LauncherConfig.instance.getSelectedVersion());
+    String clientJarName = java.lang.String.format("%s.jar",
+        LauncherConfig.instance.getSelectedVersion());
     return new File(clientJarDirectory, clientJarName).exists();
   }
 
   private int getTotalPackageSize(int[] sizes, int size) {
+    EState.setState(EState.RETRIEVE_STATE);
     for (int urlIndex = 0; urlIndex < this.packageUrls.length; urlIndex++) {
       String url = this.packageUrls[urlIndex].toString();
-      String name = url.substring(url.lastIndexOf('/') + 1);
 
       HttpsURLConnection connection = RequestHelper.performRequest(url, "GET",
           RequestHelper.xWwwFormHeader, false);
@@ -111,7 +139,7 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
       try {
         sizes[urlIndex] = connection.getContentLength();
         size += sizes[urlIndex];
-        
+
         this.totalPercentage = 5 + (((urlIndex + 1) * 5) / this.packageUrls.length);
       } finally {
         connection.disconnect();
@@ -141,7 +169,8 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
 
       this.totalPercentage = 85 + ((jarUrls.length * 5) / jarUrls.length);
     } catch (MalformedURLException murle) {
-      this.showFatalError("Can't construct URL from URI", murle);
+      this.showFatalError(murle.getMessage(), murle);
+      return;
     }
 
     if (this.loader == null) {
@@ -160,49 +189,58 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
 
     boolean loaded = this.nativesLoaded(nativesDirectory);
     if (!loaded) {
-      Throwable t = new Throwable("Failed to load natives");
-
-      LoggerHelper.logError(t.getMessage(), t, true);
+      LoggerHelper.logError("Failed to load natives", true);
       return;
     }
 
     LoggerHelper.logInfo(Arrays.toString(jarUrls), true);
   }
 
-  private boolean nativesLoaded(File nativesDirectory) {
+  private boolean nativesLoaded(File f) {
+    boolean loaded = nativesLoaded(f, "loadedLibraryNames") || nativesLoaded(f, "nativeLibraries")
+        || nativesLoaded(f, "systemNativeLibraries");
+    if (loaded) {
+      return true;
+    }
+
+    LoggerHelper.logError("Failed to load natives", true);
+    return false;
+  }
+
+  private boolean nativesLoaded(File f, String name) {
     try {
-      Field nativesField = ClassLoader.class.getDeclaredField("loadedLibraryNames");
+      Field nativesField = ClassLoader.class.getDeclaredField(name);
       nativesField.setAccessible(true);
 
       Vector<?> loadedLibraryNames = (Vector<?>) nativesField.get(this.loader);
       loadedLibraryNames.clear();
-    } catch (NoSuchFieldException nsfe) {
-      this.showFatalError("Can't find loadedLibraryNames field", nsfe);
-      return false;
-    } catch (IllegalAccessException iae) {
-      this.showFatalError("Can't access loadedLibraryNames field", iae);
-      return false;
-    }
 
-    String[] libraryPaths = new String[]{"org.lwjgl.librarypath",
-        "net.java.games.input.librarypath"};
-    for (String libraryPath : libraryPaths) {
-      System.setProperty(libraryPath, nativesDirectory.getAbsolutePath());
+      String[] libraryPaths = new String[]{"org.lwjgl.librarypath",
+          "net.java.games.input.librarypath"};
+      for (String libraryPath : libraryPaths) {
+        System.setProperty(libraryPath, f.getAbsolutePath());
+      }
+      return true;
+    } catch (NoSuchFieldException nsfe) {
+      this.showFatalError(String.format(this.fieldNotFoundText, name), nsfe);
+    } catch (IllegalAccessException iae) {
+      this.showFatalError(String.format(this.illegalFieldAccessText, name), iae);
     }
-    return true;
+    return false;
   }
 
   public Applet createAppletInstance() {
+    String appletClassName = "MinecraftApplet";
     Class<?> minecraftAppletClass;
     try {
       minecraftAppletClass = this.loader.loadClass("net.minecraft.client.MinecraftApplet");
       return (Applet) minecraftAppletClass.newInstance();
     } catch (ClassNotFoundException cnfe) {
-      this.showFatalError("Can't find MinecraftApplet class", cnfe);
+      this.showFatalError(String.format(this.classNotFoundText, appletClassName), cnfe);
     } catch (InstantiationException ie) {
-      this.showFatalError("Can't instantiate MinecraftApplet class", ie);
+      this.showFatalError(String.format(this.classInstantiationText, appletClassName), ie);
     } catch (IllegalAccessException iae) {
-      this.showFatalError("Can't access MinecraftApplet class", iae);
+      this.showFatalError(String.format(this.illegalClassAccessText, appletClassName), iae);
     }
     return null;
   }
@@ -211,19 +249,19 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
     this.fatalErrorOccurred = true;
 
     int state = EState.getState().ordinal();
-    this.fatalErrorMessage = String.format("Fatal error occurred (%s): %s", state, message);
+    this.fatalErrorMessage = String.format(this.fatalErrorMessageText, state, message);
+    this.subtaskMessage = "";
 
     LoggerHelper.logError(this.fatalErrorMessage, t, true);
   }
 
   @Override
   void loadPackage() {
-    EState.setState(EState.DETERMINE_STATE);
-
     String lwjglJarUrl = null;
     String lwjglNativeUrl = null;
     String clientJarUrl = null;
 
+    EState.setState(EState.DETERMINE_STATE);
     try {
       EPlatform platform = EPlatform.getPlatform();
       Objects.requireNonNull(platform, "platform == null!");
@@ -281,30 +319,22 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
 
       LoggerHelper.logInfo(Arrays.toString(this.packageUrls), true);
     } catch (MalformedURLException murle) {
-      if (lwjglJarUrl == null) {
-        this.showFatalError("Can't find lwjgl jar files", murle);
+      String fileName = murle.getMessage().substring(murle.getMessage().lastIndexOf("/") + 1);
+      if (lwjglJarUrl == null || lwjglNativeUrl == null || clientJarUrl == null) {
+        this.showFatalError(String.format(this.fileNotFoundText, fileName), murle);
         return;
       }
-      if (lwjglNativeUrl == null) {
-        this.showFatalError("Can't find lwjgl native files", murle);
-        return;
-      }
-      if (clientJarUrl == null) {
-        this.showFatalError("Can't find client jar file", murle);
-        return;
-      }
-      this.showFatalError("Can't find package files", murle);
+      this.showFatalError(this.packageNotFoundText, murle);
     }
   }
 
   @Override
   void downloadPackage() {
-    EState.setState(EState.DOWNLOAD_STATE);
-
     int[] packageSizes = new int[this.packageUrls.length];
     int currentPackageSize = 0;
     int totalPackageSize = this.getTotalPackageSize(packageSizes, currentPackageSize);
 
+    EState.setState(EState.DOWNLOAD_STATE);
     for (int urlIndex = 0; urlIndex < this.packageUrls.length; urlIndex++) {
       String packageUrl = this.packageUrls[urlIndex].toString();
       String packageName = packageUrl.substring(packageUrl.lastIndexOf('/') + 1);
@@ -326,15 +356,15 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
           currentPackageSize += bytesRead;
 
           int packagePercentage = (int) (((packageSize * 1.0d) / packageSizes[urlIndex]) * 100.0d);
-          this.subtaskMessage = String.format("Downloading: %s %d%%", packageName,
+          this.subtaskMessage = String.format(this.subtaskDownloadText, packageName,
               packagePercentage);
           this.totalPercentage = 10 + ((currentPackageSize * 45) / totalPackageSize);
         }
       } catch (FileNotFoundException fnfe) {
-        this.showFatalError("Can't find package file", fnfe);
+        this.showFatalError(this.packageNotFoundText, fnfe);
         return;
       } catch (IOException ioe) {
-        this.showFatalError("Can't download package file", ioe);
+        this.showFatalError(this.packageDownloadErrorText, ioe);
         return;
       } finally {
         connection.disconnect();
@@ -344,9 +374,7 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
   }
 
   @Override
-  void movePackage() throws IOException {
-    EState.setState(EState.MOVE_STATE);
-
+  void movePackage() {
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
 
@@ -357,45 +385,54 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
     int totalPackageSize = tempPackages.length;
     int movedPackages = 0;
 
+    EState.setState(EState.MOVE_STATE);
     for (File tempPackage : tempPackages) {
-
       File binDirectory = FileHelper.createDirectory(FileHelper.workingDirectory, "bin");
+      Objects.requireNonNull(binDirectory, "binDirectory == null!");
+
       File nativesDirectory = FileHelper.createDirectory(binDirectory, "natives");
+      Objects.requireNonNull(nativesDirectory, "nativesDirectory == null!");
+
       File versionsDirectory = new File(FileHelper.workingDirectory, "versions");
       File selectedVersionDirectory = FileHelper.createDirectory(versionsDirectory,
           LauncherConfig.instance.getSelectedVersion());
+      Objects.requireNonNull(selectedVersionDirectory, "selectedVersionDirectory == null!");
 
       String tempPackageName = tempPackage.getName();
-
       String clientJarName = String.format("%s.jar", LauncherConfig.instance.getSelectedVersion());
-      if (tempPackageName.equals(clientJarName)) {
-        Files.move(tempPackage.toPath(),
-            new File(selectedVersionDirectory, tempPackageName).toPath(),
-            StandardCopyOption.REPLACE_EXISTING);
-      }
-
       String[] lwjglNativeNames = platform == EPlatform.MACOSX ? LWJGL_NATIVE_DYLIB_NAMES
           : platform == EPlatform.WINDOWS ? LWJGL_NATIVE_DLL_NAMES
               : platform == EPlatform.LINUX ? LWJGL_NATIVE_SO_NAMES : null;
-      for (String lwjglNative : lwjglNativeNames) {
-        if (tempPackageName.equals(lwjglNative)) {
-          Files.move(tempPackage.toPath(), new File(nativesDirectory, tempPackageName).toPath(),
-              StandardCopyOption.REPLACE_EXISTING);
-        }
-      }
-      for (String lwjglJarName : LWJGL_JAR_NAMES) {
-        if (tempPackageName.equals(lwjglJarName)) {
-          Files.move(tempPackage.toPath(), new File(binDirectory, tempPackageName).toPath(),
-              StandardCopyOption.REPLACE_EXISTING);
-        }
-      }
 
-      this.subtaskMessage = String.format("Moving: %s", tempPackageName);
+      try {
+        for (String lwjglNative : lwjglNativeNames) {
+          if (tempPackageName.equals(lwjglNative)) {
+            Files.move(tempPackage.toPath(),
+                nativesDirectory.toPath().resolve(tempPackage.toPath().getFileName()),
+                StandardCopyOption.REPLACE_EXISTING);
+          }
+        }
+        for (String lwjglJarName : LWJGL_JAR_NAMES) {
+          if (tempPackageName.equals(lwjglJarName)) {
+            Files.move(tempPackage.toPath(),
+                binDirectory.toPath().resolve(tempPackage.toPath().getFileName()),
+                StandardCopyOption.REPLACE_EXISTING);
+          }
+        }
+
+        if (tempPackageName.equals(clientJarName)) {
+          Files.move(tempPackage.toPath(),
+              selectedVersionDirectory.toPath().resolve(tempPackage.toPath().getFileName()),
+              StandardCopyOption.REPLACE_EXISTING);
+        }
+      } catch (IOException ioe) {
+        this.showFatalError(this.packageMoveErrorText, ioe);
+        return;
+      }
 
       movedPackages++;
       this.totalPercentage = 55 + ((movedPackages * 30) / totalPackageSize);
     }
-    this.subtaskMessage = "";
 
     FileHelper.deleteDirectory(tempDirectory);
   }
@@ -403,22 +440,21 @@ public class MinecraftUpdateImpl extends MinecraftUpdate implements Runnable {
   @Override
   public void run() {
     EState.setState(EState.INIT_STATE);
-    this.totalPercentage = 0;
-
     try {
+      this.totalPercentage = 0;
+
       boolean cached = MinecraftUpdateImpl.packageCached();
       if (!cached) {
         this.loadPackage();
         this.downloadPackage();
-        this.movePackage();
       }
-
+      this.movePackage();
       this.updateClasspath();
+
+      EState.setState(EState.DONE_STATE);
+      this.totalPercentage = 95;
     } catch (Throwable t) {
       this.showFatalError(t.getMessage(), t);
     }
-
-    EState.setState(EState.DONE_STATE);
-    this.totalPercentage = 95;
   }
 }
