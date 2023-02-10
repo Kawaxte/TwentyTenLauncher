@@ -26,8 +26,9 @@ public class LauncherConfig extends LauncherCipher {
   private Boolean usingAlpha;
   private Boolean usingInfdev;
   private String selectedVersion;
+  private String selectedLanguage;
 
-  public static LauncherConfig load() {
+  public static LauncherConfig loadConfig() {
     LauncherConfig config;
     File configFile;
     try {
@@ -48,11 +49,11 @@ public class LauncherConfig extends LauncherCipher {
 
         config = new LauncherConfig();
         config.username = properties.getProperty("username");
-        config.password = decryptValue(properties.getProperty("password"));
+        config.password = LauncherConfig.decryptValue(properties.getProperty("password"));
         config.passwordSaved = Boolean.parseBoolean(properties.getProperty("password-saved"));
 
         config.clientToken = properties.getProperty("client-token");
-        config.accessToken = decryptValue(properties.getProperty("access-token"));
+        config.accessToken = LauncherConfig.decryptValue(properties.getProperty("access-token"));
         config.profileId = properties.getProperty("profile-id");
         config.profileName = properties.getProperty("profile-name");
 
@@ -60,6 +61,7 @@ public class LauncherConfig extends LauncherCipher {
         config.usingAlpha = Boolean.parseBoolean(properties.getProperty("using-alpha"));
         config.usingInfdev = Boolean.parseBoolean(properties.getProperty("using-infdev"));
         config.selectedVersion = properties.getProperty("selected-version");
+        config.selectedLanguage = properties.getProperty("selected-language");
 
         LoggerHelper.logInfo(String.format("\"%s\"", configFile.getAbsolutePath()), true);
       } catch (IOException ioe2) {
@@ -73,35 +75,37 @@ public class LauncherConfig extends LauncherCipher {
     return config;
   }
 
-  public void save() {
+  public void saveConfig() {
+    String username = this.username != null ? this.username : "";
+    String password = this.password != null ? this.password : "";
+    String passwordSaved = this.passwordSaved != null ? this.passwordSaved.toString() : "";
+    String clientToken = this.clientToken != null ? this.clientToken : "";
+    String accessToken = this.accessToken != null ? this.accessToken : "";
+    String profileId = this.profileId != null ? this.profileId : "";
+    String profileName = this.profileName != null ? this.profileName : "";
+    String usingBeta = this.usingBeta != null ? this.usingBeta.toString() : "";
+    String usingAlpha = this.usingAlpha != null ? this.usingAlpha.toString() : "";
+    String usingInfdev = this.usingInfdev != null ? this.usingInfdev.toString() : "";
+    String selectedVersion = this.selectedVersion != null ? this.selectedVersion : "";
+    String selectedLanguage = this.selectedLanguage != null ? this.selectedLanguage : "";
 
     CustomLinkedProperties general = new CustomLinkedProperties();
-    String username = this.username == null ? "" : this.username;
-    String password = this.password == null ? "" : this.password;
-    String passwordSaved = this.passwordSaved == null ? "" : this.passwordSaved.toString();
     general.setProperty("username", username);
-    general.setProperty("password", encryptValue(password));
+    general.setProperty("password", LauncherConfig.encryptValue(password));
     general.setProperty("password-saved", passwordSaved);
 
     CustomLinkedProperties profile = new CustomLinkedProperties();
-    String clientToken = this.clientToken == null ? "" : this.clientToken;
-    String accessToken = this.accessToken == null ? "" : this.accessToken;
-    String profileId = this.profileId == null ? "" : this.profileId;
-    String profileName = this.profileName == null ? "" : this.profileName;
     profile.setProperty("client-token", clientToken);
-    profile.setProperty("access-token", encryptValue(accessToken));
+    profile.setProperty("access-token", LauncherConfig.encryptValue(accessToken));
     profile.setProperty("profile-id", profileId);
     profile.setProperty("profile-name", profileName);
 
     CustomLinkedProperties options = new CustomLinkedProperties();
-    String usingBeta = this.usingBeta == null ? "" : this.usingBeta.toString();
-    String usingAlpha = this.usingAlpha == null ? "" : this.usingAlpha.toString();
-    String usingInfdev = this.usingInfdev == null ? "" : this.usingInfdev.toString();
-    String selectedVersion = this.selectedVersion == null ? "" : this.selectedVersion;
     options.setProperty("using-beta", usingBeta);
     options.setProperty("using-alpha", usingAlpha);
     options.setProperty("using-infdev", usingInfdev);
     options.setProperty("selected-version", selectedVersion);
+    options.setProperty("selected-language", selectedLanguage);
 
     File configFile = new File(FileHelper.workingDirectory, "twentyten.properties");
     try (FileOutputStream fos = new FileOutputStream(configFile.getAbsolutePath())) {
@@ -112,9 +116,9 @@ public class LauncherConfig extends LauncherCipher {
           + "##    the launcher. Do not modify this file.    ##\n"
           + "##################################################\n";
       fos.write(configFileHeader.getBytes());
-      general.store(fos, "GENERAL");
-      profile.store(fos, "PROFILE");
-      options.store(fos, "OPTIONS");
+      general.store(fos, "GENERAL ---------------------------------------|");
+      profile.store(fos, "PROFILE ---------------------------------------|");
+      options.store(fos, "OPTIONS ---------------------------------------|");
 
       LoggerHelper.logInfo(String.format("\"%s\"", configFile.getAbsolutePath()), true);
     } catch (IOException ioe) {
