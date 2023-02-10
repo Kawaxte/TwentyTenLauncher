@@ -2,6 +2,7 @@ package net.minecraft;
 
 import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.util.FileHelper;
+import ee.twentyten.util.LanguageHelper;
 import ee.twentyten.util.LoggerHelper;
 import ee.twentyten.util.OptionsHelper;
 import java.applet.Applet;
@@ -29,10 +30,17 @@ public class MinecraftLauncher extends Applet implements AppletStub {
   private static final long serialVersionUID = 1L;
   public final Map<String, String> parameters;
   private final Image bgImage;
+  private final String titleString;
+  private final String failedString;
   private MinecraftUpdateImpl update;
   private Applet applet;
   private boolean updateStarted;
   private boolean active;
+
+  {
+    this.titleString = LanguageHelper.getString("ml.string.title.text");
+    this.failedString = LanguageHelper.getString("ml.string.failed.text");
+  }
 
   public MinecraftLauncher() {
     this.parameters = new HashMap<>();
@@ -119,7 +127,7 @@ public class MinecraftLauncher extends Applet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException murle) {
-      LoggerHelper.logError("Failed to create URL object", murle, true);
+      LoggerHelper.logError(murle.getMessage(), murle, true);
     }
     return null;
   }
@@ -160,9 +168,9 @@ public class MinecraftLauncher extends Applet implements AppletStub {
         g2d.drawImage(this.bgImage, gridX, gridY, imageWidth, imageHeight, this);
       }
 
-      String title = "Updating Minecraft";
+      String title = this.titleString;
       if (this.update.isFatalErrorOccurred()) {
-        title = "Failed to launch";
+        title = this.failedString;
       }
       this.drawTitleString(title, panelWidth, panelHeight, g2d);
 
@@ -190,9 +198,6 @@ public class MinecraftLauncher extends Applet implements AppletStub {
     this.parameters.put("sessionid", sessionId);
     this.parameters.put("haspaid", hasPaid);
 
-    String formattedParameters = String.format("%s:%s:%s", username, sessionId, hasPaid);
-    LoggerHelper.logInfo(formattedParameters, false);
-
     String selectedVersion = LauncherConfig.instance.getSelectedVersion();
     try {
       String proxyPort = OptionsHelper.getPortsFromIds(selectedVersion);
@@ -203,16 +208,7 @@ public class MinecraftLauncher extends Applet implements AppletStub {
       System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     } catch (IOException ioe) {
       System.setProperty("http.proxyPort", "80");
-
-      LoggerHelper.logError("Failed to set proxy port", ioe, true);
     }
-
-    String httpProxyHost = System.getProperty("http.proxyHost");
-    String httpProxyPort = System.getProperty("http.proxyPort");
-    String legacyMergeSort = System.getProperty("java.util.Arrays.useLegacyMergeSort");
-    String formattedSystemProperties = String.format("%s:%s:%s", httpProxyHost, httpProxyPort,
-        legacyMergeSort);
-    LoggerHelper.logInfo(formattedSystemProperties, false);
 
     this.update = new MinecraftUpdateImpl();
   }
@@ -259,7 +255,7 @@ public class MinecraftLauncher extends Applet implements AppletStub {
         try {
           Thread.sleep(10L);
         } catch (InterruptedException ie) {
-          LoggerHelper.logError("Failed to cause thread to sleep", ie, true);
+          LoggerHelper.logError("Failed to sleep current thread", ie, true);
         }
       }
     }, "PaintDaemon");
