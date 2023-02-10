@@ -8,6 +8,7 @@ import ee.twentyten.ui.launcher.LauncherOfflinePanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigHelper;
 import ee.twentyten.util.FileHelper;
+import ee.twentyten.util.LanguageHelper;
 import ee.twentyten.util.LauncherHelper;
 import ee.twentyten.util.LoggerHelper;
 import ee.twentyten.util.OptionsHelper;
@@ -38,14 +39,30 @@ public class LauncherFrame extends JFrame implements ActionListener {
   private static boolean sessionExpired;
 
   static {
-    LauncherHelper.getCurrentVersion(1, 2, 8, 23, true, 1);
+    LauncherHelper.getCurrentVersion(1, 2, 10, 23, true, 1);
     LauncherFrame.version = System.getProperty("ee.twentyten.version");
   }
 
   private final LauncherLoginPanel loginPanel;
   private final LauncherOfflinePanel offlinePanel;
-  private boolean loginRememberPassword;
+  private final String errorLabelFailedText;
+  private final String errorLabelOutdatedText;
+  private final String errorLabelOfflineText;
+  private final String optionsTitleText;
+  private final String optionPaneTitleErrorText;
+  private final String optionPaneErrorNoVersionText;
   private LauncherPanel panel;
+  private boolean loginRememberPassword;
+
+  {
+    this.errorLabelFailedText = LanguageHelper.getString("lf.label.errorLabel.failed.text");
+    this.errorLabelOutdatedText = LanguageHelper.getString("lf.label.errorLabel.outdated.text");
+    this.errorLabelOfflineText = LanguageHelper.getString("lf.label.errorLabel.offline.text");
+    this.optionsTitleText = LanguageHelper.getString("od.string.title.text");
+    this.optionPaneTitleErrorText = LanguageHelper.getString("lf.optionpane.title.error.text");
+    this.optionPaneErrorNoVersionText = LanguageHelper.getString(
+        "lf.optionpane.error.noVersion.text");
+  }
 
   public LauncherFrame(String title) {
     super(title);
@@ -96,84 +113,35 @@ public class LauncherFrame extends JFrame implements ActionListener {
       LoggerHelper.logError("Failed to get versions file", ioe, true);
     }
 
-    LauncherConfig.instance = LauncherConfig.load();
+    LauncherConfig.instance = LauncherConfig.loadConfig();
     Objects.requireNonNull(LauncherConfig.instance, "config == null!");
+
+    boolean tokensEmpty = !LauncherConfig.instance.getAccessToken().isEmpty()
+        && !LauncherConfig.instance.getClientToken().isEmpty();
     if (LauncherConfig.instance.getClientToken() == null || LauncherConfig.instance.getClientToken()
         .isEmpty()) {
       ConfigHelper.initConfig();
     }
-    if (!LauncherConfig.instance.getAccessToken().isEmpty()
-        && !LauncherConfig.instance.getClientToken().isEmpty()) {
+    if (tokensEmpty) {
       LauncherFrame.sessionExpired = YggdrasilHelper.isSessionExpired(
-          LauncherConfig.instance.getAccessToken(),
-          LauncherConfig.instance.getClientToken());
+          LauncherConfig.instance.getAccessToken(), LauncherConfig.instance.getClientToken());
     }
+
+    LanguageHelper.setLanguage(LauncherConfig.instance.getSelectedLanguage());
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        LauncherFrame.instance = new LauncherFrame(
-            String.format("TwentyTen Launcher %s", version));
+        LauncherFrame.instance = new LauncherFrame(String.format("TwentyTen Launcher %s", version));
         LauncherFrame.instance.setVisible(true);
       }
     });
   }
 
-  @Override
-  public void actionPerformed(ActionEvent event) {
-    String loginUsername = this.loginPanel.getUsernameField().getText();
-    String loginPassword = new String(this.loginPanel.getPasswordField().getPassword());
-    this.loginRememberPassword = this.loginPanel.getRememberPasswordCheckBox().isSelected();
-
-    Object source = event.getSource();
-    if (source == LauncherFrame.this.loginPanel.getOptionsButton()) {
-      OptionsDialog optionsDialog = new OptionsDialog(LauncherFrame.instance);
-      optionsDialog.setVisible(true);
-    }
-    if (source == LauncherFrame.this.loginPanel.getLoginButton()) {
-      if (!LauncherConfig.instance.getUsingBeta() && !LauncherConfig.instance.getUsingAlpha()
-          && !LauncherConfig.instance.getUsingInfdev()) {
-        JOptionPane.showMessageDialog(this,
-            "Can't launch the game without selecting a version!", "Error",
-            JOptionPane.ERROR_MESSAGE);
-      }
-
-      try {
-        InetAddress address = InetAddress.getByName("minecraft.net");
-        if (address != null) {
-          boolean credentialsEmpty = loginUsername.isEmpty() || loginPassword.isEmpty();
-          boolean credentialsChanged = !LauncherConfig.instance.getUsername().equals(loginUsername)
-              || !LauncherConfig.instance.getPassword().equals(loginPassword);
-          if (!LauncherFrame.sessionExpired || credentialsChanged || credentialsEmpty) {
-            this.loginWithYggdrasil(loginUsername, loginPassword,
-                LauncherConfig.instance.getClientToken());
-          }
-          this.loginWithSession();
-        }
-        return;
-      } catch (IOException uhe) {
-        this.panel.showNoNetwork("Can't connect to minecraft.net");
-        return;
-      }
-    }
-
-    if (source == LauncherFrame.this.offlinePanel.getPlayOfflineButton()) {
-      this.launchMinecraft();
-    }
-    if (source == LauncherFrame.this.offlinePanel.getTryAgainButton()) {
-      this.panel.removeAll();
-
-      this.panel.add(this.loginPanel, SwingConstants.CENTER);
-
-      this.panel.revalidate();
-      this.panel.repaint();
-    }
-  }
-
   private void loginWithYggdrasil(String username, String password, String token) {
     JSONObject result = YggdrasilHelper.authenticate(username, password, token, true);
     if (result.has("error")) {
-      LauncherFrame.this.panel.showError("Login failed");
+      LauncherFrame.this.panel.showError(this.errorLabelFailedText);
       return;
     }
 
@@ -197,7 +165,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
     LauncherConfig.instance.setAccessToken(accessToken);
     LauncherConfig.instance.setProfileId(profileId);
     LauncherConfig.instance.setProfileName(profileName);
-    LauncherConfig.instance.save();
+    LauncherConfig.instance.saveConfig();
     this.loginWithSession();
   }
 
@@ -243,5 +211,70 @@ public class LauncherFrame extends JFrame implements ActionListener {
     this.panel = null;
 
     this.setTitle("Minecraft");
+  }
+
+  @Override
+  public void dispose() {
+    super.dispose();
+    
+    LauncherFrame.main(null);
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent event) {
+    String loginUsername = this.loginPanel.getUsernameField().getText();
+    String loginPassword = new String(this.loginPanel.getPasswordField().getPassword());
+    this.loginRememberPassword = this.loginPanel.getRememberPasswordCheckBox().isSelected();
+
+    Object source = event.getSource();
+    if (source == LauncherFrame.this.loginPanel.getOptionsButton()) {
+      OptionsDialog optionsDialog = new OptionsDialog(this.optionsTitleText,
+          LauncherFrame.instance);
+      optionsDialog.setVisible(true);
+    }
+    if (source == LauncherFrame.this.loginPanel.getLoginButton()) {
+      if (!LauncherConfig.instance.getUsingBeta() && !LauncherConfig.instance.getUsingAlpha()
+          && !LauncherConfig.instance.getUsingInfdev()) {
+        JOptionPane.showMessageDialog(this, this.optionPaneErrorNoVersionText,
+            this.optionPaneTitleErrorText, JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+
+      try {
+        /*
+        if (this.loginPanel.isOutdated()) {
+          this.panel.showError(this.errorLabelOutdatedText);
+          return;
+        }
+        */
+        InetAddress address = InetAddress.getByName("minecraft.net");
+        if (address != null) {
+          boolean credentialsEmpty = loginUsername.isEmpty() || loginPassword.isEmpty();
+          boolean credentialsChanged = !LauncherConfig.instance.getUsername().equals(loginUsername)
+              || !LauncherConfig.instance.getPassword().equals(loginPassword);
+          if (!LauncherFrame.sessionExpired || credentialsChanged || credentialsEmpty) {
+            this.loginWithYggdrasil(loginUsername, loginPassword,
+                LauncherConfig.instance.getClientToken());
+          }
+          this.loginWithSession();
+        }
+        return;
+      } catch (IOException uhe) {
+        this.panel.showNoNetwork(this.errorLabelOfflineText);
+        return;
+      }
+    }
+
+    if (source == LauncherFrame.this.offlinePanel.getPlayOfflineButton()) {
+      this.launchMinecraft();
+    }
+    if (source == LauncherFrame.this.offlinePanel.getTryAgainButton()) {
+      this.panel.removeAll();
+
+      this.panel.add(this.loginPanel, SwingConstants.CENTER);
+
+      this.panel.revalidate();
+      this.panel.repaint();
+    }
   }
 }
