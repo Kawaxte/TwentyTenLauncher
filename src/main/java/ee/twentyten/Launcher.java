@@ -6,7 +6,6 @@ import ee.twentyten.util.RuntimeHelper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 public class Launcher {
 
@@ -31,17 +30,9 @@ public class Launcher {
           System.exit(process.exitValue());
         }
       } catch (IOException ioe) {
-        JOptionPane.showMessageDialog(null,
-            String.format("An error occurred while starting the process:%n%s", ioe.getMessage()),
-            "Error", JOptionPane.ERROR_MESSAGE);
-
         LoggerHelper.logError("Failed to start the process", ioe, true);
       } catch (InterruptedException ie) {
-        JOptionPane.showMessageDialog(null,
-            String.format("An error occurred while waiting for the process to terminate:%n%s",
-                ie.getMessage()), "Error", JOptionPane.ERROR_MESSAGE);
-
-        LoggerHelper.logError("Failed to wait for process to terminate", ie, true);
+        LoggerHelper.logError("Failed to terminate the process", ie, true);
       }
     } else {
       LauncherFrame.main(args);
