@@ -16,6 +16,7 @@ public final class OptionsHelper {
   private static final Map<String, List<String>> IDS_TO_PORTS;
   private static final Map<String, List<String>> TYPES_TO_IDS;
   private static final String VERSIONS_JSON_URL;
+  public static Map<String, String> languages;
   public static Map<String, String> versionIds;
   public static Map<String, String> formattedVersionIds;
   public static String[] versionTypes;
