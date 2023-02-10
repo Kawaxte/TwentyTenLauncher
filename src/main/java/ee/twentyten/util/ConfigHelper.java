@@ -19,6 +19,7 @@ public final class ConfigHelper {
   private static final boolean DEFAULT_ALPHA_VERSION;
   private static final boolean DEFAULT_INFDEV_VERSION;
   private static final String DEFAULT_VERSION_ID;
+  private static final String DEFAULT_LANGUAGE;
 
   static {
     DEFAULT_CLIENT_TOKEN = getClientToken();
@@ -30,6 +31,7 @@ public final class ConfigHelper {
     DEFAULT_ALPHA_VERSION = false;
     DEFAULT_INFDEV_VERSION = false;
     DEFAULT_VERSION_ID = "b1.1_02";
+    DEFAULT_LANGUAGE = "en";
   }
 
   private ConfigHelper() {
@@ -69,6 +71,7 @@ public final class ConfigHelper {
     LauncherConfig.instance.setUsingAlpha(DEFAULT_ALPHA_VERSION);
     LauncherConfig.instance.setUsingInfdev(DEFAULT_INFDEV_VERSION);
     LauncherConfig.instance.setSelectedVersion(DEFAULT_VERSION_ID);
-    LauncherConfig.instance.save();
+    LauncherConfig.instance.setSelectedLanguage(DEFAULT_LANGUAGE);
+    LauncherConfig.instance.saveConfig();
   }
 }
