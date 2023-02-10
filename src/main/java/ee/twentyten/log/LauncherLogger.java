@@ -23,8 +23,8 @@ public class LauncherLogger {
   private final String javaVmVersion;
   private final String osVersion;
   private final String osArch;
-  private final String cpuId;
-  private final String gpuId;
+  private String cpuId;
+  private String gpuId;
 
   {
     this.javaRuntimeName = System.getProperty("java.runtime.name");
@@ -65,57 +65,58 @@ public class LauncherLogger {
   private void getHardwareId() {
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
+
+    String processorIdKey = "ee.twentyten.hw.cpu.id";
+    String graphicsIdKey = "ee.twentyten.hw.gpu.id";
+    String processorCommand;
+    String graphicsCommand;
+
+    switch (platform) {
+      case MACOSX:
+        processorCommand = "sysctl -n machdep.cpu.brand_string";
+        graphicsCommand = "system_profiler SPDisplaysDataType | grep -i chipset";
+        break;
+      case LINUX:
+        processorCommand = "lscpu | grep -i name";
+        graphicsCommand = "lspci | grep -i vga";
+        break;
+      case WINDOWS:
+        processorCommand = "wmic cpu get name";
+        graphicsCommand = "wmic path win32_VideoController get name";
+        break;
+      default:
+        throw new UnsupportedOperationException(String.valueOf(platform));
+    }
+
     try {
-      String processor;
-      String graphics;
-
-      Process process;
-      switch (platform) {
-        case MACOSX:
-          process = RuntimeHelper.execute("sysctl -n machdep.cpu.brand_string");
-          processor = RuntimeHelper.getProcessOutput(process);
-          Objects.requireNonNull(processor, "processor == null!");
-          processor = processor.trim();
-          System.setProperty("ee.twentyten.hw.cpu.id", processor);
-
-          process = RuntimeHelper.execute("system_profiler SPDisplaysDataType | grep -i chipset");
-          graphics = RuntimeHelper.getProcessOutput(process);
-          Objects.requireNonNull(graphics, "graphics == null!");
-          graphics = graphics.substring(graphics.indexOf(":") + 1).trim();
-          System.setProperty("ee.twentyten.hw.gpu.id", graphics);
-          break;
-        case LINUX:
-          process = RuntimeHelper.execute("lscpu | grep -i name");
-          processor = RuntimeHelper.getProcessOutput(process);
-          Objects.requireNonNull(processor, "processor == null!");
-          processor = processor.substring(processor.indexOf(":") + 1).trim();
-          System.setProperty("ee.twentyten.hw.cpu.id", processor);
-
-          process = RuntimeHelper.execute("lspci | grep -i vga");
-          graphics = RuntimeHelper.getProcessOutput(process);
-          Objects.requireNonNull(graphics, "graphics == null!");
-          graphics = graphics.substring(graphics.indexOf(":") + 1).trim();
-          System.setProperty("ee.twentyten.hw.gpu.id", graphics);
-          break;
-        case WINDOWS:
-          process = RuntimeHelper.execute("wmic cpu get name");
-          processor = RuntimeHelper.getProcessOutput(process);
-          Objects.requireNonNull(processor, "processor == null!");
-          processor = processor.substring(processor.indexOf(System.lineSeparator()) + 1).trim();
-          System.setProperty("ee.twentyten.hw.cpu.id", processor);
-
-          process = RuntimeHelper.execute("wmic path win32_VideoController get name");
-          graphics = RuntimeHelper.getProcessOutput(process);
-          Objects.requireNonNull(graphics, "graphics == null!");
-          graphics = graphics.substring(graphics.indexOf(System.lineSeparator()) + 1).trim();
-          System.setProperty("ee.twentyten.hw.gpu.id", graphics);
-          break;
-        default:
-          throw new UnsupportedOperationException(String.valueOf(platform));
-      }
+      this.cpuId = getHardwareId(platform, processorCommand, processorIdKey);
+      this.gpuId = getHardwareId(platform, graphicsCommand, graphicsIdKey);
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
+  }
+
+  private String getHardwareId(EPlatform platform, String command, String key) throws IOException {
+    Process process = RuntimeHelper.execute(command);
+
+    String result = RuntimeHelper.getProcessOutput(process);
+    Objects.requireNonNull(result, "result == null!");
+
+    switch (platform) {
+      case MACOSX:
+      case LINUX:
+        result = result.substring(result.indexOf(":") + 1);
+        break;
+      case WINDOWS:
+        result = result.substring(result.indexOf("\r\n") + 2);
+        break;
+      default:
+        throw new UnsupportedOperationException(String.valueOf(platform));
+    }
+    result = result.trim();
+
+    System.setProperty(key, result);
+    return result;
   }
 
   private boolean isSystemMessageWritten(File f) {
@@ -130,6 +131,24 @@ public class LauncherLogger {
       ioe.printStackTrace();
     }
     return true;
+  }
+
+  private void writeSystemMessage(FileWriter fw) throws IOException {
+    String systemMessage = "[SYSTEM] %s: %s%n";
+    String[] systemMessages = {
+        String.format(systemMessage, "ee.twentyten.version", LauncherFrame.version),
+        String.format(systemMessage, "ee.twentyten.hw.cpu.id", this.cpuId),
+        String.format(systemMessage, "ee.twentyten.hw.gpu.id", this.gpuId),
+        String.format(systemMessage, "os.name", EPlatform.OS_NAME),
+        String.format(systemMessage, "os.version", this.osVersion),
+        String.format(systemMessage, "os.arch", this.osArch),
+        String.format(systemMessage, "java.runtime.name", this.javaRuntimeName),
+        String.format(systemMessage, "java.runtime.version", this.javaRuntimeVersion),
+        String.format(systemMessage, "java.vm.name", this.javaVmName),
+        String.format(systemMessage, "java.vm.version", this.javaVmVersion)};
+    for (String line : systemMessages) {
+      fw.write(line);
+    }
   }
 
   public void writeLog(String message) {
@@ -148,7 +167,7 @@ public class LauncherLogger {
 
     try (FileWriter fw = new FileWriter(logFile, true)) {
       if (this.isSystemMessageWritten(logFile)) {
-        writeSystemMessage(fw);
+        this.writeSystemMessage(fw);
       }
       fw.write(String.format("%s%n", message));
     } catch (IOException ioe) {
@@ -185,24 +204,6 @@ public class LauncherLogger {
       }
     } catch (IOException ioe) {
       ioe.printStackTrace();
-    }
-  }
-
-  private void writeSystemMessage(FileWriter fw) throws IOException {
-    String systemMessage = "[SYSTEM] %s: %s%n";
-    String[] systemMessages = {
-        String.format(systemMessage, "ee.twentyten.version", LauncherFrame.version),
-        String.format(systemMessage, "ee.twentyten.hw.cpu.id", this.cpuId),
-        String.format(systemMessage, "ee.twentyten.hw.gpu.id", this.gpuId),
-        String.format(systemMessage, "os.name", EPlatform.OS_NAME),
-        String.format(systemMessage, "os.version", this.osVersion),
-        String.format(systemMessage, "os.arch", this.osArch),
-        String.format(systemMessage, "java.runtime.name", this.javaRuntimeName),
-        String.format(systemMessage, "java.runtime.version", this.javaRuntimeVersion),
-        String.format(systemMessage, "java.vm.name", this.javaVmName),
-        String.format(systemMessage, "java.vm.version", this.javaVmVersion)};
-    for (String line : systemMessages) {
-      fw.write(line);
     }
   }
 }
