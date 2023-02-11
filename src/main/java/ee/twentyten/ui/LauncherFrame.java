@@ -39,7 +39,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
   private static boolean sessionExpired;
 
   static {
-    LauncherHelper.getCurrentVersion(1, 2, 10, 23, true, 1);
+    LauncherHelper.getCurrentVersion(1, 2, 11, 23, true, 1);
     LauncherFrame.version = System.getProperty("ee.twentyten.version");
   }
 
@@ -216,7 +216,7 @@ public class LauncherFrame extends JFrame implements ActionListener {
   @Override
   public void dispose() {
     super.dispose();
-    
+
     LauncherFrame.main(null);
   }
 
