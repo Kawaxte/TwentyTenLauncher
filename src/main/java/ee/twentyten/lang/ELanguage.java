@@ -9,6 +9,7 @@ public enum ELanguage {
   LANGUAGE_ET("Eesti"),
   LANGUAGE_EN("English"),
   LANGUAGE_FR("Français"),
+  LANGUAGE_JP("日本語"),
   LANGUAGE_PL("Polski");
 
   @Setter
