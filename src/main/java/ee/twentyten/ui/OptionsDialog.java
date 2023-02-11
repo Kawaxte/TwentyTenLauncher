@@ -145,7 +145,6 @@ public class OptionsDialog extends JDialog implements ActionListener {
   private void updateSetLanguageList() {
     OptionsHelper.languages = new HashMap<>();
 
-    //it will set the enum constant name as the "languages" id, but the name within the enum constant as the display.
     DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
     for (ELanguage language : ELanguage.values()) {
       String languageName = language.getName();
@@ -210,15 +209,15 @@ public class OptionsDialog extends JDialog implements ActionListener {
       if (selectedVersion != null) {
         LauncherConfig.instance.setSelectedVersion(OptionsHelper.versionIds.get(selectedVersion));
       }
-      if (selectedLanguage != null) {
+      if (selectedLanguage != null && !OptionsHelper.languages.get(selectedLanguage)
+          .equals(LauncherConfig.instance.getSelectedLanguage())) {
         LauncherConfig.instance.setSelectedLanguage(OptionsHelper.languages.get(selectedLanguage));
+        LauncherConfig.instance.saveConfig();
+
+        LauncherFrame.instance.dispose();
       }
 
       LauncherConfig.instance.saveConfig();
-
-      if (selectedLanguage != null) {
-        LauncherFrame.instance.dispose();
-      }
     }
   }
 }
