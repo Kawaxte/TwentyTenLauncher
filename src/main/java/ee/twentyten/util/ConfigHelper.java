@@ -10,35 +10,35 @@ import java.util.UUID;
 
 public final class ConfigHelper {
 
-  private static final String DEFAULT_CLIENT_TOKEN;
-  private static final String DEFAULT_ACCESS_TOKEN;
   private static final String DEFAULT_USERNAME;
   private static final String DEFAULT_PASSWORD;
-  private static final boolean DEFAULT_REMEMBER_PASSWORD;
-  private static final boolean DEFAULT_BETA_VERSION;
-  private static final boolean DEFAULT_ALPHA_VERSION;
-  private static final boolean DEFAULT_INFDEV_VERSION;
-  private static final String DEFAULT_VERSION_ID;
-  private static final String DEFAULT_LANGUAGE;
+  private static final boolean DEFAULT_PASSWORD_SAVED;
+  private static final String DEFAULT_CLIENT_TOKEN;
+  private static final String DEFAULT_ACCESS_TOKEN;
+  private static final boolean DEFAULT_USING_BETA;
+  private static final boolean DEFAULT_USING_ALPHA;
+  private static final boolean DEFAULT_USING_INFDEV;
+  private static final String DEFAULT_SELECTED_VERSION;
+  private static final String DEFAULT_SELECTED_LANGUAGE;
 
   static {
-    DEFAULT_CLIENT_TOKEN = getClientToken();
-    DEFAULT_ACCESS_TOKEN = "";
     DEFAULT_USERNAME = "";
     DEFAULT_PASSWORD = "";
-    DEFAULT_REMEMBER_PASSWORD = false;
-    DEFAULT_BETA_VERSION = true;
-    DEFAULT_ALPHA_VERSION = false;
-    DEFAULT_INFDEV_VERSION = false;
-    DEFAULT_VERSION_ID = "b1.1_02";
-    DEFAULT_LANGUAGE = "en";
+    DEFAULT_PASSWORD_SAVED = false;
+    DEFAULT_CLIENT_TOKEN = ConfigHelper.getClientToken();
+    DEFAULT_ACCESS_TOKEN = "";
+    DEFAULT_USING_BETA = true;
+    DEFAULT_USING_ALPHA = false;
+    DEFAULT_USING_INFDEV = false;
+    DEFAULT_SELECTED_VERSION = "b1.1_02";
+    DEFAULT_SELECTED_LANGUAGE = ConfigHelper.getLanguage();
   }
 
   private ConfigHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static String getClientToken() {
+  private static String getClientToken() {
     File configFile = new File(FileHelper.workingDirectory, "twentyten.properties");
     if (!configFile.exists()) {
       return UUID.randomUUID().toString().replace("-", "");
@@ -61,17 +61,21 @@ public final class ConfigHelper {
     return properties.getProperty("client-token", clientToken);
   }
 
+  private static String getLanguage() {
+    return System.getProperty("user.language");
+  }
+
   public static void initConfig() {
     LauncherConfig.instance.setClientToken(DEFAULT_CLIENT_TOKEN);
     LauncherConfig.instance.setAccessToken(DEFAULT_ACCESS_TOKEN);
     LauncherConfig.instance.setUsername(DEFAULT_USERNAME);
     LauncherConfig.instance.setPassword(DEFAULT_PASSWORD);
-    LauncherConfig.instance.setPasswordSaved(DEFAULT_REMEMBER_PASSWORD);
-    LauncherConfig.instance.setUsingBeta(DEFAULT_BETA_VERSION);
-    LauncherConfig.instance.setUsingAlpha(DEFAULT_ALPHA_VERSION);
-    LauncherConfig.instance.setUsingInfdev(DEFAULT_INFDEV_VERSION);
-    LauncherConfig.instance.setSelectedVersion(DEFAULT_VERSION_ID);
-    LauncherConfig.instance.setSelectedLanguage(DEFAULT_LANGUAGE);
+    LauncherConfig.instance.setPasswordSaved(DEFAULT_PASSWORD_SAVED);
+    LauncherConfig.instance.setUsingBeta(DEFAULT_USING_BETA);
+    LauncherConfig.instance.setUsingAlpha(DEFAULT_USING_ALPHA);
+    LauncherConfig.instance.setUsingInfdev(DEFAULT_USING_INFDEV);
+    LauncherConfig.instance.setSelectedVersion(DEFAULT_SELECTED_VERSION);
+    LauncherConfig.instance.setSelectedLanguage(DEFAULT_SELECTED_LANGUAGE);
     LauncherConfig.instance.saveConfig();
   }
 }
