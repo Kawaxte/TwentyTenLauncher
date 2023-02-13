@@ -83,8 +83,6 @@ public class LauncherLoginPanel extends CustomJPanel {
   public LauncherLoginPanel(
       LayoutManager layout, boolean isDoubleBuffered
   ) {
-
-    /* Call the constructor of the parent class. */
     super(layout, isDoubleBuffered);
 
     /* Specify the layout of the top and bottom panel. */
@@ -114,6 +112,7 @@ public class LauncherLoginPanel extends CustomJPanel {
    * `isOutdated`.
    */
   private String setOutdated(boolean isOutdated) {
+    
     /* Set the outdated status of the object. */
     this.isOutdated = isOutdated;
 
@@ -129,7 +128,7 @@ public class LauncherLoginPanel extends CustomJPanel {
     String outdatedString = String.format(
         "<html><a href='%s'>%s</a></html>",
         this.latestReleaseUrl, this.linkLabelOutdatedText);
-    
+
     return this.isOutdated
         ? outdatedString
         : registerString;
