@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * <p>This class is a utility class and can't be instantiated.
  */
 public final class LoggerHelper {
-  
+
   public static boolean isUsingDebugger;
 
   static {
@@ -160,7 +160,9 @@ public final class LoggerHelper {
       Throwable t,
       boolean isWrittenToFile
   ) {
-    Throwable cause = t.getCause() != null ? t.getCause() : t;
+    Throwable cause = t.getCause() != null
+        ? t.getCause()
+        : t;
     if (isUsingDebugger) {
       Logger logger = LoggerFactory.getLogger(
           LoggerHelper.getCallerClassName());
