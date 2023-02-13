@@ -39,7 +39,7 @@ public class LauncherLanguage {
       /* Check if the input stream is null */
       if (is == null) {
 
-        /* Create a throwable */
+        /* Create a new throwable to log. */
         Throwable t = new Throwable("Failed to return input stream");
 
         /* Log the error */
@@ -48,7 +48,7 @@ public class LauncherLanguage {
       }
 
 
-      /* Create a reader */
+      /* Create a reader for the input stream */
       Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
 
       /* Load the language file */
@@ -56,10 +56,10 @@ public class LauncherLanguage {
     } catch (IOException ioe) {
 
       /* Create a string for the error */
-      String loadError = "Failed to load language file";
+      String errorString = "Failed to load language file";
 
       /* Log the error */
-      LoggerHelper.logError(loadError, ioe, true);
+      LoggerHelper.logError(errorString, ioe, true);
     }
   }
 
@@ -77,7 +77,7 @@ public class LauncherLanguage {
     /* Check if the bundle is null */
     if (LauncherLanguage.resourceBundle == null) {
 
-      /* Create a throwable */
+      /* Create a new throwable to log. */
       Throwable t = new Throwable("Failed to return resource bundle");
 
       /* Log the error */
@@ -91,12 +91,12 @@ public class LauncherLanguage {
     } catch (MissingResourceException mre) {
 
       /* Create a string for the error */
-      String findError = "Failed to find key in bundle";
+      String missingResource = "Failed to find key in bundle";
 
       /* Log the error */
-      LoggerHelper.logError(findError, mre, true);
+      LoggerHelper.logError(missingResource, mre, true);
     }
-    
+
     return key;
   }
 }
