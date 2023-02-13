@@ -134,7 +134,7 @@ public final class FileHelper {
     /* If the directory was not created, log the error and return null. */
     if (!isDirectoryCreated) {
 
-      /* Create a Throwable for the logger. */
+      /* Create a new throwable to log. */
       Throwable t = new Throwable("Failed to create directory");
 
       /* Log the error. */
@@ -187,7 +187,7 @@ public final class FileHelper {
     /* If the directory was not deleted, log the error. */
     if (!isDirectoryDeleted) {
 
-      /* Create a Throwable for the logger. */
+      /* Create a new throwable to log. */
       Throwable t = new Throwable("Failed to delete directory");
 
       /* Log the error. */
