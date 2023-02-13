@@ -51,19 +51,27 @@ public final class LauncherVersionHelper {
       boolean isPreRelease,
       int preReleaseVersion
   ) {
+
+    /* Call the validate methods to ensure that the parameters are valid. */
     LauncherVersionHelper.validateMonth(month);
     LauncherVersionHelper.validateDay(day);
+
+    /* If this is a pre-release version, validate the pre-release version. */
     if (isPreRelease) {
       LauncherVersionHelper.validatePreReleaseVersion(preReleaseVersion);
     }
 
+    /* Format the pre-release string. */
     String preReleaseString = LauncherVersionHelper.formatPreReleaseString(
         isPreRelease, preReleaseVersion);
+
+    /* Format the current version. */
     String currentVersion = String.format(
         "%d.%02d.%02d%02d%s",
         majorVersion, month, day, year, preReleaseString
     );
 
+    /* Set the system property. */
     System.setProperty("ee.twentyten.version", currentVersion);
   }
 
@@ -109,14 +117,18 @@ public final class LauncherVersionHelper {
   private static void validateMonth(
       int month
   ) {
+
+    /* If the month is not between 1 and 12, log the error. */
     if (month < 1 || month > 12) {
+
+      /* Create a new throwable to log. */
       Throwable t = new Throwable(String.format(
           "Invalid month: %d",
           month)
       );
 
-      LoggerHelper.logError(t.getMessage(), t, true
-      );
+      /* Log the error. */
+      LoggerHelper.logError(t.getMessage(), t, true);
     }
   }
 
@@ -128,14 +140,18 @@ public final class LauncherVersionHelper {
   private static void validateDay(
       int day
   ) {
+
+    /* If the day is not between 1 and 31, log the error. */
     if (day < 1 || day > 31) {
+
+      /* Create a new throwable to log. */
       Throwable t = new Throwable(String.format(
           "Invalid day: %d",
           day)
       );
 
-      LoggerHelper.logError(t.getMessage(), t, true
-      );
+      /* Log the error. */
+      LoggerHelper.logError(t.getMessage(), t, true);
     }
   }
 
@@ -147,13 +163,18 @@ public final class LauncherVersionHelper {
   private static void validatePreReleaseVersion(
       int preReleaseVersion
   ) {
+
+    /* If the pre-release version is less than 0, log the error. */
     if (preReleaseVersion < 0) {
+
+      /* Create a new throwable to log. */
       Throwable t = new Throwable(String.format(
           "Invalid pre-release version: %d",
           preReleaseVersion)
       );
 
-      LoggerHelper.logError(t.getMessage(), t, false);
+      /* Log the error. */
+      LoggerHelper.logError(t.getMessage(), t, true);
     }
   }
 
