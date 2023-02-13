@@ -62,10 +62,10 @@ public final class FileHelper {
     } catch (IOException ioe) {
 
       /* Create a string for the error message. */
-      String readError = "Failed to read image file";
+      String errorString = "Failed to read image file";
 
       /* Log the error. */
-      LoggerHelper.logError(readError, ioe, true);
+      LoggerHelper.logError(errorString, ioe, true);
     }
     return Optional.empty();
   }
@@ -102,10 +102,10 @@ public final class FileHelper {
     } catch (IOException ioe) {
 
       /* Create a string for the error message. */
-      String readError = "Failed to read bytes from file";
+      String errorString = "Failed to read bytes from file";
 
       /* Log the error. */
-      LoggerHelper.logError(readError, ioe, true);
+      LoggerHelper.logError(errorString, ioe, true);
     }
     return Optional.empty();
   }
@@ -133,8 +133,11 @@ public final class FileHelper {
 
     /* If the directory was not created, log the error and return null. */
     if (!isDirectoryCreated) {
+
+      /* Create a Throwable for the logger. */
       Throwable t = new Throwable("Failed to create directory");
 
+      /* Log the error. */
       LoggerHelper.logError(t.getMessage(), t, true);
       return null;
     }
@@ -183,8 +186,11 @@ public final class FileHelper {
 
     /* If the directory was not deleted, log the error. */
     if (!isDirectoryDeleted) {
+
+      /* Create a Throwable for the logger. */
       Throwable t = new Throwable("Failed to delete directory");
 
+      /* Log the error. */
       LoggerHelper.logError(t.getMessage(), t, true);
     }
   }
@@ -224,12 +230,12 @@ public final class FileHelper {
     } catch (IOException ioe) {
 
       /* Create a string for the error message. */
-      String downloadError = String.format(
+      String errorString = String.format(
           "%s -> %s",
           url, target.getAbsolutePath());
 
       /* Log the error. */
-      LoggerHelper.logError(downloadError, ioe, true);
+      LoggerHelper.logError(errorString, ioe, true);
     }
   }
 }
