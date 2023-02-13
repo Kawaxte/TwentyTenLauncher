@@ -5,14 +5,6 @@ import java.lang.management.ManagementFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A helper class for logging messages to the console and/or a file.
- *
- * <p>The class provides methods for logging info, warning, and error messages.
- * The log messages can be written to the console and/or a file.
- *
- * <p>This class is a utility class and can't be instantiated.
- */
 public final class LoggerHelper {
 
   public static boolean isUsingDebugger;
