@@ -45,23 +45,37 @@ public final class LauncherHelper {
    * cannot be determined or created.
    */
   public static File getWorkingDirectory() {
+    /* If the working directory has not been mapped to the current platform,
+     * map it. */
     LauncherHelper.mapWorkingDirectoryToPlatform();
 
+    /* Get the name of the current platform. */
     EPlatform platformName = EPlatform.getPlatform();
+
+    /* Get the working directory for the current platform. */
     File workingDirectory = LauncherHelper.workingDirectories.get(platformName);
+
+    /* If the working directory is null, log the error and return null. */
     if (workingDirectory == null) {
-      String notFoundError = "No working directory found";
 
-      LoggerHelper.logError(notFoundError, true);
+      /* Create a string for the error message. */
+      String nullString = "Failed to find working directory";
+
+      /* Log the error. */
+      LoggerHelper.logError(nullString, true);
       return null;
     }
+
+    /* If the working directory does not exist, attempt to create it. */
     if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
-      String creationError = "Failed to create working directory";
 
-      LoggerHelper.logError(creationError, true);
+      /* Create a string for the error message. */
+      String errorString = "Failed to create working directory";
+
+      /* Log the error. */
+      LoggerHelper.logError(errorString, true);
       return null;
     }
-
     return workingDirectory;
   }
 
@@ -70,22 +84,35 @@ public final class LauncherHelper {
    * look and feel to the system look and feel.
    */
   public static void setLookAndFeel() {
+
+    /* Try to set the look and feel to the system look and feel. */
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (UnsupportedLookAndFeelException ulafe) {
+
+      /* If the look and feel is not supported, log the error. */
       LoggerHelper.logError(ulafe.getMessage(), ulafe, true);
     } catch (ClassNotFoundException cnfe) {
-      String notFoundError = "Can't find look and feel class";
 
-      LoggerHelper.logError(notFoundError, cnfe, true);
+      /* Create a string for the error message. */
+      String classNotFound = "Can't find look and feel class";
+
+      /* If the look and feel class is not found, log the error. */
+      LoggerHelper.logError(classNotFound, cnfe, true);
     } catch (InstantiationException ie) {
-      String instantiationError = "Can't instantiate look and feel class";
 
-      LoggerHelper.logError(instantiationError, ie, true);
+      /* Create a string for the error message. */
+      String instantiation = "Can't instantiate look and feel class";
+
+      /* If the look and feel class can't be instantiated, log the error. */
+      LoggerHelper.logError(instantiation, ie, true);
     } catch (IllegalAccessException iae) {
-      String accessError = "Can't access look and feel class";
 
-      LoggerHelper.logError(accessError, iae, true);
+      /* Create a string for the error message. */
+      String illegalAccess = "Can't access look and feel class";
+
+      /* If the look and feel class can't be accessed, log the error. */
+      LoggerHelper.logError(illegalAccess, iae, true);
     }
   }
 
@@ -105,6 +132,9 @@ public final class LauncherHelper {
    * <code>userHome/.twentyten</code>
    */
   private static void mapWorkingDirectoryToPlatform() {
+
+    /* If the working directory has already been mapped to the current
+     * platform, return. */
     LauncherHelper.workingDirectories.put(
         EPlatform.MACOSX,
         new File(String.format(
@@ -112,12 +142,18 @@ public final class LauncherHelper {
             userHome), "twentyten")
     );
 
+    /* If the working directory has already been mapped to the current
+     * platform, return. */
     LauncherHelper.workingDirectories.put(
         EPlatform.LINUX,
         new File(userHome, ".twentyten")
     );
 
+    /* Create a file for the appData directory. */
     File appDataFile = new File(appData, ".twentyten");
+
+    /* If the working directory has already been mapped to the current
+     * platform, return. */
     LauncherHelper.workingDirectories.put(
         EPlatform.WINDOWS,
         appData != null
