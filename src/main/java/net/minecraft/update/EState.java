@@ -1,18 +1,26 @@
 package net.minecraft.update;
 
-import ee.twentyten.util.LanguageHelper;
+import ee.twentyten.lang.LauncherLanguage;
 import lombok.Getter;
 import lombok.Setter;
 
 public enum EState {
-  INIT_STATE(LanguageHelper.getString("es.string.initState.text")),
-  CACHE_STATE(LanguageHelper.getString("es.string.cacheState.text")),
-  DETERMINE_STATE(LanguageHelper.getString("es.string.determineState.text")),
-  RETRIEVE_STATE(LanguageHelper.getString("es.string.retrieveState.text")),
-  DOWNLOAD_STATE(LanguageHelper.getString("es.string.downloadState.text")),
-  MOVE_STATE(LanguageHelper.getString("es.string.moveState.text")),
-  CLASSPATH_STATE(LanguageHelper.getString("es.string.classpathState.text")),
-  DONE_STATE(LanguageHelper.getString("es.string.doneState.text"));
+  INIT_STATE(LauncherLanguage
+      .getString("es.state.initState")),
+  CACHE_STATE(LauncherLanguage
+      .getString("es.state.cacheState")),
+  DETERMINE_STATE(LauncherLanguage
+      .getString("es.state.determineState")),
+  RETRIEVE_STATE(LauncherLanguage
+      .getString("es.state.retrieveState")),
+  DOWNLOAD_STATE(LauncherLanguage
+      .getString("es.state.downloadState")),
+  MOVE_STATE(LauncherLanguage
+      .getString("es.state.moveState")),
+  CLASSPATH_STATE(LauncherLanguage
+      .getString("es.state.classpathState")),
+  DONE_STATE(LauncherLanguage
+      .getString("es.state.doneState"));
 
   @Getter
   @Setter
