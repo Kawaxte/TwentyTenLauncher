@@ -13,48 +13,78 @@ import org.json.JSONObject;
 
 public final class OptionsHelper {
 
+  public static final String VERSIONS_JSON_URL;
   private static final Map<String, List<String>> IDS_TO_PORTS;
   private static final Map<String, List<String>> TYPES_TO_IDS;
-  private static final String VERSIONS_JSON_URL;
   public static Map<String, String> languages;
   public static Map<String, String> versionIds;
   public static Map<String, String> formattedVersionIds;
   public static String[] versionTypes;
 
   static {
+    VERSIONS_JSON_URL = "https://raw.githubusercontent.com/"
+        + "sojlabjoi/"
+        + "AlphacraftLauncher/"
+        + "master/"
+        + "versions.json";
+
     TYPES_TO_IDS = new HashMap<>();
     IDS_TO_PORTS = new HashMap<>();
 
-    VERSIONS_JSON_URL = "https://raw.githubusercontent.com/sojlabjoi/AlphacraftLauncher/master/versions.json";
-
-    versionTypes = new String[]{"beta", "alpha", "infdev"};
-    formattedVersionIds = new HashMap<>();
-    formattedVersionIds.put(versionTypes[0], "Beta %s");
-    formattedVersionIds.put(versionTypes[1], "Alpha v%s");
-    formattedVersionIds.put(versionTypes[2], "Infdev (%s)");
+    OptionsHelper.versionTypes = new String[]
+        {
+            "beta", "alpha", "infdev"
+        };
+    OptionsHelper.formattedVersionIds = new HashMap<>();
+    OptionsHelper.formattedVersionIds.put(
+        OptionsHelper.versionTypes[0], "Beta %s"
+    );
+    OptionsHelper.formattedVersionIds.put(
+        OptionsHelper.versionTypes[1], "Alpha v%s"
+    );
+    OptionsHelper.formattedVersionIds.put(
+        OptionsHelper.versionTypes[2], "Infdev (%s)"
+    );
   }
 
   private OptionsHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static List<String> getVersionIds(String type) {
+  public static List<String> getVersionIds(
+      String type
+  ) {
+
+    /* Get the list of ids from the map. */
     List<String> ids = TYPES_TO_IDS.get(type);
     if (ids == null) {
-      File versionsDirectory = FileHelper.createDirectory(FileHelper.workingDirectory, "versions");
-      File versionsFile = new File(versionsDirectory, "versions.json");
 
-      JSONObject data = FileHelper.readJsonFile(versionsFile);
+      /* Create the versions directory and the versions file. */
+      File versionsDirectory = FileHelper.createDirectory(
+          FileHelper.workingDirectory, "versions"
+      );
+      File versionsFile = new File(
+          versionsDirectory, "versions.json"
+      );
+
+      /* Read the versions file and return an Optional containing the JSON data. */
+      JSONObject data = FileHelper.readJsonFile(versionsFile).get();
       Objects.requireNonNull(data, "data == null!");
 
+      /* Get the array of versions by the type. */
       JSONArray array = data.getJSONArray(type);
       if (array == null) {
         return Collections.emptyList();
       }
 
+      /* Create a new list of ids. */
       ids = new ArrayList<>();
-      for (int i = 0; i < array.length(); i++) {
-        JSONObject obj = array.getJSONObject(i);
+
+      /* Loop through the array of objects and add each of the types'
+       * ids to the list of ids. */
+      for (int objIndex = 0; objIndex < array.length();
+          objIndex++) {
+        JSONObject obj = array.getJSONObject(objIndex);
         if (obj.has("id")) {
           ids.add(obj.getString("id"));
         }
@@ -64,16 +94,33 @@ public final class OptionsHelper {
     return ids;
   }
 
-  public static String getPortsFromIds(String id) throws IOException {
-    File versionsDirectory = new File(FileHelper.workingDirectory, "versions");
-    File versionsFile = new File(versionsDirectory, "versions.json");
+  public static String getPortsFromIds(
+      String id
+  ) throws IOException {
 
-    JSONObject data = FileHelper.readJsonFile(versionsFile);
+    /* Create the versions directory and the versions file. */
+    File versionsDirectory = new File(
+        FileHelper.workingDirectory, "versions"
+    );
+    File versionsFile = new File(
+        versionsDirectory, "versions.json"
+    );
+
+    /* Read the versions file and return an Optional containing the JSON data. */
+    JSONObject data = FileHelper.readJsonFile(versionsFile).get();
     Objects.requireNonNull(data, "data == null!");
-    for (String type : versionTypes) {
+
+    /* Loop through the version types. */
+    for (String type : OptionsHelper.versionTypes) {
+
+      /* Get the array of versions by the type. */
       JSONArray array = data.getJSONArray(type);
-      for (int i = 0; i < array.length(); i++) {
-        JSONObject version = array.getJSONObject(i);
+
+      /* Loop through the array of versions and map each of the types'
+       * ids to their respective ports.*/
+      for (int versionIndex = 0; versionIndex < array.length();
+          versionIndex++) {
+        JSONObject version = array.getJSONObject(versionIndex);
 
         String versionId = version.getString("id");
         String versionPort = version.getString("port");
@@ -81,25 +128,5 @@ public final class OptionsHelper {
       }
     }
     return String.valueOf(IDS_TO_PORTS.get(id));
-  }
-
-  public static void downloadVersionsFile() throws IOException {
-    File versionsDirectory = new File(FileHelper.workingDirectory, "versions");
-    if (!versionsDirectory.exists()) {
-      boolean created = versionsDirectory.mkdirs();
-      if (!created) {
-        Throwable t = new Throwable("Failed to create versions directory");
-
-        LoggerHelper.logError(t.getMessage(), t, true);
-      }
-    }
-
-    File versionsFile = new File(versionsDirectory, "versions.json");
-    if (!versionsFile.exists()) {
-      long lastModified = System.currentTimeMillis() - versionsFile.lastModified();
-      if (lastModified > FileHelper.CACHE_EXPIRATION_TIME) {
-        FileHelper.downloadFile(VERSIONS_JSON_URL, versionsFile);
-      }
-    }
   }
 }
