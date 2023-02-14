@@ -39,26 +39,33 @@ public final class ConfigHelper {
   }
 
   private static String getClientToken() {
-    File configFile = new File(FileHelper.workingDirectory, "twentyten.properties");
-    if (!configFile.exists()) {
-      return UUID.randomUUID().toString().replace("-", "");
-    }
+    
+    /* Get the config file from the working directory. */
+    File configFile = new File(
+        FileHelper.workingDirectory, "twentyten.properties"
+    );
 
+    /* Create a new instance of the properties class. */
     CustomLinkedProperties properties = new CustomLinkedProperties();
+
+    /* Read the file using an unbuffered stream because we don't want to
+     * buffer the entire file in memory. */
     try (InputStream is = Files.newInputStream(configFile.toPath())) {
+
+      /* Load the properties from the file. */
       properties.load(is);
-    } catch (IOException ioe1) {
-      try (InputStream is = ConfigHelper.class.getResourceAsStream("twentyten.properties")) {
-        properties.load(is);
-      } catch (IOException ioe2) {
-        LoggerHelper.logError(
-            String.format("Failed to load config file from \"%s\"", configFile.getAbsolutePath()),
-            ioe2, true);
-      }
+    } catch (IOException ioe) {
+      LoggerHelper.logError(
+          "Failed to load config file",
+          ioe, true
+      );
     }
 
-    String clientToken = UUID.randomUUID().toString().replace("-", "");
-    return properties.getProperty("client-token", clientToken);
+    /* If the client token is not set, generate a new one. */
+    return properties.getProperty(
+        "client-token", UUID.randomUUID()
+            .toString()
+            .replace("-", ""));
   }
 
   private static String getLanguage() {
