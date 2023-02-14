@@ -1,6 +1,8 @@
 package ee.twentyten.util;
 
-import ee.twentyten.request.HttpsConnectionImpl;
+import ee.twentyten.request.EMethod;
+import ee.twentyten.request.HttpsConnectionRequestImpl;
+import ee.twentyten.request.JsonConnectionRequestImpl;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -11,60 +13,109 @@ import org.json.JSONObject;
 
 public final class RequestHelper {
 
-  private static final HttpsConnectionImpl CONNECTION_IMPL;
-  public static Map<String, String> xWwwFormHeader;
+  private static final HttpsConnectionRequestImpl HTTPS_CONNECTION_REQUEST;
+  private static final JsonConnectionRequestImpl JSON_CONNECTION_REQUEST;
+  public static Map<String, String> xWwwFormUrlencodedHeader;
   public static Map<String, String> jsonHeader;
 
   static {
-    xWwwFormHeader = Collections.unmodifiableMap(new HashMap<String, String>() {{
-      put("Content-Type", "application/x-www-form-urlencoded");
-    }});
-    jsonHeader = Collections.unmodifiableMap(new HashMap<String, String>() {{
-      put("Content-Type", "application/json");
-    }});
+    HTTPS_CONNECTION_REQUEST = new HttpsConnectionRequestImpl();
+    JSON_CONNECTION_REQUEST = new JsonConnectionRequestImpl();
 
-    CONNECTION_IMPL = new HttpsConnectionImpl();
+    xWwwFormUrlencodedHeader = Collections.unmodifiableMap(
+        new HashMap<String, String>() {
+          {
+            put("Content-Type", "application/x-www-form-urlencoded");
+            put("Accept", "application/x-www-form-urlencoded");
+          }
+        });
+    jsonHeader = Collections.unmodifiableMap(
+        new HashMap<String, String>() {
+          {
+            put("Content-Type", "application/json");
+            put("Accept", "application/json");
+          }
+        });
   }
 
   private RequestHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static HttpsURLConnection performRequest(String url, String method,
-      Map<String, String> headers, boolean cached) {
+  public static HttpsURLConnection performHttpsRequest(
+      String url,
+      EMethod method,
+      Map<String, String> headers
+  ) {
     try {
-      return CONNECTION_IMPL.performRequest(new URL(url), method, headers, cached);
+      URL httpsUrl = new URL(url);
+      return HTTPS_CONNECTION_REQUEST.performRequest(
+          httpsUrl, method, headers
+      );
     } catch (MalformedURLException murle) {
-      LoggerHelper.logError("Failed to create URL", murle, true);
+      LoggerHelper.logError(
+          "Failed to perform Https request",
+          murle, true
+      );
     }
     return null;
   }
 
-  public static HttpsURLConnection performRequest(String url, String method,
-      Map<String, String> headers, boolean cached, String data) {
+  public static HttpsURLConnection performHttpsRequest(
+      String url,
+      EMethod method,
+      Map<String, String> headers,
+      Object data
+  ) {
     try {
-      return CONNECTION_IMPL.performRequest(new URL(url), method, headers, cached, data);
+      URL httpsUrl = new URL(url);
+      return HTTPS_CONNECTION_REQUEST.performRequest(
+          httpsUrl, method, headers, data
+      );
     } catch (MalformedURLException murle) {
-      LoggerHelper.logError("Failed to perform Https request", murle, true);
+      LoggerHelper.logError(
+          "Failed to perform Https request",
+          murle, true
+      );
     }
     return null;
   }
 
-  public static void performJsonRequest(String url, String method, Map<String, String> headers,
-      boolean cached) {
+  public static JSONObject performJsonRequest(
+      String url,
+      EMethod method,
+      Map<String, String> headers
+  ) {
     try {
-      CONNECTION_IMPL.performJsonRequest(new URL(url), method, headers, cached);
+      URL jsonUrl = new URL(url);
+      return JSON_CONNECTION_REQUEST.performRequest(
+          jsonUrl, method, headers
+      );
     } catch (MalformedURLException murle) {
-      LoggerHelper.logError("Failed to perform JSON request", murle, true);
+      LoggerHelper.logError(
+          "Failed to perform JSON request",
+          murle, true
+      );
     }
+    return null;
   }
 
-  public static JSONObject performJsonRequest(String url, String method,
-      Map<String, String> headers, boolean cached, JSONObject data) {
+  public static JSONObject performJsonRequest(
+      String url,
+      EMethod method,
+      Map<String, String> headers,
+      Object data
+  ) {
     try {
-      return CONNECTION_IMPL.performJsonRequest(new URL(url), method, headers, cached, data);
+      URL jsonUrl = new URL(url);
+      return JSON_CONNECTION_REQUEST.performRequest(
+          jsonUrl, method, headers, data
+      );
     } catch (MalformedURLException murle) {
-      LoggerHelper.logError("Failed to perform JSON request", murle, true);
+      LoggerHelper.logError(
+          "Failed to perform JSON request",
+          murle, true
+      );
     }
     return null;
   }
