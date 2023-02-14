@@ -155,12 +155,11 @@ public class LauncherPanel extends JPanel implements ActionListener {
       for (int gridIndex = 0; gridIndex < (gridWidth * gridHeight);
           gridIndex++) {
 
-        /* Modulus and division are used to get the x and y coordinates of
-         * the grid */
+        /* Calculate the x and y coordinates of the grid cell */
         int gridX = imageWidth * (gridIndex % gridWidth);
         int gridY = imageHeight * (gridIndex / gridWidth);
 
-        /* Draw the background image */
+        /* Draw the image to the graphics object */
         g2d.drawImage(
             this.bgImage,
             gridX, gridY,
