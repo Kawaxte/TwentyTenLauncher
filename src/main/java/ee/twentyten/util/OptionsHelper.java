@@ -69,7 +69,9 @@ public final class OptionsHelper {
 
       /* Read the versions file and return an Optional containing the JSON data. */
       JSONObject data = FileHelper.readJsonFile(versionsFile).get();
-      Objects.requireNonNull(data, "data == null!");
+      Objects.requireNonNull(
+          data, "data == null!"
+      );
 
       /* Get the array of versions by the type. */
       JSONArray array = data.getJSONArray(type);
@@ -108,7 +110,9 @@ public final class OptionsHelper {
 
     /* Read the versions file and return an Optional containing the JSON data. */
     JSONObject data = FileHelper.readJsonFile(versionsFile).get();
-    Objects.requireNonNull(data, "data == null!");
+    Objects.requireNonNull(
+        data, "data == null!"
+    );
 
     /* Loop through the version types. */
     for (String type : OptionsHelper.versionTypes) {
