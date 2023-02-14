@@ -38,8 +38,8 @@ public final class LauncherHelper {
         platformName
     );
 
-    /* 'NullPointerException' will be thrown here because the working
-     * directory should never be null as it is needed for the launcher. */
+    /* 'NullPointerException' will be thrown here when the specified key is
+      not found in the map. */
     Objects.requireNonNull(
         workingDirectory,
         "workingDirectory == null!"
