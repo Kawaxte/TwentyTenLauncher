@@ -17,28 +17,18 @@ public enum ELanguage {
   private final String name;
 
   ELanguage(String name) {
-
-    /* Set the name */
     this.name = name;
   }
 
-  /**
-   * Gets the language of the application based on the input string.
-   *
-   * @param lang the string representing the language code
-   */
-  public static void getLanguage(String lang) {
+  public static void getLanguage(
+      String lang
+  ) {
 
-    /* Loop through all the languages */
+    /* Loop through all the languages and check if the language code is the
+     * same as the one passed in. */
     for (ELanguage language : values()) {
-
-      /* Get the language code from the enum */
       String languageCode = language.name().substring(9);
-
-      /* Check if the language code is valid */
       if (languageCode.equalsIgnoreCase(lang)) {
-
-        /* Set the language */
         return;
       }
     }
