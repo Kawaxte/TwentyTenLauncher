@@ -164,7 +164,9 @@ public final class RuntimeHelper {
       EPlatform platform,
       File src
   ) throws IOException {
-    Objects.requireNonNull(platform, "platform == null!");
+    Objects.requireNonNull(
+        platform, "platform == null!"
+    );
 
     switch (platform) {
       case MACOSX:
