@@ -44,12 +44,15 @@ public class OptionsPanel extends JPanel {
   public OptionsPanel() {
     super(new BorderLayout(), true);
 
+    int orientation = JTabbedPane.TOP;
+
     Border border = BorderFactory.createEmptyBorder(
         8, 8, 8, 8);
     this.setBorder(border);
 
     BorderLayout borderLayout = new BorderLayout(
         0, 8);
+    FlowLayout flowLayout = new FlowLayout(FlowLayout.CENTER);
     this.optionsVersionPanel = new OptionsVersionPanel(
         borderLayout, true
     );
@@ -64,35 +67,35 @@ public class OptionsPanel extends JPanel {
         this.languageTabText, this.optionsLanguagePanel
     );
 
-    int orientation = JTabbedPane.TOP;
     this.createTopTabbedPane(orientation);
-
-    FlowLayout flowLayout = new FlowLayout(FlowLayout.CENTER);
     this.createBottomPanel(flowLayout);
   }
 
-  private void createTopTabbedPane(int orientation) {
+  private void createTopTabbedPane(
+      int orientation
+  ) {
     this.tabbedPane = new JTabbedPane(orientation);
     this.add(this.tabbedPane, BorderLayout.NORTH);
   }
 
-  private void createBottomPanel(LayoutManager layout) {
+  private void createBottomPanel(
+      LayoutManager layout
+  ) {
+    int tabbedPaneWidth = this.tabbedPane.getPreferredSize().width;
+
     JPanel bottomPanel = new JPanel(
         layout, true
     );
     this.add(bottomPanel, BorderLayout.SOUTH);
 
     this.cancelButton = new JButton(this.cancelButtonText);
-    bottomPanel.add(this.cancelButton);
-
-    int tabbedPaneWidth = this.tabbedPane.getPreferredSize().width;
-    bottomPanel.add(Box.createHorizontalStrut(tabbedPaneWidth >> 2));
-
     this.openGameDirectoryButton = new JButton(
         this.openGameDirectoryButtonText);
-    bottomPanel.add(this.openGameDirectoryButton);
-
     this.saveOptionsButton = new JButton(this.saveOptionsButtonText);
+
+    bottomPanel.add(this.cancelButton);
+    bottomPanel.add(Box.createHorizontalStrut(tabbedPaneWidth >> 2));
+    bottomPanel.add(this.openGameDirectoryButton);
     bottomPanel.add(this.saveOptionsButton);
   }
 }
