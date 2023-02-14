@@ -53,9 +53,6 @@ public class OptionsVersionPanel extends JPanel {
   private void createMiddlePanel(
       LayoutManager layout
   ) {
-    JPanel middlePanel = new JPanel(layout, true);
-    this.add(middlePanel, SwingConstants.CENTER);
-
     String showBetaVersionsCheckboxText = String.format(
         this.showVersionsCheckboxText,
         "Beta", "2010-12-20 -> 2011-01-21"
@@ -68,6 +65,9 @@ public class OptionsVersionPanel extends JPanel {
         this.showVersionsCheckboxText,
         "Infdev", "2010-06-29 -> 2010-06-30"
     );
+    
+    JPanel middlePanel = new JPanel(layout, true);
+    this.add(middlePanel, SwingConstants.CENTER);
 
     this.showBetaVersionsCheckBox = new JCheckBox(
         showBetaVersionsCheckboxText,
