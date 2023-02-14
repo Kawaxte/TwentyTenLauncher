@@ -38,7 +38,9 @@ public final class FileHelper {
 
       /* Get the URL of the image file. */
       URL input = clazz.getClassLoader().getResource(name);
-      Objects.requireNonNull(input, "input == null!");
+      Objects.requireNonNull(
+          input, "input == null!"
+      );
 
       /* Read the image file and return an Optional containing the image. */
       return Optional.of(ImageIO.read(input));
@@ -115,7 +117,9 @@ public final class FileHelper {
 
     /* Get the directory's contents. */
     File[] files = directory.listFiles();
-    Objects.requireNonNull(files, "files == null!");
+    Objects.requireNonNull(
+        files, "files == null!"
+    );
 
     /* Delete the directory's contents. */
     for (File file : files) {
@@ -153,7 +157,9 @@ public final class FileHelper {
         EMethod.GET,
         RequestHelper.xWwwFormUrlencodedHeader
     );
-    Objects.requireNonNull(connection, "connection == null!");
+    Objects.requireNonNull(
+        connection, "connection == null!"
+    );
 
     /* Get the connection's input stream. */
     try (InputStream is = connection.getInputStream()) {
