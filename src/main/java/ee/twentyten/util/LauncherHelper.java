@@ -37,9 +37,6 @@ public final class LauncherHelper {
     File workingDirectory = LauncherHelper.workingDirectories.get(
         platformName
     );
-
-    /* 'NullPointerException' will be thrown here when the specified key is
-      not found in the map. */
     Objects.requireNonNull(
         workingDirectory,
         "workingDirectory == null!"
