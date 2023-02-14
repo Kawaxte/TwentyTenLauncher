@@ -60,12 +60,14 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
 
       /* Set the request method */
       connection.setRequestMethod(method.name());
-      connection.setDoOutput(true);
 
       /* Loop through the headers and set them */
       for (Map.Entry<String, String> entry : headers.entrySet()) {
         connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
+
+      /* Set the connection to output in order to write data to it */
+      connection.setDoOutput(true);
 
       /* Write the data to the output stream */
       try (OutputStream os = connection.getOutputStream();
