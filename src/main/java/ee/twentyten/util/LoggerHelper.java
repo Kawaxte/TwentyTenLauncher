@@ -18,44 +18,22 @@ public final class LoggerHelper {
     LauncherLogger.instance = new LauncherLogger();
   }
 
-  /**
-   * Prevents instantiation of this class.
-   *
-   * @throws UnsupportedOperationException if this method is called.
-   */
   private LoggerHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  /**
-   * Retrieves the name of the class that is calling the method.
-   *
-   * @return The name of the class that is calling the method.
-   */
   private static String getCallerClassName() {
     StackTraceElement[] elements = Thread.currentThread()
         .getStackTrace();
     return elements[3].getClassName();
   }
 
-  /**
-   * Retrieves the name of the method that is calling the method.
-   *
-   * @return The name of the method that is calling the method.
-   */
   private static String getCallerMethodName() {
     StackTraceElement[] elements = Thread.currentThread()
         .getStackTrace();
     return elements[3].getMethodName();
   }
 
-  /**
-   * Logs the provided message as an informational message.
-   *
-   * @param message         The message to be logged.
-   * @param isWrittenToFile Indicates whether the message should be written to a
-   *                        file.
-   */
   public static void logInfo(
       String message,
       boolean isWrittenToFile
@@ -75,17 +53,10 @@ public final class LoggerHelper {
           LoggerHelper.getCallerClassName(), message
       );
 
-      LauncherLogger.getInstance().writeLog(output);
+      LauncherLogger.instance.writeLog(output);
     }
   }
 
-  /**
-   * Logs the provided message as a warning message.
-   *
-   * @param message         The message to be logged.
-   * @param isWrittenToFile Indicates whether the message should be written to a
-   *                        file.
-   */
   public static void logWarn(
       String message,
       boolean isWrittenToFile
@@ -105,17 +76,10 @@ public final class LoggerHelper {
           LoggerHelper.getCallerClassName(), message
       );
 
-      LauncherLogger.getInstance().writeLog(output);
+      LauncherLogger.instance.writeLog(output);
     }
   }
 
-  /**
-   * Logs the provided message as an error message.
-   *
-   * @param message         The message to be logged.
-   * @param isWrittenToFile Indicates whether the message should be written to a
-   *                        file.
-   */
   public static void logError(
       String message,
       boolean isWrittenToFile
@@ -135,26 +99,22 @@ public final class LoggerHelper {
           LoggerHelper.getCallerClassName(), message
       );
 
-      LauncherLogger.getInstance().writeLog(output);
+      LauncherLogger.instance.writeLog(output);
     }
   }
 
-  /**
-   * Logs the provided message as an error message.
-   *
-   * @param message         The message to be logged.
-   * @param t               The throwable that caused the error.
-   * @param isWrittenToFile Indicates whether the message and stack trace should
-   *                        be written to a file.
-   */
   public static void logError(
       String message,
       Throwable t,
       boolean isWrittenToFile
   ) {
+
+    /* Using the cause of the throwable if it exists, otherwise using the
+     * throwable itself. */
     Throwable cause = t.getCause() != null
         ? t.getCause()
         : t;
+
     if (isUsingDebugger) {
       Logger logger = LoggerFactory.getLogger(
           LoggerHelper.getCallerClassName());
@@ -169,7 +129,7 @@ public final class LoggerHelper {
           "[ERROR] %s - %s",
           LoggerHelper.getCallerClassName(), message);
 
-      LauncherLogger.getInstance().writeLog(output, cause);
+      LauncherLogger.instance.writeLog(output, cause);
     }
   }
 }
