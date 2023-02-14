@@ -38,9 +38,6 @@ public final class FileHelper {
 
       /* Get the URL of the image file. */
       URL input = clazz.getClassLoader().getResource(name);
-
-      /* 'NullPointerException' will be thrown here if the image file does not
-       * exist. */
       Objects.requireNonNull(input, "input == null!");
 
       /* Read the image file and return an Optional containing the image. */
@@ -118,9 +115,6 @@ public final class FileHelper {
 
     /* Get the directory's contents. */
     File[] files = directory.listFiles();
-
-    /* 'NullPointerException' will be thrown here when the directory is not
-     * a directory. */
     Objects.requireNonNull(files, "files == null!");
 
     /* Delete the directory's contents. */
@@ -159,9 +153,6 @@ public final class FileHelper {
         EMethod.GET,
         RequestHelper.xWwwFormUrlencodedHeader
     );
-
-    /* 'NullPointerException' will be thrown here because without a connection
-     * there is no point in continuing. */
     Objects.requireNonNull(connection, "connection == null!");
 
     /* Get the connection's input stream. */
