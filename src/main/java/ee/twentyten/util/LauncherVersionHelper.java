@@ -21,11 +21,6 @@ public final class LauncherVersionHelper {
             + "latest";
   }
 
-  /**
-   * Prevents instantiation of this class.
-   *
-   * @throws UnsupportedOperationException if this method is called.
-   */
   private LauncherVersionHelper() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
@@ -51,34 +46,31 @@ public final class LauncherVersionHelper {
       boolean isPreRelease,
       int preReleaseVersion
   ) {
-
-    /* Call the validate methods to ensure that the parameters are valid. */
     LauncherVersionHelper.validateMonth(month);
     LauncherVersionHelper.validateDay(day);
-
-    /* If this is a pre-release version, validate the pre-release version. */
     if (isPreRelease) {
       LauncherVersionHelper.validatePreReleaseVersion(preReleaseVersion);
     }
 
-    /* Format the pre-release string. */
     String preReleaseString = LauncherVersionHelper.formatPreReleaseString(
-        isPreRelease, preReleaseVersion);
-
-    /* Format the current version. */
+        isPreRelease,
+        preReleaseVersion
+    );
     String currentVersion = String.format(
         "%d.%02d.%02d%02d%s",
         majorVersion, month, day, year, preReleaseString
     );
 
-    /* Set the system property. */
     System.setProperty("ee.twentyten.version", currentVersion);
   }
 
   /**
-   * Determines if the launcher is outdated.
+   * Checks if the current launcher version is outdated by comparing it to the
+   * latest version on Github. The check is performed in a separate thread to
+   * avoid blocking the main thread while waiting for a response from the Github
+   * API.
    *
-   * @return a boolean indicating whether the launcher is outdated or not
+   * @return True if the launcher is outdated, false if it is up-to-date
    */
   public static boolean isLauncherOutdated() {
     ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -88,7 +80,8 @@ public final class LauncherVersionHelper {
         RequestHelper.performJsonRequest(
             LauncherVersionHelper.latestReleaseUrl,
             EMethod.GET,
-            RequestHelper.jsonHeader);
+            RequestHelper.jsonHeader
+        );
 
         String currentVersion = System.getProperty("ee.twentyten.version");
         String latestVersion = RequestHelper.jsonHeader.get("tag_name");
@@ -101,96 +94,99 @@ public final class LauncherVersionHelper {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LoggerHelper.logError("Failed to interrupt current thread", ie, true);
+      String errorMessage = "Failed to interrupt current thread";
+
+      LoggerHelper.logError(errorMessage, ie, true);
     } catch (ExecutionException ee) {
-      LoggerHelper.logError("Failed to check for launcher updates", ee, true);
+      String errorMessage = "Failed to check for launcher updates";
+
+      LoggerHelper.logError(errorMessage, ee, true);
     }
     executor.shutdown();
     return false;
   }
 
   /**
-   * Validates the given month.
+   * Validates that the given month is within the valid range of 1 to 12. If the
+   * month is invalid, an IllegalArgumentException is thrown.
    *
-   * @param month The month to validate.
+   * @param month the month to validate
+   * @throws IllegalArgumentException if the month is less than 1 or greater
+   *                                  than 12
    */
   private static void validateMonth(
       int month
   ) {
-
-    /* If the month is not between 1 and 12, log the error. */
     if (month < 1 || month > 12) {
-
-      /* Create a new throwable to log. */
-      Throwable t = new Throwable(String.format(
+      Throwable ia = new IllegalArgumentException(String.format(
           "Invalid month: %d",
           month)
       );
 
-      /* Log the error. */
-      LoggerHelper.logError(t.getMessage(), t, true);
+      LoggerHelper.logError(ia.getMessage(), ia, true);
     }
   }
 
   /**
-   * Validates the given day.
+   * Validates that the given day is within the valid range of 1 to 31. If the
+   * day is invalid, an IllegalArgumentException is thrown.
    *
-   * @param day The day to validate.
+   * @param day the day to validate
+   * @throws IllegalArgumentException if the day is less than 1 or greater than
+   *                                  31
    */
   private static void validateDay(
       int day
   ) {
-
-    /* If the day is not between 1 and 31, log the error. */
     if (day < 1 || day > 31) {
-
-      /* Create a new throwable to log. */
-      Throwable t = new Throwable(String.format(
+      Throwable iae = new IllegalArgumentException(String.format(
           "Invalid day: %d",
           day)
       );
 
-      /* Log the error. */
-      LoggerHelper.logError(t.getMessage(), t, true);
+      LoggerHelper.logError(iae.getMessage(), iae, true);
     }
   }
 
   /**
-   * Validates the given pre-release version.
+   * Validates that the given pre-release version is greater than or equal to 0.
+   * If the pre-release version is invalid, an IllegalArgumentException is
+   * thrown.
    *
-   * @param preReleaseVersion The pre-release version to validate.
+   * @param preReleaseVersion the pre-release version to validate
+   * @throws IllegalArgumentException if the pre-release version is less than 0
    */
   private static void validatePreReleaseVersion(
       int preReleaseVersion
   ) {
-
-    /* If the pre-release version is less than 0, log the error. */
     if (preReleaseVersion < 0) {
-
-      /* Create a new throwable to log. */
-      Throwable t = new Throwable(String.format(
+      Throwable iae = new IllegalArgumentException(String.format(
           "Invalid pre-release version: %d",
           preReleaseVersion)
       );
 
-      /* Log the error. */
-      LoggerHelper.logError(t.getMessage(), t, true);
+      LoggerHelper.logError(iae.getMessage(), iae, true);
     }
   }
 
   /**
-   * Formats the pre-release string for the version.
+   * Formats the pre-release version number and returns a string representation
+   * of the pre-release string.
    *
-   * @param isPreRelease      Whether the version is a pre-release version.
-   * @param preReleaseVersion The pre-release version.
-   * @return A string representation of the pre-release version.
+   * @param isPreRelease      a boolean indicating if the version is a
+   *                          pre-release version
+   * @param preReleaseVersion the pre-release version number
+   * @return a formatted string representing the pre-release version, or an
+   * empty string if the version is not a pre-release version
    */
   private static String formatPreReleaseString(
       boolean isPreRelease,
       int preReleaseVersion
   ) {
     return isPreRelease
-        ? "_pre" + preReleaseVersion
+        ? String.format(
+        "_pre%d",
+        preReleaseVersion)
         : "";
   }
 }
