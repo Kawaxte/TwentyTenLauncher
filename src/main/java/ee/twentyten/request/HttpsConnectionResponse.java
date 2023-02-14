@@ -6,7 +6,9 @@ import javax.net.ssl.HttpsURLConnection;
 
 class HttpsConnectionResponse {
 
-  HttpsURLConnection getResponse(HttpsURLConnection connection) {
+  HttpsURLConnection getResponse(
+      HttpsURLConnection connection
+  ) {
     try {
 
       /* Get the HTTP status code from the response */
