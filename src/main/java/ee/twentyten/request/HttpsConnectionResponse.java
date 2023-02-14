@@ -21,15 +21,23 @@ class HttpsConnectionResponse {
       String connectionUrl = connection.getURL().toString();
 
       /* Format the response code, message, and URL */
-      String formattedResponse = String.format("%d %s (%s)", responseCode,
-          responseMessage, connectionUrl);
+      String formattedResponse = String.format(
+          "%d %s (%s)",
+          responseCode, responseMessage, connectionUrl
+      );
 
       /* Log using INFO level if the response code is 2xx, otherwise log
        * using ERROR level */
       if (responseCode / 100 == 2) {
-        LoggerHelper.logInfo(formattedResponse, false);
+        LoggerHelper.logInfo(
+            formattedResponse,
+            false
+        );
       } else {
-        LoggerHelper.logError(formattedResponse, false);
+        LoggerHelper.logError(
+            formattedResponse,
+            false
+        );
       }
       return connection;
     } catch (IOException ioe) {
