@@ -3,13 +3,10 @@ package ee.twentyten.ui.options;
 import ee.twentyten.lang.LauncherLanguage;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.LayoutManager;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.border.Border;
 import lombok.Getter;
 
 @Getter
@@ -23,7 +20,7 @@ public class OptionsPanel extends JPanel {
   private final String saveOptionsButtonText;
   private final OptionsVersionPanel optionsVersionPanel;
   private final OptionsLanguagePanel optionsLanguagePanel;
-  private JTabbedPane tabbedPane;
+  private final JTabbedPane tabbedPane;
   private JButton cancelButton;
   private JButton openGameDirectoryButton;
   private JButton saveOptionsButton;
@@ -44,58 +41,33 @@ public class OptionsPanel extends JPanel {
   public OptionsPanel() {
     super(new BorderLayout(), true);
 
-    int orientation = JTabbedPane.TOP;
-
-    Border border = BorderFactory.createEmptyBorder(
-        8, 8, 8, 8);
-    this.setBorder(border);
-
-    BorderLayout borderLayout = new BorderLayout(
-        0, 8);
-    FlowLayout flowLayout = new FlowLayout(FlowLayout.CENTER);
-    this.optionsVersionPanel = new OptionsVersionPanel(
-        borderLayout, true
-    );
-    this.optionsLanguagePanel = new OptionsLanguagePanel(
-        borderLayout, true
-    );
-
-    this.tabbedPane.add(
-        this.versionTabText, this.optionsVersionPanel
-    );
-    this.tabbedPane.add(
-        this.languageTabText, this.optionsLanguagePanel
-    );
-
-    this.createTopTabbedPane(orientation);
-    this.createBottomPanel(flowLayout);
-  }
-
-  private void createTopTabbedPane(
-      int orientation
-  ) {
-    this.tabbedPane = new JTabbedPane(orientation);
+    this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
     this.add(this.tabbedPane, BorderLayout.NORTH);
+
+    this.optionsVersionPanel = new OptionsVersionPanel();
+    this.tabbedPane.add(this.versionTabText, this.optionsVersionPanel);
+
+    this.optionsLanguagePanel = new OptionsLanguagePanel();
+    this.tabbedPane.add(this.versionTabText, this.optionsLanguagePanel);
+
+    this.createBottomPanel();
   }
 
-  private void createBottomPanel(
-      LayoutManager layout
-  ) {
+  private void createBottomPanel() {
     int tabbedPaneWidth = this.tabbedPane.getPreferredSize().width;
 
-    JPanel bottomPanel = new JPanel(
-        layout, true
-    );
+    JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER), true);
     this.add(bottomPanel, BorderLayout.SOUTH);
 
     this.cancelButton = new JButton(this.cancelButtonText);
-    this.openGameDirectoryButton = new JButton(
-        this.openGameDirectoryButtonText);
-    this.saveOptionsButton = new JButton(this.saveOptionsButtonText);
-
     bottomPanel.add(this.cancelButton);
     bottomPanel.add(Box.createHorizontalStrut(tabbedPaneWidth >> 2));
+
+    this.openGameDirectoryButton = new JButton(
+        this.openGameDirectoryButtonText);
     bottomPanel.add(this.openGameDirectoryButton);
+
+    this.saveOptionsButton = new JButton(this.saveOptionsButtonText);
     bottomPanel.add(this.saveOptionsButton);
   }
 }
