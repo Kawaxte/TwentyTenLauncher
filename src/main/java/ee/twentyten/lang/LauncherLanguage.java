@@ -15,20 +15,12 @@ public class LauncherLanguage {
 
   private static ResourceBundle resourceBundle;
 
-  public static void setLanguage(
-      String tag
-  ) {
-
-    /* Get the language */
+  public static void setLanguage(String tag) {
     ELanguage.getLanguage(tag);
 
-    /* Get the name of the language file */
-    String languageFileName = String.format(
-        "language/locale_%s.properties",
-        tag
-    );
+    String languageFileName = String.format("language/locale_%s.properties",
+        tag);
 
-    /* Load the language file */
     try (InputStream is = LauncherLanguage.class.getClassLoader()
         .getResourceAsStream(languageFileName)) {
       Objects.requireNonNull(is, "is == null!");
@@ -39,24 +31,16 @@ public class LauncherLanguage {
       /* Create a new resource bundle */
       LauncherLanguage.resourceBundle = new PropertyResourceBundle(reader);
     } catch (IOException ioe) {
-      LoggerHelper.logError(
-          "Failed to load language file",
-          ioe, true
-      );
+      LoggerHelper.logError("Failed to load language file", ioe, true);
     }
   }
 
-  public static String getString(
-      String key
-  ) {
+  public static String getString(String key) {
     Objects.requireNonNull(resourceBundle, "resourceBundle == null!");
     try {
       return LauncherLanguage.resourceBundle.getString(key);
     } catch (MissingResourceException mre) {
-      LoggerHelper.logError(
-          "Failed to find key in bundle",
-          mre, true
-      );
+      LoggerHelper.logError("Failed to find key in bundle", mre, true);
     }
     return key;
   }
