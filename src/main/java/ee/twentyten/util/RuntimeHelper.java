@@ -30,7 +30,7 @@ public final class RuntimeHelper {
         process.getInputStream());
         BufferedReader br = new BufferedReader(isr)) {
 
-      /* Using 'StringBuilder' to avoid creating a new 'String' object for
+      /* Use 'StringBuilder' to avoid creating a new 'String' object for
        * every line. */
       StringBuilder sb = new StringBuilder();
 
