@@ -1,8 +1,7 @@
 package ee.twentyten.request;
 
 public enum EMethod {
-  GET("GET"),
-  POST("POST");
+  GET("GET"), POST("POST");
 
   private final String method;
 
@@ -10,12 +9,7 @@ public enum EMethod {
     this.method = method;
   }
 
-  public static EMethod getMethod(
-      String method
-  ) {
-
-    /* Loop through all the enum values and return the one that matches
-     * the method */
+  public static EMethod getMethod(String method) {
     for (EMethod m : EMethod.values()) {
       if (m.method.equals(method)) {
         return m;
