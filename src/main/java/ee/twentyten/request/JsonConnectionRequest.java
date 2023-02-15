@@ -15,9 +15,9 @@ public abstract class JsonConnectionRequest {
   HttpsURLConnection openConnection(URL url) {
     HttpsURLConnection connection = null;
     try {
-      
-      /* Force TLSv1.2 because Java 7 doesn't support TLSv1.3 and TLSv1.2 is
-       * not enabled by default */
+
+      /* Force TLSv1.2 because it is not enabled by default on Java 7 and is
+       * minimum required protocol for majority of websites */
       SSLContext context = SSLContext.getInstance("TLSv1.2");
       context.init(null, null, new SecureRandom());
 
