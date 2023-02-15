@@ -39,14 +39,16 @@ public class OptionsVersionPanel extends JPanel {
     super(layout, isDoubleBuffered);
 
     Border border = BorderFactory.createEmptyBorder(
-        8, 8, 8, 8);
+        8, 8, 8, 8
+    );
     this.setBorder(border);
 
     GridLayout gridLayout = new GridLayout(
-        0, 1);
-    this.createMiddlePanel(gridLayout);
-
+        0, 1
+    );
     BorderLayout borderLayout = new BorderLayout();
+
+    this.createMiddlePanel(gridLayout);
     this.createBottomPanel(borderLayout);
   }
 
@@ -65,7 +67,7 @@ public class OptionsVersionPanel extends JPanel {
         this.showVersionsCheckboxText,
         "Infdev", "2010-06-29 -> 2010-06-30"
     );
-    
+
     JPanel middlePanel = new JPanel(layout, true);
     this.add(middlePanel, SwingConstants.CENTER);
 
@@ -82,9 +84,9 @@ public class OptionsVersionPanel extends JPanel {
         LauncherConfig.instance.getUsingInfdev()
     );
 
+    middlePanel.add(this.showBetaVersionsCheckBox, 0);
     middlePanel.add(this.showAlphaVersionsCheckBox, 1);
     middlePanel.add(this.showInfdevVersionsCheckBox, 2);
-    middlePanel.add(this.showBetaVersionsCheckBox, 0);
   }
 
   private void createBottomPanel(
