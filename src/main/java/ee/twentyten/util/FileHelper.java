@@ -30,151 +30,80 @@ public final class FileHelper {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static Optional<BufferedImage> readImageFile(
-      Class<?> clazz,
-      String name
-  ) {
+  public static Optional<BufferedImage> readImageFile(Class<?> clazz,
+      String name) {
     try {
-
-      /* Get the URL of the image file. */
       URL input = clazz.getClassLoader().getResource(name);
-      Objects.requireNonNull(
-          input, "input == null!"
-      );
-
-      /* Read the image file and return an Optional containing the image. */
+      Objects.requireNonNull(input, "input == null!");
       return Optional.of(ImageIO.read(input));
     } catch (IOException ioe) {
-      LoggerHelper.logError(
-          "Failed to read image file",
-          ioe, true
-      );
+      LoggerHelper.logError("Failed to read image file", ioe, true);
     }
     return Optional.empty();
   }
 
-  public static Optional<JSONObject> readJsonFile(
-      File src
-  ) {
-
-    /* If the file does not exist or is not a file, return an empty Optional. */
+  public static Optional<JSONObject> readJsonFile(File src) {
     if (!src.exists() || !src.isFile()) {
       return Optional.empty();
     }
 
     try {
-
-      /* Read the file's contents into a byte array. */
       byte[] bytes = Files.readAllBytes(src.toPath());
-
-      /* Convert the byte array to a string. */
       String json = new String(bytes, StandardCharsets.UTF_8);
-
-      /* Create a new JSONObject from the string and return an Optional
-       * containing the JSONObject. */
-      JSONObject jsonObject = new JSONObject(json);
-      return Optional.of(jsonObject);
+      JSONObject jsonObj = new JSONObject(json);
+      return Optional.of(jsonObj);
     } catch (IOException ioe) {
-      LoggerHelper.logError(
-          "Failed to read bytes from file",
-          ioe, true
-      );
+      LoggerHelper.logError("Failed to read bytes from file", ioe, true);
     }
     return Optional.empty();
   }
 
-  public static File createDirectory(
-      File parent,
-      String name
-  ) {
-
-    /* If the directory already exists, return it. */
+  public static File createDirectory(File parent, String name) {
     File directory = new File(parent, name);
     if (directory.exists() && directory.isDirectory()) {
       return directory;
     }
 
-    /* Create the directory. */
     boolean isDirectoryCreated = directory.mkdirs();
     if (!isDirectoryCreated) {
-      LoggerHelper.logError(
-          "Failed to create directory",
-          true
-      );
+      LoggerHelper.logError("Failed to create directory", true);
       return null;
     }
     return directory;
   }
 
-  public static void deleteDirectory(
-      File directory
-  ) {
-
-    /* If the directory does not exist, return. */
+  public static void deleteDirectory(File directory) {
     if (!directory.exists()) {
       return;
     }
 
-    /* Get the directory's contents. */
     File[] files = directory.listFiles();
-    Objects.requireNonNull(
-        files, "files == null!"
-    );
-
-    /* Delete the directory's contents. */
+    Objects.requireNonNull(files, "files == null!");
     for (File file : files) {
       if (file.isDirectory()) {
         FileHelper.deleteDirectory(file);
       } else {
         boolean isFileDeleted = file.delete();
         if (!isFileDeleted) {
-          LoggerHelper.logError(
-              "Failed to delete file",
-              true
-          );
+          LoggerHelper.logError("Failed to delete file", true);
         }
       }
     }
 
-    /* Delete the directory. */
     boolean isDirectoryDeleted = directory.delete();
     if (!isDirectoryDeleted) {
-      LoggerHelper.logError(
-          "Failed to delete directory",
-          true
-      );
+      LoggerHelper.logError("Failed to delete directory", true);
     }
   }
 
-  public static void downloadFile(
-      String url,
-      File target
-  ) {
-
-    /* Open a connection to the URL. */
-    HttpsURLConnection connection = RequestHelper.performHttpsRequest(
-        url,
-        EMethod.GET,
-        RequestHelper.xWwwFormUrlencodedHeader
-    );
-    Objects.requireNonNull(
-        connection, "connection == null!"
-    );
-
-    /* Get the connection's input stream. */
+  public static void downloadFile(String url, File target) {
+    HttpsURLConnection connection = RequestHelper.performHttpsRequest(url,
+        EMethod.GET, RequestHelper.xWwwFormUrlencodedHeader);
+    Objects.requireNonNull(connection, "connection == null!");
     try (InputStream is = connection.getInputStream()) {
-
-      /* Copy the file to the target file. */
-      Files.copy(
-          is,
-          target.toPath(),
-          StandardCopyOption.REPLACE_EXISTING
-      );
+      Files.copy(is, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException ioe) {
-      LoggerHelper.logError(
-          "Failed to download file",
-          ioe, true
-      );
+      LoggerHelper.logError("Failed to download file", ioe, true);
     }
   }
 }
