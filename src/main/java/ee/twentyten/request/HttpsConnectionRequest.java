@@ -11,46 +11,27 @@ import javax.net.ssl.SSLContext;
 
 abstract class HttpsConnectionRequest {
 
-  HttpsURLConnection openConnection(
-      URL url
-  ) {
+  HttpsURLConnection openConnection(URL url) {
     HttpsURLConnection connection = null;
     try {
-
-      /* Open connection to the URL */
-      connection = (HttpsURLConnection) url.openConnection();
-
       /* Force TLSv1.2 because Java 7 doesn't support TLSv1.3 and TLSv1.2 is
        * not enabled by default */
       SSLContext context = SSLContext.getInstance("TLSv1.2");
       context.init(null, null, new SecureRandom());
 
-      /* Set the connection to use TLSv1.2 */
+      connection = (HttpsURLConnection) url.openConnection();
       connection.setSSLSocketFactory(context.getSocketFactory());
     } catch (IOException ioe) {
-      LoggerHelper.logError(
-          "Failed to open connection",
-          ioe, true
-      );
+      LoggerHelper.logError("Failed to open connection", ioe, true);
     } catch (GeneralSecurityException gse) {
-      LoggerHelper.logError(
-          "Failed to initialise SSL context",
-          gse, true
-      );
+      LoggerHelper.logError("Failed to initialise SSL context", gse, true);
     }
     return connection;
   }
 
-  public abstract HttpsURLConnection performRequest(
-      URL url,
-      EMethod method,
-      Map<String, String> headers
-  );
+  public abstract HttpsURLConnection performRequest(URL url, EMethod method,
+      Map<String, String> headers);
 
-  public abstract HttpsURLConnection performRequest(
-      URL url,
-      EMethod method,
-      Map<String, String> headers,
-      Object data
-  );
+  public abstract HttpsURLConnection performRequest(URL url, EMethod method,
+      Map<String, String> headers, Object data);
 }
