@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import org.json.JSONObject;
@@ -50,8 +51,7 @@ public final class FileHelper {
     try {
       byte[] bytes = Files.readAllBytes(src.toPath());
       String json = new String(bytes, StandardCharsets.UTF_8);
-      JSONObject jsonObj = new JSONObject(json);
-      return Optional.of(jsonObj);
+      return Optional.of(new JSONObject(json));
     } catch (IOException ioe) {
       LoggerHelper.logError("Failed to read bytes from file", ioe, true);
     }
@@ -96,14 +96,37 @@ public final class FileHelper {
     }
   }
 
-  public static void downloadFile(String url, File target) {
+  public static void downloadFile(String url, final File target) {
     HttpsURLConnection connection = RequestHelper.performHttpsRequest(url,
         EMethod.GET, RequestHelper.xWwwFormUrlencodedHeader);
     Objects.requireNonNull(connection, "connection == null!");
-    try (InputStream is = connection.getInputStream()) {
-      Files.copy(is, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+    final CountDownLatch latch = new CountDownLatch(1);
+
+    try {
+      final InputStream is = connection.getInputStream();
+
+      Thread downloadThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Files.copy(is, target.toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+          } catch (IOException ioe) {
+            LoggerHelper.logError("Failed to copy input stream to file", ioe,
+                true);
+          } finally {
+            latch.countDown();
+          }
+        }
+      }, "downloadFile");
+      downloadThread.start();
+
+      latch.await();
     } catch (IOException ioe) {
-      LoggerHelper.logError("Failed to download file", ioe, true);
+      LoggerHelper.logError("Failed to get input stream", ioe, true);
+    } catch (InterruptedException ie) {
+      LoggerHelper.logError("Failed to wait for download thread", ie, true);
     }
   }
 }
