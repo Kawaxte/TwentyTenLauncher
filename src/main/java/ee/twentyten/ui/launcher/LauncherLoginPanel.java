@@ -31,9 +31,9 @@ public class LauncherLoginPanel extends CustomJPanel {
   private final String linkLabelOutdatedText;
   private final String loginButtonText;
   @Getter
-  private boolean isOutdated;
+  private final boolean isOutdated;
   @Getter
-  private String linkUrls;
+  private final String linkUrls;
   @Getter
   private JLabel errorLabel;
   @Getter
@@ -58,6 +58,7 @@ public class LauncherLoginPanel extends CustomJPanel {
         + "&client_id=00000000402b5328" + "&lic=1";
 
     this.isOutdated = LauncherVersionHelper.isLauncherOutdated();
+    this.linkUrls = this.isOutdated ? latestReleaseUrl : accountSignupUrl;
 
     this.usernameLabelText = LauncherLanguage.getString(
         "llp.label.usernameLabel");
@@ -82,17 +83,6 @@ public class LauncherLoginPanel extends CustomJPanel {
     this.createBottomPanel();
   }
 
-  private String setOutdated(boolean isOutdated) {
-    this.isOutdated = isOutdated;
-    this.linkUrls = this.isOutdated ? latestReleaseUrl : accountSignupUrl;
-
-    String registerString = String.format("<html><a href='%s'>%s</a></html>",
-        this.accountSignupUrl, this.linkLabelText);
-    String outdatedString = String.format("<html><a href='%s'>%s</a></html>",
-        this.latestReleaseUrl, this.linkLabelOutdatedText);
-    return this.isOutdated ? outdatedString : registerString;
-  }
-
   private void createTopPanel() {
     JPanel topPanel = new JPanel(new BorderLayout(), true);
     topPanel.setBackground(Color.GRAY);
@@ -101,7 +91,6 @@ public class LauncherLoginPanel extends CustomJPanel {
     Font errorLabelFont = new Font(Font.SANS_SERIF, Font.ITALIC, 16);
     this.errorLabel = new JLabel("\u00A0", SwingConstants.CENTER);
     this.errorLabel.setFont(errorLabelFont);
-
     this.errorLabel.setForeground(Color.RED.darker());
     this.add(this.errorLabel, BorderLayout.NORTH);
   }
@@ -124,41 +113,43 @@ public class LauncherLoginPanel extends CustomJPanel {
 
     JPanel easternMiddlePanel = new JPanel(new GridLayout(3, 1, 0, 2), true);
     easternMiddlePanel.setBackground(Color.GRAY);
-
     this.add(easternMiddlePanel, BorderLayout.CENTER);
-    this.usernameField = new JTextField(20);
 
     String savedUsername = LauncherConfig.instance.getUsername();
+    this.usernameField = new JTextField(20);
     this.usernameField.setText(savedUsername);
     easternMiddlePanel.add(this.usernameField, 0);
 
-    this.passwordField = new JPasswordField(20);
     String savedPassword = LauncherConfig.instance.getPassword();
+    this.passwordField = new JPasswordField(20);
     this.passwordField.setText(savedPassword);
-
     easternMiddlePanel.add(this.passwordField, 1);
+
+    boolean isPasswordSaved = LauncherConfig.instance.getPasswordSaved();
     this.rememberPasswordCheckBox = new JCheckBox(
         this.rememberPasswordCheckBoxText);
-
     this.rememberPasswordCheckBox.setContentAreaFilled(false);
-    boolean isPasswordSaved = LauncherConfig.instance.getPasswordSaved();
     this.rememberPasswordCheckBox.setSelected(isPasswordSaved);
     easternMiddlePanel.add(this.rememberPasswordCheckBox, 2);
   }
 
   private void createBottomPanel() {
+    String registerString = String.format("<html><a href='%s'>%s</a></html>",
+        this.accountSignupUrl, this.linkLabelText);
+    String outdatedString = String.format("<html><a href='%s'>%s</a></html>",
+        this.latestReleaseUrl, this.linkLabelOutdatedText);
+    String linkLabelString = this.isOutdated ? outdatedString : registerString;
+
     JPanel bottomPanel = new JPanel(new BorderLayout(), true);
     bottomPanel.setBackground(Color.GRAY);
     this.add(bottomPanel, BorderLayout.SOUTH);
 
-    String linkLabelString = this.setOutdated(this.isOutdated);
-    this.linkLabel = new JLabel(linkLabelString, SwingConstants.LEFT);
-
     Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+    this.linkLabel = new JLabel(linkLabelString, SwingConstants.LEFT);
     this.linkLabel.setCursor(handCursor);
     this.linkLabel.setForeground(Color.BLUE);
-
     bottomPanel.add(this.linkLabel, BorderLayout.WEST);
+
     this.loginButton = new JButton(this.loginButtonText);
     bottomPanel.add(this.loginButton, BorderLayout.EAST);
   }
