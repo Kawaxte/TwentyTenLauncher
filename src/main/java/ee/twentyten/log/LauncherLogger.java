@@ -42,10 +42,7 @@ public class LauncherLogger {
   }
 
   public LauncherLogger() {
-    this.logFileName = String.format(
-        "twentyten_%s.log",
-        this.getTimestamp()
-    );
+    this.logFileName = String.format("twentyten_%s.log", this.getTimestamp());
   }
 
   private String getTimestamp() {
@@ -56,19 +53,13 @@ public class LauncherLogger {
     int hour = calendar.get(Calendar.HOUR_OF_DAY);
     int minute = calendar.get(Calendar.MINUTE);
     int second = calendar.get(Calendar.SECOND);
-
-    return String.format(
-        "%04d-%02d-%02dT%02d-%02d-%02d",
-        year, month, day, hour, minute, second
-    );
+    return String.format("%04d-%02d-%02dT%02d-%02d-%02d", year, month, day,
+        hour, minute, second);
   }
 
   private void getHardwareId() {
-
-    /* Get the platform name. */
     EPlatform platform = EPlatform.getPlatform();
 
-    /* Get the commands for retrieving the hardware ID. */
     String cpuIdCommand = "";
     String gpuIdCommand = "";
     switch (platform) {
@@ -88,42 +79,24 @@ public class LauncherLogger {
         throw new UnsupportedOperationException(String.valueOf(platform));
     }
 
-    /* Get the hardware ID. */
     try {
       String gpuIdKey = "ee.twentyten.hw.gpu.id";
       String cpuIdKey = "ee.twentyten.hw.cpu.id";
-      this.cpuId = this.getHardwareId(
-          platform,
-          cpuIdCommand,
-          cpuIdKey
-      );
-      this.gpuId = this.getHardwareId(
-          platform,
-          gpuIdCommand,
-          gpuIdKey
-      );
+      this.cpuId = this.getHardwareId(platform, cpuIdCommand, cpuIdKey);
+      this.gpuId = this.getHardwareId(platform, gpuIdCommand, gpuIdKey);
     } catch (IOException ioe) {
-      LoggerHelper.logError(
-          "Failed to retrieve the hardware ID",
-          ioe, false
-      );
+      LoggerHelper.logError("Failed to retrieve the hardware ID", ioe, false);
     }
   }
 
-  private String getHardwareId(
-      EPlatform platform,
-      String command,
-      String key
-  ) throws IOException {
-
-    /* Execute the command and get the output. */
+  private String getHardwareId(EPlatform platform, String command, String key)
+      throws IOException {
     Process process = RuntimeHelper.executeCommand(command);
     String result = RuntimeHelper.getOutput(process);
     if (result == null) {
       return null;
     }
 
-    /* Remove the first line of the output. */
     switch (platform) {
       case MACOSX:
       case LINUX:
@@ -135,23 +108,17 @@ public class LauncherLogger {
       default:
         throw new UnsupportedOperationException(String.valueOf(platform));
     }
-
-    /* Remove the trailing whitespace. */
     result = result.trim();
 
     System.setProperty(key, result);
     return result;
   }
 
-  private boolean isSystemMessageWritten(
-      File file
-  ) {
+  private boolean isSystemMessageWritten(File file) {
 
     /* BufferedReader and FileReader are used instead of Scanner because
      * Scanner is not thread-safe. */
     try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-
-      /* Read the first line of the file. */
       String line;
       while ((line = br.readLine()) != null) {
         if (line.startsWith("[SYSTEM]")) {
@@ -160,149 +127,88 @@ public class LauncherLogger {
       }
     } catch (IOException ioe) {
       LoggerHelper.logError(
-          "Failed to check if system message has been written",
-          ioe, false
-      );
+          "Failed to check if system message has been written", ioe, false);
     }
     return true;
   }
 
-  private void writeSystemMessage(
-      FileWriter fw
-  ) throws IOException {
+  private void writeSystemMessage(FileWriter fw) throws IOException {
     String systemMessage = "[SYSTEM] %s: %s%n";
 
     String[] systemMessages = {
-        String.format(
-            systemMessage,
-            "ee.twentyten.version", LauncherFrame.launcherVersion),
-        String.format(
-            systemMessage,
-            "ee.twentyten.hw.cpu.id", this.cpuId),
-        String.format(
-            systemMessage,
-            "ee.twentyten.hw.gpu.id", this.gpuId),
-        String.format(
-            systemMessage,
-            "os.name", EPlatform.OS_NAME),
-        String.format(
-            systemMessage,
-            "os.version", this.osVersion),
-        String.format(
-            systemMessage,
-            "os.arch", this.osArch),
-        String.format(
-            systemMessage,
-            "java.runtime.name", this.javaRuntimeName),
-        String.format(
-            systemMessage, "java.runtime.version", this.javaRuntimeVersion),
-        String.format(
-            systemMessage,
-            "java.vm.name", this.javaVmName),
-        String.format(
-            systemMessage,
-            "java.vm.version", this.javaVmVersion)
-    };
-
-    /* Write the system messages to the log file. */
+        String.format(systemMessage, "ee.twentyten.version",
+            LauncherFrame.launcherVersion),
+        String.format(systemMessage, "ee.twentyten.hw.cpu.id", this.cpuId),
+        String.format(systemMessage, "ee.twentyten.hw.gpu.id", this.gpuId),
+        String.format(systemMessage, "os.name", EPlatform.OS_NAME),
+        String.format(systemMessage, "os.version", this.osVersion),
+        String.format(systemMessage, "os.arch", this.osArch),
+        String.format(systemMessage, "java.runtime.name", this.javaRuntimeName),
+        String.format(systemMessage, "java.runtime.version",
+            this.javaRuntimeVersion),
+        String.format(systemMessage, "java.vm.name", this.javaVmName),
+        String.format(systemMessage, "java.vm.version", this.javaVmVersion)};
     for (String line : systemMessages) {
       fw.write(line);
     }
   }
 
-  public void writeLog(
-      String message
-  ) {
-
-    /* Create the log directory if it does not exist. */
-    File logDirectory = FileHelper.createDirectory(
-        FileHelper.workingDirectory, "logs"
-    );
-    File logFile = new File(
-        logDirectory, this.logFileName
-    );
+  public void writeLog(String message) {
+    File logDirectory = FileHelper.createDirectory(FileHelper.workingDirectory,
+        "logs");
+    File logFile = new File(logDirectory, this.logFileName);
     if (!logFile.exists()) {
       try {
         boolean isNewFileCreated = logFile.createNewFile();
         if (!isNewFileCreated) {
-          LoggerHelper.logError(
-              "Failed to create log file",
-              false
-          );
+          LoggerHelper.logError("Failed to create log file", false);
           return;
         }
       } catch (IOException ioe) {
-        LoggerHelper.logError(
-            "Failed to create log file",
-            ioe, false
-        );
+        LoggerHelper.logError("Failed to create log file", ioe, false);
       }
     }
 
-    /* Write the message to the log file. */
     try (FileWriter fw = new FileWriter(logFile, true)) {
       if (this.isSystemMessageWritten(logFile)) {
         this.writeSystemMessage(fw);
       }
       fw.write(String.format("%s%n", message));
     } catch (IOException ioe) {
-      LoggerHelper.logError(
-          "Failed to write to log file",
-          ioe, false
-      );
+      LoggerHelper.logError("Failed to write to log file", ioe, false);
     }
   }
 
-  public void writeLog(
-      String message,
-      Throwable t
-  ) {
-    /* Create the log directory if it does not exist. */
-    File logDirectory = FileHelper.createDirectory(
-        FileHelper.workingDirectory, "logs"
-    );
-    File logFile = new File(
-        logDirectory, this.logFileName
-    );
+  public void writeLog(String message, Throwable t) {
+    File logDirectory = FileHelper.createDirectory(FileHelper.workingDirectory,
+        "logs");
+    File logFile = new File(logDirectory, this.logFileName);
     if (!logFile.exists()) {
       try {
         boolean isNewFileCreated = logFile.createNewFile();
         if (!isNewFileCreated) {
-          LoggerHelper.logError(
-              "Failed to create log file",
-              false
-          );
+          LoggerHelper.logError("Failed to create log file", false);
           return;
         }
       } catch (IOException ioe) {
-        LoggerHelper.logError(
-            "Failed to create log file",
-            ioe, false
-        );
+        LoggerHelper.logError("Failed to create log file", ioe, false);
       }
     }
 
-    /* Write the message to the log file. */
     try (FileWriter fw = new FileWriter(logFile, true)) {
       if (this.isSystemMessageWritten(logFile)) {
         this.writeSystemMessage(fw);
       }
       fw.write(String.format("%s%n", message));
 
-      /* Write the stack trace to the log file. */
-      try (StringWriter sw = new StringWriter();
-          PrintWriter pw = new PrintWriter(sw)) {
-
-        /* Print the stack trace to the PrintWriter. */
+      try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(
+          sw)) {
         t.printStackTrace(pw);
 
         fw.write(String.format("%s", sw));
       }
     } catch (IOException ioe) {
-      LoggerHelper.logError(
-          "Failed to write to log file",
-          ioe, false
-      );
+      LoggerHelper.logError("Failed to write to log file", ioe, false);
     }
   }
 }
