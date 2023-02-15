@@ -39,33 +39,18 @@ public final class ConfigHelper {
   }
 
   private static String getClientToken() {
-    
-    /* Get the config file from the working directory. */
-    File configFile = new File(
-        FileHelper.workingDirectory, "twentyten.properties"
-    );
+    File configFile = new File(FileHelper.workingDirectory,
+        "twentyten.properties");
 
-    /* Create a new instance of the properties class. */
     CustomLinkedProperties properties = new CustomLinkedProperties();
 
-    /* Read the file using an unbuffered stream because we don't want to
-     * buffer the entire file in memory. */
     try (InputStream is = Files.newInputStream(configFile.toPath())) {
-
-      /* Load the properties from the file. */
       properties.load(is);
     } catch (IOException ioe) {
-      LoggerHelper.logError(
-          "Failed to load config file",
-          ioe, true
-      );
+      LoggerHelper.logError("Failed to load config file", ioe, true);
     }
-
-    /* If the client token is not set, generate a new one. */
-    return properties.getProperty(
-        "client-token", UUID.randomUUID()
-            .toString()
-            .replace("-", ""));
+    return properties.getProperty("client-token",
+        UUID.randomUUID().toString().replace("-", ""));
   }
 
   private static String getLanguage() {
