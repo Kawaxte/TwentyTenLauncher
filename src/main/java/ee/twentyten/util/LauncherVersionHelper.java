@@ -58,7 +58,7 @@ public final class LauncherVersionHelper {
     try {
       return future.get();
     } catch (InterruptedException ie) {
-      LoggerHelper.logError("Failed to wait for thread to finish", ie, true);
+      Thread.currentThread().interrupt();
     } catch (ExecutionException ee) {
       LoggerHelper.logError("Failed to check for launcher updates", ee, true);
     }
