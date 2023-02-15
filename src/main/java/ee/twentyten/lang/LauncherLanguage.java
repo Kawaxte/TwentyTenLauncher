@@ -25,10 +25,8 @@ public class LauncherLanguage {
         .getResourceAsStream(languageFileName)) {
       Objects.requireNonNull(is, "is == null!");
 
-      /* Create a reader for the input stream */
       Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
-
-      /* Create a new resource bundle */
+      
       LauncherLanguage.resourceBundle = new PropertyResourceBundle(reader);
     } catch (IOException ioe) {
       LoggerHelper.logError("Failed to load language file", ioe, true);
