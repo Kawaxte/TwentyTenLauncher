@@ -20,12 +20,7 @@ public enum ELanguage {
     this.name = name;
   }
 
-  public static void getLanguage(
-      String lang
-  ) {
-
-    /* Loop through all the languages and check if the language code is the
-     * same as the one passed in. */
+  public static void getLanguage(String lang) {
     for (ELanguage language : values()) {
       String languageCode = language.name().substring(9);
       if (languageCode.equalsIgnoreCase(lang)) {
