@@ -4,14 +4,12 @@ import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.lang.LauncherLanguage;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.LayoutManager;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import lombok.Getter;
 
 @Getter
@@ -27,81 +25,54 @@ public class OptionsVersionPanel extends JPanel {
   private JComboBox<String> useVersionComboBox;
 
   {
-    this.showVersionsCheckboxText = LauncherLanguage
-        .getString("ovp.checkbox.showVersionsCheckBox");
-    this.useVersionLabelText = LauncherLanguage
-        .getString("ovp.label.useVersionLabel");
+    this.showVersionsCheckboxText = LauncherLanguage.getString(
+        "ovp.checkbox.showVersionsCheckBox");
+    this.useVersionLabelText = LauncherLanguage.getString(
+        "ovp.label.useVersionLabel");
   }
 
-  public OptionsVersionPanel(
-      LayoutManager layout, boolean isDoubleBuffered
-  ) {
-    super(layout, isDoubleBuffered);
+  public OptionsVersionPanel() {
+    super(new BorderLayout(), true);
 
-    Border border = BorderFactory.createEmptyBorder(
-        8, 8, 8, 8
-    );
-    this.setBorder(border);
+    this.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
-    GridLayout gridLayout = new GridLayout(
-        0, 1
-    );
-    BorderLayout borderLayout = new BorderLayout();
-
-    this.createMiddlePanel(gridLayout);
-    this.createBottomPanel(borderLayout);
+    this.createMiddlePanel();
+    this.createBottomPanel();
   }
 
-  private void createMiddlePanel(
-      LayoutManager layout
-  ) {
-    String showBetaVersionsCheckboxText = String.format(
-        this.showVersionsCheckboxText,
-        "Beta", "2010-12-20 -> 2011-01-21"
-    );
-    String showAlphaVersionsCheckboxText = String.format(
-        this.showVersionsCheckboxText,
-        "Alpha", "2010-07-02 -> 2010-12-03"
-    );
-    String showInfdevVersionsCheckboxText = String.format(
-        this.showVersionsCheckboxText,
-        "Infdev", "2010-06-29 -> 2010-06-30"
-    );
-
-    JPanel middlePanel = new JPanel(layout, true);
+  private void createMiddlePanel() {
+    JPanel middlePanel = new JPanel(new GridLayout(0, 1), true);
     this.add(middlePanel, SwingConstants.CENTER);
 
-    this.showBetaVersionsCheckBox = new JCheckBox(
-        showBetaVersionsCheckboxText,
-        LauncherConfig.instance.getUsingBeta()
-    );
+    String showBetaVersionsCheckboxText = String.format(
+        this.showVersionsCheckboxText, "Beta", "2010-12-20 -> 2011-01-21");
+    this.showBetaVersionsCheckBox = new JCheckBox(showBetaVersionsCheckboxText,
+        LauncherConfig.instance.getUsingBeta());
+    middlePanel.add(this.showBetaVersionsCheckBox, 0);
+
+    String showAlphaVersionsCheckboxText = String.format(
+        this.showVersionsCheckboxText, "Alpha", "2010-07-02 -> 2010-12-03");
     this.showAlphaVersionsCheckBox = new JCheckBox(
-        showAlphaVersionsCheckboxText,
-        LauncherConfig.instance.getUsingAlpha()
-    );
+        showAlphaVersionsCheckboxText, LauncherConfig.instance.getUsingAlpha());
+    middlePanel.add(this.showAlphaVersionsCheckBox, 1);
+
+    String showInfdevVersionsCheckboxText = String.format(
+        this.showVersionsCheckboxText, "Infdev", "2010-06-29 -> 2010-06-30");
     this.showInfdevVersionsCheckBox = new JCheckBox(
         showInfdevVersionsCheckboxText,
-        LauncherConfig.instance.getUsingInfdev()
-    );
-
-    middlePanel.add(this.showBetaVersionsCheckBox, 0);
-    middlePanel.add(this.showAlphaVersionsCheckBox, 1);
+        LauncherConfig.instance.getUsingInfdev());
     middlePanel.add(this.showInfdevVersionsCheckBox, 2);
   }
 
-  private void createBottomPanel(
-      LayoutManager layout
-  ) {
-    JPanel bottomPanel = new JPanel(layout, true);
+  private void createBottomPanel() {
+    JPanel bottomPanel = new JPanel(new BorderLayout(), true);
     this.add(bottomPanel, BorderLayout.SOUTH);
 
-    this.useVersionLabel = new JLabel(
-        this.useVersionLabelText,
-        SwingConstants.RIGHT
-    );
-    this.useVersionComboBox = new JComboBox<>();
-
+    this.useVersionLabel = new JLabel(this.useVersionLabelText,
+        SwingConstants.RIGHT);
     bottomPanel.add(this.useVersionLabel, BorderLayout.WEST);
+
+    this.useVersionComboBox = new JComboBox<>();
     bottomPanel.add(this.useVersionComboBox, BorderLayout.CENTER);
   }
 }

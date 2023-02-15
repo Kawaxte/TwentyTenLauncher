@@ -2,7 +2,6 @@ package ee.twentyten.ui.options;
 
 import ee.twentyten.lang.LauncherLanguage;
 import java.awt.BorderLayout;
-import java.awt.LayoutManager;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -10,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import lombok.Getter;
 
 @Getter
@@ -29,12 +27,10 @@ public class OptionsLanguagePanel extends JPanel {
         .getString("olp.label.setLanguageLabel");
   }
 
-  public OptionsLanguagePanel(LayoutManager layout, boolean isDoubleBuffered) {
-    super(layout, isDoubleBuffered);
+  public OptionsLanguagePanel() {
+    super(new BorderLayout(0, 5), true);
 
-    Border border = BorderFactory.createEmptyBorder(
-        8, 8, 8, 8);
-    this.setBorder(border);
+    this.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
     this.createMiddlePanel();
     this.createBottomPanel();
@@ -45,9 +41,7 @@ public class OptionsLanguagePanel extends JPanel {
     this.add(middlePanel, BorderLayout.NORTH);
 
     JTextArea translationsTextArea = new JTextArea(
-        this.translationsTextAreaText,
-        4, 1
-    );
+        this.translationsTextAreaText, 4, 1);
     translationsTextArea.setEditable(false);
     translationsTextArea.setLineWrap(true);
     translationsTextArea.setWrapStyleWord(true);
@@ -55,7 +49,6 @@ public class OptionsLanguagePanel extends JPanel {
     JScrollPane scrollPane = new JScrollPane(translationsTextArea);
     scrollPane.setVerticalScrollBarPolicy(
         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
     middlePanel.add(scrollPane, BorderLayout.CENTER);
   }
 
@@ -63,13 +56,11 @@ public class OptionsLanguagePanel extends JPanel {
     JPanel bottomPanel = new JPanel(new BorderLayout(), true);
     this.add(bottomPanel, BorderLayout.SOUTH);
 
-    JLabel setLanguageLabel = new JLabel(
-        this.setLanguageLabelText,
-        SwingConstants.RIGHT
-    );
-    this.setLanguageComboBox = new JComboBox<>();
-
+    JLabel setLanguageLabel = new JLabel(this.setLanguageLabelText,
+        SwingConstants.RIGHT);
     bottomPanel.add(setLanguageLabel, BorderLayout.WEST);
+
+    this.setLanguageComboBox = new JComboBox<>();
     bottomPanel.add(this.setLanguageComboBox, BorderLayout.CENTER);
   }
 }
