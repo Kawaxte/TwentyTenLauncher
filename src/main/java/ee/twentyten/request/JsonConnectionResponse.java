@@ -17,8 +17,8 @@ class JsonConnectionResponse {
       String connectionUrl = connection.getURL().toString();
       String formattedResponse = String.format("%d %s (%s)", responseCode,
           responseMessage, connectionUrl);
-      String response;
 
+      String response;
       try (BufferedReader br = new BufferedReader(new InputStreamReader(
           responseCode >= 400 ? connection.getErrorStream()
               : connection.getInputStream(), StandardCharsets.UTF_8))) {
@@ -32,8 +32,10 @@ class JsonConnectionResponse {
 
       if (responseCode / 100 == 2) {
         LoggerHelper.logInfo(formattedResponse, false);
+        LoggerHelper.logInfo(response, false);
       } else {
         LoggerHelper.logError(formattedResponse, false);
+        LoggerHelper.logError(response, false);
       }
       return response.isEmpty() ? new JSONObject() : new JSONObject(response);
     } catch (IOException ioe) {

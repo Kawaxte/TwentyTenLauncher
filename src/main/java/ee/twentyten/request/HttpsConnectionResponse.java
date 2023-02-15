@@ -1,7 +1,10 @@
 package ee.twentyten.request;
 
 import ee.twentyten.util.LoggerHelper;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import javax.net.ssl.HttpsURLConnection;
 
 class HttpsConnectionResponse {
@@ -14,10 +17,24 @@ class HttpsConnectionResponse {
       String formattedResponse = String.format("%d %s (%s)", responseCode,
           responseMessage, connectionUrl);
 
+      String response;
+      try (BufferedReader br = new BufferedReader(new InputStreamReader(
+          responseCode >= 400 ? connection.getErrorStream()
+              : connection.getInputStream(), StandardCharsets.UTF_8))) {
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+          sb.append(line);
+        }
+        response = sb.toString();
+      }
+
       if (responseCode / 100 == 2) {
         LoggerHelper.logInfo(formattedResponse, false);
+        LoggerHelper.logInfo(response, false);
       } else {
         LoggerHelper.logError(formattedResponse, false);
+        LoggerHelper.logError(response, false);
       }
       return connection;
     } catch (IOException ioe) {
