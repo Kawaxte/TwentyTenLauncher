@@ -32,10 +32,8 @@ class JsonConnectionResponse {
 
       if (responseCode / 100 == 2) {
         LoggerHelper.logInfo(formattedResponse, false);
-        LoggerHelper.logInfo(response, false);
       } else {
         LoggerHelper.logError(formattedResponse, false);
-        LoggerHelper.logError(response, false);
       }
       return response.isEmpty() ? new JSONObject() : new JSONObject(response);
     } catch (IOException ioe) {
