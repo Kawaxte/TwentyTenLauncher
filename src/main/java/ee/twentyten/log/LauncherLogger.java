@@ -13,11 +13,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
-import lombok.Getter;
 
 public class LauncherLogger {
 
-  @Getter
   public static LauncherLogger instance;
   private final String logFileName;
   private final String javaRuntimeName;
@@ -50,12 +48,6 @@ public class LauncherLogger {
     );
   }
 
-  /**
-   * Returns a string representation of the current date and time in the format
-   * of "yyyy-MM-dd'T'HH-mm-ss".
-   *
-   * @return the current date and time in a formatted string
-   */
   private String getTimestamp() {
     Calendar calendar = Calendar.getInstance();
     int year = calendar.get(Calendar.YEAR);
@@ -71,17 +63,12 @@ public class LauncherLogger {
     );
   }
 
-  /**
-   * Retrieves the hardware ID of the CPU and GPU for the current platform.
-   * <p>
-   * The hardware ID is retrieved through the execution of platform-specific
-   * commands.
-   *
-   * @throws UnsupportedOperationException if the platform is not supported
-   */
   private void getHardwareId() {
+
+    /* Get the platform name. */
     EPlatform platform = EPlatform.getPlatform();
 
+    /* Get the commands for retrieving the hardware ID. */
     String cpuIdCommand = "";
     String gpuIdCommand = "";
     switch (platform) {
@@ -98,17 +85,10 @@ public class LauncherLogger {
         gpuIdCommand = "wmic path win32_VideoController get name";
         break;
       default:
-        String unsupportedPlatform = String.format(
-            "Unsupported platform: %s",
-            platform
-        );
-
-        Throwable uoe = new UnsupportedOperationException(unsupportedPlatform);
-
-        LoggerHelper.logError(uoe.getMessage(), uoe, false);
-        break;
+        throw new UnsupportedOperationException(String.valueOf(platform));
     }
 
+    /* Get the hardware ID. */
     try {
       String gpuIdKey = "ee.twentyten.hw.gpu.id";
       String cpuIdKey = "ee.twentyten.hw.cpu.id";
@@ -123,39 +103,27 @@ public class LauncherLogger {
           gpuIdKey
       );
     } catch (IOException ioe) {
-      String errorMessage = String.format(
-          "Failed to retrieve the hardware ID: %s",
-          ioe.getMessage()
+      LoggerHelper.logError(
+          "Failed to retrieve the hardware ID",
+          ioe, false
       );
-      
-      LoggerHelper.logError(errorMessage, ioe, false);
     }
   }
 
-  /**
-   * Retrieves the hardware ID for a specific platform by executing a command
-   * and parsing the result.
-   *
-   * @param platform the platform for which to retrieve the hardware ID
-   * @param command  the command to execute to retrieve the hardware ID
-   * @param key      the key to use to store the hardware ID in the system
-   *                 properties
-   * @return the hardware ID for the specified platform
-   * @throws IOException                   if there is an error retrieving the
-   *                                       hardware ID
-   * @throws UnsupportedOperationException if the platform is not supported
-   */
   private String getHardwareId(
       EPlatform platform,
       String command,
       String key
   ) throws IOException {
+
+    /* Execute the command and get the output. */
     Process process = RuntimeHelper.executeCommand(command);
     String result = RuntimeHelper.getOutput(process);
     if (result == null) {
       return null;
     }
 
+    /* Remove the first line of the output. */
     switch (platform) {
       case MACOSX:
       case LINUX:
@@ -165,36 +133,25 @@ public class LauncherLogger {
         result = result.substring(result.indexOf("\r\n") + 2);
         break;
       default:
-        String unsupportedPlatform = String.format(
-            "Unsupported platform: %s",
-            platform
-        );
-
-        Throwable uoe = new UnsupportedOperationException(unsupportedPlatform);
-
-        LoggerHelper.logError(uoe.getMessage(), uoe, false);
-        break;
+        throw new UnsupportedOperationException(String.valueOf(platform));
     }
+
+    /* Remove the trailing whitespace. */
     result = result.trim();
 
     System.setProperty(key, result);
     return result;
   }
 
-  /**
-   * Checks if a system message has already been written to the specified file.
-   *
-   * @param file the file to check for a system message
-   * @return true if a system message has not been written, false otherwise
-   */
   private boolean isSystemMessageWritten(
       File file
   ) {
 
-    /*
-     * BufferedReader and FileReader are used instead of Scanner because
+    /* BufferedReader and FileReader are used instead of Scanner because
      * Scanner is not thread-safe. */
     try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+
+      /* Read the first line of the file. */
       String line;
       while ((line = br.readLine()) != null) {
         if (line.startsWith("[SYSTEM]")) {
@@ -202,24 +159,14 @@ public class LauncherLogger {
         }
       }
     } catch (IOException ioe) {
-      String errorMessage = String.format(
-          "Failed to check if system message has been written: %s",
-          ioe.getMessage()
+      LoggerHelper.logError(
+          "Failed to check if system message has been written",
+          ioe, false
       );
-
-      LoggerHelper.logError(errorMessage, ioe, false);
     }
-
     return true;
   }
 
-  /**
-   * Writes a system message to the specified file writer.
-   *
-   * @param fw the file writer to use for writing the system message
-   * @throws IOException if an I/O error occurs while writing to the file
-   *                     writer
-   */
   private void writeSystemMessage(
       FileWriter fw
   ) throws IOException {
@@ -257,19 +204,17 @@ public class LauncherLogger {
             "java.vm.version", this.javaVmVersion)
     };
 
+    /* Write the system messages to the log file. */
     for (String line : systemMessages) {
       fw.write(line);
     }
   }
 
-  /**
-   * Writes a log message to a log file in the logs directory.
-   *
-   * @param message the message to be written to the log file
-   */
   public void writeLog(
       String message
   ) {
+
+    /* Create the log directory if it does not exist. */
     File logDirectory = FileHelper.createDirectory(
         FileHelper.workingDirectory, "logs"
     );
@@ -280,51 +225,39 @@ public class LauncherLogger {
       try {
         boolean isNewFileCreated = logFile.createNewFile();
         if (!isNewFileCreated) {
-          String errorMessage = String.format(
-              "Failed to create log file: %s",
-              logFile.getAbsolutePath()
+          LoggerHelper.logError(
+              "Failed to create log file",
+              false
           );
-
-          Throwable ioe = new IOException(errorMessage);
-
-          LoggerHelper.logError(errorMessage, ioe, false);
           return;
         }
       } catch (IOException ioe) {
-        String errorMessage = String.format(
-            "Failed to create log file: %s",
-            logFile.getAbsolutePath()
+        LoggerHelper.logError(
+            "Failed to create log file",
+            ioe, false
         );
-
-        LoggerHelper.logError(errorMessage, ioe, false);
       }
     }
 
+    /* Write the message to the log file. */
     try (FileWriter fw = new FileWriter(logFile, true)) {
       if (this.isSystemMessageWritten(logFile)) {
         this.writeSystemMessage(fw);
       }
       fw.write(String.format("%s%n", message));
     } catch (IOException ioe) {
-      String errorMessage = String.format(
-          "Failed to write to log file: %s",
-          logFile.getAbsolutePath()
+      LoggerHelper.logError(
+          "Failed to write to log file",
+          ioe, false
       );
-
-      LoggerHelper.logError(errorMessage, ioe, false);
     }
   }
 
-  /**
-   * Writes a log message to a log file with an optional throwable stack trace.
-   *
-   * @param message the message to be written to the log file
-   * @param t       optional throwable stack trace to write to the log
-   */
   public void writeLog(
       String message,
       Throwable t
   ) {
+    /* Create the log directory if it does not exist. */
     File logDirectory = FileHelper.createDirectory(
         FileHelper.workingDirectory, "logs"
     );
@@ -335,56 +268,41 @@ public class LauncherLogger {
       try {
         boolean isNewFileCreated = logFile.createNewFile();
         if (!isNewFileCreated) {
-          String errorMessage = String.format(
-              "Failed to create log file: %s",
-              logFile.getAbsolutePath()
+          LoggerHelper.logError(
+              "Failed to create log file",
+              false
           );
-
-          Throwable ioe = new IOException(errorMessage);
-
-          LoggerHelper.logError(errorMessage, ioe, false);
           return;
         }
       } catch (IOException ioe) {
-        String errorMessage = String.format(
-            "Failed to create log file: %s",
-            logFile.getAbsolutePath()
+        LoggerHelper.logError(
+            "Failed to create log file",
+            ioe, false
         );
-
-        LoggerHelper.logError(errorMessage, ioe, false);
       }
     }
 
+    /* Write the message to the log file. */
     try (FileWriter fw = new FileWriter(logFile, true)) {
       if (this.isSystemMessageWritten(logFile)) {
         this.writeSystemMessage(fw);
       }
       fw.write(String.format("%s%n", message));
 
-      try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(
-          sw)) {
-        if (t == null) {
-          String errorMessage = String.format(
-              "Failed to write to log file: %s",
-              logFile.getAbsolutePath()
-          );
+      /* Write the stack trace to the log file. */
+      try (StringWriter sw = new StringWriter();
+          PrintWriter pw = new PrintWriter(sw)) {
 
-          Throwable npe = new NullPointerException(errorMessage);
-
-          LoggerHelper.logError(errorMessage, npe, false);
-          return;
-        }
-
+        /* Print the stack trace to the PrintWriter. */
         t.printStackTrace(pw);
+
         fw.write(String.format("%s", sw));
       }
     } catch (IOException ioe) {
-      String errorMessage = String.format(
-          "Failed to write to log file: %s",
-          logFile.getAbsolutePath()
+      LoggerHelper.logError(
+          "Failed to write to log file",
+          ioe, false
       );
-
-      LoggerHelper.logError(errorMessage, ioe, false);
     }
   }
 }
