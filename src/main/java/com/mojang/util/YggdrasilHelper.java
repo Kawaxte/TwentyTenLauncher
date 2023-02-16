@@ -2,72 +2,108 @@ package com.mojang.util;
 
 import com.mojang.YggdrasilAuthenticationImpl;
 import ee.twentyten.config.LauncherConfig;
+import ee.twentyten.ui.LauncherFrame;
+import ee.twentyten.ui.launcher.LauncherLoginPanel;
+import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.LoggerHelper;
 import org.json.JSONObject;
 
 public final class YggdrasilHelper {
 
-  public static final String YGGDRASIL_AUTH_URL;
-  private static final YggdrasilAuthenticationImpl AUTHENTICATION_IMPL;
+  public static final String MOJANG_SERVER_URL;
+  private static final YggdrasilAuthenticationImpl AUTHENTICATION;
 
   static {
-    YGGDRASIL_AUTH_URL = "https://authserver.mojang.com/%s";
-    AUTHENTICATION_IMPL = new YggdrasilAuthenticationImpl();
+    MOJANG_SERVER_URL = "https://authserver.mojang.com/%s";
+    AUTHENTICATION = new YggdrasilAuthenticationImpl();
   }
 
-  public static JSONObject authenticate(String username, String password, String clientToken,
-      boolean requestUser) {
-    JSONObject result = AUTHENTICATION_IMPL.authenticate(username, password, clientToken,
-        requestUser);
-    if (result.has("error")) {
-      LoggerHelper.logError(result.toString(), false);
-      return result;
-    }
+  public static JSONObject authenticate(final String username,
+      final String password, final boolean requestUser) {
+    LauncherPanel launcherPanel = LauncherFrame.instance.getLauncherPanel();
+    final LauncherLoginPanel launcherLoginPanel = launcherPanel.getLauncherLoginPanel();
 
-    LoggerHelper.logInfo(result.toString(), false);
-    return result;
-  }
+    final JSONObject[] result = new JSONObject[1];
+    Thread authenticationThread = new Thread(new Runnable() {
+      public void run() {
+        result[0] = AUTHENTICATION.authenticate(username, password,
+            requestUser);
+        if (result[0].has("error")) {
+          LoggerHelper.logError(result[0].toString(), false);
+          return;
+        }
 
-  public static JSONObject validate(String accessToken, String clientToken) {
-    JSONObject result = AUTHENTICATION_IMPL.validate(accessToken, clientToken);
-    if (result == null) {
-      return new JSONObject();
-    }
-    if (result.has("error")) {
-      LoggerHelper.logError(result.toString(), false);
-      return result;
-    }
+        String accessToken = result[0].getString("accessToken");
+        String newClientToken = result[0].getString("clientToken");
+        if (!result[0].has("selectedProfile")) {
+          LauncherConfig.instance.setProfileName("");
+          LauncherConfig.instance.setProfileId("");
+        } else {
+          String name = result[0].getJSONObject("selectedProfile")
+              .getString("name");
+          String id = result[0].getJSONObject("selectedProfile")
+              .getString("id");
 
-    LoggerHelper.logInfo(result.toString(), false);
-    return result;
-  }
+          LauncherConfig.instance.setProfileName(name);
+          LauncherConfig.instance.setProfileId(id);
 
-  public static JSONObject refresh(String accessToken, String clientToken, boolean requestUser) {
-    JSONObject result = AUTHENTICATION_IMPL.refresh(accessToken, clientToken, requestUser);
-    if (result.has("error")) {
-      LoggerHelper.logError(result.toString(), false);
-      return result;
-    }
-
-    LoggerHelper.logInfo(result.toString(), false);
-    return result;
-  }
-
-  public static boolean isSessionExpired(String accessToken, String clientToken) {
-    JSONObject session = YggdrasilHelper.validate(accessToken, clientToken);
-    if (session.has("error")) {
-      session = YggdrasilHelper.refresh(accessToken, clientToken, true);
-      if (session.has("error")) {
-        LoggerHelper.logError("Failed to refresh access token", true);
-        return false;
+          boolean isPasswordSaved = launcherLoginPanel.getRememberPasswordCheckBox()
+              .isSelected();
+          LauncherConfig.instance.setUsername(username);
+          LauncherConfig.instance.setPassword(isPasswordSaved ? password : "");
+          LauncherConfig.instance.setPasswordSaved(isPasswordSaved);
+          LauncherConfig.instance.setAccessToken(accessToken);
+          LauncherConfig.instance.setClientToken(newClientToken);
+          LauncherConfig.instance.saveConfig();
+        }
       }
-
-      String newAccessToken = session.getString("accessToken");
-      String newClientToken = session.getString("clientToken");
-      LauncherConfig.instance.setAccessToken(newAccessToken);
-      LauncherConfig.instance.setClientToken(newClientToken);
-      LauncherConfig.instance.saveConfig();
+    }, "yggdrasil");
+    authenticationThread.start();
+    try {
+      authenticationThread.join();
+    } catch (InterruptedException ie) {
+      LoggerHelper.logError("Interrupted while authenticating", ie, true);
     }
-    return true;
+    return result[0];
+  }
+
+  public static void validateAndRefresh(final String accessToken,
+      final String clientToken, final boolean requestUser) {
+    Thread validationThread = new Thread(new Runnable() {
+      public void run() {
+        JSONObject result = AUTHENTICATION.validate(accessToken, clientToken);
+        if (result.has("error")) {
+          LoggerHelper.logError(result.toString(), false);
+          Thread refreshThread = new Thread(new Runnable() {
+            public void run() {
+              JSONObject refreshResult = AUTHENTICATION.refresh(accessToken,
+                  clientToken, requestUser);
+              if (refreshResult.has("error")) {
+                LoggerHelper.logError(refreshResult.toString(), false);
+                LauncherFrame.isSessionExpired = true;
+                return;
+              }
+
+              String newAccessToken = refreshResult.getString("accessToken");
+              String newClientToken = refreshResult.getString("clientToken");
+
+              LauncherConfig.instance.setAccessToken(newAccessToken);
+              LauncherConfig.instance.setClientToken(newClientToken);
+              LauncherConfig.instance.saveConfig();
+
+              LauncherFrame.isSessionExpired = false;
+            }
+          });
+          refreshThread.start();
+          try {
+            refreshThread.join();
+          } catch (InterruptedException ie) {
+            LoggerHelper.logError("Interrupted while refreshing the session",
+                ie, true);
+          }
+        }
+      }
+    }, "yggdrasil");
+    validationThread.start();
   }
 }
