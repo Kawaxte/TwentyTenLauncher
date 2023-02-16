@@ -20,8 +20,8 @@ public final class YggdrasilHelper {
 
   public static JSONObject authenticate(final String username,
       final String password, final boolean requestUser) {
-    LauncherPanel launcherPanel = LauncherFrame.instance.getLauncherPanel();
-    final LauncherLoginPanel launcherLoginPanel = launcherPanel.getLauncherLoginPanel();
+    LauncherPanel panel = LauncherFrame.instance.getPanel();
+    final LauncherLoginPanel loginPanel = panel.getLoginPanel();
 
     final JSONObject[] result = new JSONObject[1];
     Thread authenticationThread = new Thread(new Runnable() {
@@ -47,7 +47,7 @@ public final class YggdrasilHelper {
           LauncherConfig.instance.setProfileName(name);
           LauncherConfig.instance.setProfileId(id);
 
-          boolean isPasswordSaved = launcherLoginPanel.getRememberPasswordCheckBox()
+          boolean isPasswordSaved = loginPanel.getRememberPasswordCheckBox()
               .isSelected();
           LauncherConfig.instance.setUsername(username);
           LauncherConfig.instance.setPassword(isPasswordSaved ? password : "");
@@ -62,7 +62,8 @@ public final class YggdrasilHelper {
     try {
       authenticationThread.join();
     } catch (InterruptedException ie) {
-      LoggerHelper.logError("Interrupted while authenticating", ie, true);
+      LoggerHelper.logError("Interrupted while waiting for authentication",
+          true);
     }
     return result[0];
   }
