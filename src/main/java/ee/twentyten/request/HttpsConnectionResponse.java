@@ -6,7 +6,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 class HttpsConnectionResponse {
 
-  HttpsURLConnection getResponse(HttpsURLConnection connection) {
+  HttpsURLConnection response(HttpsURLConnection connection) {
     try {
       int responseCode = connection.getResponseCode();
       String responseMessage = connection.getResponseMessage();
