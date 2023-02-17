@@ -11,9 +11,7 @@ public final class LoggerHelper {
 
   static {
     LoggerHelper.isUsingDebugger = ManagementFactory.getRuntimeMXBean()
-        .getInputArguments()
-        .toString()
-        .contains("-agentlib:jdwp");
+        .getInputArguments().toString().contains("-agentlib:jdwp");
 
     LauncherLogger.instance = new LauncherLogger();
   }
@@ -23,110 +21,73 @@ public final class LoggerHelper {
   }
 
   private static String getCallerClassName() {
-    StackTraceElement[] elements = Thread.currentThread()
-        .getStackTrace();
+    StackTraceElement[] elements = Thread.currentThread().getStackTrace();
     return elements[3].getClassName();
   }
 
   private static String getCallerMethodName() {
-    StackTraceElement[] elements = Thread.currentThread()
-        .getStackTrace();
+    StackTraceElement[] elements = Thread.currentThread().getStackTrace();
     return elements[3].getMethodName();
   }
 
-  public static void logInfo(
-      String message,
-      boolean isWrittenToFile
-  ) {
-    if (isUsingDebugger) {
+  public static void logInfo(String message, boolean isWrittenToFile) {
+    if (LoggerHelper.isUsingDebugger) {
       Logger logger = LoggerFactory.getLogger(
           LoggerHelper.getCallerClassName());
-      logger.info(String.format(
-          "%s: %s",
-          LoggerHelper.getCallerMethodName(), message)
-      );
+      logger.info(
+          String.format("%s: %s", LoggerHelper.getCallerMethodName(), message));
     }
-
     if (isWrittenToFile) {
-      String output = String.format(
-          "[INFO] %s - %s",
-          LoggerHelper.getCallerClassName(), message
-      );
+      String output = String.format("[INFO] %s - %s",
+          LoggerHelper.getCallerClassName(), message);
 
       LauncherLogger.instance.writeLog(output);
     }
   }
 
-  public static void logWarn(
-      String message,
-      boolean isWrittenToFile
-  ) {
-    if (isUsingDebugger) {
+  public static void logWarn(String message, boolean isWrittenToFile) {
+    if (LoggerHelper.isUsingDebugger) {
       Logger logger = LoggerFactory.getLogger(
           LoggerHelper.getCallerClassName());
-      logger.warn(String.format(
-          "%s: %s",
-          LoggerHelper.getCallerMethodName(), message)
-      );
+      logger.warn(
+          String.format("%s: %s", LoggerHelper.getCallerMethodName(), message));
     }
-
     if (isWrittenToFile) {
-      String output = String.format(
-          "[WARN] %s - %s",
-          LoggerHelper.getCallerClassName(), message
-      );
+      String output = String.format("[WARN] %s - %s",
+          LoggerHelper.getCallerClassName(), message);
 
       LauncherLogger.instance.writeLog(output);
     }
   }
 
-  public static void logError(
-      String message,
-      boolean isWrittenToFile
-  ) {
-    if (isUsingDebugger) {
+  public static void logError(String message, boolean isWrittenToFile) {
+    if (LoggerHelper.isUsingDebugger) {
       Logger logger = LoggerFactory.getLogger(
           LoggerHelper.getCallerClassName());
-      logger.error(String.format(
-          "%s: %s",
-          LoggerHelper.getCallerMethodName(), message)
-      );
+      logger.error(
+          String.format("%s: %s", LoggerHelper.getCallerMethodName(), message));
     }
-
     if (isWrittenToFile) {
-      String output = String.format(
-          "[ERROR] %s - %s",
-          LoggerHelper.getCallerClassName(), message
-      );
+      String output = String.format("[ERROR] %s - %s",
+          LoggerHelper.getCallerClassName(), message);
 
       LauncherLogger.instance.writeLog(output);
     }
   }
 
-  public static void logError(
-      String message,
-      Throwable t,
-      boolean isWrittenToFile
-  ) {
+  public static void logError(String message, Throwable t,
+      boolean isWrittenToFile) {
+    Throwable cause = t.getCause() != null ? t.getCause() : t;
 
-    /* Using the cause of the throwable if it exists, otherwise using the
-     * throwable itself. */
-    Throwable cause = t.getCause() != null
-        ? t.getCause()
-        : t;
-
-    if (isUsingDebugger) {
+    if (LoggerHelper.isUsingDebugger) {
       Logger logger = LoggerFactory.getLogger(
           LoggerHelper.getCallerClassName());
-      logger.error(String.format(
-          "%s: %s",
-          LoggerHelper.getCallerMethodName(), message), cause
-      );
+      logger.error(
+          String.format("%s: %s", LoggerHelper.getCallerMethodName(), message),
+          cause);
     }
-
     if (isWrittenToFile) {
-      String output = String.format(
-          "[ERROR] %s - %s",
+      String output = String.format("[ERROR] %s - %s",
           LoggerHelper.getCallerClassName(), message);
 
       LauncherLogger.instance.writeLog(output, cause);
