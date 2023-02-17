@@ -103,7 +103,7 @@ public class LauncherLogger {
         result = result.substring(result.indexOf(":") + 1);
         break;
       case WINDOWS:
-        result = result.substring(result.indexOf("\r\n") + 2);
+        result = result.substring(result.indexOf("\r") + 1);
         break;
       default:
         throw new UnsupportedOperationException(String.valueOf(platform));
@@ -114,11 +114,10 @@ public class LauncherLogger {
     return result;
   }
 
-  private boolean isSystemMessageWritten(File file) {
+  private boolean isSystemMessageWritten(File target) {
 
-    /* BufferedReader and FileReader are used instead of Scanner because
-     * Scanner is not thread-safe. */
-    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+    /* BufferedReader and FileReader are used because Scanner is not thread-safe */
+    try (BufferedReader br = new BufferedReader(new FileReader(target))) {
       String line;
       while ((line = br.readLine()) != null) {
         if (line.startsWith("[SYSTEM]")) {
