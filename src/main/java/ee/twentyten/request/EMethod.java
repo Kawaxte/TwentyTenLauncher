@@ -1,7 +1,7 @@
 package ee.twentyten.request;
 
 public enum EMethod {
-  GET("GET"), POST("POST");
+  GET("GET"), POST("POST"), HEAD("HEAD");
 
   private final String method;
 
