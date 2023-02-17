@@ -19,7 +19,7 @@ import org.apache.commons.codec.binary.Base64;
 
 abstract class LauncherCipher {
 
-  private static SecretKey getSecretKey() {
+  private static SecretKey generateSecretKey() {
     try {
       KeyGenerator kg = KeyGenerator.getInstance("AES");
 
@@ -40,7 +40,7 @@ abstract class LauncherCipher {
       return "";
     }
 
-    SecretKey key = getSecretKey();
+    SecretKey key = generateSecretKey();
     Objects.requireNonNull(key, "key == null!");
 
     IvParameterSpec iv = new IvParameterSpec(key.getEncoded());
@@ -67,7 +67,7 @@ abstract class LauncherCipher {
       return "";
     }
 
-    SecretKey key = getSecretKey();
+    SecretKey key = generateSecretKey();
     Objects.requireNonNull(key, "key == null!");
 
     IvParameterSpec iv = new IvParameterSpec(key.getEncoded());
