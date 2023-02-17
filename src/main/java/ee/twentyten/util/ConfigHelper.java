@@ -15,6 +15,9 @@ public final class ConfigHelper {
   private static final boolean DEFAULT_PASSWORD_SAVED;
   private static final String DEFAULT_CLIENT_TOKEN;
   private static final String DEFAULT_ACCESS_TOKEN;
+  private static final String DEFAULT_REFRESH_TOKEN;
+  private static final String DEFAULT_PROFILE_ID;
+  private static final String DEFAULT_PROFILE_NAME;
   private static final boolean DEFAULT_USING_BETA;
   private static final boolean DEFAULT_USING_ALPHA;
   private static final boolean DEFAULT_USING_INFDEV;
@@ -25,8 +28,11 @@ public final class ConfigHelper {
     DEFAULT_USERNAME = "";
     DEFAULT_PASSWORD = "";
     DEFAULT_PASSWORD_SAVED = false;
-    DEFAULT_CLIENT_TOKEN = ConfigHelper.getClientToken();
+    DEFAULT_CLIENT_TOKEN = ConfigHelper.generateClientToken();
     DEFAULT_ACCESS_TOKEN = "";
+    DEFAULT_REFRESH_TOKEN = "";
+    DEFAULT_PROFILE_ID = "";
+    DEFAULT_PROFILE_NAME = "";
     DEFAULT_USING_BETA = true;
     DEFAULT_USING_ALPHA = false;
     DEFAULT_USING_INFDEV = false;
@@ -38,7 +44,7 @@ public final class ConfigHelper {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  private static String getClientToken() {
+  public static String generateClientToken() {
     File configFile = new File(FileHelper.workingDirectory,
         "twentyten.properties");
 
