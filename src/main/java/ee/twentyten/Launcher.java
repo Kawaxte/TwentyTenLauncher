@@ -12,7 +12,8 @@ public class Launcher {
   public static void main(String[] args) {
     if (RuntimeHelper.MAX_MEMORY < RuntimeHelper.MIN_MEMORY) {
       List<String> arguments = new ArrayList<>();
-      arguments.add(EPlatform.getPlatform() == EPlatform.WINDOWS ? "javaw" : "java");
+      arguments.add(
+          EPlatform.getPlatform() == EPlatform.WINDOWS ? "javaw" : "java");
       arguments.add("-Xmx1024m");
       arguments.add("-Dsun.java2d.d3d=false");
       arguments.add("-Dsun.java2d.opengl=false");
@@ -32,7 +33,8 @@ public class Launcher {
       } catch (IOException ioe) {
         LoggerHelper.logError("Failed to start the process", ioe, true);
       } catch (InterruptedException ie) {
-        LoggerHelper.logError("Failed to terminate the process", ie, true);
+        LoggerHelper.logError("Interrupted while waiting for the process", ie,
+            true);
       }
     } else {
       LauncherFrame.main(args);
