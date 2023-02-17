@@ -1,12 +1,11 @@
 package ee.twentyten.ui.launcher;
 
+import com.microsoft.util.MicrosoftHelper;
+import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.lang.LauncherLanguage;
 import ee.twentyten.ui.LauncherFrame;
-import ee.twentyten.ui.OptionsDialog;
 import ee.twentyten.util.FileHelper;
 import ee.twentyten.util.LoggerHelper;
-import ee.twentyten.util.OptionsHelper;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -14,228 +13,174 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.LayoutManager;
 import java.awt.Transparency;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.VolatileImage;
-import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import lombok.Getter;
 
 public class LauncherPanel extends JPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private final String errorLabelFailedText;
-  private final String errorLabelOutdatedText;
-  private final String errorLabelConnectionText;
   private final Image bgImage;
-  private final LauncherLoginPanel launcherLoginPanel;
+  private final String microsoftLoginButtonText;
+  @Getter
+  private LauncherLoginPanel loginPanel;
+  @Getter
+  private JButton microsoftLoginButton;
 
   {
-    this.bgImage = FileHelper.readImageFile(
-        LauncherPanel.class, "icon/dirt.png").get();
+    this.bgImage = FileHelper.readImageFile(LauncherPanel.class,
+        "icon/dirt.png");
 
-    this.errorLabelFailedText = LauncherLanguage
-        .getString("lp.label.errorLabel.failed");
-    this.errorLabelOutdatedText = LauncherLanguage
-        .getString("lp.label.errorLabel.outdated");
-    this.errorLabelConnectionText = LauncherLanguage
-        .getString("lp.label.errorLabel.connection");
+    this.microsoftLoginButtonText = LauncherLanguage.getString(
+        "llp.button.microsoftLoginButton");
   }
 
-  public LauncherPanel(
-      LayoutManager layout,
-      boolean isDoubleBuffered
-  ) {
-    super(layout, isDoubleBuffered);
+  public LauncherPanel() {
+    super(new GridBagLayout(), true);
 
     Dimension panelSize = new Dimension(854, 480);
     this.setPreferredSize(panelSize);
 
-    BorderLayout borderLayout = new BorderLayout(0, 8);
-    this.launcherLoginPanel = new LauncherLoginPanel(
-        borderLayout, true
-    );
-    this.launcherLoginPanel
-        .getOptionsButton()
-        .addActionListener(this);
-    this.launcherLoginPanel
-        .getLoginButton()
-        .addActionListener(this);
-    this.add(this.launcherLoginPanel);
+    GridBagConstraints gbc = new GridBagConstraints();
+    this.addComponents(gbc);
+
+    this.microsoftLoginButton.addActionListener(this);
   }
 
-  private void openOptionsDialog() {
-    String optionsTitleText = LauncherLanguage
-        .getString("od.string.title");
+  private void addComponents(GridBagConstraints gbc) {
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.insets.top = 23;
+    this.loginPanel = new LauncherLoginPanel();
+    this.add(this.loginPanel, gbc);
 
-    OptionsDialog optionsDialog = new OptionsDialog(
-        optionsTitleText, LauncherFrame.instance
-    );
-    optionsDialog.setVisible(true);
+    gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.insets.top = 0;
+
+    this.microsoftLoginButton = new JButton(this.microsoftLoginButtonText);
+    this.add(this.microsoftLoginButton, gbc);
   }
 
-  public void showNoNetworkMessage(
-      String message
-  ) {
+  public void addNoNetworkPanel(String message) {
     this.removeAll();
 
-    /*
-    this.add(this.offlinePanel);
-    this.offlinePanel.getErrorLabel().setText(message);
-
-    if (!MinecraftLauncher.isMinecraftCached()) {
-      this.offlinePanel.add(this.offlinePanel.getPlayOnlineLabel(),
-          BorderLayout.CENTER);
-    } else {
-      this.offlinePanel.remove(this.offlinePanel.getPlayOnlineLabel());
-    }
-    this.offlinePanel.getPlayOfflineButton()
-        .setEnabled(MinecraftLauncher.isMinecraftCached());
-    */
+    LauncherNoNetworkPanel noNetworkPanel = new LauncherNoNetworkPanel();
+    noNetworkPanel.getErrorLabel().setText(message);
+    this.add(noNetworkPanel);
 
     this.revalidate();
     this.repaint();
   }
 
-  private void drawTitleString(
-      String title,
-      int pWidth,
-      int pHeight,
-      Graphics2D g2d
-  ) {
+  public void addMicrosoftLoginPanel(String userCode,
+      int expiresIn, String verificationUri) {
+    this.removeAll();
 
-    /* Set the font and color */
+    LauncherMicrosoftLoginPanel microsoftLoginPanel = new LauncherMicrosoftLoginPanel();
+    microsoftLoginPanel.getUserCodeLabel().setText(userCode);
+    microsoftLoginPanel.setExpiresIn(expiresIn);
+    microsoftLoginPanel.setVerificationUri(verificationUri);
+    microsoftLoginPanel.startProgressBar();
+    this.add(microsoftLoginPanel);
+
+    this.revalidate();
+    this.repaint();
+  }
+
+  private void drawTitleString(String title, int pWidth, int pHeight,
+      Graphics2D g2d) {
     Font titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 20);
     g2d.setFont(titleFont);
     g2d.setColor(Color.LIGHT_GRAY);
 
-    /* Get the font metrics */
     FontMetrics fm = g2d.getFontMetrics();
     int stringWidth = fm.stringWidth(title);
     int stringHeight = fm.getHeight();
-
-    /* Bit shifting is used to divide and multiply by 2 because it is faster
-     * than using the division and multiplication operators */
     int stringX = (pWidth >> 1 >> 1) - (stringWidth >> 1);
     int stringY = (pHeight >> 1 >> 1) - (stringHeight << 1);
 
-    /* Draw the string */
     g2d.drawString(title, stringX, stringY);
   }
 
   @Override
-  protected void paintComponent(
-      Graphics g
-  ) {
+  protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
     int panelWidth = this.getWidth();
     int panelHeight = this.getHeight();
     int imageWidth = 32;
     int imageHeight = 32;
-
-    /* Bit shifting is used to divide by 32 because it is faster than using
-     * the division operator to divide by 32 */
     int gridWidth = ((panelWidth + imageWidth) - 1) >> 5;
     int gridHeight = ((panelHeight + imageHeight) - 1) >> 5;
 
-    /* Create a compatible volatile image */
     GraphicsConfiguration gc = ((Graphics2D) g).getDeviceConfiguration();
     VolatileImage compatVolatileImage = gc.createCompatibleVolatileImage(
-        panelWidth >> 1, panelHeight >> 1,
-        Transparency.TRANSLUCENT);
+        panelWidth >> 1, panelHeight >> 1, Transparency.TRANSLUCENT);
 
-    /* Create a graphics object from the volatile image */
     Graphics2D g2d = compatVolatileImage.createGraphics();
     try {
-
-      /* Loop through the grid where each grid cell is 32x32 pixels */
       for (int gridIndex = 0; gridIndex < (gridWidth * gridHeight);
           gridIndex++) {
-
-        /* Calculate the x and y coordinates of the grid cell */
         int gridX = imageWidth * (gridIndex % gridWidth);
         int gridY = imageHeight * (gridIndex / gridWidth);
 
-        /* Draw the image to the graphics object */
-        g2d.drawImage(
-            this.bgImage,
-            gridX, gridY,
-            imageWidth, imageHeight,
-            this
-        );
+        g2d.drawImage(this.bgImage, gridX, gridY, imageWidth, imageHeight,
+            this);
       }
 
       String title = "TwentyTen Launcher";
       this.drawTitleString(title, panelWidth, panelHeight, g2d);
     } finally {
-
-      /* Dispose of the graphics object to free up resources */
       g2d.dispose();
     }
 
-    /* Draw the volatile image to the screen */
-    g.drawImage(
-        compatVolatileImage,
-        0, 0,
-        panelWidth, panelHeight,
-        0, 0,
-        panelWidth >> 1, panelHeight >> 1,
-        this
-    );
+    g.drawImage(compatVolatileImage, 0, 0, panelWidth, panelHeight, 0, 0,
+        panelWidth >> 1, panelHeight >> 1, this);
   }
 
   @Override
-  public void actionPerformed(
-      ActionEvent event
-  ) {
-
-    /* Get the source of the event */
-    Object source = event.getSource();
-
-    /* Check if the source is the login button */
-    if (source == this.launcherLoginPanel.getLoginButton()) {
-      //TODO: SIGNING IN WITH YGGDRASIL
-    }
-
-    /* Check if the source is the options button */
-    if (source == this.launcherLoginPanel.getOptionsButton()) {
-
-      /* Check if the versions directory exists */
-      File versionsDirectory = new File(
-          FileHelper.workingDirectory, "versions");
-      if (!versionsDirectory.exists()) {
-        boolean isVersionsDirectoryCreated = versionsDirectory.mkdirs();
-        if (!isVersionsDirectoryCreated) {
-          LoggerHelper.logError(
-              "Failed to create versions directory",
-              true
-          );
-        }
-      }
-
-      /* Check if the versions file exists */
-      File versionsFile = new File(versionsDirectory, "versions.json");
-      if (!versionsFile.exists()) {
-
-        /* Calculate the time since the file was last modified */
-        long lastModified =
-            System.currentTimeMillis() - versionsFile.lastModified();
-
-        /* Check if the file is older than the cache expiration time */
-        if (lastModified > FileHelper.cacheExpirationTime) {
-
-          /* Download the versions file */
-          FileHelper.downloadFile(
-              OptionsHelper.VERSIONS_JSON_URL, versionsFile
-          );
-        }
-        this.openOptionsDialog();
+  public void actionPerformed(ActionEvent evt) {
+    Object src = evt.getSource();
+    if (src == this.microsoftLoginButton) {
+      /*
+      if (this.loginPanel.isLauncherOutdated(this)) {
         return;
       }
-      this.openOptionsDialog();
+      */
+      if (LauncherLoginPanel.isVersionSelected()) {
+        return;
+      }
+
+      try {
+        InetAddress address = InetAddress.getByName("www.minecraft.net");
+        if (address != null) {
+          String refreshToken = LauncherConfig.instance.getRefreshToken();
+          if (refreshToken.isEmpty() || LauncherFrame.isSessionExpired) {
+            MicrosoftHelper.authenticate(this);
+          }
+        }
+        
+        if (!LauncherConfig.instance.getRefreshToken().isEmpty()) {
+          String profileName = LauncherConfig.instance.getProfileName();
+          String sessionId = LauncherConfig.instance.getSessionId();
+          LauncherFrame.instance.launchMinecraft(profileName, sessionId, true);
+        }
+      } catch (UnknownHostException uhe) {
+        this.addNoNetworkPanel(this.loginPanel.getErrorLabelOutdatedText());
+
+        LoggerHelper.logError("Failed to get address", uhe, true);
+      }
     }
   }
 }
