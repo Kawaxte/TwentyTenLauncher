@@ -4,29 +4,27 @@ import com.mojang.YggdrasilAuthenticationImpl;
 import ee.twentyten.config.LauncherConfig;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.launcher.LauncherLoginPanel;
-import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.LoggerHelper;
 import org.json.JSONObject;
 
 public final class YggdrasilHelper {
 
   public static final String MOJANG_SERVER_URL;
-  private static final YggdrasilAuthenticationImpl AUTHENTICATION;
+  private static final YggdrasilAuthenticationImpl YGGDRASIL_AUTHENTICATION;
 
   static {
     MOJANG_SERVER_URL = "https://authserver.mojang.com/%s";
-    AUTHENTICATION = new YggdrasilAuthenticationImpl();
+    YGGDRASIL_AUTHENTICATION = new YggdrasilAuthenticationImpl();
   }
 
   public static JSONObject authenticate(final String username,
-      final String password, final boolean requestUser) {
-    LauncherPanel panel = LauncherFrame.instance.getPanel();
-    final LauncherLoginPanel loginPanel = panel.getLoginPanel();
-
+      final String password, final boolean requestUser,
+      final LauncherLoginPanel loginPanel) {
     final JSONObject[] result = new JSONObject[1];
+
     Thread authenticationThread = new Thread(new Runnable() {
       public void run() {
-        result[0] = AUTHENTICATION.authenticate(username, password,
+        result[0] = YGGDRASIL_AUTHENTICATION.authenticate(username, password,
             requestUser);
         if (result[0].has("error")) {
           LoggerHelper.logError(result[0].toString(), false);
@@ -72,13 +70,14 @@ public final class YggdrasilHelper {
       final String clientToken, final boolean requestUser) {
     Thread validationThread = new Thread(new Runnable() {
       public void run() {
-        JSONObject result = AUTHENTICATION.validate(accessToken, clientToken);
+        JSONObject result = YGGDRASIL_AUTHENTICATION.validate(accessToken,
+            clientToken);
         if (result.has("error")) {
           LoggerHelper.logError(result.toString(), false);
           Thread refreshThread = new Thread(new Runnable() {
             public void run() {
-              JSONObject refreshResult = AUTHENTICATION.refresh(accessToken,
-                  clientToken, requestUser);
+              JSONObject refreshResult = YGGDRASIL_AUTHENTICATION.refresh(
+                  accessToken, clientToken, requestUser);
               if (refreshResult.has("error")) {
                 LoggerHelper.logError(refreshResult.toString(), false);
                 LauncherFrame.isSessionExpired = true;
