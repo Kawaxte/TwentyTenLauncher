@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 class JsonConnectionResponse {
 
-  JSONObject getResponse(HttpsURLConnection connection) {
+  JSONObject response(HttpsURLConnection connection) {
     try {
       int responseCode = connection.getResponseCode();
       String responseMessage = connection.getResponseMessage();

@@ -31,7 +31,7 @@ public class JsonConnectionRequestImpl extends JsonConnectionRequest {
     } catch (ProtocolException pe) {
       LoggerHelper.logError("Failed to set request method", pe, true);
     }
-    return this.connectionResponse.getResponse(connection);
+    return this.connectionResponse.response(connection);
   }
 
   @Override
@@ -55,6 +55,6 @@ public class JsonConnectionRequestImpl extends JsonConnectionRequest {
     } catch (IOException ioe) {
       LoggerHelper.logError("Failed to write data to output stream", ioe, true);
     }
-    return this.connectionResponse.getResponse(connection);
+    return this.connectionResponse.response(connection);
   }
 }
