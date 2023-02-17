@@ -6,6 +6,7 @@ import ee.twentyten.ui.LauncherFrame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,7 +55,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements
 
   private void createTopPanel() {
     JPanel topPanel = new JPanel(new BorderLayout(), true);
-    topPanel.setBackground(Color.GRAY);
+    topPanel.setBackground(this.getBackground());
     this.add(topPanel, BorderLayout.NORTH);
 
     this.errorLabel = new JLabel("\u00A0", SwingConstants.CENTER);
@@ -65,7 +66,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements
 
   private void createMiddlePanel() {
     JPanel middlePanel = new JPanel(new BorderLayout(), true);
-    middlePanel.setBackground(Color.GRAY);
+    middlePanel.setBackground(this.getBackground());
     this.add(middlePanel, BorderLayout.CENTER);
 
     this.playOnlineLabel = new JLabel(this.playOnlineLabelText,
@@ -77,7 +78,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements
 
   private void createBottomPanel() {
     JPanel bottomPanel = new JPanel(new GridLayout(1, 2), true);
-    bottomPanel.setBackground(Color.GRAY);
+    bottomPanel.setBackground(this.getBackground());
     this.add(bottomPanel, BorderLayout.SOUTH);
 
     this.playOfflineButton = new JButton(this.playOfflineButtonText);
@@ -88,6 +89,20 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements
     bottomPanel.add(this.tryAgainButton, BorderLayout.EAST);
   }
 
+  private void addLauncherPanelComponents(LauncherPanel panel,
+      GridBagConstraints gbc) {
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.insets.top = 23;
+    panel.add(panel.getLoginPanel(), gbc);
+
+    gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.insets.top = 0;
+    panel.add(panel.getMicrosoftLoginButton(), gbc);
+  }
+
   @Override
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
@@ -95,12 +110,15 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements
       LauncherFrame.instance.launchMinecraft(false);
     }
     if (src == this.tryAgainButton) {
-      LauncherPanel launcherPanel = LauncherFrame.instance.getLauncherPanel();
-      launcherPanel.getParent();
-      launcherPanel.removeAll();
-      launcherPanel.add(launcherPanel.getLauncherLoginPanel());
-      launcherPanel.validate();
-      launcherPanel.repaint();
+      LauncherPanel panel = LauncherFrame.instance.getPanel();
+      panel.getParent();
+      panel.removeAll();
+
+      GridBagConstraints gbc = new GridBagConstraints();
+      this.addLauncherPanelComponents(panel, gbc);
+
+      panel.revalidate();
+      panel.repaint();
     }
   }
 }
