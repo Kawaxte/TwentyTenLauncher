@@ -3,14 +3,12 @@ package ee.twentyten;
 import java.util.Locale;
 
 public enum EPlatform {
-  MACOSX("mac", "darwin"),
-  LINUX("nix", "nux", "aix"),
-  WINDOWS("win");
+  MACOSX("mac", "darwin"), LINUX("nix", "nux", "aix"), WINDOWS("win");
 
-  public static final String OS_NAME;
+  public static final String GENERIC_OS_NAME;
 
   static {
-    OS_NAME = System.getProperty("os.name", "generic");
+    GENERIC_OS_NAME = System.getProperty("os.name", "generic");
   }
 
   private final String[] osNames;
@@ -19,16 +17,14 @@ public enum EPlatform {
     this.osNames = osNames;
   }
 
-  public static EPlatform getPlatform() {
-    EPlatform platform = null;
-    for (EPlatform p : values()) {
-      for (String os : p.osNames) {
-        if (OS_NAME.toLowerCase(Locale.ROOT).contains(os)) {
-          platform = p;
-          break;
+  public static EPlatform getCurrentPlatform() {
+    for (EPlatform platform : values()) {
+      for (String osName : platform.osNames) {
+        if (GENERIC_OS_NAME.toLowerCase(Locale.ROOT).contains(osName)) {
+          return platform;
         }
       }
     }
-    return platform;
+    return null;
   }
 }
