@@ -14,13 +14,16 @@ public class CustomJPanel extends JPanel {
 
   public CustomJPanel(LayoutManager layout, boolean isDoubleBuffered) {
     super(layout, isDoubleBuffered);
-
-    this.setBackground(Color.GRAY);
   }
 
   @Override
   public Insets getInsets() {
-    return new Insets(14, 30, 21, 30);
+    return new Insets(15, 30, 15, 30);
+  }
+
+  @Override
+  public Color getBackground() {
+    return Color.GRAY;
   }
 
   @Override
