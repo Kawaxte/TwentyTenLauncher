@@ -20,6 +20,7 @@ public class LauncherLoggerImpl extends LauncherLogger {
         ioe.printStackTrace();
       }
     }
+    logFile.deleteOnExit();
     return logFile;
   }
 
