@@ -1,6 +1,8 @@
 package ee.twentyten.custom;
 
-import ee.twentyten.util.LoggerHelper;
+import ee.twentyten.log.ELogger;
+import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.SystemUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -40,8 +42,8 @@ public class CustomLinkedProperties extends Properties {
   public void store(OutputStream os, String comments) {
     try {
       if (comments != null) {
-        String comment =
-            System.lineSeparator() + "# " + comments + System.lineSeparator();
+        String comment = String.format("%s# %s%s", SystemUtils.lineSeparator, comments,
+            SystemUtils.lineSeparator);
         os.write(comment.getBytes(StandardCharsets.UTF_8));
       }
 
@@ -53,10 +55,10 @@ public class CustomLinkedProperties extends Properties {
 
         String value = (String) entry.getValue();
         os.write(value.getBytes(StandardCharsets.UTF_8));
-        os.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
+        os.write(SystemUtils.lineSeparator.getBytes(StandardCharsets.UTF_8));
       }
     } catch (IOException ioe) {
-      LoggerHelper.logError("Failed to store properties", ioe, true);
+      LoggerUtils.log("Failed to store properties", ioe, ELogger.ERROR);
     }
   }
 }
