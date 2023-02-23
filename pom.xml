@@ -9,6 +9,7 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
+          <appendAssemblyId>false</appendAssemblyId>
           <archive>
             <manifest>
               <mainClass>ee.twentyten.Launcher</mainClass>
@@ -25,6 +26,12 @@
   </build>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
+    <dependency>
+      <artifactId>jna-platform</artifactId>
+      <groupId>net.java.dev.jna</groupId>
+      <version>5.13.0</version>
+    </dependency>
     <dependency>
       <artifactId>json</artifactId>
       <groupId>org.json</groupId>
@@ -35,21 +42,6 @@
       <groupId>org.projectlombok</groupId>
       <scope>provided</scope>
       <version>1.18.24</version>
-    </dependency>
-    <dependency>
-      <artifactId>commons-codec</artifactId>
-      <groupId>commons-codec</groupId>
-      <version>1.15</version>
-    </dependency>
-    <dependency>
-      <artifactId>slf4j-api</artifactId>
-      <groupId>org.slf4j</groupId>
-      <version>1.7.36</version>
-    </dependency>
-    <dependency>
-      <artifactId>slf4j-simple</artifactId>
-      <groupId>org.slf4j</groupId>
-      <version>1.7.36</version>
     </dependency>
   </dependencies>
   <groupId>ee.sojla</groupId>
@@ -67,6 +59,6 @@
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
-  <version>20231702p1</version>
+  <version>20230223_p1</version>
 
 </project>
