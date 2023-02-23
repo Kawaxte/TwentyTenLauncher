@@ -1,163 +1,123 @@
 package ee.twentyten.config;
 
 import ee.twentyten.custom.CustomLinkedProperties;
-import ee.twentyten.util.FileHelper;
-import ee.twentyten.util.LoggerHelper;
+import ee.twentyten.log.ELogger;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.LoggerUtils;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class LauncherConfig extends LauncherCipher {
+abstract class LauncherConfig {
 
-  public static LauncherConfig instance;
-  private String username;
-  private String password;
-  private Boolean passwordSaved;
-  private String clientToken;
-  private String accessToken;
-  private String refreshToken;
-  private String profileId;
-  private String profileName;
-  private Boolean usingBeta;
-  private Boolean usingAlpha;
-  private Boolean usingInfdev;
-  private String selectedVersion;
-  private String selectedLanguage;
+  String clientToken;
+  String selectedVersion;
+  String selectedLanguage;
+  String yggdrasilUsername;
+  String yggdrasilPassword;
+  boolean isYggdrasilPasswordSaved;
+  String yggdrasilAccessToken;
+  String yggdrasilProfileId;
+  String yggdrasilProfileName;
+  int microsoftAccessTokenExpiresIn;
+  String microsoftAccessToken;
+  String microsoftRefreshToken;
+  String microsoftProfileId;
+  String microsoftProfileName;
+  String yggdrasilSessionId;
+  String microsoftSessionId;
 
-  public static LauncherConfig loadConfig() {
-    LauncherConfig config;
-    try {
-      File configFile = new File(FileHelper.workingDirectory,
-          "twentyten.properties");
-      if (!configFile.exists()) {
-        boolean isConfigFileCreated = configFile.createNewFile();
+  File getConfigFile() {
+    File configFile = new File(LauncherUtils.workingDirectory, "twentyten_settings.properties");
+    if (!configFile.exists()) {
+      boolean isConfigFileCreated;
+      try {
+        isConfigFileCreated = configFile.createNewFile();
         if (!isConfigFileCreated) {
-          LoggerHelper.logError("Failed to create config file", true);
-          return null;
+          throw new IOException("Failed to create config file");
         }
+      } catch (IOException ioe) {
+        LoggerUtils.log(ioe.getMessage(), ioe, ELogger.ERROR);
       }
-
-      try (FileInputStream fis = new FileInputStream(configFile)) {
-        CustomLinkedProperties properties = new CustomLinkedProperties();
-        properties.load(fis);
-
-        config = new LauncherConfig();
-        config.username = properties.getProperty("username");
-        config.password = LauncherConfig.decryptValue(
-            properties.getProperty("password"));
-        config.passwordSaved = Boolean.parseBoolean(
-            properties.getProperty("password-saved"));
-
-        config.clientToken = properties.getProperty("client-token");
-        config.accessToken = LauncherConfig.decryptValue(
-            properties.getProperty("access-token"));
-        config.refreshToken = LauncherConfig.decryptValue(
-            properties.getProperty("refresh-token"));
-        config.profileId = properties.getProperty("profile-id");
-        config.profileName = properties.getProperty("profile-name");
-
-        config.usingBeta = Boolean.parseBoolean(
-            properties.getProperty("using-beta"));
-        config.usingAlpha = Boolean.parseBoolean(
-            properties.getProperty("using-alpha"));
-        config.usingInfdev = Boolean.parseBoolean(
-            properties.getProperty("using-infdev"));
-        config.selectedVersion = properties.getProperty("selected-version");
-        config.selectedLanguage = properties.getProperty("selected-language");
-
-        LoggerHelper.logInfo(
-            String.format("\"%s\"", configFile.getAbsolutePath()), true);
-
-        return config;
-      } catch (IOException ioe2) {
-        LoggerHelper.logError("Failed to load config file", ioe2, true);
-      }
-    } catch (IOException ioe1) {
-      LoggerHelper.logError("Failed to get working directory", ioe1, true);
     }
-    return null;
+    return configFile;
   }
 
-  public String getSessionId() {
-    return String.format("%s:%s:%s", this.clientToken, this.accessToken,
-        this.profileId);
+  void getGeneralProperties(CustomLinkedProperties clp) {
+    this.clientToken = clp.getProperty("clientToken");
+    this.selectedVersion = clp.getProperty("selectedVersion");
+    this.selectedLanguage = clp.getProperty("selectedLanguage");
   }
 
-  public void saveConfig() {
-    String username = this.username != null ? this.username : "";
-    String password = this.password != null ? this.password : "";
-    String passwordSaved =
-        this.passwordSaved != null ? this.passwordSaved.toString() : "";
-    String clientToken = this.clientToken != null ? this.clientToken : "";
-    String accessToken = this.accessToken != null ? this.accessToken : "";
-    String refreshToken = this.refreshToken != null ? this.refreshToken : "";
-    String profileId = this.profileId != null ? this.profileId : "";
-    String profileName = this.profileName != null ? this.profileName : "";
-    String usingBeta = this.usingBeta != null ? this.usingBeta.toString() : "";
-    String usingAlpha =
-        this.usingAlpha != null ? this.usingAlpha.toString() : "";
-    String usingInfdev =
-        this.usingInfdev != null ? this.usingInfdev.toString() : "";
-    String selectedVersion =
-        this.selectedVersion != null ? this.selectedVersion : "";
-    String selectedLanguage =
-        this.selectedLanguage != null ? this.selectedLanguage : "";
-
-    CustomLinkedProperties general = new CustomLinkedProperties();
-    general.setProperty("username", username);
-    general.setProperty("password", LauncherConfig.encryptValue(password));
-    general.setProperty("password-saved", passwordSaved);
-
-    CustomLinkedProperties profile = new CustomLinkedProperties();
-    profile.setProperty("client-token", clientToken);
-    profile.setProperty("access-token",
-        LauncherConfig.encryptValue(accessToken));
-    profile.setProperty("refresh-token",
-        LauncherConfig.encryptValue(refreshToken));
-    profile.setProperty("profile-id", profileId);
-    profile.setProperty("profile-name", profileName);
-
-    CustomLinkedProperties options = new CustomLinkedProperties();
-    options.setProperty("using-beta", usingBeta);
-    options.setProperty("using-alpha", usingAlpha);
-    options.setProperty("using-infdev", usingInfdev);
-    options.setProperty("selected-version", selectedVersion);
-    options.setProperty("selected-language", selectedLanguage);
-
-    File configFile = new File(FileHelper.workingDirectory,
-        "twentyten.properties");
-    try (FileOutputStream fos = new FileOutputStream(
-        configFile.getAbsolutePath())) {
-
-      String lineSeparator = System.lineSeparator();
-
-      String configFileHeader =
-          "##################################################"
-              + lineSeparator
-              + "##    TwentyTen Launcher Configuration File     ##"
-              + lineSeparator
-              + "##==============================================##"
-              + lineSeparator
-              + "##    This file is automatically generated by   ##"
-              + lineSeparator
-              + "##    the launcher. Do not modify this file.    ##"
-              + lineSeparator
-              + "##################################################"
-              + lineSeparator;
-      fos.write(configFileHeader.getBytes());
-      general.store(fos, "GENERAL ---------------------------------------|");
-      profile.store(fos, "PROFILE ---------------------------------------|");
-      options.store(fos, "OPTIONS ---------------------------------------|");
-
-      LoggerHelper.logInfo(
-          String.format("\"%s\"", configFile.getAbsolutePath()), true);
-    } catch (IOException ioe) {
-      LoggerHelper.logError("Failed to save config file", ioe, true);
-    }
+  void getYggdrasilProperties(CustomLinkedProperties clp) {
+    this.yggdrasilUsername = clp.getProperty("yggdrasilUsername");
+    this.yggdrasilPassword = this.decrypt(clp.getProperty("yggdrasilPassword"));
+    this.isYggdrasilPasswordSaved = Boolean.parseBoolean(
+        clp.getProperty("isYggdrasilPasswordSaved "));
+    this.yggdrasilAccessToken = clp.getProperty("yggdrasilAccessToken");
+    this.yggdrasilProfileId = clp.getProperty("yggdrasilProfileId");
+    this.yggdrasilProfileName = clp.getProperty("yggdrasilProfileName");
+    this.yggdrasilSessionId = clp.getProperty("yggdrasilSessionId");
   }
+
+  void getMicrosoftProperties(CustomLinkedProperties clp) {
+    this.microsoftAccessTokenExpiresIn = Integer.parseInt(
+        clp.getProperty("microsoftAccessTokenExpiresIn") != null ? clp.getProperty(
+            "microsoftAccessTokenExpiresIn") : "0");
+    this.microsoftAccessToken = clp.getProperty("microsoftAccessToken");
+    this.microsoftRefreshToken = clp.getProperty("microsoftRefreshToken");
+    this.microsoftProfileId = clp.getProperty("microsoftProfileId");
+    this.microsoftProfileName = clp.getProperty("microsoftProfileName");
+    this.microsoftSessionId = clp.getProperty("microsoftSessionId");
+  }
+
+  void setGeneralProperties(CustomLinkedProperties clp) {
+    clp.setProperty("clientToken",
+        this.clientToken != null ? this.clientToken : ConfigUtils.generateClientToken());
+    clp.setProperty("selectedVersion",
+        this.selectedVersion != null ? this.selectedVersion : "b1.1_02");
+    clp.setProperty("selectedLanguage",
+        this.selectedLanguage != null ? this.selectedLanguage : "en");
+  }
+
+  void setYggdrasilProperties(CustomLinkedProperties clp) {
+    clp.setProperty("yggdrasilUsername",
+        this.yggdrasilUsername != null ? this.yggdrasilUsername : "");
+    clp.setProperty("yggdrasilPassword",
+        this.encrypt(this.yggdrasilPassword != null ? this.yggdrasilPassword : ""));
+    clp.setProperty("isYggdrasilPasswordSaved", Boolean.toString(this.isYggdrasilPasswordSaved));
+    clp.setProperty("yggdrasilAccessToken",
+        this.yggdrasilAccessToken != null ? this.yggdrasilAccessToken : "");
+    clp.setProperty("yggdrasilProfileId",
+        this.yggdrasilProfileId != null ? this.yggdrasilProfileId : "");
+    clp.setProperty("yggdrasilProfileName",
+        this.yggdrasilProfileName != null ? this.yggdrasilProfileName : "");
+    clp.setProperty("yggdrasilSessionId",
+        ConfigUtils.formatSessionId(this.clientToken, this.yggdrasilAccessToken,
+            this.yggdrasilProfileId));
+  }
+
+  void setMicrosoftProperties(CustomLinkedProperties clp) {
+    clp.setProperty("microsoftAccessTokenExpiresIn", Integer.toString(
+        this.microsoftAccessTokenExpiresIn != 0 ? this.microsoftAccessTokenExpiresIn : 0));
+    clp.setProperty("microsoftAccessToken",
+        this.microsoftAccessToken != null ? this.microsoftAccessToken : "");
+    clp.setProperty("microsoftRefreshToken",
+        this.microsoftRefreshToken != null ? this.microsoftRefreshToken : "");
+    clp.setProperty("microsoftProfileId",
+        this.microsoftProfileId != null ? this.microsoftProfileId : "");
+    clp.setProperty("microsoftProfileName",
+        this.microsoftProfileName != null ? this.microsoftProfileName : "");
+    clp.setProperty("microsoftSessionId",
+        ConfigUtils.formatSessionId(this.clientToken, this.microsoftAccessToken,
+            this.microsoftProfileId));
+  }
+
+  abstract void load();
+
+  abstract void save();
+
+  abstract String encrypt(String value);
+
+  abstract String decrypt(String value);
 }
