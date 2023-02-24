@@ -16,7 +16,7 @@ public final class SystemUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static void setLauncherVersion(int major, int year, int month, int day, int preRelease,
+  public static void setLauncherVersion(int major, int day, int month, int year, int preRelease,
       boolean isPreRelease) {
     if (major > 99 || major < 1) {
       throw new IllegalArgumentException("major > 99 || major < 1");
