@@ -12,12 +12,9 @@ public class Launcher {
       LauncherUtils.buildLowMemoryProcess();
     }
 
-    Launcher.init();
-    LauncherFrame.main(args);
-  }
-
-  private static void init() {
     ConfigUtils.readFromConfig();
     LanguageUtils.loadLocaleFile(ConfigUtils.config.getSelectedLanguage());
+    
+    LauncherFrame.main(args);
   }
 }
