@@ -3,9 +3,9 @@ package ee.twentyten.custom;
 import ee.twentyten.util.LookAndFeelUtils;
 import javax.swing.JButton;
 
-public class CustomTransparentJButton extends JButton {
+public class CustomJButton extends JButton {
 
-  public CustomTransparentJButton(String text) {
+  public CustomJButton(String text) {
     super(text);
   }
 
