@@ -1,7 +1,9 @@
 package ee.twentyten.ui;
 
-import ee.twentyten.lang.LauncherLanguage;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.LanguageUtils;
 import javax.swing.JOptionPane;
+import lombok.Getter;
 
 public class LauncherOptionPane extends JOptionPane {
 
@@ -12,19 +14,21 @@ public class LauncherOptionPane extends JOptionPane {
     LauncherOptionPane.instance = new LauncherOptionPane();
   }
 
-  private final String optionPaneTitleErrorText;
-  private final String optionPaneVersionErrorText;
+  @Getter
+  private final boolean isNoShowVersionsSelected;
 
   {
-    this.optionPaneTitleErrorText = LauncherLanguage.getString(
-        "lp.string.title.error");
-    this.optionPaneVersionErrorText = LauncherLanguage.getString(
-        "lp.string.error.version");
+    this.isNoShowVersionsSelected = !ConfigUtils.config.isShowBetaVersionsSelected()
+        && !ConfigUtils.config.isShowAlphaVersionsSelected()
+        && !ConfigUtils.config.isShowInfdevVersionsSelected();
   }
 
-  public void showVersionError() {
-    JOptionPane.showMessageDialog(LauncherFrame.instance,
-        this.optionPaneVersionErrorText, this.optionPaneTitleErrorText,
-        JOptionPane.ERROR_MESSAGE);
+  private LauncherOptionPane() {
+    super();
+  }
+
+  public void showErrorMessage(String message) {
+    JOptionPane.showMessageDialog(LauncherFrame.instance, message,
+        LanguageUtils.optionPaneTitleErrorText, JOptionPane.ERROR_MESSAGE);
   }
 }
