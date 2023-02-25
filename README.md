@@ -59,13 +59,9 @@ If you encounter a problem or have an idea for a new feature, please follow thes
 4. Include any relevant details, like error messages or steps to reproduce the issue.
 5. Click on the ``Submit new issue`` button to open the issue.
 
-We will review your input and try our best to address any issues or consider any suggestions
-in a timely manner. Thank you for helping us make the launcher better!
-
 <h3 align="center">Submitting Pull Requests</h3>
 
-We appreciate contributions from the community in the form of pull requests. A pull request is a way
-to propose changes to the code in a repository. If you would like to submit a change or addition to
+If you would like to submit a change or addition to
 the launcher, please follow these steps:
 
 1. First, create a copy of the repository by forking it, which will create a personal copy of the
@@ -75,5 +71,7 @@ the launcher, please follow these steps:
 4. Submit a pull request from your forked repository to the original repository.
    Provide a detailed explanation of your changes and any relevant information.
 
-We will review your request and provide feedback, or merge the changes into the main codebase
-as appropriate.
+<h3 align="center">Localisation</h3>
+If you would like to help make the launcher accessible to players from around the
+world, [click here](https://explore.transifex.com/xte/twentyten/) to translate the
+launcher to various languages. Your contribution will be greatly appreciated!
