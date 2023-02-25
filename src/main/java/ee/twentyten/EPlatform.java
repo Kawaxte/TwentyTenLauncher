@@ -17,7 +17,7 @@ public enum EPlatform {
     this.osNames = osNames;
   }
 
-  public static EPlatform getCurrentPlatform() {
+  public static EPlatform getPlatform() {
     for (EPlatform platform : values()) {
       for (String osName : platform.osNames) {
         if (GENERIC_OS_NAME.toLowerCase(Locale.ROOT).contains(osName)) {
