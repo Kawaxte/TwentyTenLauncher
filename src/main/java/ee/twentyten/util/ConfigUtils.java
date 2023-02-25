@@ -1,8 +1,15 @@
 package ee.twentyten.util;
 
+import ee.twentyten.config.LauncherConfigImpl;
 import java.util.UUID;
 
 public final class ConfigUtils {
+
+  public static LauncherConfigImpl config;
+
+  static {
+    ConfigUtils.config = new LauncherConfigImpl();
+  }
 
   private ConfigUtils() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
@@ -29,5 +36,13 @@ public final class ConfigUtils {
 
   public static String formatSessionId(String clientToken, String accessToken, String uuid) {
     return String.format("%s:%s:%s", clientToken, accessToken, uuid);
+  }
+
+  public static void readFromConfig() {
+    ConfigUtils.config.load();
+  }
+
+  public static void writeToConfig() {
+    ConfigUtils.config.save();
   }
 }
