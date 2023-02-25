@@ -35,9 +35,6 @@ public class CustomLinkedProperties extends Properties {
   public synchronized Object setProperty(String key, String value) {
     if (value == null) {
       value = "";
-
-      LoggerUtils.log(String.format("%s=%s -> %s=%s", key, this.getProperty(key), key, value),
-          ELogger.WARNING);
     }
     if (value.matches("^[0-9]+$")) {
       return this.linkedMap.put(key, Integer.parseInt(value));
@@ -50,13 +47,6 @@ public class CustomLinkedProperties extends Properties {
 
   @Override
   public synchronized Object put(Object key, Object value) {
-    if (value == null) {
-      value = "";
-
-      LoggerUtils.log(
-          String.format("%s=%s -> %s=%s", key, this.getProperty((String) key), key, value),
-          ELogger.WARNING);
-    }
     super.put(key, value);
     return this.linkedMap.put(key, value);
   }
