@@ -21,10 +21,8 @@ public final class LookAndFeelUtils {
   public static void setLookAndFeel() {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-      String lookAndFeelClassName = UIManager.getLookAndFeel().getClass().getCanonicalName();
-      LoggerUtils.log(String.format("Setting look at feel: %s", lookAndFeelClassName),
-          ELogger.INFO);
+      
+      LoggerUtils.log(UIManager.getLookAndFeel().getClass().getCanonicalName(), ELogger.INFO);
     } catch (UnsupportedLookAndFeelException ulafe) {
       LoggerUtils.log("Failed to set look and feel", ulafe, ELogger.ERROR);
     } catch (ClassNotFoundException cnfe) {
