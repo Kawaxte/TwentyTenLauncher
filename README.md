@@ -16,10 +16,11 @@
     <img src="https://img.shields.io/badge/Java-7%2B-blue.svg">
   </a>
 </p>
-<div align="center"></div>
+<div align="center">
   <a href="https://i.imgur.com/XI2qib8.png">
     <img src="https://i.imgur.com/XI2qib8.png">
   </a>
+</div>
 
 ---
 
