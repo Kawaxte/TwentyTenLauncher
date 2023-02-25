@@ -7,20 +7,35 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
+        <artifactId>maven-shade-plugin</artifactId>
         <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <archive>
-            <manifest>
+          <artifactSet>
+            <includes>
+              <include>org.json:json</include>
+              <include>org.projectlombok:lombok</include>
+              <include>net.java.dev.jna:jna</include>
+              <include>net.java.dev.jna:jna-platform</include>
+            </includes>
+          </artifactSet>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <shadedArtifactAttached>true</shadedArtifactAttached>
+          <transformers>
+            <transformer
+              implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
               <mainClass>ee.twentyten.Launcher</mainClass>
-            </manifest>
-          </archive>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
+            </transformer>
+          </transformers>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
         <groupId>org.apache.maven.plugins</groupId>
-        <version>3.3.0</version>
+        <version>3.1.1</version>
       </plugin>
     </plugins>
   </build>
@@ -32,16 +47,18 @@
       <groupId>net.java.dev.jna</groupId>
       <version>5.13.0</version>
     </dependency>
-    <dependency>
-      <artifactId>json</artifactId>
-      <groupId>org.json</groupId>
-      <version>20220924</version>
-    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
     <dependency>
       <artifactId>lombok</artifactId>
       <groupId>org.projectlombok</groupId>
       <scope>provided</scope>
-      <version>1.18.24</version>
+      <version>1.18.26</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.json/json -->
+    <dependency>
+      <artifactId>json</artifactId>
+      <groupId>org.json</groupId>
+      <version>20220924</version>
     </dependency>
   </dependencies>
   <groupId>ee.sojla</groupId>
@@ -52,13 +69,6 @@
     <maven.compiler.target>7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-  </repositories>
-  <version>20230223_p1</version>
+  <version>20230225_p1</version>
 
 </project>
