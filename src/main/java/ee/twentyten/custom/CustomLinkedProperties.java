@@ -23,9 +23,42 @@ public class CustomLinkedProperties extends Properties {
   }
 
   @Override
+  public String getProperty(String key, String defaultValue) {
+    String value = (String) this.linkedMap.get(key);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
+  }
+
+  @Override
+  public synchronized Object setProperty(String key, String value) {
+    if (value == null) {
+      value = "";
+
+      LoggerUtils.log(String.format("%s=%s -> %s=%s", key, this.getProperty(key), key, value),
+          ELogger.WARNING);
+    }
+    if (value.matches("^[0-9]+$")) {
+      return this.linkedMap.put(key, Integer.parseInt(value));
+    }
+    if (value.matches("^(true|false)$")) {
+      return this.linkedMap.put(key, Boolean.parseBoolean(value));
+    }
+    return this.linkedMap.put(key, value);
+  }
+
+  @Override
   public synchronized Object put(Object key, Object value) {
-    this.linkedMap.put(key, value);
-    return super.put(key, value);
+    if (value == null) {
+      value = "";
+
+      LoggerUtils.log(
+          String.format("%s=%s -> %s=%s", key, this.getProperty((String) key), key, value),
+          ELogger.WARNING);
+    }
+    super.put(key, value);
+    return this.linkedMap.put(key, value);
   }
 
   @Override
@@ -42,9 +75,12 @@ public class CustomLinkedProperties extends Properties {
   public void store(OutputStream os, String comments) {
     try {
       if (comments != null) {
-        String comment = String.format("%s# %s%s", SystemUtils.lineSeparator, comments,
-            SystemUtils.lineSeparator);
-        os.write(comment.getBytes(StandardCharsets.UTF_8));
+        StringBuilder sbComment = new StringBuilder();
+        sbComment.append(SystemUtils.lineSeparator);
+        sbComment.append("# ");
+        sbComment.append(comments);
+        sbComment.append(SystemUtils.lineSeparator);
+        os.write(sbComment.toString().getBytes(StandardCharsets.UTF_8));
       }
 
       Set<Map.Entry<Object, Object>> entries = entrySet();
@@ -53,12 +89,27 @@ public class CustomLinkedProperties extends Properties {
         os.write(key.getBytes(StandardCharsets.UTF_8));
         os.write("=".getBytes(StandardCharsets.UTF_8));
 
-        String value = (String) entry.getValue();
-        os.write(value.getBytes(StandardCharsets.UTF_8));
+        Object value = entry.getValue();
+        switch (value.getClass().getSimpleName()) {
+          case "Boolean":
+            Boolean boolValue = (Boolean) value;
+            os.write(boolValue.toString().getBytes(StandardCharsets.UTF_8));
+            break;
+          case "Integer":
+            Integer intValue = (Integer) value;
+            os.write(intValue.toString().getBytes(StandardCharsets.UTF_8));
+            break;
+          case "String":
+            String strValue = (String) value;
+            os.write(strValue.getBytes(StandardCharsets.UTF_8));
+            break;
+          default:
+            throw new IllegalArgumentException(String.format("%s=%s", key, value));
+        }
         os.write(SystemUtils.lineSeparator.getBytes(StandardCharsets.UTF_8));
       }
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to store properties", ioe, ELogger.ERROR);
+      LoggerUtils.log("Failed to write bytes to output stream", ioe, ELogger.ERROR);
     }
   }
 }
