@@ -15,10 +15,10 @@ public final class LoggerUtils {
   private static LauncherLoggerImpl logger;
 
   static {
+    LoggerUtils.logger = new LauncherLoggerImpl();
+
     LoggerUtils.isDebugging = ManagementFactory.getRuntimeMXBean().getInputArguments().toString()
         .contains("-agentlib:jdwp");
-
-    LoggerUtils.logger = new LauncherLoggerImpl();
   }
 
   private LoggerUtils() {
@@ -58,7 +58,7 @@ public final class LoggerUtils {
         sb.append(sw);
         sb.delete(sb.length() - SystemUtils.lineSeparator.length(), sb.length());
       } catch (IOException ioe) {
-        sb.append("Error while logging exception: ").append(ioe.getMessage());
+        sb.append(ioe.getMessage());
       }
     }
     return sb.toString();
@@ -69,7 +69,7 @@ public final class LoggerUtils {
     if (LoggerUtils.isDebugging) {
       switch (type) {
         case INFO:
-        case WARNING:
+        case WARN:
           System.out.println(logMessage);
           break;
         default:
@@ -85,7 +85,7 @@ public final class LoggerUtils {
     if (LoggerUtils.isDebugging) {
       switch (type) {
         case INFO:
-        case WARNING:
+        case WARN:
           System.out.println(logMessage);
           break;
         default:
