@@ -1,8 +1,5 @@
 package ee.twentyten.config;
 
-import lombok.Getter;
-
-@Getter
 abstract class LauncherConfig {
 
   public abstract void load();
