@@ -2,29 +2,54 @@ package ee.twentyten.util;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.Launcher;
-import ee.twentyten.config.LauncherConfigImpl;
 import ee.twentyten.log.ELogger;
+import ee.twentyten.request.ERequestHeader;
+import ee.twentyten.request.ERequestMethod;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import org.json.JSONObject;
 
 public final class LauncherUtils {
 
   public static final long MIN_MEMORY = 536870912L;
   public static final long MAX_MEMORY = Runtime.getRuntime().maxMemory();
   public static File workingDirectory;
+  public static URL apiLatestReleaseUrl;
+  public static URL registrationUrl;
+  public static URL latestReleaseUrl;
+  public static boolean isUpdateChecked;
+  public static boolean isOutdated;
   private static Map<EPlatform, File> workingDirectories;
-  private static LauncherConfigImpl config;
 
   static {
     LauncherUtils.workingDirectories = new HashMap<>();
     LauncherUtils.workingDirectory = LauncherUtils.getWorkingDirectory();
 
-    LauncherUtils.config = new LauncherConfigImpl();
+    try {
+      LauncherUtils.apiLatestReleaseUrl = new URL(
+          "https://api.github.com/repos/sojlabjoi/TwentyTenLauncher/releases/latest");
+      LauncherUtils.registrationUrl = new URL(
+          new StringBuilder().append("https://signup.live.com/").append("signup?")
+              .append("cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d")
+              .append("&client_id=00000000402b5328").append("&lic=1").toString());
+      LauncherUtils.latestReleaseUrl = new URL(
+          "https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest");
+    } catch (MalformedURLException murle) {
+      LoggerUtils.log("Failed to create URL", murle, ELogger.ERROR);
+    }
   }
 
   private LauncherUtils() {
@@ -32,7 +57,7 @@ public final class LauncherUtils {
   }
 
   public static File getWorkingDirectory() {
-    EPlatform platform = EPlatform.getCurrentPlatform();
+    EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
 
     LauncherUtils.mapWorkingDirectoryToPlatform(platform);
@@ -45,8 +70,47 @@ public final class LauncherUtils {
     return workingDirectory;
   }
 
+  public static boolean isLauncherOutdated() {
+    if (!LauncherUtils.isUpdateChecked) {
+      ThreadFactory updateFactory = new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+          Thread t = new Thread(r);
+          t.setName(String.format("update-%s", t.getId()));
+          t.setDaemon(true);
+          return t;
+        }
+      };
+      ExecutorService updateService = Executors.newSingleThreadExecutor(updateFactory);
+      Future<Boolean> updateFuture = updateService.submit(new Callable<Boolean>() {
+        @Override
+        public Boolean call() {
+          JSONObject latestRelease = RequestUtils.performJsonRequest(
+              LauncherUtils.apiLatestReleaseUrl,
+              ERequestMethod.GET, ERequestHeader.JSON);
+          Objects.requireNonNull(latestRelease, "latestRelease == null!");
+
+          String latestVersion = latestRelease.getString("tag_name");
+          String currentVersion = SystemUtils.launcherVersion;
+          return !Objects.equals(latestVersion, currentVersion);
+        }
+      });
+      try {
+        LauncherUtils.isOutdated = updateFuture.get();
+        LauncherUtils.isUpdateChecked = true;
+      } catch (ExecutionException ee) {
+        LoggerUtils.log("Execution while checking for updates", ee, ELogger.ERROR);
+      } catch (InterruptedException ie) {
+        LoggerUtils.log("Interrupted while checking for updates", ie, ELogger.ERROR);
+      } finally {
+        updateService.shutdown();
+      }
+    }
+    return LauncherUtils.isOutdated;
+  }
+
   public static void buildLowMemoryProcess() {
-    EPlatform platform = EPlatform.getCurrentPlatform();
+    EPlatform platform = EPlatform.getPlatform();
 
     List<String> arguments = new ArrayList<>();
     arguments.add(platform == EPlatform.WINDOWS ? "javaw" : "java");
@@ -62,10 +126,9 @@ public final class LauncherUtils {
     ProcessBuilder pb = new ProcessBuilder(arguments);
     pb.redirectErrorStream(true);
     try {
-      Process p = pb.start();
-      LoggerUtils.log(String.format("Building process with arguments: %s", arguments),
-          ELogger.INFO);
+      LoggerUtils.log(arguments.toString(), ELogger.INFO);
 
+      Process p = pb.start();
       System.exit(p.waitFor());
     } catch (IOException ioe) {
       LoggerUtils.log("Failed to start process", ioe, ELogger.ERROR);
@@ -73,14 +136,6 @@ public final class LauncherUtils {
       LoggerUtils.log("Interrupted while waiting for process to finish", ie, ELogger.ERROR);
       System.exit(1);
     }
-  }
-
-  public static void readFromConfig() {
-    LauncherUtils.config.load();
-  }
-
-  public static void writeToConfig() {
-    LauncherUtils.config.save();
   }
 
   private static void mapWorkingDirectoryToPlatform(EPlatform platform) {
