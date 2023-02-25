@@ -1,8 +1,9 @@
 package ee.twentyten;
 
 import ee.twentyten.ui.LauncherFrame;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.SystemUtils;
 
 public class Launcher {
 
@@ -11,9 +12,12 @@ public class Launcher {
       LauncherUtils.buildLowMemoryProcess();
     }
 
-    SystemUtils.setLauncherVersion(1, 23, 2, 23, 1, true);
-
-    LauncherUtils.readFromConfig();
+    Launcher.init();
     LauncherFrame.main(args);
+  }
+
+  private static void init() {
+    ConfigUtils.readFromConfig();
+    LanguageUtils.loadLocaleFile(ConfigUtils.config.getSelectedLanguage());
   }
 }
