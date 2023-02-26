@@ -2,9 +2,9 @@ package ee.twentyten.custom;
 
 import javax.swing.JCheckBox;
 
-public class CustomJCheckBox extends JCheckBox {
+public class TransparentJCheckBox extends JCheckBox {
 
-  public CustomJCheckBox(String text) {
+  public TransparentJCheckBox(String text) {
     super(text);
   }
 

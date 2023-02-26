@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicPanelUI;
 
-public class CustomBasicPanelUI extends BasicPanelUI {
+public class TransparentPanelUI extends BasicPanelUI {
 
   @Override
   public void installUI(JComponent c) {
