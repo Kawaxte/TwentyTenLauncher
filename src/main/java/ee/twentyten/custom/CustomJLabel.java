@@ -8,7 +8,7 @@ public class CustomJLabel extends JLabel {
   private static final long serialVersionUID = 1L;
 
   public CustomJLabel(String text, int horizontalAlignment) {
-    super(String.format("<html><a href=\"\">%s</a><html>", text), horizontalAlignment);
+    super(text, horizontalAlignment);
     this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
   }
 
