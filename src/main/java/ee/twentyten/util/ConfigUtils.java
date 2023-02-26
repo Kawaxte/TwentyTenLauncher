@@ -2,9 +2,11 @@ package ee.twentyten.util;
 
 import ee.twentyten.config.LauncherConfigImpl;
 import java.util.UUID;
+import lombok.Getter;
 
 public final class ConfigUtils {
 
+  @Getter
   public static LauncherConfigImpl config;
 
   static {
@@ -38,11 +40,11 @@ public final class ConfigUtils {
     return String.format("%s:%s:%s", clientToken, accessToken, uuid);
   }
 
-  public static void readFromConfig() {
-    ConfigUtils.config.load();
+  public static void loadConfig() {
+    ConfigUtils.getConfig().load();
   }
 
-  public static void writeToConfig() {
-    ConfigUtils.config.save();
+  public static void saveConfig() {
+    ConfigUtils.getConfig().save();
   }
 }
