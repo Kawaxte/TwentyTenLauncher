@@ -1,8 +1,9 @@
 package ee.twentyten.request;
 
-import ee.twentyten.util.LoggerHelper;
+import ee.twentyten.log.ELogger;
+import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.RequestUtils;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -11,49 +12,59 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
 
-  private final HttpsConnectionResponse connectionResponse;
-
-  {
-    this.connectionResponse = new HttpsConnectionResponse();
+  private HttpsURLConnection getResponse(HttpsURLConnection connection) {
+    try {
+      int responseCode = connection.getResponseCode();
+      String responseMessage = connection.getResponseMessage();
+      String connectionUrl = connection.getURL().toString();
+      String formattedResponse = String.format("%d %s (%s)", responseCode, responseMessage,
+          connectionUrl);
+      LoggerUtils.log(formattedResponse, responseCode / 100 != 2 ? ELogger.ERROR : ELogger.INFO);
+    } catch (IOException ioe) {
+      LoggerUtils.log("Failed to get HTTPS response", ioe, ELogger.ERROR);
+    }
+    return connection;
   }
 
   @Override
-  public HttpsURLConnection performRequest(URL url, EMethod method,
-      Map<String, String> headers) {
+  public HttpsURLConnection perform(URL url, ERequestMethod method, ERequestHeader header) {
     HttpsURLConnection connection = null;
     try {
-      connection = this.openConnection(url);
+      connection = RequestUtils.openHttpsConnection(url);
       connection.setRequestMethod(method.name());
+
+      Map<String, String> headers = header.setHeader();
       for (Map.Entry<String, String> entry : headers.entrySet()) {
         connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
     } catch (ProtocolException pe) {
-      LoggerHelper.logError("Failed to set request method", pe, true);
+      LoggerUtils.log("Failed to set request method", pe, ELogger.ERROR);
     }
-    return this.connectionResponse.response(connection);
+    return this.getResponse(connection);
   }
 
   @Override
-  public HttpsURLConnection performRequest(URL url, EMethod method,
-      Map<String, String> headers, Object data) {
+  public HttpsURLConnection perform(URL url, ERequestMethod method, ERequestHeader header,
+      Object data) {
     HttpsURLConnection connection = null;
     try {
-      connection = this.openConnection(url);
+      connection = RequestUtils.openHttpsConnection(url);
       connection.setRequestMethod(method.name());
+
+      Map<String, String> headers = header.setHeader();
       for (Map.Entry<String, String> entry : headers.entrySet()) {
         connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
 
       connection.setDoOutput(true);
-      try (OutputStream os = connection.getOutputStream(); OutputStreamWriter osw = new OutputStreamWriter(
-          os)) {
+      try (OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream())) {
         osw.write(data.toString());
       }
     } catch (ProtocolException pe) {
-      LoggerHelper.logError("Failed to set request method", pe, true);
+      LoggerUtils.log("Failed to set request method", pe, ELogger.ERROR);
     } catch (IOException ioe) {
-      LoggerHelper.logError("Failed to write data to output stream", ioe, true);
+      LoggerUtils.log("Failed to write data to output stream", ioe, ELogger.ERROR);
     }
-    return this.connectionResponse.response(connection);
+    return this.getResponse(connection);
   }
 }
