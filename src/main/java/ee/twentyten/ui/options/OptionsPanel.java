@@ -1,149 +1,123 @@
 package ee.twentyten.ui.options;
 
-import ee.twentyten.EPlatform;
-import ee.twentyten.config.LauncherConfig;
-import ee.twentyten.lang.LauncherLanguage;
-import ee.twentyten.ui.LauncherFrame;
-import ee.twentyten.util.FileHelper;
-import ee.twentyten.util.LoggerHelper;
-import ee.twentyten.util.OptionsHelper;
-import ee.twentyten.util.RuntimeHelper;
-import java.awt.BorderLayout;
+import ee.twentyten.custom.UTF8ResourceBundle;
+import ee.twentyten.log.ELogger;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.LoggerUtils;
 import java.awt.Desktop;
+import java.awt.Desktop.Action;
 import java.awt.FlowLayout;
-import java.awt.Window;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
 public class OptionsPanel extends JPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private final String versionTabText;
-  private final String languageTabText;
-  private final String cancelButtonText;
-  private final String openGameDirectoryButtonText;
-  private final String saveOptionsButtonText;
-  private OptionsVersionPanel versionPanel;
-  private OptionsLanguagePanel languagePanel;
-  private JTabbedPane tabbedPane;
-  private JButton cancelButton;
-  private JButton openGameDirectoryButton;
-  private JButton saveOptionsButton;
+  @Getter
+  @Setter
+  private static OptionsPanel instance;
+  private final JButton openGameDirectoryButton;
+  private final JButton saveOptionsButton;
+  @Getter
+  private final OptionsLanguageGroupBox languageGroupBox;
+  @Getter
+  private final OptionsVersionGroupBox versionGroupBox;
 
   {
-    this.versionTabText = LauncherLanguage.getString("ovp.string.title");
-    this.languageTabText = LauncherLanguage.getString("olp.string.title");
-    this.cancelButtonText = LauncherLanguage.getString(
-        "op.button.cancelButton");
-    this.openGameDirectoryButtonText = LauncherLanguage.getString(
-        "op.button.openGameDirectoryButton");
-    this.saveOptionsButtonText = LauncherLanguage.getString(
-        "op.button.saveOptionsButton");
-  }
+    this.languageGroupBox = new OptionsLanguageGroupBox();
+    this.versionGroupBox = new OptionsVersionGroupBox();
 
-  public OptionsPanel() {
-    super(new BorderLayout(), true);
+    this.openGameDirectoryButton = new JButton(LanguageUtils.openGameDirectoryButtonKey);
+    this.saveOptionsButton = new JButton(LanguageUtils.saveOptionsButtonKey);
 
-    this.createTabbedPane();
-    this.createBottomPanel();
-
-    this.cancelButton.addActionListener(this);
     this.openGameDirectoryButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
   }
 
-  private void createTabbedPane() {
-    this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-    this.add(this.tabbedPane, BorderLayout.NORTH);
+  public OptionsPanel() {
+    super(new GridBagLayout(), true);
 
-    this.versionPanel = new OptionsVersionPanel();
-    this.tabbedPane.add(this.versionTabText, this.versionPanel);
+    OptionsPanel.setInstance(this);
+    this.buildPanel();
 
-    this.languagePanel = new OptionsLanguagePanel();
-    this.tabbedPane.add(this.languageTabText, this.languagePanel);
+    this.setTextToComponents(LanguageUtils.getBundle());
   }
 
-  private void createBottomPanel() {
-    int tabbedPaneWidth = this.tabbedPane.getPreferredSize().width;
+  public void setTextToComponents(UTF8ResourceBundle bundle) {
+    LanguageUtils.setTextToComponent(bundle, this.openGameDirectoryButton,
+        LanguageUtils.openGameDirectoryButtonKey);
+    LanguageUtils.setTextToComponent(bundle, this.saveOptionsButton,
+        LanguageUtils.saveOptionsButtonKey);
+  }
 
-    JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER), true);
-    this.add(bottomPanel, BorderLayout.SOUTH);
+  private void buildPanel() {
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    this.add(this.languageGroupBox, gbc);
 
-    this.cancelButton = new JButton(this.cancelButtonText);
-    bottomPanel.add(this.cancelButton);
-    bottomPanel.add(Box.createHorizontalStrut(tabbedPaneWidth >> 2));
+    gbc.gridy = 1;
+    this.add(this.versionGroupBox, gbc);
 
-    this.openGameDirectoryButton = new JButton(
-        this.openGameDirectoryButtonText);
-    bottomPanel.add(this.openGameDirectoryButton);
+    gbc.gridy = 2;
+    this.add(this.buildBottomPanel(), gbc);
+  }
 
-    this.saveOptionsButton = new JButton(this.saveOptionsButtonText);
-    bottomPanel.add(this.saveOptionsButton);
+  private JPanel buildBottomPanel() {
+    JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT), true);
+    bottomPanel.add(this.openGameDirectoryButton, 0);
+    bottomPanel.add(this.saveOptionsButton, 1);
+    return bottomPanel;
   }
 
   @Override
-  public void actionPerformed(ActionEvent evt) {
-    Object src = evt.getSource();
-    if (src == this.cancelButton) {
-      Window parent = (Window) this.getTopLevelAncestor();
-      parent.dispatchEvent(new WindowEvent(parent, WindowEvent.WINDOW_CLOSING));
-    }
-    if (src == this.openGameDirectoryButton) {
-      try {
-        Desktop.getDesktop().open(FileHelper.workingDirectory);
-      } catch (IOException ioe1) {
-        LoggerHelper.logError("Failed to open working directory", ioe1, true);
-
-        EPlatform platform = EPlatform.getPlatform();
-        try {
-          RuntimeHelper.executeCommand(platform, FileHelper.workingDirectory);
-        } catch (IOException ioe2) {
-          LoggerHelper.logError("Failed to execute string command", ioe2, true);
+  public void actionPerformed(ActionEvent event) {
+    Object source = event.getSource();
+    if (source == this.openGameDirectoryButton) {
+      boolean isDesktopSupported = Desktop.isDesktopSupported();
+      if (isDesktopSupported) {
+        Desktop desktop = Desktop.getDesktop();
+        boolean isSupported = desktop.isSupported(Action.OPEN);
+        if (isSupported) {
+          try {
+            Desktop.getDesktop().open(LauncherUtils.workingDirectory);
+          } catch (IOException ioe) {
+            LoggerUtils.log("Failed to open Minecraft directory", ioe, ELogger.ERROR);
+          }
         }
       }
     }
-    if (src == this.saveOptionsButton) {
-      String selectedVersion = (String) this.versionPanel.getUseVersionComboBox()
+    if (source == this.saveOptionsButton) {
+      String selectedLanguage = (String) this.languageGroupBox.getSetLanguageComboBox()
           .getSelectedItem();
-      String selectedLanguage = (String) this.languagePanel.getSetLanguageComboBox()
-          .getSelectedItem();
-      if (selectedVersion != null) {
-        LauncherConfig.instance.setSelectedVersion(
-            OptionsHelper.versionIds.get(selectedVersion));
-      }
-      if (selectedLanguage != null && !OptionsHelper.languages.get(
-              selectedLanguage)
-          .equals(LauncherConfig.instance.getSelectedLanguage())) {
-        LauncherConfig.instance.setSelectedLanguage(
-            OptionsHelper.languages.get(selectedLanguage));
-        LauncherConfig.instance.saveConfig();
+      final String mappedLanguage = LanguageUtils.languageMap.get(selectedLanguage);
 
-        LauncherLanguage.setLanguage(
-            LauncherConfig.instance.getSelectedLanguage());
-
-        LauncherFrame.instance.dispose();
-
+      boolean isLanguageChanged = !mappedLanguage.equals(
+          ConfigUtils.getConfig().getSelectedLanguage());
+      if (selectedLanguage != null && isLanguageChanged) {
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            LauncherFrame.instance = new LauncherFrame(
-                LauncherFrame.launcherTitle);
-            LauncherFrame.instance.setVisible(true);
+            UTF8ResourceBundle bundle = UTF8ResourceBundle.getCustomBundle(
+                String.format("language/locale_%s", mappedLanguage));
+            LanguageUtils.updateLauncherLanguage(bundle);
           }
         });
-        return;
-      }
 
-      LauncherConfig.instance.saveConfig();
+        ConfigUtils.getConfig().setSelectedLanguage(mappedLanguage);
+        ConfigUtils.saveConfig();
+      }
     }
   }
 }
