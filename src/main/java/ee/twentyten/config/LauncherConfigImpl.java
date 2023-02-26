@@ -1,6 +1,6 @@
 package ee.twentyten.config;
 
-import ee.twentyten.custom.CustomProperties;
+import ee.twentyten.custom.LinkedProperties;
 import ee.twentyten.log.ELogger;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LauncherUtils;
@@ -19,17 +19,19 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class LauncherConfigImpl extends LauncherConfig {
 
   /* GENERAL */
-  private String clientToken;
   private String selectedLanguage;
   private boolean isShowBetaVersionsSelected;
   private boolean isShowAlphaVersionsSelected;
   private boolean isShowInfdevVersionsSelected;
   private String selectedVersion;
+  private String clientToken;
 
   /* YGGDRASIL AUTHENTICATION */
   private String yggdrasilUsername;
@@ -64,8 +66,7 @@ public class LauncherConfigImpl extends LauncherConfig {
     return configFile;
   }
 
-  private void getGeneralProperties(CustomProperties clp) {
-    this.clientToken = clp.getProperty("clientToken", ConfigUtils.generateClientToken());
+  private void getGeneralProperties(LinkedProperties clp) {
     this.selectedLanguage = clp.getProperty("selectedLanguage", "en");
     this.isShowBetaVersionsSelected = Boolean.parseBoolean(
         clp.getProperty("isShowBetaVersionsSelected", "true"));
@@ -74,9 +75,10 @@ public class LauncherConfigImpl extends LauncherConfig {
     this.isShowInfdevVersionsSelected = Boolean.parseBoolean(
         clp.getProperty("isShowInfdevVersionsSelected", "false"));
     this.selectedVersion = clp.getProperty("selectedVersion", "b1.1_02");
+    this.clientToken = clp.getProperty("clientToken", ConfigUtils.generateClientToken());
   }
 
-  private void getYggdrasilProperties(CustomProperties clp) {
+  private void getYggdrasilProperties(LinkedProperties clp) {
     this.yggdrasilUsername = clp.getProperty("yggdrasilUsername", null);
     this.yggdrasilPassword = this.decrypt(clp.getProperty("yggdrasilPassword", null));
     this.isYggdrasilPasswordSaved = Boolean.parseBoolean(
@@ -87,7 +89,7 @@ public class LauncherConfigImpl extends LauncherConfig {
     this.yggdrasilSessionId = clp.getProperty("yggdrasilSessionId");
   }
 
-  private void getMicrosoftProperties(CustomProperties clp) {
+  private void getMicrosoftProperties(LinkedProperties clp) {
     this.microsoftAccessToken = clp.getProperty("microsoftAccessToken", null);
     this.microsoftAccessTokenExpiresIn = Integer.parseInt(
         clp.getProperty("microsoftAccessTokenExpiresIn", Integer.toString(0)));
@@ -97,8 +99,7 @@ public class LauncherConfigImpl extends LauncherConfig {
     this.microsoftSessionId = clp.getProperty("microsoftSessionId");
   }
 
-  private void setGeneralProperties(CustomProperties clp) {
-    clp.setProperty("clientToken", this.clientToken);
+  private void setGeneralProperties(LinkedProperties clp) {
     clp.setProperty("selectedLanguage", this.selectedLanguage);
     clp.setProperty("isShowBetaVersionsSelected",
         Boolean.toString(this.isShowBetaVersionsSelected));
@@ -107,9 +108,10 @@ public class LauncherConfigImpl extends LauncherConfig {
     clp.setProperty("isShowInfdevVersionsSelected",
         Boolean.toString(this.isShowInfdevVersionsSelected));
     clp.setProperty("selectedVersion", this.selectedVersion);
+    clp.setProperty("clientToken", this.clientToken);
   }
 
-  private void setYggdrasilProperties(CustomProperties clp) {
+  private void setYggdrasilProperties(LinkedProperties clp) {
     clp.setProperty("yggdrasilUsername", this.yggdrasilUsername);
     clp.setProperty("yggdrasilPassword", this.encrypt(this.yggdrasilPassword));
     clp.setProperty("isYggdrasilPasswordSaved", Boolean.toString(this.isYggdrasilPasswordSaved));
@@ -121,7 +123,7 @@ public class LauncherConfigImpl extends LauncherConfig {
             this.yggdrasilProfileId));
   }
 
-  private void setMicrosoftProperties(CustomProperties clp) {
+  private void setMicrosoftProperties(LinkedProperties clp) {
     clp.setProperty("microsoftAccessToken", this.microsoftAccessToken);
     clp.setProperty("microsoftAccessTokenExpiresIn",
         Integer.toString(this.microsoftAccessTokenExpiresIn));
@@ -138,7 +140,7 @@ public class LauncherConfigImpl extends LauncherConfig {
     File configFile = this.getConfigFile();
     String configFilePath = configFile.getAbsolutePath();
     try (FileInputStream fis = new FileInputStream(configFile)) {
-      CustomProperties clp = new CustomProperties();
+      LinkedProperties clp = new LinkedProperties();
       clp.load(fis);
 
       this.getGeneralProperties(clp);
@@ -150,7 +152,7 @@ public class LauncherConfigImpl extends LauncherConfig {
       }
       LoggerUtils.log(configFilePath, ELogger.INFO);
     } catch (FileNotFoundException fnfe) {
-      LoggerUtils.log("Failed to find config file", fnfe, ELogger.ERROR);
+      LoggerUtils.log("Can't find config file", fnfe, ELogger.ERROR);
     } catch (IOException ioe) {
       LoggerUtils.log("Failed to load config file", ioe, ELogger.ERROR);
     }
@@ -163,21 +165,21 @@ public class LauncherConfigImpl extends LauncherConfig {
     try (FileOutputStream fos = new FileOutputStream(configFile)) {
       fos.write(ConfigUtils.generateConfigFileHeader().getBytes());
 
-      CustomProperties clpGeneral = new CustomProperties();
+      LinkedProperties clpGeneral = new LinkedProperties();
       this.setGeneralProperties(clpGeneral);
       clpGeneral.store(fos, "GENERAL");
 
-      CustomProperties clpYggdrasil = new CustomProperties();
+      LinkedProperties clpYggdrasil = new LinkedProperties();
       this.setYggdrasilProperties(clpYggdrasil);
       clpYggdrasil.store(fos, "MOJANG AUTHENTICATION");
 
-      CustomProperties clpMicrosoft = new CustomProperties();
+      LinkedProperties clpMicrosoft = new LinkedProperties();
       this.setMicrosoftProperties(clpMicrosoft);
       clpMicrosoft.store(fos, "MICROSOFT AUTHENTICATION");
 
       LoggerUtils.log(configFilePath, ELogger.INFO);
     } catch (FileNotFoundException fnfe) {
-      LoggerUtils.log("Failed to find config file", fnfe, ELogger.ERROR);
+      LoggerUtils.log("Can't find config file", fnfe, ELogger.ERROR);
     } catch (IOException ioe) {
       LoggerUtils.log("Failed to save config file", ioe, ELogger.ERROR);
     }
@@ -198,10 +200,10 @@ public class LauncherConfigImpl extends LauncherConfig {
 
     IvParameterSpec ips = new IvParameterSpec(ivBytes);
     try {
-      Cipher instance = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      instance.init(Cipher.ENCRYPT_MODE, sks, ips);
+      Cipher configCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+      configCipher.init(Cipher.ENCRYPT_MODE, sks, ips);
 
-      byte[] encryptedBytes = instance.doFinal(value.getBytes());
+      byte[] encryptedBytes = configCipher.doFinal(value.getBytes());
       byte[] finalBytes = new byte[ivBytes.length + encryptedBytes.length];
       System.arraycopy(ivBytes, 0, finalBytes, 0, ivBytes.length);
       System.arraycopy(encryptedBytes, 0, finalBytes, ivBytes.length, encryptedBytes.length);
@@ -226,10 +228,10 @@ public class LauncherConfigImpl extends LauncherConfig {
     byte[] encryptedDataBytes = Arrays.copyOfRange(encryptedBytes, 16, encryptedBytes.length);
     IvParameterSpec ips = new IvParameterSpec(ivBytes);
     try {
-      Cipher instance = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      instance.init(Cipher.DECRYPT_MODE, sks, ips);
+      Cipher configCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+      configCipher.init(Cipher.DECRYPT_MODE, sks, ips);
 
-      byte[] decryptedBytes = instance.doFinal(encryptedDataBytes);
+      byte[] decryptedBytes = configCipher.doFinal(encryptedDataBytes);
       return new String(decryptedBytes);
     } catch (GeneralSecurityException gse) {
       LoggerUtils.log("Failed to decrypt value", gse, ELogger.ERROR);
