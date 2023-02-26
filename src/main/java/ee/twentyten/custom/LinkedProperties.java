@@ -13,7 +13,7 @@ import java.util.Set;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
-public class CustomProperties extends Properties {
+public class LinkedProperties extends Properties {
 
   private static final long serialVersionUID = 1L;
   private final LinkedHashMap<Object, Object> linkedMap;
