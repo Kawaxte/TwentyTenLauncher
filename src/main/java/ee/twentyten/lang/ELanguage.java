@@ -3,6 +3,7 @@ package ee.twentyten.lang;
 import lombok.Getter;
 
 public enum ELanguage {
+  Language_BG("Български"),
   LANGUAGE_CS("Čeština"),
   LANGUAGE_DE("Deutsch"),
   LANGUAGE_ET("Eesti"),
