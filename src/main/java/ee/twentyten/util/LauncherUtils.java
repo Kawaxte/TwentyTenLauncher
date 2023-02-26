@@ -5,8 +5,10 @@ import ee.twentyten.Launcher;
 import ee.twentyten.log.ELogger;
 import ee.twentyten.request.ERequestHeader;
 import ee.twentyten.request.ERequestMethod;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -86,8 +88,7 @@ public final class LauncherUtils {
         @Override
         public Boolean call() {
           JSONObject latestRelease = RequestUtils.performJsonRequest(
-              LauncherUtils.apiLatestReleaseUrl,
-              ERequestMethod.GET, ERequestHeader.JSON);
+              LauncherUtils.apiLatestReleaseUrl, ERequestMethod.GET, ERequestHeader.JSON);
           Objects.requireNonNull(latestRelease, "latestRelease == null!");
 
           String latestVersion = latestRelease.getString("tag_name");
@@ -124,11 +125,14 @@ public final class LauncherUtils {
     arguments.add(Launcher.class.getCanonicalName());
 
     ProcessBuilder pb = new ProcessBuilder(arguments);
-    pb.redirectErrorStream(true);
+    LoggerUtils.log(arguments.toString(), ELogger.INFO);
     try {
-      LoggerUtils.log(arguments.toString(), ELogger.INFO);
-
       Process p = pb.start();
+
+      String errorStreamMessage = LauncherUtils.getErrorStream(p);
+      if (!errorStreamMessage.isEmpty()) {
+        LoggerUtils.log(errorStreamMessage, ELogger.ERROR);
+      }
       System.exit(p.waitFor());
     } catch (IOException ioe) {
       LoggerUtils.log("Failed to start process", ioe, ELogger.ERROR);
@@ -136,6 +140,20 @@ public final class LauncherUtils {
       LoggerUtils.log("Interrupted while waiting for process to finish", ie, ELogger.ERROR);
       System.exit(1);
     }
+  }
+
+  private static String getErrorStream(Process p) {
+    StringBuilder sb = new StringBuilder();
+    try (InputStreamReader isr = new InputStreamReader(
+        p.getErrorStream()); BufferedReader br = new BufferedReader(isr)) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        sb.append(line).append(SystemUtils.lineSeparator);
+      }
+    } catch (IOException ioe) {
+      LoggerUtils.log("Failed to read error stream from process", ioe, ELogger.ERROR);
+    }
+    return sb.toString();
   }
 
   private static void mapWorkingDirectoryToPlatform(EPlatform platform) {
