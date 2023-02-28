@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +79,7 @@ public final class LauncherUtils {
         @Override
         public Thread newThread(Runnable r) {
           Thread t = new Thread(r);
-          t.setName(String.format("update-%s", t.getId()));
+          t.setName(MessageFormat.format("update-{0}", t.getId()));
           t.setDaemon(true);
           return t;
         }
