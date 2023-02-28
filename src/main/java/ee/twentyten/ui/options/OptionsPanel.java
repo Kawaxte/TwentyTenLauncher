@@ -2,10 +2,10 @@ package ee.twentyten.ui.options;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.log.ELogger;
-import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.VersionUtils;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.awt.FlowLayout;
@@ -16,16 +16,14 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.Setter;
 
 public class OptionsPanel extends JPanel implements ActionListener {
 
-  private static final long serialVersionUID = 1L;
   @Getter
   @Setter
-  private static OptionsPanel instance;
+  public static OptionsPanel instance;
   private final JButton openGameDirectoryButton;
   private final JButton saveOptionsButton;
   @Getter
@@ -99,25 +97,8 @@ public class OptionsPanel extends JPanel implements ActionListener {
       }
     }
     if (source == this.saveOptionsButton) {
-      String selectedLanguage = (String) this.languageGroupBox.getSetLanguageComboBox()
-          .getSelectedItem();
-      final String mappedLanguage = LanguageUtils.languageMap.get(selectedLanguage);
-
-      boolean isLanguageChanged = !mappedLanguage.equals(
-          ConfigUtils.getConfig().getSelectedLanguage());
-      if (selectedLanguage != null && isLanguageChanged) {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            UTF8ResourceBundle bundle = UTF8ResourceBundle.getCustomBundle(
-                String.format("language/locale_%s", mappedLanguage));
-            LanguageUtils.updateLauncherLanguage(bundle);
-          }
-        });
-
-        ConfigUtils.getConfig().setSelectedLanguage(mappedLanguage);
-        ConfigUtils.saveConfig();
-      }
+      LanguageUtils.updateSelectedLanguage(OptionsLanguageGroupBox.getInstance());
+      VersionUtils.updateSelectedVersion(OptionsVersionGroupBox.getInstance());
     }
   }
 }
