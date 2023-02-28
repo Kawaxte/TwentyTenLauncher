@@ -75,6 +75,7 @@ the launcher, please follow these steps:
 5. Wait for the pull request to be reviewed and merged.
 
 <h2 align="center">Localisation</h2>
+
 If you would like to help make the launcher accessible to players from around the
-world, [click here](https://explore.transifex.com/xte/twentyten/) to translate the
+world, [click here](https://explore.transifex.com/xte/twentyten) to translate the
 launcher to various languages. Your contribution will be greatly appreciated!
