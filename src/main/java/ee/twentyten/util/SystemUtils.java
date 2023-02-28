@@ -1,5 +1,7 @@
 package ee.twentyten.util;
 
+import java.text.MessageFormat;
+
 public final class SystemUtils {
 
   public static String lineSeparator;
@@ -34,9 +36,9 @@ public final class SystemUtils {
       throw new IllegalArgumentException("preRelease > 99 || preRelease <= 0 && isPreRelease");
     }
 
-    String currentLauncherVersion =
-        isPreRelease ? String.format("%d.%d.%02d%02d_pre%d", major, month, day, year, preRelease)
-            : String.format("%d.%d.%02d%02d", major, month, day, year);
+    String currentLauncherVersion = MessageFormat.format(
+        "{0,number}.{1,number}.{2,number,00}{3,number,00}{4}", major, month, day, year,
+        isPreRelease ? MessageFormat.format("_pre{0,number}", preRelease) : "");
     if (SystemUtils.launcherVersion == null) {
       System.setProperty("ee.twentyten.launcher.version", currentLauncherVersion);
       SystemUtils.launcherVersion = currentLauncherVersion;
