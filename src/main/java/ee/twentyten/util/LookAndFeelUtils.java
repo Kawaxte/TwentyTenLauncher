@@ -4,6 +4,7 @@ import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinReg;
 import ee.twentyten.log.ELogger;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -101,8 +102,8 @@ public final class LookAndFeelUtils {
         String currentThemeContents = FileUtils.readFileContents(currentThemePath);
         String[] currentThemeLines = currentThemeContents.split("\\r?\\n");
 
-        String classicThemePath = String.format(
-            "%s\\Resources\\Ease of Access Themes\\classic.theme", SystemRoot);
+        String classicThemePath = MessageFormat.format(
+            "{0}\\Resources\\Ease of Access Themes\\classic.theme", SystemRoot);
         String classicThemeContents = FileUtils.readFileContents(classicThemePath);
         String[] classicThemeLines = classicThemeContents.split("\\r?\\n");
         return Objects.equals(currentThemeLines[3], classicThemeLines[3]);
