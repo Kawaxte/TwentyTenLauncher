@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.Objects;
 import lombok.Getter;
 
@@ -42,7 +43,7 @@ public class LauncherLanguageImpl extends LauncherLanguage {
   public void load(String baseName, String isoCode) {
     ELanguage.getLanguage(isoCode);
 
-    String localeFileName = String.format("%s_%s.properties", baseName, isoCode);
+    String localeFileName = MessageFormat.format("{0}_{1}.properties", baseName, isoCode);
     try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(localeFileName)) {
       Objects.requireNonNull(is, "is == null!");
       try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
