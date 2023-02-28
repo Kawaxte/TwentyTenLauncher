@@ -152,7 +152,7 @@ public class LauncherConfigImpl extends LauncherConfig {
       }
       LoggerUtils.log(configFilePath, ELogger.INFO);
     } catch (FileNotFoundException fnfe) {
-      LoggerUtils.log("Can't find config file", fnfe, ELogger.ERROR);
+      LoggerUtils.log("Failed to find config file", fnfe, ELogger.ERROR);
     } catch (IOException ioe) {
       LoggerUtils.log("Failed to load config file", ioe, ELogger.ERROR);
     }
@@ -179,7 +179,7 @@ public class LauncherConfigImpl extends LauncherConfig {
 
       LoggerUtils.log(configFilePath, ELogger.INFO);
     } catch (FileNotFoundException fnfe) {
-      LoggerUtils.log("Can't find config file", fnfe, ELogger.ERROR);
+      LoggerUtils.log("Failed to find config file", fnfe, ELogger.ERROR);
     } catch (IOException ioe) {
       LoggerUtils.log("Failed to save config file", ioe, ELogger.ERROR);
     }
