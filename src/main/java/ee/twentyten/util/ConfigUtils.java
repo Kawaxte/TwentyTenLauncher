@@ -37,7 +37,8 @@ public final class ConfigUtils {
   }
 
   public static String formatSessionId(String clientToken, String accessToken, String uuid) {
-    return String.format("%s:%s:%s", clientToken, accessToken, uuid);
+    return new StringBuilder().append(clientToken).append(":").append(accessToken).append(":")
+        .append(uuid).toString();
   }
 
   public static void loadConfig() {
