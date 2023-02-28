@@ -15,8 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListener {
-
-  private static final long serialVersionUID = 1L;
+  
   @Getter
   @Setter
   public static LauncherNoNetworkPanel instance;

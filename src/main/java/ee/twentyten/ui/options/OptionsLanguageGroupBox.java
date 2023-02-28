@@ -12,10 +12,9 @@ import lombok.Setter;
 
 public class OptionsLanguageGroupBox extends JGroupBox {
 
-  private static final long serialVersionUID = 1L;
   @Getter
   @Setter
-  private static OptionsLanguageGroupBox instance;
+  public static OptionsLanguageGroupBox instance;
   private final JLabel setLanguageLabel;
   @Getter
   private final JComboBox<String> setLanguageComboBox;

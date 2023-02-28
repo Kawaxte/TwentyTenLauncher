@@ -10,7 +10,6 @@ import lombok.Setter;
 
 public class OptionsDialog extends JDialog {
 
-  private static final long serialVersionUID = 1L;
   @Getter
   @Setter
   public static OptionsDialog instance;

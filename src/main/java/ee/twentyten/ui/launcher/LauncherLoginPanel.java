@@ -34,8 +34,7 @@ import lombok.Setter;
 
 @Getter
 public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
-
-  private static final long serialVersionUID = 1L;
+  
   @Getter
   @Setter
   public static LauncherLoginPanel instance;
