@@ -5,10 +5,15 @@ import ee.twentyten.request.ERequestHeader;
 import ee.twentyten.request.ERequestMethod;
 import ee.twentyten.request.HttpsConnectionRequestImpl;
 import ee.twentyten.request.JsonConnectionRequestImpl;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.text.MessageFormat;
+import java.util.Objects;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import org.json.JSONObject;
@@ -25,6 +30,48 @@ public final class RequestUtils {
 
   private RequestUtils() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
+  }
+
+  public static HttpsURLConnection getResponse(HttpsURLConnection connection) {
+    try {
+      int responseCode = connection.getResponseCode();
+      String responseMessage = connection.getResponseMessage();
+      String connectionUrl = connection.getURL().toString();
+      String formattedResponse = MessageFormat.format("{0} {1} ({2})", responseCode,
+          responseMessage, connectionUrl);
+      LoggerUtils.log(formattedResponse, responseCode / 100 != 2 ? ELogger.ERROR : ELogger.INFO);
+    } catch (IOException ioe) {
+      LoggerUtils.log("Failed to get HTTPS response", ioe, ELogger.ERROR);
+    }
+    return connection;
+  }
+
+  public static JSONObject getJsonResponse(HttpsURLConnection connection) {
+    String jsonResponse = null;
+    try {
+      int responseCode = connection.getResponseCode();
+      String responseMessage = connection.getResponseMessage();
+      String connectionUrl = connection.getURL().toString();
+      String formattedResponse = MessageFormat.format("{0} {1} ({2})", responseCode,
+          responseMessage, connectionUrl);
+      LoggerUtils.log(formattedResponse, responseCode / 100 != 2 ? ELogger.ERROR : ELogger.INFO);
+
+      try (InputStreamReader isr = new InputStreamReader(
+          responseCode >= 400 ? connection.getErrorStream() : connection.getInputStream(),
+          StandardCharsets.UTF_8); BufferedReader br = new BufferedReader(isr)) {
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+          sb.append(line);
+        }
+        jsonResponse = sb.toString();
+      }
+    } catch (IOException ioe) {
+      LoggerUtils.log("Failed to get HTTPS response", ioe, ELogger.ERROR);
+    }
+
+    Objects.requireNonNull(jsonResponse, "jsonResponse == null!");
+    return jsonResponse.isEmpty() ? new JSONObject() : new JSONObject(jsonResponse);
   }
 
   public static HttpsURLConnection openHttpsConnection(URL url) {
