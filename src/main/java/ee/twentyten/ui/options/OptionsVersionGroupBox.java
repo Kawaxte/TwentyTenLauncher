@@ -2,11 +2,14 @@ package ee.twentyten.ui.options;
 
 import ee.twentyten.custom.JGroupBox;
 import ee.twentyten.custom.UTF8ResourceBundle;
+import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.VersionUtils;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.MessageFormat;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -16,23 +19,29 @@ import lombok.Setter;
 
 public class OptionsVersionGroupBox extends JGroupBox implements ActionListener {
 
-  private static final long serialVersionUID = 1L;
   @Getter
   @Setter
-  private static OptionsVersionGroupBox instance;
+  public static OptionsVersionGroupBox instance;
   private final JCheckBox showBetaVersionsCheckBox;
   private final JCheckBox showAlphaVersionsCheckBox;
   private final JCheckBox showInfdevVersionsCheckBox;
+  private final JCheckBox[] showVersionCheckBoxes;
   private final JLabel useVersionLabel;
+  @Getter
   private final JComboBox<String> useVersionComboBox;
 
   {
     this.showBetaVersionsCheckBox = new JCheckBox(
-        String.format(LanguageUtils.showVersionsCheckBoxKey, "Beta", "2010-12-20 -> 2011-01-21"));
+        MessageFormat.format(LanguageUtils.showVersionsCheckBoxKey, "Beta",
+            "2010-12-20 -> 2011-01-21"), ConfigUtils.getConfig().isShowBetaVersionsSelected());
     this.showAlphaVersionsCheckBox = new JCheckBox(
-        String.format(LanguageUtils.showVersionsCheckBoxKey, "Alpha", "2010-07-02 -> 2010-12-03"));
+        MessageFormat.format(LanguageUtils.showVersionsCheckBoxKey, "Alpha",
+            "2010-07-02 -> 2010-12-03"), ConfigUtils.getConfig().isShowAlphaVersionsSelected());
     this.showInfdevVersionsCheckBox = new JCheckBox(
-        String.format(LanguageUtils.showVersionsCheckBoxKey, "Infdev", "2010-06-29 -> 2010-06-30"));
+        MessageFormat.format(LanguageUtils.showVersionsCheckBoxKey, "Infdev",
+            "2010-06-29 -> 2010-06-30"), ConfigUtils.getConfig().isShowInfdevVersionsSelected());
+    this.showVersionCheckBoxes = new JCheckBox[]{this.showBetaVersionsCheckBox,
+        this.showAlphaVersionsCheckBox, this.showInfdevVersionsCheckBox};
     this.useVersionLabel = new JLabel(LanguageUtils.useVersionLabelKey, JLabel.RIGHT);
     this.useVersionComboBox = new JComboBox<>();
 
@@ -48,6 +57,7 @@ public class OptionsVersionGroupBox extends JGroupBox implements ActionListener 
     this.buildTopPanel();
     this.buildMiddlePanel();
 
+    VersionUtils.updateVersionComboBox(this);
     this.setTextToContainers(LanguageUtils.getBundle());
     this.setTextToComponents(LanguageUtils.getBundle());
   }
@@ -85,5 +95,27 @@ public class OptionsVersionGroupBox extends JGroupBox implements ActionListener 
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
+
+    for (int i = 0; i < this.showVersionCheckBoxes.length; i++) {
+      if (source == this.showVersionCheckBoxes[i]) {
+        switch (i) {
+          case 0:
+            ConfigUtils.getConfig()
+                .setShowBetaVersionsSelected(this.showVersionCheckBoxes[i].isSelected());
+            break;
+          case 1:
+            ConfigUtils.getConfig()
+                .setShowAlphaVersionsSelected(this.showVersionCheckBoxes[i].isSelected());
+            break;
+          case 2:
+            ConfigUtils.getConfig()
+                .setShowInfdevVersionsSelected(this.showVersionCheckBoxes[i].isSelected());
+            break;
+          default:
+            break;
+        }
+        VersionUtils.updateVersionComboBox(this);
+      }
+    }
   }
 }
