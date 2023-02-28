@@ -1,6 +1,7 @@
 package ee.twentyten.custom;
 
 import java.awt.Cursor;
+import java.text.MessageFormat;
 import javax.swing.JLabel;
 
 public class CustomJLabel extends JLabel {
@@ -14,6 +15,6 @@ public class CustomJLabel extends JLabel {
 
   @Override
   public void setText(String text) {
-    super.setText(String.format("<html><a href=\"\">%s</a><html>", text));
+    super.setText(MessageFormat.format("<html><a href=\"\">{0}</a><html>", text));
   }
 }
