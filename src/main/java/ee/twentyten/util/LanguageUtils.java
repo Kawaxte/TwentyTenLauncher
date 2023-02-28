@@ -16,22 +16,26 @@ import java.awt.Container;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.swing.AbstractButton;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.Setter;
 
 public final class LanguageUtils {
 
   public static Map<String, String> languageMap;
+
   /* LauncherPanel */
   public static String loginFailedKey;
   public static String outdatedLauncherKey;
   public static String noNetworkKey;
   public static String microsoftLoginButtonKey;
+
   /* LauncherLoginPanel */
   public static String usernameLabelKey;
   public static String passwordLabelKey;
@@ -40,22 +44,28 @@ public final class LanguageUtils {
   public static String needAccountKey;
   public static String updateLauncherKey;
   public static String loginButtonKey;
+
   /* LauncherNoNetworkPanel */
   public static String playOnlineLabelKey;
   public static String playOfflineButtonKey;
   public static String tryAgainButtonKey;
+
   /* LauncherMicrosoftLoginPanel */
   public static String copyUserCodeLabelKey;
   public static String openBrowserButtonKey;
   public static String cancelButtonKey;
+
   /* OptionsDialog */
   public static String optionsDialogTitleKey;
+
   /* OptionsPanel */
   public static String openGameDirectoryButtonKey;
   public static String saveOptionsButtonKey;
+
   /* OptionsLanguageGroupBox */
   public static String optionsLanguageGroupBoxKey;
   public static String setLanguageLabelKey;
+
   /* OptionsVersionGroupBox */
   public static String optionsVersionGroupBoxKey;
   public static String showVersionsCheckBoxKey;
@@ -185,6 +195,45 @@ public final class LanguageUtils {
     }
   }
 
+  public static void updateLanguageComboBox(OptionsLanguageGroupBox olgb) {
+    DefaultComboBoxModel<String> languageModel = new DefaultComboBoxModel<>();
+
+    LanguageUtils.languageMap = new HashMap<>();
+    for (ELanguage language : ELanguage.values()) {
+      String languageName = language.getName();
+      String languageValue = language.toString().substring(9);
+      languageModel.addElement(languageName);
+      LanguageUtils.languageMap.put(languageName, languageValue.toLowerCase());
+    }
+    for (Map.Entry<String, String> entry : LanguageUtils.languageMap.entrySet()) {
+      if (entry.getValue().equals(ConfigUtils.getConfig().getSelectedLanguage())) {
+        languageModel.setSelectedItem(entry.getKey());
+        break;
+      }
+    }
+    olgb.getSetLanguageComboBox().setModel(languageModel);
+  }
+
+  public static void updateSelectedLanguage(OptionsLanguageGroupBox olgb) {
+    String selectedLanguage = (String) olgb.getSetLanguageComboBox().getSelectedItem();
+    selectedLanguage = LanguageUtils.languageMap.get(selectedLanguage);
+    boolean isLanguageChanged = !Objects.equals(selectedLanguage,
+        ConfigUtils.getConfig().getSelectedLanguage());
+    if (isLanguageChanged) {
+      final String finalSelectedLanguage = selectedLanguage;
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          UTF8ResourceBundle bundle = UTF8ResourceBundle.getCustomBundle(
+              MessageFormat.format("language/locale_{0}", finalSelectedLanguage));
+          LanguageUtils.updateLauncherLanguage(bundle);
+        }
+      });
+      ConfigUtils.getConfig().setSelectedLanguage(selectedLanguage);
+      ConfigUtils.saveConfig();
+    }
+  }
+
   public static void updateLauncherLanguage(UTF8ResourceBundle bundle) {
     LauncherPanel.getInstance().setTextToComponents(bundle);
     if (LauncherMicrosoftLoginPanel.instance != null) {
@@ -203,24 +252,5 @@ public final class LanguageUtils {
     OptionsVersionGroupBox.getInstance().setTextToComponents(bundle);
 
     OptionsDialog.getInstance().pack();
-  }
-
-  public static void updateLanguageComboBox(OptionsLanguageGroupBox olgb) {
-    DefaultComboBoxModel<String> languageModel = new DefaultComboBoxModel<>();
-
-    LanguageUtils.languageMap = new HashMap<>();
-    for (ELanguage language : ELanguage.values()) {
-      String languageName = language.getName();
-      String languageValue = language.toString().substring(9);
-      languageModel.addElement(languageName);
-      LanguageUtils.languageMap.put(languageName, languageValue.toLowerCase());
-    }
-    for (Map.Entry<String, String> entry : LanguageUtils.languageMap.entrySet()) {
-      if (entry.getValue().equals(ConfigUtils.getConfig().getSelectedLanguage())) {
-        languageModel.setSelectedItem(entry.getKey());
-        break;
-      }
-    }
-    olgb.getSetLanguageComboBox().setModel(languageModel);
   }
 }
