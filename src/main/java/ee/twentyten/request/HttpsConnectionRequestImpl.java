@@ -12,20 +12,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
 
-  private HttpsURLConnection getResponse(HttpsURLConnection connection) {
-    try {
-      int responseCode = connection.getResponseCode();
-      String responseMessage = connection.getResponseMessage();
-      String connectionUrl = connection.getURL().toString();
-      String formattedResponse = String.format("%d %s (%s)", responseCode, responseMessage,
-          connectionUrl);
-      LoggerUtils.log(formattedResponse, responseCode / 100 != 2 ? ELogger.ERROR : ELogger.INFO);
-    } catch (IOException ioe) {
-      LoggerUtils.log("Failed to get HTTPS response", ioe, ELogger.ERROR);
-    }
-    return connection;
-  }
-
   @Override
   public HttpsURLConnection perform(URL url, ERequestMethod method, ERequestHeader header) {
     HttpsURLConnection connection = null;
@@ -40,7 +26,7 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
     } catch (ProtocolException pe) {
       LoggerUtils.log("Failed to set request method", pe, ELogger.ERROR);
     }
-    return this.getResponse(connection);
+    return RequestUtils.getResponse(connection);
   }
 
   @Override
@@ -65,6 +51,6 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
     } catch (IOException ioe) {
       LoggerUtils.log("Failed to write data to output stream", ioe, ELogger.ERROR);
     }
-    return this.getResponse(connection);
+    return RequestUtils.getResponse(connection);
   }
 }
