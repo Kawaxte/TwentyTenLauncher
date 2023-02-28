@@ -6,6 +6,7 @@ import ee.twentyten.util.SystemUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -94,7 +95,7 @@ public class LinkedProperties extends Properties {
             os.write(strValue.getBytes(StandardCharsets.UTF_8));
             break;
           default:
-            throw new IllegalArgumentException(String.format("%s=%s", key, value));
+            throw new IllegalArgumentException(MessageFormat.format("{0}={1}", key, value));
         }
         os.write(SystemUtils.lineSeparator.getBytes(StandardCharsets.UTF_8));
       }
