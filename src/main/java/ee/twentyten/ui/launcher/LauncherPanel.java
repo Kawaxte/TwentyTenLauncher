@@ -15,10 +15,10 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Transparency;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import javax.swing.JPanel;
 import lombok.Getter;
@@ -26,12 +26,9 @@ import lombok.Setter;
 
 public class LauncherPanel extends JPanel implements ActionListener {
 
-  private static final long serialVersionUID = 1L;
   @Getter
   @Setter
   public static LauncherPanel instance;
-  private final BufferedImage bgImage;
-  private final String panelTitle;
   @Getter
   private final TransparentJButton microsoftLoginButton;
   private final LauncherLoginPanel loginPanel;
@@ -40,9 +37,6 @@ public class LauncherPanel extends JPanel implements ActionListener {
   {
     this.loginPanel = new LauncherLoginPanel();
     this.microsoftLoginPanel = new LauncherMicrosoftLoginPanel();
-
-    this.bgImage = FileUtils.readImageResource("icon/dirt.png", LauncherPanel.class);
-    this.panelTitle = "TwentyTen Launcher";
     this.microsoftLoginButton = new TransparentJButton(
         LanguageUtils.getString(LanguageUtils.microsoftLoginButtonKey));
 
@@ -115,6 +109,11 @@ public class LauncherPanel extends JPanel implements ActionListener {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
+    Image bgImage = FileUtils.readImageResource("icon/dirt.png", LauncherPanel.class);
+    if (bgImage == null) {
+      bgImage = this.createImage(1, 1);
+    }
+
     GraphicsConfiguration gc = ((Graphics2D) g).getDeviceConfiguration();
     int panelWidth = this.getWidth();
     int panelHeight = this.getHeight();
@@ -123,17 +122,18 @@ public class LauncherPanel extends JPanel implements ActionListener {
 
     Graphics2D g2d = vImg.createGraphics();
     try {
-      int bgWidth = this.bgImage.getWidth() << 1;
-      int bgHeight = this.bgImage.getHeight() << 1;
+      int bgWidth = bgImage.getWidth(this) << 1;
+      int bgHeight = bgImage.getHeight(this) << 1;
       int gridWidth = (panelWidth + bgWidth) >> 5;
       int gridHeight = (panelHeight + bgHeight) >> 5;
-      for (int grid = 0; grid < (gridWidth * gridHeight); grid++) {
-        int gridX = (grid % gridWidth) << 5;
-        int gridY = (grid / gridWidth) << 5;
-        g2d.drawImage(this.bgImage, gridX, gridY, bgWidth, bgHeight, this);
+      for (int i = 0; i < (gridWidth * gridHeight); i++) {
+        int gridX = (i % gridWidth) << 5;
+        int gridY = (i / gridWidth) << 5;
+        g2d.drawImage(bgImage, gridX, gridY, bgWidth, bgHeight, this);
       }
 
-      this.drawTitleString(g2d, this.panelTitle, panelWidth, panelHeight);
+      String title = "TwentyTen Launcher";
+      this.drawTitleString(g2d, title, panelWidth, panelHeight);
     } finally {
       g2d.dispose();
     }
