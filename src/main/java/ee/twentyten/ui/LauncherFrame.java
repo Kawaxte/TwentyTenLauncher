@@ -7,20 +7,20 @@ import ee.twentyten.util.SystemUtils;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.text.MessageFormat;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.Setter;
 
 public class LauncherFrame extends JFrame {
-
-  private static final long serialVersionUID = 1L;
+  
   @Getter
   @Setter
   public static LauncherFrame instance;
 
   public LauncherFrame() {
-    super(String.format("TwentyTen Launcher %s", SystemUtils.launcherVersion));
+    super(MessageFormat.format("TwentyTen Launcher {0}", SystemUtils.launcherVersion));
 
     LauncherFrame.setInstance(this);
     this.setIconImage(FileUtils.readImageResource("icon/favicon.png", LauncherFrame.class));
@@ -39,7 +39,7 @@ public class LauncherFrame extends JFrame {
 
   public static void main(String... args) {
     LookAndFeelUtils.setLookAndFeel();
-    SystemUtils.setLauncherVersion(1, 27, 2, 23, 1, true);
+    SystemUtils.setLauncherVersion(1, 28, 2, 23, 8, true);
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override
