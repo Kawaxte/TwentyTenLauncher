@@ -73,3 +73,8 @@ the launcher, please follow these steps:
 4. Submit a pull request from your forked repository to the original repository.
    Provide a detailed explanation of your changes and any relevant information.
 5. Wait for the pull request to be reviewed and merged.
+
+<h2 align="center">Localisation</h2>
+If you would like to help make the launcher accessible to players from around the
+world, [click here](https://explore.transifex.com/xte/twentyten/) to translate the
+launcher to various languages. Your contribution will be greatly appreciated!
