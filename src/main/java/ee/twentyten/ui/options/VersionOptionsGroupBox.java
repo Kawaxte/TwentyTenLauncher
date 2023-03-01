@@ -17,11 +17,11 @@ import javax.swing.JPanel;
 import lombok.Getter;
 import lombok.Setter;
 
-public class OptionsVersionGroupBox extends JGroupBox implements ActionListener {
+public class VersionOptionsGroupBox extends JGroupBox implements ActionListener {
 
   @Getter
   @Setter
-  private static OptionsVersionGroupBox instance;
+  private static VersionOptionsGroupBox instance;
   private final JCheckBox showBetaVersionsCheckBox;
   private final JCheckBox showAlphaVersionsCheckBox;
   private final JCheckBox showInfdevVersionsCheckBox;
@@ -32,17 +32,17 @@ public class OptionsVersionGroupBox extends JGroupBox implements ActionListener 
 
   {
     this.showBetaVersionsCheckBox = new JCheckBox(
-        MessageFormat.format("ovgb.checkbox.showVersionsCheckBox", "Beta",
+        MessageFormat.format("vogb.checkbox.showVersionsCheckBox", "Beta",
             "2010-12-20 -> 2011-01-21"), ConfigUtils.getInstance().isShowBetaVersionsSelected());
     this.showAlphaVersionsCheckBox = new JCheckBox(
-        MessageFormat.format("ovgb.checkbox.showVersionsCheckBox", "Alpha",
+        MessageFormat.format("vogb.checkbox.showVersionsCheckBox", "Alpha",
             "2010-07-02 -> 2010-12-03"), ConfigUtils.getInstance().isShowAlphaVersionsSelected());
     this.showInfdevVersionsCheckBox = new JCheckBox(
-        MessageFormat.format("ovgb.checkbox.showVersionsCheckBox", "Infdev",
+        MessageFormat.format("vogb.checkbox.showVersionsCheckBox", "Infdev",
             "2010-06-29 -> 2010-06-30"), ConfigUtils.getInstance().isShowInfdevVersionsSelected());
     this.showVersionCheckBoxes = new JCheckBox[]{this.showBetaVersionsCheckBox,
         this.showAlphaVersionsCheckBox, this.showInfdevVersionsCheckBox};
-    this.useVersionLabel = new JLabel("ovgb.label.useVersionLabel", JLabel.RIGHT);
+    this.useVersionLabel = new JLabel("vogb.label.useVersionLabel", JLabel.RIGHT);
     this.useVersionComboBox = new JComboBox<>();
 
     this.showBetaVersionsCheckBox.addActionListener(this);
@@ -50,10 +50,10 @@ public class OptionsVersionGroupBox extends JGroupBox implements ActionListener 
     this.showInfdevVersionsCheckBox.addActionListener(this);
   }
 
-  public OptionsVersionGroupBox() {
-    super("ovgb.string.title");
+  public VersionOptionsGroupBox() {
+    super("vogb.string.title");
 
-    OptionsVersionGroupBox.setInstance(this);
+    VersionOptionsGroupBox.setInstance(this);
     this.buildTopPanel();
     this.buildMiddlePanel();
 
@@ -63,17 +63,17 @@ public class OptionsVersionGroupBox extends JGroupBox implements ActionListener 
   }
 
   public void setTextToContainers(UTF8ResourceBundle bundle) {
-    LanguageUtils.setTextToContainer(bundle, this, "ovgb.string.title");
+    LanguageUtils.setTextToContainer(bundle, this, "vogb.string.title");
   }
 
   public void setTextToComponents(UTF8ResourceBundle bundle) {
     LanguageUtils.setTextToComponent(bundle, this.showBetaVersionsCheckBox,
-        "ovgb.checkbox.showVersionsCheckBox", "Beta", "2010-12-20 -> 2011-01-21");
+        "vogb.checkbox.showVersionsCheckBox", "Beta", "2010-12-20 -> 2011-01-21");
     LanguageUtils.setTextToComponent(bundle, this.showAlphaVersionsCheckBox,
-        "ovgb.checkbox.showVersionsCheckBox", "Alpha", "2010-07-02 -> 2010-12-03");
+        "vogb.checkbox.showVersionsCheckBox", "Alpha", "2010-07-02 -> 2010-12-03");
     LanguageUtils.setTextToComponent(bundle, this.showInfdevVersionsCheckBox,
-        "ovgb.checkbox.showVersionsCheckBox", "Infdev", "2010-06-29 -> 2010-06-30");
-    LanguageUtils.setTextToComponent(bundle, this.useVersionLabel, "ovgb.label.useVersionLabel");
+        "vogb.checkbox.showVersionsCheckBox", "Infdev", "2010-06-29 -> 2010-06-30");
+    LanguageUtils.setTextToComponent(bundle, this.useVersionLabel, "vogb.label.useVersionLabel");
   }
 
   private void buildTopPanel() {
