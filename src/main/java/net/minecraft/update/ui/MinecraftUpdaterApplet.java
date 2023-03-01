@@ -31,7 +31,6 @@ import javax.swing.Timer;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.update.MinecraftUpdaterImpl;
-import net.minecraft.util.MinecraftUtils;
 
 public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
 
@@ -64,7 +63,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     File versionsFile = new File(VersionUtils.versionsDirectory, "versions.json");
     String selectedVersion = ConfigUtils.getInstance().getSelectedVersion();
     if (versionsFile.exists() && selectedVersion != null) {
-      int proxyPort = MinecraftUtils.getProxyPort(selectedVersion);
+      int proxyPort = VersionUtils.getProxyPort(selectedVersion);
       System.setProperty("http.proxyHost", "betacraft.uk");
       System.setProperty("http.proxyPort", String.valueOf(proxyPort));
       System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
@@ -76,6 +75,8 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     this.minecraftApplet = applet;
     applet.setStub(this);
     applet.setSize(this.getWidth(), this.getHeight());
+
+    LoggerUtils.logMinecraft();
 
     this.add(this.minecraftApplet);
     applet.init();
