@@ -88,16 +88,33 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     this.updateTaskMessage = "";
   }
 
-  private boolean isContentLengthNotZero(URL url, String urlString) {
-    if (FileUtils.getContentLength(url) == -1) {
-      Throwable fnfe = new FileNotFoundException(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
-          urlString));
-      this.showFatalErrorMessage(fnfe.getMessage());
-      LoggerUtils.log("Failed to check content length", fnfe, ELoggerLevel.ERROR);
+  private boolean isContentLengthAvailable(final URL url, String urlString) {
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    Future<Integer> contentLengthFuture = executor.submit(new Callable<Integer>() {
+      @Override
+      public Integer call() {
+        return FileUtils.getContentLength(url);
+      }
+    });
+
+    try {
+      int contentLength = contentLengthFuture.get();
+      if (contentLength == -1) {
+        Throwable fnfe = new FileNotFoundException(MessageFormat.format(
+            LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
+            urlString));
+
+        this.showFatalErrorMessage(fnfe.getMessage());
+        LoggerUtils.log("Failed to check content length", fnfe, ELoggerLevel.ERROR);
+        return true;
+      }
+      return false;
+    } catch (InterruptedException | ExecutionException e) {
+      LoggerUtils.log("Failed to get content length", e, ELoggerLevel.ERROR);
       return true;
+    } finally {
+      executor.shutdown();
     }
-    return false;
   }
 
   private void unloadNativeLibraries() {
@@ -155,16 +172,13 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     try {
       List<URL> packageUrls = new ArrayList<>();
 
-      boolean isJarUrlNotZero;
+      URL lwjglJarUrl;
       for (String lwjglJar : MinecraftUtils.lwjglJars) {
-        URL lwjglJarUrl = new URL(
-            MessageFormat.format("{0}/{1}", MinecraftUtils.lwjglUrl, lwjglJar));
-        isJarUrlNotZero = this.isContentLengthNotZero(lwjglJarUrl,
-            FileUtils.getFileNameFromUrl(lwjglJarUrl));
-        if (isJarUrlNotZero) {
+        lwjglJarUrl = new URL(MessageFormat.format("{0}/{1}", MinecraftUtils.lwjglUrl, lwjglJar));
+        if (this.isContentLengthAvailable(lwjglJarUrl, FileUtils.getFileName(lwjglJarUrl))) {
           return;
         }
-        MinecraftUtils.getLwjglJarFile(packageUrls, lwjglJarUrl);
+        MinecraftUtils.checkForLwjglJarFiles(packageUrls, lwjglJarUrl);
       }
 
       URL lwjglNativesUrl;
@@ -184,37 +198,19 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
         default:
           throw new IllegalStateException(String.valueOf(platform));
       }
-
-      boolean isLwjglNativesUrlNotZero = this.isContentLengthNotZero(lwjglNativesUrl,
-          FileUtils.getFileNameFromUrl(lwjglNativesUrl));
-      if (isLwjglNativesUrlNotZero) {
+      if (this.isContentLengthAvailable(lwjglNativesUrl,
+          FileUtils.getFileName(lwjglNativesUrl))) {
         return;
       }
-      switch (platform) {
-        case MACOSX:
-          MinecraftUtils.getLwjglNativeLibraries(packageUrls, lwjglNativesUrl,
-              MinecraftUtils.lwjglMacosxNatives);
-          break;
-        case LINUX:
-          MinecraftUtils.getLwjglNativeLibraries(packageUrls, lwjglNativesUrl,
-              MinecraftUtils.lwjglLinuxNatives);
-          break;
-        case WINDOWS:
-          MinecraftUtils.getLwjglNativeLibraries(packageUrls, lwjglNativesUrl,
-              MinecraftUtils.lwjglWindowsNatives);
-          break;
-        default:
-          throw new IllegalStateException(String.valueOf(platform));
-      }
+      MinecraftUtils.checkForLwjglNativeLibraryFiles(platform, packageUrls, lwjglNativesUrl);
 
       URL minecraftJarUrl = new URL(MessageFormat.format("{0}/{1}", MinecraftUtils.minecraftJarUrl,
           MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion())));
-      boolean isMinecraftClientUrlNotZero = this.isContentLengthNotZero(minecraftJarUrl,
-          FileUtils.getFileNameFromUrl(minecraftJarUrl));
-      if (isMinecraftClientUrlNotZero) {
+      if (this.isContentLengthAvailable(minecraftJarUrl,
+          FileUtils.getFileName(minecraftJarUrl))) {
         return;
       }
-      MinecraftUtils.getMinecraftJarFile(packageUrls, minecraftJarUrl);
+      MinecraftUtils.checkForMinecraftJarFile(packageUrls, minecraftJarUrl);
 
       this.packageUrls = packageUrls.toArray(new URL[0]);
       LoggerUtils.log(Arrays.toString(this.packageUrls), ELoggerLevel.INFO);
@@ -231,17 +227,19 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     this.updateStateMessage = EState.RETRIEVE_STATE.getMessage();
 
     List<Callable<Integer>> retrieveTasks = new ArrayList<>();
+
+    final HttpsURLConnection[] connection = {null};
     for (final URL fileUrl : this.packageUrls) {
       retrieveTasks.add(new Callable<Integer>() {
         @Override
         public Integer call() {
-          HttpsURLConnection connection = RequestUtils.performHttpsRequest(fileUrl,
-              ERequestMethod.HEAD, ERequestHeader.NO_CACHE);
-          Objects.requireNonNull(connection, "connection == null!");
+          connection[0] = RequestUtils.performHttpsRequest(fileUrl, ERequestMethod.HEAD,
+              ERequestHeader.NO_CACHE);
+          Objects.requireNonNull(connection[0], "connection == null!");
           try {
-            return connection.getContentLength();
+            return connection[0].getContentLength();
           } finally {
-            connection.disconnect();
+            connection[0].disconnect();
           }
         }
       });
@@ -286,7 +284,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
         return;
       }
 
-      File packageFile = new File(binDirectory, FileUtils.getFileNameFromUrl(fileUrl));
+      File packageFile = new File(binDirectory, FileUtils.getFileName(fileUrl));
       if (Objects.equals(packageFile.getName(),
           MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion()))) {
         File versionDirectory = new File(VersionUtils.versionsDirectory,
@@ -314,7 +312,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
           currentFileSize += bufferSize;
           this.updateTaskMessage = MessageFormat.format(
               LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.subtaskDownload"),
-              FileUtils.getFileNameFromUrl(fileUrl), (currentFileSize * 100) / totalFileSize);
+              FileUtils.getFileName(fileUrl), (currentFileSize * 100) / totalFileSize);
           this.updatePercentage = 10 + ((currentFileSize * 45) / totalFileSize);
 
           downloadedFileSize += bufferSize;
@@ -381,7 +379,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
           try (InputStream is = zipFile.getInputStream(
               entry); FileOutputStream fos = new FileOutputStream(nativeFile)) {
             int bufferSize;
-            byte[] buffer = new byte[65536];
+            byte[] buffer = new byte[16384];
             while ((bufferSize = is.read(buffer, 0, buffer.length)) != -1) {
               fos.write(buffer, 0, bufferSize);
 
