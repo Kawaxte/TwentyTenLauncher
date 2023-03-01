@@ -1,7 +1,7 @@
 package ee.twentyten.ui.options;
 
-import ee.twentyten.custom.JGroupBox;
 import ee.twentyten.custom.UTF8ResourceBundle;
+import ee.twentyten.custom.component.JGroupBox;
 import ee.twentyten.util.LanguageUtils;
 import java.awt.BorderLayout;
 import javax.swing.JComboBox;
@@ -14,18 +14,18 @@ public class OptionsLanguageGroupBox extends JGroupBox {
 
   @Getter
   @Setter
-  public static OptionsLanguageGroupBox instance;
+  private static OptionsLanguageGroupBox instance;
   private final JLabel setLanguageLabel;
   @Getter
   private final JComboBox<String> setLanguageComboBox;
 
   {
-    this.setLanguageLabel = new JLabel(LanguageUtils.setLanguageLabelKey, JLabel.RIGHT);
+    this.setLanguageLabel = new JLabel("olgb.label.setLanguageLabel", JLabel.RIGHT);
     this.setLanguageComboBox = new JComboBox<>();
   }
 
   public OptionsLanguageGroupBox() {
-    super(LanguageUtils.optionsLanguageGroupBoxKey);
+    super("olgb.string.title");
 
     OptionsLanguageGroupBox.setInstance(this);
     this.buildTopPanel();
@@ -43,12 +43,10 @@ public class OptionsLanguageGroupBox extends JGroupBox {
   }
 
   public void setTextToContainers(UTF8ResourceBundle bundle) {
-    LanguageUtils.setTextToContainer(bundle, this, LanguageUtils.optionsLanguageGroupBoxKey);
+    LanguageUtils.setTextToContainer(bundle, this, "olgb.string.title");
   }
 
   public void setTextToComponents(UTF8ResourceBundle bundle) {
-    this.setTitle(LanguageUtils.getString(bundle, LanguageUtils.optionsLanguageGroupBoxKey));
-    LanguageUtils.setTextToComponent(bundle, this.setLanguageLabel,
-        LanguageUtils.setLanguageLabelKey);
+    LanguageUtils.setTextToComponent(bundle, this.setLanguageLabel, "olgb.label.setLanguageLabel");
   }
 }
