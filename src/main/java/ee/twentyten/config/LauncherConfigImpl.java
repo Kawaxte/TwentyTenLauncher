@@ -1,7 +1,8 @@
 package ee.twentyten.config;
 
 import ee.twentyten.custom.LinkedProperties;
-import ee.twentyten.log.ELogger;
+import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.util.CipherUtils;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
@@ -10,14 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
-import java.util.Arrays;
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -53,14 +46,13 @@ public class LauncherConfigImpl extends LauncherConfig {
   private File getConfigFile() {
     File configFile = new File(LauncherUtils.workingDirectory, "twentyten_settings.properties");
     if (!configFile.exists()) {
-      boolean isConfigFileCreated;
       try {
-        isConfigFileCreated = configFile.createNewFile();
-        if (!isConfigFileCreated) {
-          throw new IOException("Failed to create config file");
+        boolean isFileCreated = configFile.createNewFile();
+        if (!isFileCreated) {
+          LoggerUtils.log("Couldn't create config file", ELoggerLevel.ERROR);
         }
       } catch (IOException ioe) {
-        LoggerUtils.log(ioe.getMessage(), ioe, ELogger.ERROR);
+        LoggerUtils.log("Failed to create config file", ioe, ELoggerLevel.ERROR);
       }
     }
     return configFile;
@@ -80,7 +72,7 @@ public class LauncherConfigImpl extends LauncherConfig {
 
   private void getYggdrasilProperties(LinkedProperties clp) {
     this.yggdrasilUsername = clp.getProperty("yggdrasilUsername", null);
-    this.yggdrasilPassword = this.decrypt(clp.getProperty("yggdrasilPassword", null));
+    this.yggdrasilPassword = CipherUtils.decryptValue(clp.getProperty("yggdrasilPassword", null));
     this.isYggdrasilPasswordSaved = Boolean.parseBoolean(
         clp.getProperty("isYggdrasilPasswordSaved", "false"));
     this.yggdrasilAccessToken = clp.getProperty("yggdrasilAccessToken", null);
@@ -113,7 +105,7 @@ public class LauncherConfigImpl extends LauncherConfig {
 
   private void setYggdrasilProperties(LinkedProperties clp) {
     clp.setProperty("yggdrasilUsername", this.yggdrasilUsername);
-    clp.setProperty("yggdrasilPassword", this.encrypt(this.yggdrasilPassword));
+    clp.setProperty("yggdrasilPassword", CipherUtils.encryptValue(this.yggdrasilPassword));
     clp.setProperty("isYggdrasilPasswordSaved", Boolean.toString(this.isYggdrasilPasswordSaved));
     clp.setProperty("yggdrasilAccessToken", this.yggdrasilAccessToken);
     clp.setProperty("yggdrasilProfileId", this.yggdrasilProfileId);
@@ -150,11 +142,11 @@ public class LauncherConfigImpl extends LauncherConfig {
       if (clp.isEmpty()) {
         this.save();
       }
-      LoggerUtils.log(configFilePath, ELogger.INFO);
+      LoggerUtils.log(configFilePath, ELoggerLevel.INFO);
     } catch (FileNotFoundException fnfe) {
-      LoggerUtils.log("Failed to find config file", fnfe, ELogger.ERROR);
+      LoggerUtils.log("Coudn't find config file", fnfe, ELoggerLevel.ERROR);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to load config file", ioe, ELogger.ERROR);
+      LoggerUtils.log("Failed to load config file", ioe, ELoggerLevel.ERROR);
     }
   }
 
@@ -177,65 +169,11 @@ public class LauncherConfigImpl extends LauncherConfig {
       this.setMicrosoftProperties(clpMicrosoft);
       clpMicrosoft.store(fos, "MICROSOFT AUTHENTICATION");
 
-      LoggerUtils.log(configFilePath, ELogger.INFO);
+      LoggerUtils.log(configFilePath, ELoggerLevel.INFO);
     } catch (FileNotFoundException fnfe) {
-      LoggerUtils.log("Failed to find config file", fnfe, ELogger.ERROR);
+      LoggerUtils.log("Coudn't find config file", fnfe, ELoggerLevel.ERROR);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to save config file", ioe, ELogger.ERROR);
+      LoggerUtils.log("Failed to save config file", ioe, ELoggerLevel.ERROR);
     }
-  }
-
-  @Override
-  public String encrypt(String value) {
-    if (value == null || value.isEmpty()) {
-      return "";
-    }
-
-    byte[] keyBytes = Arrays.copyOf("passwordFile".getBytes(StandardCharsets.UTF_8), 16);
-    SecretKeySpec sks = new SecretKeySpec(keyBytes, "AES");
-
-    SecureRandom sr = new SecureRandom();
-    byte[] ivBytes = new byte[16];
-    sr.nextBytes(ivBytes);
-
-    IvParameterSpec ips = new IvParameterSpec(ivBytes);
-    try {
-      Cipher configCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      configCipher.init(Cipher.ENCRYPT_MODE, sks, ips);
-
-      byte[] encryptedBytes = configCipher.doFinal(value.getBytes());
-      byte[] finalBytes = new byte[ivBytes.length + encryptedBytes.length];
-      System.arraycopy(ivBytes, 0, finalBytes, 0, ivBytes.length);
-      System.arraycopy(encryptedBytes, 0, finalBytes, ivBytes.length, encryptedBytes.length);
-      return DatatypeConverter.printBase64Binary(finalBytes);
-    } catch (GeneralSecurityException gse) {
-      LoggerUtils.log("Failed to encrypt value", gse, ELogger.ERROR);
-    }
-    return null;
-  }
-
-  @Override
-  public String decrypt(String value) {
-    if (value == null || value.isEmpty()) {
-      return "";
-    }
-
-    byte[] keyBytes = Arrays.copyOf("passwordFile".getBytes(StandardCharsets.UTF_8), 16);
-    SecretKeySpec sks = new SecretKeySpec(keyBytes, "AES");
-
-    byte[] encryptedBytes = DatatypeConverter.parseBase64Binary(value);
-    byte[] ivBytes = Arrays.copyOfRange(encryptedBytes, 0, 16);
-    byte[] encryptedDataBytes = Arrays.copyOfRange(encryptedBytes, 16, encryptedBytes.length);
-    IvParameterSpec ips = new IvParameterSpec(ivBytes);
-    try {
-      Cipher configCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      configCipher.init(Cipher.DECRYPT_MODE, sks, ips);
-
-      byte[] decryptedBytes = configCipher.doFinal(encryptedDataBytes);
-      return new String(decryptedBytes);
-    } catch (GeneralSecurityException gse) {
-      LoggerUtils.log("Failed to decrypt value", gse, ELogger.ERROR);
-    }
-    return null;
   }
 }
