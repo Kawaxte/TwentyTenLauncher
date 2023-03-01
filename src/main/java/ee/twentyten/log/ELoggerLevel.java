@@ -1,5 +1,5 @@
 package ee.twentyten.log;
 
-public enum ELogger {
+public enum ELoggerLevel {
   INFO, WARN, ERROR
 }
