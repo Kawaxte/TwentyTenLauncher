@@ -1,6 +1,6 @@
 package ee.twentyten.util;
 
-import ee.twentyten.log.ELogger;
+import ee.twentyten.log.ELoggerLevel;
 import ee.twentyten.ui.options.OptionsVersionGroupBox;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -28,7 +28,7 @@ public final class VersionUtils {
       VersionUtils.versionsFileUrl = new URL(
           "https://raw.githubusercontent.com/sojlabjoi/TwentyTenLauncher/stable/versions.json");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create URL", murle, ELogger.ERROR);
+      LoggerUtils.log("Failed to create URL", murle, ELoggerLevel.ERROR);
     }
   }
 
@@ -41,7 +41,7 @@ public final class VersionUtils {
     if (!VersionUtils.versionsDirectory.exists()) {
       boolean isDirectoryCreated = VersionUtils.versionsDirectory.mkdirs();
       if (!isDirectoryCreated) {
-        LoggerUtils.log("Failed to create versions directory", ELogger.ERROR);
+        LoggerUtils.log("Failed to create versions directory", ELoggerLevel.ERROR);
       }
     }
     if (!versionsFile.exists()) {
@@ -56,7 +56,7 @@ public final class VersionUtils {
     for (String versionType : VersionUtils.versionTypes) {
       File versionFile = new File(VersionUtils.versionsDirectory, "versions.json");
       if (versionFile.exists()) {
-        JSONObject versionsJson = FileUtils.readJsonFileContents(versionFile);
+        JSONObject versionsJson = FileUtils.readJsonFile(versionFile);
         JSONArray versionsArray = versionsJson.getJSONArray(versionType);
         for (int i = versionsArray.length() - 1; i >= 0; i--) {
           JSONObject versionJson = versionsArray.getJSONObject(i);
@@ -76,14 +76,14 @@ public final class VersionUtils {
           }
 
           boolean isBetaVersionSelected =
-              ConfigUtils.getConfig().isShowBetaVersionsSelected() && Objects.equals(versionType,
+              ConfigUtils.getInstance().isShowBetaVersionsSelected() && Objects.equals(versionType,
                   "beta");
           boolean isAlphaVersionSelected =
-              ConfigUtils.getConfig().isShowAlphaVersionsSelected() && Objects.equals(versionType,
+              ConfigUtils.getInstance().isShowAlphaVersionsSelected() && Objects.equals(versionType,
                   "alpha");
           boolean isInfdevVersionSelected =
-              ConfigUtils.getConfig().isShowInfdevVersionsSelected() && Objects.equals(versionType,
-                  "infdev");
+              ConfigUtils.getInstance().isShowInfdevVersionsSelected() && Objects.equals(
+                  versionType, "infdev");
           if (isBetaVersionSelected || isAlphaVersionSelected || isInfdevVersionSelected) {
             VersionUtils.versionMap.put(versionName, versionId);
             versionModel.addElement(versionName);
@@ -91,7 +91,7 @@ public final class VersionUtils {
         }
       }
     }
-    String selectedVersion = ConfigUtils.getConfig().getSelectedVersion();
+    String selectedVersion = ConfigUtils.getInstance().getSelectedVersion();
     for (Map.Entry<String, String> entry : VersionUtils.versionMap.entrySet()) {
       if (Objects.equals(entry.getValue(), selectedVersion)) {
         versionModel.setSelectedItem(entry.getKey());
@@ -107,9 +107,9 @@ public final class VersionUtils {
       selectedVersion = VersionUtils.versionMap.get(selectedVersion);
     }
     boolean isVersionChanged = !Objects.equals(selectedVersion,
-        ConfigUtils.getConfig().getSelectedVersion());
+        ConfigUtils.getInstance().getSelectedVersion());
     if (isVersionChanged) {
-      ConfigUtils.getConfig().setSelectedVersion(selectedVersion);
+      ConfigUtils.getInstance().setSelectedVersion(selectedVersion);
       ConfigUtils.saveConfig();
     }
   }
