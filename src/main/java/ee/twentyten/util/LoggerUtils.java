@@ -1,6 +1,6 @@
 package ee.twentyten.util;
 
-import ee.twentyten.log.ELogger;
+import ee.twentyten.log.ELogLevel;
 import ee.twentyten.log.LauncherLoggerImpl;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,14 +8,18 @@ import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 
 public final class LoggerUtils {
 
   public static boolean isDebugging;
-  private static LauncherLoggerImpl logger;
+  @Getter
+  @Setter
+  private static LauncherLoggerImpl instance;
 
   static {
-    LoggerUtils.logger = new LauncherLoggerImpl();
+    LoggerUtils.setInstance(new LauncherLoggerImpl());
 
     LoggerUtils.isDebugging = ManagementFactory.getRuntimeMXBean().getInputArguments().toString()
         .contains("-agentlib:jdwp");
@@ -43,13 +47,13 @@ public final class LoggerUtils {
     return elements[4].getMethodName();
   }
 
-  public static String formatLogMessage(String message, ELogger type) {
+  public static String formatLogMessage(String message, ELogLevel type) {
     return new StringBuilder().append("[").append(LoggerUtils.getCurrentTime()).append("] [")
         .append(type).append("] ").append(LoggerUtils.getCallerClassName()).append("::")
         .append(LoggerUtils.getCallerMethodName()).append(" - ").append(message).toString();
   }
 
-  public static String formatLogMessage(String message, Throwable t, ELogger type) {
+  public static String formatLogMessage(String message, Throwable t, ELogLevel type) {
     StringBuilder sb = new StringBuilder();
     sb.append(formatLogMessage(message, type)).append(SystemUtils.lineSeparator);
     if (t != null) {
@@ -64,7 +68,7 @@ public final class LoggerUtils {
     return sb.toString();
   }
 
-  public static void log(String message, ELogger type) {
+  public static void log(String message, ELogLevel type) {
     String logMessage = LoggerUtils.formatLogMessage(message, type);
     if (LoggerUtils.isDebugging) {
       switch (type) {
@@ -77,10 +81,10 @@ public final class LoggerUtils {
           break;
       }
     }
-    LoggerUtils.logger.log(logMessage);
+    LoggerUtils.getInstance().log(logMessage);
   }
 
-  public static void log(String message, Throwable t, ELogger type) {
+  public static void log(String message, Throwable t, ELogLevel type) {
     String logMessage = LoggerUtils.formatLogMessage(message, t, type);
     if (LoggerUtils.isDebugging) {
       switch (type) {
@@ -93,6 +97,6 @@ public final class LoggerUtils {
           break;
       }
     }
-    LoggerUtils.logger.log(logMessage);
+    LoggerUtils.getInstance().log(logMessage);
   }
 }
