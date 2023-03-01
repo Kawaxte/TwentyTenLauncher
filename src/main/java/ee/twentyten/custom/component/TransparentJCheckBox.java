@@ -1,4 +1,4 @@
-package ee.twentyten.custom;
+package ee.twentyten.custom.component;
 
 import javax.swing.JCheckBox;
 
