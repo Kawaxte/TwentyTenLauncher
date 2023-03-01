@@ -10,24 +10,24 @@ import javax.swing.JPanel;
 import lombok.Getter;
 import lombok.Setter;
 
-public class OptionsLanguageGroupBox extends JGroupBox {
+public class LanguageOptionsGroupBox extends JGroupBox {
 
   @Getter
   @Setter
-  private static OptionsLanguageGroupBox instance;
+  private static LanguageOptionsGroupBox instance;
   private final JLabel setLanguageLabel;
   @Getter
   private final JComboBox<String> setLanguageComboBox;
 
   {
-    this.setLanguageLabel = new JLabel("olgb.label.setLanguageLabel", JLabel.RIGHT);
+    this.setLanguageLabel = new JLabel("logb.label.setLanguageLabel", JLabel.RIGHT);
     this.setLanguageComboBox = new JComboBox<>();
   }
 
-  public OptionsLanguageGroupBox() {
-    super("olgb.string.title");
+  public LanguageOptionsGroupBox() {
+    super("logb.string.title");
 
-    OptionsLanguageGroupBox.setInstance(this);
+    LanguageOptionsGroupBox.setInstance(this);
     this.buildTopPanel();
 
     LanguageUtils.updateLanguageComboBox(this);
@@ -43,10 +43,10 @@ public class OptionsLanguageGroupBox extends JGroupBox {
   }
 
   public void setTextToContainers(UTF8ResourceBundle bundle) {
-    LanguageUtils.setTextToContainer(bundle, this, "olgb.string.title");
+    LanguageUtils.setTextToContainer(bundle, this, "logb.string.title");
   }
 
   public void setTextToComponents(UTF8ResourceBundle bundle) {
-    LanguageUtils.setTextToComponent(bundle, this.setLanguageLabel, "olgb.label.setLanguageLabel");
+    LanguageUtils.setTextToComponent(bundle, this.setLanguageLabel, "logb.label.setLanguageLabel");
   }
 }
