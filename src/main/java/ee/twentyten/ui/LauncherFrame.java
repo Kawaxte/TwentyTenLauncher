@@ -6,7 +6,6 @@ import ee.twentyten.util.LookAndFeelUtils;
 import ee.twentyten.util.SystemUtils;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.text.MessageFormat;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -14,10 +13,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class LauncherFrame extends JFrame {
-  
+
   @Getter
   @Setter
-  public static LauncherFrame instance;
+  private static LauncherFrame instance;
 
   public LauncherFrame() {
     super(MessageFormat.format("TwentyTen Launcher {0}", SystemUtils.launcherVersion));
@@ -39,7 +38,7 @@ public class LauncherFrame extends JFrame {
 
   public static void main(String... args) {
     LookAndFeelUtils.setLookAndFeel();
-    SystemUtils.setLauncherVersion(1, 28, 2, 23, 8, true);
+    SystemUtils.setLauncherVersion(1, 1, 3, 23, 1, true);
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -47,13 +46,5 @@ public class LauncherFrame extends JFrame {
         new LauncherFrame();
       }
     });
-  }
-
-  @Override
-  public void update(Graphics g) {
-    if (LookAndFeelUtils.isUsingWindowsClassicTheme != LookAndFeelUtils.isWindowsClassic()) {
-      SwingUtilities.updateComponentTreeUI(this);
-    }
-    super.update(g);
   }
 }
