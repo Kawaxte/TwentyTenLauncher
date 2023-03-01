@@ -1,6 +1,6 @@
 package ee.twentyten.util;
 
-import ee.twentyten.log.ELogLevel;
+import ee.twentyten.log.ELoggerLevel;
 import ee.twentyten.log.LauncherLoggerImpl;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -47,13 +47,13 @@ public final class LoggerUtils {
     return elements[4].getMethodName();
   }
 
-  public static String formatLogMessage(String message, ELogLevel type) {
+  public static String formatLogMessage(String message, ELoggerLevel type) {
     return new StringBuilder().append("[").append(LoggerUtils.getCurrentTime()).append("] [")
         .append(type).append("] ").append(LoggerUtils.getCallerClassName()).append("::")
         .append(LoggerUtils.getCallerMethodName()).append(" - ").append(message).toString();
   }
 
-  public static String formatLogMessage(String message, Throwable t, ELogLevel type) {
+  public static String formatLogMessage(String message, Throwable t, ELoggerLevel type) {
     StringBuilder sb = new StringBuilder();
     sb.append(formatLogMessage(message, type)).append(SystemUtils.lineSeparator);
     if (t != null) {
@@ -68,7 +68,7 @@ public final class LoggerUtils {
     return sb.toString();
   }
 
-  public static void log(String message, ELogLevel type) {
+  public static void log(String message, ELoggerLevel type) {
     String logMessage = LoggerUtils.formatLogMessage(message, type);
     if (LoggerUtils.isDebugging) {
       switch (type) {
@@ -84,7 +84,7 @@ public final class LoggerUtils {
     LoggerUtils.getInstance().log(logMessage);
   }
 
-  public static void log(String message, Throwable t, ELogLevel type) {
+  public static void log(String message, Throwable t, ELoggerLevel type) {
     String logMessage = LoggerUtils.formatLogMessage(message, t, type);
     if (LoggerUtils.isDebugging) {
       switch (type) {
