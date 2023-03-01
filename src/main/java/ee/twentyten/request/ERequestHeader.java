@@ -25,6 +25,17 @@ public enum ERequestHeader {
         }
       });
     }
+  },
+  NO_CACHE {
+    @Override
+    public Map<String, String> setHeader() {
+      return Collections.unmodifiableMap(new HashMap<String, String>() {
+        {
+          put("Cache-Control", "no-cache");
+          put("Pragma", "no-cache");
+        }
+      });
+    }
   };
 
   public abstract Map<String, String> setHeader();
