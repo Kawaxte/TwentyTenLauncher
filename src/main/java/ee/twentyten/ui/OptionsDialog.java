@@ -12,10 +12,10 @@ public class OptionsDialog extends JDialog {
 
   @Getter
   @Setter
-  public static OptionsDialog instance;
+  private static OptionsDialog instance;
 
   public OptionsDialog(JFrame owner, boolean modal) {
-    super(owner, LanguageUtils.getString(LanguageUtils.optionsDialogTitleKey), modal);
+    super(owner, LanguageUtils.getString("od.string.title"), modal);
 
     OptionsDialog.setInstance(this);
     this.add(new OptionsPanel());
@@ -30,6 +30,6 @@ public class OptionsDialog extends JDialog {
   }
 
   public void setTextToContainers(UTF8ResourceBundle bundle) {
-    LanguageUtils.setTextToContainer(bundle, this, LanguageUtils.optionsDialogTitleKey);
+    LanguageUtils.setTextToContainer(bundle, this, "od.string.title");
   }
 }
