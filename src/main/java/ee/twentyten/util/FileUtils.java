@@ -23,20 +23,7 @@ public final class FileUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static int getContentLength(URL url) {
-    HttpsURLConnection connection = null;
-    try {
-      connection = RequestUtils.performHttpsRequest(url, ERequestMethod.HEAD,
-          ERequestHeader.NO_CACHE);
-      return connection.getContentLength();
-    } finally {
-      if (connection != null) {
-        connection.disconnect();
-      }
-    }
-  }
-
-  public static String getFileNameFromUrl(URL url) {
+  public static String getFileName(URL url) {
     String urlPath = url.getPath();
     return urlPath.substring(urlPath.lastIndexOf('/') + 1);
   }
@@ -94,5 +81,12 @@ public final class FileUtils {
         connection.disconnect();
       }
     }
+  }
+
+  public static synchronized int getContentLength(URL url) {
+    HttpsURLConnection connection;
+    connection = RequestUtils.performHttpsRequest(url, ERequestMethod.HEAD,
+        ERequestHeader.NO_CACHE);
+    return connection.getContentLength();
   }
 }
