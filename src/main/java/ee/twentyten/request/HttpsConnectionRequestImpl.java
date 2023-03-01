@@ -1,6 +1,6 @@
 package ee.twentyten.request;
 
-import ee.twentyten.log.ELogger;
+import ee.twentyten.log.ELoggerLevel;
 import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.RequestUtils;
 import java.io.IOException;
@@ -24,7 +24,11 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
         connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
     } catch (ProtocolException pe) {
-      LoggerUtils.log("Failed to set request method", pe, ELogger.ERROR);
+      LoggerUtils.log("Failed to set request method", pe, ELoggerLevel.ERROR);
+    } finally {
+      if (connection != null) {
+        connection.disconnect();
+      }
     }
     return RequestUtils.getResponse(connection);
   }
@@ -47,9 +51,13 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
         osw.write(data.toString());
       }
     } catch (ProtocolException pe) {
-      LoggerUtils.log("Failed to set request method", pe, ELogger.ERROR);
+      LoggerUtils.log("Failed to set request method", pe, ELoggerLevel.ERROR);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to write data to output stream", ioe, ELogger.ERROR);
+      LoggerUtils.log("Failed to write data to output stream", ioe, ELoggerLevel.ERROR);
+    } finally {
+      if (connection != null) {
+        connection.disconnect();
+      }
     }
     return RequestUtils.getResponse(connection);
   }
