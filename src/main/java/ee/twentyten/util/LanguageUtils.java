@@ -9,9 +9,9 @@ import ee.twentyten.ui.launcher.LauncherLoginPanel;
 import ee.twentyten.ui.launcher.LauncherMicrosoftLoginPanel;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
-import ee.twentyten.ui.options.OptionsLanguageGroupBox;
+import ee.twentyten.ui.options.LanguageOptionsGroupBox;
 import ee.twentyten.ui.options.OptionsPanel;
-import ee.twentyten.ui.options.OptionsVersionGroupBox;
+import ee.twentyten.ui.options.VersionOptionsGroupBox;
 import java.awt.Container;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -92,7 +92,7 @@ public final class LanguageUtils {
     }
   }
 
-  public static void updateLanguageComboBox(OptionsLanguageGroupBox olgb) {
+  public static void updateLanguageComboBox(LanguageOptionsGroupBox logb) {
     DefaultComboBoxModel<String> languageModel = new DefaultComboBoxModel<>();
 
     LanguageUtils.languageMap = new HashMap<>();
@@ -108,11 +108,11 @@ public final class LanguageUtils {
         break;
       }
     }
-    olgb.getSetLanguageComboBox().setModel(languageModel);
+    logb.getSetLanguageComboBox().setModel(languageModel);
   }
 
-  public static void updateSelectedLanguage(OptionsLanguageGroupBox olgb) {
-    String selectedLanguage = (String) olgb.getSetLanguageComboBox().getSelectedItem();
+  public static void updateSelectedLanguage(LanguageOptionsGroupBox logb) {
+    String selectedLanguage = (String) logb.getSetLanguageComboBox().getSelectedItem();
     selectedLanguage = LanguageUtils.languageMap.get(selectedLanguage);
     boolean isLanguageChanged = !Objects.equals(selectedLanguage,
         ConfigUtils.getInstance().getSelectedLanguage());
@@ -143,10 +143,10 @@ public final class LanguageUtils {
 
     OptionsDialog.getInstance().setTextToContainers(bundle);
     OptionsPanel.getInstance().setTextToComponents(bundle);
-    OptionsLanguageGroupBox.getInstance().setTextToContainers(bundle);
-    OptionsLanguageGroupBox.getInstance().setTextToComponents(bundle);
-    OptionsVersionGroupBox.getInstance().setTextToContainers(bundle);
-    OptionsVersionGroupBox.getInstance().setTextToComponents(bundle);
+    LanguageOptionsGroupBox.getInstance().setTextToContainers(bundle);
+    LanguageOptionsGroupBox.getInstance().setTextToComponents(bundle);
+    VersionOptionsGroupBox.getInstance().setTextToContainers(bundle);
+    VersionOptionsGroupBox.getInstance().setTextToComponents(bundle);
 
     OptionsDialog.getInstance().pack();
   }
