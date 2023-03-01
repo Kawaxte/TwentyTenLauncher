@@ -3,14 +3,16 @@ package ee.twentyten.util;
 import ee.twentyten.config.LauncherConfigImpl;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.Setter;
 
 public final class ConfigUtils {
 
   @Getter
-  public static LauncherConfigImpl config;
+  @Setter
+  private static LauncherConfigImpl instance;
 
   static {
-    ConfigUtils.config = new LauncherConfigImpl();
+    ConfigUtils.setInstance(new LauncherConfigImpl());
   }
 
   private ConfigUtils() {
@@ -42,10 +44,10 @@ public final class ConfigUtils {
   }
 
   public static void loadConfig() {
-    ConfigUtils.getConfig().load();
+    ConfigUtils.getInstance().load();
   }
 
   public static void saveConfig() {
-    ConfigUtils.getConfig().save();
+    ConfigUtils.getInstance().save();
   }
 }
