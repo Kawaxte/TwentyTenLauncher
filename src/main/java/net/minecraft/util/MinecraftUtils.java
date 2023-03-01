@@ -18,8 +18,6 @@ import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.MinecraftLauncher;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public final class MinecraftUtils {
 
@@ -57,51 +55,6 @@ public final class MinecraftUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static void getLwjglJarFile(List<URL> urls, URL url) {
-    File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
-    File lwjglJarFile = new File(binDirectory, FileUtils.getFileNameFromUrl(url));
-    if (!lwjglJarFile.exists()) {
-      urls.add(url);
-    }
-  }
-
-  public static void getLwjglNativeLibraries(List<URL> urls, URL url,
-      String[] nativeLibraries) {
-    File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
-    File nativesDirectory = new File(binDirectory, "natives");
-    for (String nativeLibrary : nativeLibraries) {
-      File lwjglNativeLibraryFile = new File(nativesDirectory, nativeLibrary);
-      if (!lwjglNativeLibraryFile.exists()) {
-        urls.add(url);
-        break;
-      }
-    }
-  }
-
-  public static void getMinecraftJarFile(List<URL> urls, URL url) {
-    File versionDirectory = new File(VersionUtils.versionsDirectory,
-        ConfigUtils.getInstance().getSelectedVersion());
-    File minecraftJarFile = new File(versionDirectory,
-        MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion()));
-    if (!minecraftJarFile.exists()) {
-      urls.add(url);
-    }
-  }
-
-  public static int getProxyPort(String version) {
-    File versionsFile = new File(VersionUtils.versionsDirectory, "versions.json");
-    JSONObject versionJson = FileUtils.readJsonFile(versionsFile);
-
-    String versionType = MinecraftUtils.getVersionType(version);
-    for (String versionTypeKey : versionJson.keySet()) {
-      if (versionTypeKey.equals(versionType)) {
-        JSONArray versionArray = versionJson.getJSONArray(versionTypeKey);
-        return MinecraftUtils.getProxyPortFromVersionArray(versionArray, version);
-      }
-    }
-    return Integer.parseInt("80");
-  }
-
   public static boolean isMinecraftCached() {
     EPlatform platform = EPlatform.getPlatform();
 
@@ -134,34 +87,59 @@ public final class MinecraftUtils {
             MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion())));
   }
 
+  public static void checkForLwjglJarFiles(List<URL> urls, URL url) {
+    File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
+    File lwjglJarFile = new File(binDirectory, FileUtils.getFileName(url));
+    if (!lwjglJarFile.exists()) {
+      urls.add(url);
+    }
+  }
+
+  public static void checkForLwjglNativeLibraryFiles(List<URL> urls, URL url, String[] libraries) {
+    File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
+    File nativesDirectory = new File(binDirectory, "natives");
+    for (String library : libraries) {
+      File lwjglNativeLibraryFile = new File(nativesDirectory, library);
+      if (!lwjglNativeLibraryFile.exists()) {
+        urls.add(url);
+        break;
+      }
+    }
+  }
+
+  public static void checkForLwjglNativeLibraryFiles(EPlatform platform, List<URL> urls, URL url) {
+    switch (platform) {
+      case MACOSX:
+        MinecraftUtils.checkForLwjglNativeLibraryFiles(urls, url,
+            MinecraftUtils.lwjglMacosxNatives);
+        break;
+      case LINUX:
+        MinecraftUtils.checkForLwjglNativeLibraryFiles(urls, url, MinecraftUtils.lwjglLinuxNatives);
+        break;
+      case WINDOWS:
+        MinecraftUtils.checkForLwjglNativeLibraryFiles(urls, url,
+            MinecraftUtils.lwjglWindowsNatives);
+        break;
+      default:
+        throw new IllegalStateException(String.valueOf(platform));
+    }
+  }
+
+  public static void checkForMinecraftJarFile(List<URL> urls, URL url) {
+    File versionDirectory = new File(VersionUtils.versionsDirectory,
+        ConfigUtils.getInstance().getSelectedVersion());
+    File minecraftJarFile = new File(versionDirectory,
+        MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion()));
+    if (!minecraftJarFile.exists()) {
+      urls.add(url);
+    }
+  }
+
   public static void launchMinecraft() {
     MinecraftUtils.getInstance().launch();
   }
 
   public static void launchMinecraft(String username, String sessionId) {
     MinecraftUtils.getInstance().launch(username, sessionId);
-  }
-
-  private static String getVersionType(String version) {
-    switch (version.charAt(0)) {
-      case 'b':
-        return "beta";
-      case 'a':
-        return "alpha";
-      case 'i':
-        return "infdev";
-      default:
-        return null;
-    }
-  }
-
-  private static int getProxyPortFromVersionArray(JSONArray array, String version) {
-    for (int i = 0; i < array.length(); i++) {
-      JSONObject object = array.getJSONObject(i);
-      if (object.getString("version_id").equals(version)) {
-        return object.getInt("proxy_port");
-      }
-    }
-    return Integer.parseInt("80");
   }
 }
