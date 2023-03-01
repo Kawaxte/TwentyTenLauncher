@@ -1,4 +1,4 @@
-package ee.twentyten.custom;
+package ee.twentyten.custom.ui;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics;

@@ -1,4 +1,4 @@
-package ee.twentyten.custom;
+package ee.twentyten.custom.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
