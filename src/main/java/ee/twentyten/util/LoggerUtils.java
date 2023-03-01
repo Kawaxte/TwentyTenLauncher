@@ -29,6 +29,14 @@ public final class LoggerUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
+  public static char[] getCurrentDateAndTime() {
+    Date currentTime = new Date();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
+
+    String formattedTime = sdf.format(currentTime);
+    return formattedTime.toCharArray();
+  }
+
   private static char[] getCurrentTime() {
     Date currentTime = new Date();
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -47,15 +55,15 @@ public final class LoggerUtils {
     return elements[4].getMethodName();
   }
 
-  public static String formatLogMessage(String message, ELoggerLevel type) {
+  public static String formatLogMessage(String message, ELoggerLevel level) {
     return new StringBuilder().append("[").append(LoggerUtils.getCurrentTime()).append("] [")
-        .append(type).append("] ").append(LoggerUtils.getCallerClassName()).append("::")
+        .append(level).append("] ").append(LoggerUtils.getCallerClassName()).append("::")
         .append(LoggerUtils.getCallerMethodName()).append(" - ").append(message).toString();
   }
 
-  public static String formatLogMessage(String message, Throwable t, ELoggerLevel type) {
+  public static String formatLogMessage(String message, Throwable t, ELoggerLevel level) {
     StringBuilder sb = new StringBuilder();
-    sb.append(formatLogMessage(message, type)).append(SystemUtils.lineSeparator);
+    sb.append(formatLogMessage(message, level)).append(SystemUtils.lineSeparator);
     if (t != null) {
       try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
         t.printStackTrace(pw);
@@ -68,10 +76,10 @@ public final class LoggerUtils {
     return sb.toString();
   }
 
-  public static void log(String message, ELoggerLevel type) {
-    String logMessage = LoggerUtils.formatLogMessage(message, type);
+  public static void log(String message, ELoggerLevel level) {
+    String logMessage = LoggerUtils.formatLogMessage(message, level);
     if (LoggerUtils.isDebugging) {
-      switch (type) {
+      switch (level) {
         case INFO:
         case WARN:
           System.out.println(logMessage);
@@ -84,10 +92,10 @@ public final class LoggerUtils {
     LoggerUtils.getInstance().log(logMessage);
   }
 
-  public static void log(String message, Throwable t, ELoggerLevel type) {
-    String logMessage = LoggerUtils.formatLogMessage(message, t, type);
+  public static void log(String message, Throwable t, ELoggerLevel level) {
+    String logMessage = LoggerUtils.formatLogMessage(message, t, level);
     if (LoggerUtils.isDebugging) {
-      switch (type) {
+      switch (level) {
         case INFO:
         case WARN:
           System.out.println(logMessage);
@@ -98,5 +106,9 @@ public final class LoggerUtils {
       }
     }
     LoggerUtils.getInstance().log(logMessage);
+  }
+
+  public static void logMinecraft() {
+    LoggerUtils.getInstance().logMinecraft();
   }
 }
