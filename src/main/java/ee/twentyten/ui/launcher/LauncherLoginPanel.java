@@ -1,22 +1,20 @@
 package ee.twentyten.ui.launcher;
 
-import ee.twentyten.custom.CustomJLabel;
-import ee.twentyten.custom.CustomJPanel;
-import ee.twentyten.custom.TransparentJButton;
-import ee.twentyten.custom.TransparentJCheckBox;
-import ee.twentyten.custom.TransparentPanelUI;
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.log.ELogger;
+import ee.twentyten.custom.component.CustomJLabel;
+import ee.twentyten.custom.component.TransparentJButton;
+import ee.twentyten.custom.component.TransparentJCheckBox;
+import ee.twentyten.custom.ui.CustomJPanel;
+import ee.twentyten.custom.ui.TransparentPanelUI;
+import ee.twentyten.log.ELoggerLevel;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.OptionsDialog;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,14 +29,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.util.MinecraftUtils;
 
 @Getter
 public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
-  
+
   @Getter
   @Setter
-  public static LauncherLoginPanel instance;
-  private final JLabel errorLabel;
+  private static LauncherLoginPanel instance;
   private final JLabel usernameLabel;
   private final JLabel passwordLabel;
   private final JTextField usernameField;
@@ -49,16 +47,17 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
   private final TransparentJButton loginButton;
 
   {
-    this.errorLabel = new JLabel("\u00A0", JLabel.CENTER);
-    this.usernameLabel = new JLabel(LanguageUtils.usernameLabelKey, JLabel.RIGHT);
-    this.passwordLabel = new JLabel(LanguageUtils.passwordLabelKey, JLabel.RIGHT);
+    this.usernameLabel = new JLabel("llp.label.usernameLabel", JLabel.RIGHT);
+    this.passwordLabel = new JLabel("llp.label.passwordLabel", JLabel.RIGHT);
     this.usernameField = new JTextField(20);
     this.passwordField = new JPasswordField(20);
-    this.optionsButton = new TransparentJButton(LanguageUtils.optionsButtonKey);
+    this.optionsButton = new TransparentJButton("llp.button.optionsButton");
     this.rememberPasswordCheckBox = new TransparentJCheckBox(
-        LanguageUtils.rememberPasswordCheckBoxKey);
-    this.linkLabel = new CustomJLabel(LanguageUtils.needAccountKey, JLabel.CENTER);
-    this.loginButton = new TransparentJButton(LanguageUtils.loginButtonKey);
+        "llp.checkbox.rememberPasswordCheckBox");
+    this.linkLabel = new CustomJLabel(
+        LauncherUtils.isOutdated ? "llp.label.linkLabel.updateLauncher"
+            : "llp.label.linkLabel.needAccount", JLabel.CENTER);
+    this.loginButton = new TransparentJButton("llp.button.loginButton");
 
     MouseAdapter adapter = new MouseAdapter() {
       @Override
@@ -69,9 +68,9 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
             d.browse(LauncherUtils.isOutdated ? LauncherUtils.latestReleaseUrl.toURI()
                 : LauncherUtils.registrationUrl.toURI());
           } catch (IOException ioe) {
-            LoggerUtils.log("Failed to launch browser", ioe, ELogger.ERROR);
+            LoggerUtils.log("Failed to launch browser", ioe, ELoggerLevel.ERROR);
           } catch (URISyntaxException urise) {
-            LoggerUtils.log("Failed to resolve URI", urise, ELogger.ERROR);
+            LoggerUtils.log("Failed to resolve URI", urise, ELoggerLevel.ERROR);
           }
         }
       }
@@ -93,24 +92,21 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
   }
 
   public void setTextToComponents(UTF8ResourceBundle bundle) {
-    LanguageUtils.setTextToComponent(bundle, this.usernameLabel, LanguageUtils.usernameLabelKey);
-    LanguageUtils.setTextToComponent(bundle, this.passwordLabel, LanguageUtils.passwordLabelKey);
-    LanguageUtils.setTextToComponent(bundle, this.optionsButton, LanguageUtils.optionsButtonKey);
+    LanguageUtils.setTextToComponent(bundle, this.usernameLabel, "llp.label.usernameLabel");
+    LanguageUtils.setTextToComponent(bundle, this.passwordLabel, "llp.label.passwordLabel");
+    LanguageUtils.setTextToComponent(bundle, this.optionsButton, "llp.button.optionsButton");
     LanguageUtils.setTextToComponent(bundle, this.rememberPasswordCheckBox,
-        LanguageUtils.rememberPasswordCheckBoxKey);
+        "llp.checkbox.rememberPasswordCheckBox");
     LanguageUtils.setTextToComponent(bundle, this.linkLabel,
-        LauncherUtils.isOutdated ? LanguageUtils.updateLauncherKey : LanguageUtils.needAccountKey);
-    LanguageUtils.setTextToComponent(bundle, this.loginButton, LanguageUtils.loginButtonKey);
+        LauncherUtils.isOutdated ? "llp.label.linkLabel.updateLauncher"
+            : "llp.label.linkLabel.needAccount");
+    LanguageUtils.setTextToComponent(bundle, this.loginButton, "llp.button.loginButton");
   }
 
   void buildTopPanel() {
-    Font errorFont = new Font(Font.SANS_SERIF, Font.ITALIC, 16);
-    this.errorLabel.setFont(errorFont);
-    this.errorLabel.setForeground(Color.RED.darker());
-
     JPanel topPanel = new JPanel(new BorderLayout(), true);
     topPanel.setUI(new TransparentPanelUI());
-    topPanel.add(this.errorLabel, BorderLayout.NORTH);
+    topPanel.add(new JLabel("\u00A0"), BorderLayout.NORTH);
     this.add(topPanel, BorderLayout.NORTH);
   }
 
@@ -131,10 +127,6 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
   }
 
   private void buildBottomPanel() {
-    if (LauncherUtils.isOutdated) {
-      this.linkLabel.setText(LanguageUtils.updateLauncherKey);
-    }
-
     JPanel bottomPanel = new JPanel(new BorderLayout(), true);
     bottomPanel.setUI(new TransparentPanelUI());
     bottomPanel.add(this.linkLabel, BorderLayout.WEST);
@@ -155,11 +147,12 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
     }
     if (source == this.loginButton) {
       if (LauncherUtils.isLauncherOutdated()) {
-        LauncherPanel.getInstance().showNoNetworkPanel(
-            LanguageUtils.getString(LanguageUtils.getBundle(), LanguageUtils.outdatedLauncherKey));
+        LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
+            new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
+                "lp.label.errorLabel.outdatedLauncher"));
         return;
       }
-      System.out.println("Login button pressed");
+      MinecraftUtils.launchMinecraft();
     }
   }
 }
