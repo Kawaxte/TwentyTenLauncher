@@ -1,7 +1,7 @@
 package ee.twentyten.lang;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.log.ELogger;
+import ee.twentyten.log.ELoggerLevel;
 import ee.twentyten.util.LoggerUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,14 +49,14 @@ public class LauncherLanguageImpl extends LauncherLanguage {
       try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
         this.bundle = new UTF8ResourceBundle(isr);
       } catch (IOException ioe2) {
-        LoggerUtils.log("Failed to load locale file", ioe2, ELogger.ERROR);
+        LoggerUtils.log("Failed to load locale file", ioe2, ELoggerLevel.ERROR);
       }
 
       URL localeFileInput = this.getClass().getClassLoader().getResource(localeFileName);
       Objects.requireNonNull(localeFileInput, "localeFileInput == null!");
-      LoggerUtils.log(localeFileInput.getPath(), ELogger.INFO);
+      LoggerUtils.log(localeFileInput.getPath(), ELoggerLevel.INFO);
     } catch (IOException ioe1) {
-      LoggerUtils.log("Failed to load locale file", ioe1, ELogger.ERROR);
+      LoggerUtils.log("Failed to load locale file", ioe1, ELoggerLevel.ERROR);
     }
   }
 }

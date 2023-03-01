@@ -1,7 +1,7 @@
 package ee.twentyten.ui.options;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.log.ELogger;
+import ee.twentyten.log.ELoggerLevel;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
@@ -23,7 +23,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
 
   @Getter
   @Setter
-  public static OptionsPanel instance;
+  private static OptionsPanel instance;
   private final JButton openGameDirectoryButton;
   private final JButton saveOptionsButton;
   @Getter
@@ -35,8 +35,8 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.languageGroupBox = new OptionsLanguageGroupBox();
     this.versionGroupBox = new OptionsVersionGroupBox();
 
-    this.openGameDirectoryButton = new JButton(LanguageUtils.openGameDirectoryButtonKey);
-    this.saveOptionsButton = new JButton(LanguageUtils.saveOptionsButtonKey);
+    this.openGameDirectoryButton = new JButton("op.button.openGameDirectoryButton");
+    this.saveOptionsButton = new JButton("op.button.saveOptionsButton");
 
     this.openGameDirectoryButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
@@ -53,9 +53,8 @@ public class OptionsPanel extends JPanel implements ActionListener {
 
   public void setTextToComponents(UTF8ResourceBundle bundle) {
     LanguageUtils.setTextToComponent(bundle, this.openGameDirectoryButton,
-        LanguageUtils.openGameDirectoryButtonKey);
-    LanguageUtils.setTextToComponent(bundle, this.saveOptionsButton,
-        LanguageUtils.saveOptionsButtonKey);
+        "op.button.openGameDirectoryButton");
+    LanguageUtils.setTextToComponent(bundle, this.saveOptionsButton, "op.button.saveOptionsButton");
   }
 
   private void buildPanel() {
@@ -91,7 +90,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
           try {
             Desktop.getDesktop().open(LauncherUtils.workingDirectory);
           } catch (IOException ioe) {
-            LoggerUtils.log("Failed to open Minecraft directory", ioe, ELogger.ERROR);
+            LoggerUtils.log("Failed to open Minecraft directory", ioe, ELoggerLevel.ERROR);
           }
         }
       }

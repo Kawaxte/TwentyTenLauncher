@@ -1,10 +1,11 @@
 package ee.twentyten.ui.launcher;
 
-import ee.twentyten.custom.CustomJPanel;
-import ee.twentyten.custom.TransparentJButton;
-import ee.twentyten.custom.TransparentPanelUI;
 import ee.twentyten.custom.UTF8ResourceBundle;
+import ee.twentyten.custom.component.TransparentJButton;
+import ee.twentyten.custom.ui.CustomJPanel;
+import ee.twentyten.custom.ui.TransparentPanelUI;
 import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LauncherUtils;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -23,10 +24,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionListener {
-  
+
   @Getter
   @Setter
-  public static LauncherMicrosoftLoginPanel instance;
+  private static LauncherMicrosoftLoginPanel instance;
   private final JLabel copyUserCodeLabel;
   private final JLabel userCodeLabel;
   private final JProgressBar expiresInProgressBar;
@@ -34,11 +35,11 @@ public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionL
   private final TransparentJButton cancelButton;
 
   {
-    this.copyUserCodeLabel = new JLabel(LanguageUtils.copyUserCodeLabelKey, JLabel.CENTER);
+    this.copyUserCodeLabel = new JLabel("lmlp.label.copyUserCodeLabel", JLabel.CENTER);
     this.userCodeLabel = new JLabel("\u00A0", JLabel.CENTER);
     this.expiresInProgressBar = new JProgressBar();
-    this.openBrowserButton = new TransparentJButton(LanguageUtils.openBrowserButtonKey);
-    this.cancelButton = new TransparentJButton(LanguageUtils.cancelButtonKey);
+    this.openBrowserButton = new TransparentJButton("lmlp.button.openBrowserButton");
+    this.cancelButton = new TransparentJButton("lmlp.button.cancelButton");
 
     MouseAdapter adapter = new MouseAdapter() {
       @Override
@@ -78,10 +79,10 @@ public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionL
 
   public void setTextToComponents(UTF8ResourceBundle bundle) {
     LanguageUtils.setTextToComponent(bundle, this.copyUserCodeLabel,
-        LanguageUtils.copyUserCodeLabelKey);
+        "lmlp.label.copyUserCodeLabel");
     LanguageUtils.setTextToComponent(bundle, this.openBrowserButton,
-        LanguageUtils.openBrowserButtonKey);
-    LanguageUtils.setTextToComponent(bundle, this.cancelButton, LanguageUtils.cancelButtonKey);
+        "lmlp.button.openBrowserButton");
+    LanguageUtils.setTextToComponent(bundle, this.cancelButton, "lmlp.button.cancelButton");
   }
 
   private void buildTopPanel() {
@@ -116,7 +117,7 @@ public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionL
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source == this.cancelButton) {
-      LauncherPanel.getInstance().show(new LauncherPanel());
+      LauncherUtils.addPanel(LauncherPanel.getInstance(), new LauncherPanel());
     }
   }
 }

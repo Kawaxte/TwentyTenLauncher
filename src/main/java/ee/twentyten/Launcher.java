@@ -10,7 +10,7 @@ public class Launcher {
 
   public static void main(String... args) {
     if (LauncherUtils.MIN_MEMORY > LauncherUtils.MAX_MEMORY) {
-      LauncherUtils.buildLowMemoryProcess();
+      LauncherUtils.buildProcess();
     }
 
     ConfigUtils.loadConfig();
