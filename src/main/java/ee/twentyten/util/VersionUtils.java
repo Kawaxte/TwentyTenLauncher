@@ -1,7 +1,7 @@
 package ee.twentyten.util;
 
 import ee.twentyten.log.ELoggerLevel;
-import ee.twentyten.ui.options.OptionsVersionGroupBox;
+import ee.twentyten.ui.options.VersionOptionsGroupBox;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -49,7 +49,7 @@ public final class VersionUtils {
     }
   }
 
-  public static void updateVersionComboBox(OptionsVersionGroupBox ovgb) {
+  public static void updateVersionComboBox(VersionOptionsGroupBox vogb) {
     VersionUtils.versionMap = new HashMap<>();
 
     DefaultComboBoxModel<String> versionModel = new DefaultComboBoxModel<>();
@@ -98,11 +98,11 @@ public final class VersionUtils {
         break;
       }
     }
-    ovgb.getUseVersionComboBox().setModel(versionModel);
+    vogb.getUseVersionComboBox().setModel(versionModel);
   }
 
-  public static void updateSelectedVersion(OptionsVersionGroupBox ovgb) {
-    String selectedVersion = (String) ovgb.getUseVersionComboBox().getSelectedItem();
+  public static void updateSelectedVersion(VersionOptionsGroupBox vogb) {
+    String selectedVersion = (String) vogb.getUseVersionComboBox().getSelectedItem();
     if (selectedVersion != null) {
       selectedVersion = VersionUtils.versionMap.get(selectedVersion);
     }
