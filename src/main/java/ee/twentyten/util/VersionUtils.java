@@ -49,6 +49,43 @@ public final class VersionUtils {
     }
   }
 
+  public static int getProxyPort(String version) {
+    File versionsFile = new File(VersionUtils.versionsDirectory, "versions.json");
+    JSONObject versionJson = FileUtils.readJsonFile(versionsFile);
+
+    String versionType = VersionUtils.getVersionType(version);
+    for (String versionTypeKey : versionJson.keySet()) {
+      if (versionTypeKey.equals(versionType)) {
+        JSONArray versionArray = versionJson.getJSONArray(versionTypeKey);
+        return VersionUtils.getProxyPortFromVersionArray(versionArray, version);
+      }
+    }
+    return Integer.parseInt("80");
+  }
+
+  private static String getVersionType(String version) {
+    switch (version.charAt(0)) {
+      case 'b':
+        return "beta";
+      case 'a':
+        return "alpha";
+      case 'i':
+        return "infdev";
+      default:
+        return null;
+    }
+  }
+
+  private static int getProxyPortFromVersionArray(JSONArray array, String version) {
+    for (int i = 0; i < array.length(); i++) {
+      JSONObject object = array.getJSONObject(i);
+      if (object.getString("version_id").equals(version)) {
+        return object.getInt("proxy_port");
+      }
+    }
+    return Integer.parseInt("80");
+  }
+
   public static void updateVersionComboBox(VersionOptionsGroupBox vogb) {
     VersionUtils.versionMap = new HashMap<>();
 
