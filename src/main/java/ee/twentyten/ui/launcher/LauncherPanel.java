@@ -1,12 +1,12 @@
 package ee.twentyten.ui.launcher;
 
-import ee.twentyten.custom.TransparentJButton;
 import ee.twentyten.custom.UTF8ResourceBundle;
+import ee.twentyten.custom.component.TransparentJButton;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.LookAndFeelUtils;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.VolatileImage;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,17 +29,20 @@ public class LauncherPanel extends JPanel implements ActionListener {
 
   @Getter
   @Setter
-  public static LauncherPanel instance;
+  private static LauncherPanel instance;
   @Getter
   private final TransparentJButton microsoftLoginButton;
   private final LauncherLoginPanel loginPanel;
   private final LauncherMicrosoftLoginPanel microsoftLoginPanel;
+  private final LauncherNoNetworkPanel noNetworkPanel;
 
   {
     this.loginPanel = new LauncherLoginPanel();
     this.microsoftLoginPanel = new LauncherMicrosoftLoginPanel();
+    this.noNetworkPanel = new LauncherNoNetworkPanel();
+
     this.microsoftLoginButton = new TransparentJButton(
-        LanguageUtils.getString(LanguageUtils.microsoftLoginButtonKey));
+        LanguageUtils.getString("lp.button.microsoftLoginButton"));
 
     this.microsoftLoginButton.addActionListener(this);
   }
@@ -54,28 +58,9 @@ public class LauncherPanel extends JPanel implements ActionListener {
     this.setTextToComponents(LanguageUtils.getBundle());
   }
 
-  public void show(Component comp) {
-    this.removeAll();
-
-    this.add(comp);
-
-    this.revalidate();
-    this.repaint();
-  }
-
-  public void showNoNetworkPanel(String message) {
-    this.removeAll();
-
-    this.add(new LauncherNoNetworkPanel());
-    this.loginPanel.getErrorLabel().setText(message);
-
-    this.revalidate();
-    this.repaint();
-  }
-
   public void setTextToComponents(UTF8ResourceBundle bundle) {
     LanguageUtils.setTextToComponent(bundle, this.microsoftLoginButton,
-        LanguageUtils.microsoftLoginButtonKey);
+        "lp.button.microsoftLoginButton");
   }
 
   private void buildPanel() {
@@ -92,17 +77,24 @@ public class LauncherPanel extends JPanel implements ActionListener {
     this.add(this.microsoftLoginButton, gbc);
   }
 
-  private void drawTitleString(Graphics g2d, String title, int width, int height) {
-    Font titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 20);
-    g2d.setFont(titleFont);
+  private void drawTitleString(Graphics2D g2d, String title, int width, int height) {
+    g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
     g2d.setColor(Color.LIGHT_GRAY);
 
-    FontMetrics fontMetrics = g2d.getFontMetrics();
-    int titleWidth = fontMetrics.stringWidth(title);
-    int titleHeight = fontMetrics.getHeight();
+    FontMetrics fm = g2d.getFontMetrics();
+    int titleWidth = fm.stringWidth(title);
+    int titleHeight = fm.getHeight();
     int titleX = (width >> 1 >> 1) - (titleWidth >> 1);
     int titleY = (height >> 1 >> 1) - (titleHeight << 1);
     g2d.drawString(title, titleX, titleY);
+  }
+
+  @Override
+  public void updateUI() {
+    if (LookAndFeelUtils.isUsingWindowsClassicTheme != LookAndFeelUtils.isWindowsClassic()) {
+      SwingUtilities.updateComponentTreeUI(this);
+    }
+    super.updateUI();
   }
 
   @Override
@@ -145,11 +137,12 @@ public class LauncherPanel extends JPanel implements ActionListener {
     Object source = event.getSource();
     if (source == this.microsoftLoginButton) {
       if (LauncherUtils.isLauncherOutdated()) {
-        LauncherPanel.getInstance().showNoNetworkPanel(
-            LanguageUtils.getString(LanguageUtils.getBundle(), LanguageUtils.outdatedLauncherKey));
+        LauncherUtils.addPanelWithErrorMessage(this, this.noNetworkPanel,
+            LanguageUtils.getString(LanguageUtils.getBundle(),
+                "lp.label.errorLabel.outdatedLauncher"));
         return;
       }
-      this.show(this.microsoftLoginPanel);
+      LauncherUtils.addPanel(this, this.microsoftLoginPanel);
     }
   }
 }
