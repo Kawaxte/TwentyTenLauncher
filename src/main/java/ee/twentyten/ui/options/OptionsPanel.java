@@ -27,13 +27,13 @@ public class OptionsPanel extends JPanel implements ActionListener {
   private final JButton openGameDirectoryButton;
   private final JButton saveOptionsButton;
   @Getter
-  private final OptionsLanguageGroupBox languageGroupBox;
+  private final LanguageOptionsGroupBox languageGroupBox;
   @Getter
-  private final OptionsVersionGroupBox versionGroupBox;
+  private final VersionOptionsGroupBox versionGroupBox;
 
   {
-    this.languageGroupBox = new OptionsLanguageGroupBox();
-    this.versionGroupBox = new OptionsVersionGroupBox();
+    this.languageGroupBox = new LanguageOptionsGroupBox();
+    this.versionGroupBox = new VersionOptionsGroupBox();
 
     this.openGameDirectoryButton = new JButton("op.button.openGameDirectoryButton");
     this.saveOptionsButton = new JButton("op.button.saveOptionsButton");
@@ -96,8 +96,8 @@ public class OptionsPanel extends JPanel implements ActionListener {
       }
     }
     if (source == this.saveOptionsButton) {
-      LanguageUtils.updateSelectedLanguage(OptionsLanguageGroupBox.getInstance());
-      VersionUtils.updateSelectedVersion(OptionsVersionGroupBox.getInstance());
+      LanguageUtils.updateSelectedLanguage(LanguageOptionsGroupBox.getInstance());
+      VersionUtils.updateSelectedVersion(VersionOptionsGroupBox.getInstance());
     }
   }
 }
