@@ -3,7 +3,7 @@ package ee.twentyten.util;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinReg;
-import ee.twentyten.log.ELogLevel;
+import ee.twentyten.log.ELoggerLevel;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
@@ -22,15 +22,15 @@ public final class LookAndFeelUtils {
   public static void setLookAndFeel() {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      LoggerUtils.log(UIManager.getLookAndFeel().getClass().getCanonicalName(), ELogLevel.INFO);
+      LoggerUtils.log(UIManager.getLookAndFeel().getClass().getCanonicalName(), ELoggerLevel.INFO);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      LoggerUtils.log("Can't set look and feel", ulafe, ELogLevel.ERROR);
+      LoggerUtils.log("Can't set look and feel", ulafe, ELoggerLevel.ERROR);
     } catch (ClassNotFoundException cnfe) {
-      LoggerUtils.log("Failed to find look and feel class", cnfe, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to find look and feel class", cnfe, ELoggerLevel.ERROR);
     } catch (InstantiationException ie) {
-      LoggerUtils.log("Failed to instantiate look and feel class", ie, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to instantiate look and feel class", ie, ELoggerLevel.ERROR);
     } catch (IllegalAccessException iae) {
-      LoggerUtils.log("Failed to access look and feel class", iae, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to access look and feel class", iae, ELoggerLevel.ERROR);
     }
   }
 
@@ -67,7 +67,7 @@ public final class LookAndFeelUtils {
         }
       }
     } catch (Win32Exception w32e) {
-      LoggerUtils.log("Failed to read registry key", w32e, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to read registry key", w32e, ELoggerLevel.ERROR);
     }
     return false;
   }
@@ -86,7 +86,7 @@ public final class LookAndFeelUtils {
         return keyValues.get("ThemeActive").equals("0");
       }
     } catch (Win32Exception w32e) {
-      LoggerUtils.log("Failed to read registry key", w32e, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to read registry key", w32e, ELoggerLevel.ERROR);
     }
     return false;
   }
@@ -109,7 +109,7 @@ public final class LookAndFeelUtils {
         return Objects.equals(currentThemeLines[3], classicThemeLines[3]);
       }
     } catch (Win32Exception w32e) {
-      LoggerUtils.log("Failed to read registry key", w32e, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to read registry key", w32e, ELoggerLevel.ERROR);
     }
     return false;
   }
