@@ -1,6 +1,6 @@
 package net.minecraft.update.ui;
 
-import ee.twentyten.log.ELogLevel;
+import ee.twentyten.log.ELoggerLevel;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.FileUtils;
@@ -150,7 +150,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create document base URL", murle, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to create document base URL", murle, ELoggerLevel.ERROR);
     }
     return null;
   }
@@ -160,7 +160,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create code base URL", murle, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to create code base URL", murle, ELoggerLevel.ERROR);
     }
     return null;
   }

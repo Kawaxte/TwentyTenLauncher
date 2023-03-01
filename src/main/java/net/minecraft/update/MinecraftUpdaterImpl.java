@@ -1,7 +1,7 @@
 package net.minecraft.update;
 
 import ee.twentyten.EPlatform;
-import ee.twentyten.log.ELogLevel;
+import ee.twentyten.log.ELoggerLevel;
 import ee.twentyten.request.ERequestHeader;
 import ee.twentyten.request.ERequestMethod;
 import ee.twentyten.util.ConfigUtils;
@@ -64,17 +64,17 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       this.showFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.instantation.class"),
           "MinecraftApplet"));
-      LoggerUtils.log("Failed to instantiate MinecraftApplet class", ie, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to instantiate MinecraftApplet class", ie, ELoggerLevel.ERROR);
     } catch (IllegalAccessException iae) {
       this.showFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.illegalAccess.class"),
           "MinecraftApplet"));
-      LoggerUtils.log("Failed to access MinecraftApplet class", iae, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to access MinecraftApplet class", iae, ELoggerLevel.ERROR);
     } catch (ClassNotFoundException cnfe) {
       this.showFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.classNotFound"),
           "MinecraftApplet"));
-      LoggerUtils.log("Failed to find MinecraftApplet class", cnfe, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to find MinecraftApplet class", cnfe, ELoggerLevel.ERROR);
     }
     return null;
   }
@@ -94,7 +94,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
           urlString));
       this.showFatalErrorMessage(fnfe.getMessage());
-      LoggerUtils.log("Failed to check content length", fnfe, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to check content length", fnfe, ELoggerLevel.ERROR);
       return true;
     }
     return false;
@@ -115,12 +115,12 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       this.showFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fieldNotFound"),
           "loadedLibraryNames"));
-      LoggerUtils.log("Failed to find loadedLibraryNames field", nsfe, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to find loadedLibraryNames field", nsfe, ELoggerLevel.ERROR);
     } catch (IllegalAccessException iae) {
       this.showFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.illegalAccess.field"),
           "loadedLibraryNames"));
-      LoggerUtils.log("Failed to access loadedLibraryNames field", iae, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to access loadedLibraryNames field", iae, ELoggerLevel.ERROR);
     }
   }
 
@@ -131,7 +131,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       File nativesDirectory = new File(directory, "natives");
       System.setProperty(libraryPath, nativesDirectory.getAbsolutePath());
       LoggerUtils.log(MessageFormat.format("{0}={1}", libraryPath, System.getProperty(libraryPath)),
-          ELogLevel.INFO);
+          ELoggerLevel.INFO);
     }
     this.isNativesLoaded = true;
   }
@@ -217,11 +217,11 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       MinecraftUtils.getMinecraftJarFile(packageUrls, minecraftJarUrl);
 
       this.packageUrls = packageUrls.toArray(new URL[0]);
-      LoggerUtils.log(Arrays.toString(this.packageUrls), ELogLevel.INFO);
+      LoggerUtils.log(Arrays.toString(this.packageUrls), ELoggerLevel.INFO);
     } catch (MalformedURLException murle) {
       this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
           "mui.exception.io.package.determineFailed"));
-      LoggerUtils.log("Failed to determine package URLs", murle, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to determine package URLs", murle, ELoggerLevel.ERROR);
     }
   }
 
@@ -261,9 +261,9 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     } catch (ExecutionException ee) {
       this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
           "mui.exception.io.package.retrieveFailed"));
-      LoggerUtils.log("Failed to retrieve package sizes", ee, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to retrieve package sizes", ee, ELoggerLevel.ERROR);
     } catch (InterruptedException ie) {
-      LoggerUtils.log("Interrupted while retrieving package sizes", ie, ELogLevel.ERROR);
+      LoggerUtils.log("Interrupted while retrieving package sizes", ie, ELoggerLevel.ERROR);
     } finally {
       retrieveService.shutdown();
     }
@@ -282,7 +282,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     for (URL fileUrl : this.packageUrls) {
       File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
       if (!binDirectory.mkdirs() && !binDirectory.exists()) {
-        LoggerUtils.log("Failed to create bin directory", ELogLevel.ERROR);
+        LoggerUtils.log("Failed to create bin directory", ELoggerLevel.ERROR);
         return;
       }
 
@@ -292,7 +292,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
         File versionDirectory = new File(VersionUtils.versionsDirectory,
             ConfigUtils.getInstance().getSelectedVersion());
         if (!versionDirectory.mkdirs() && !versionDirectory.exists()) {
-          LoggerUtils.log("Failed to create version directory", ELogLevel.ERROR);
+          LoggerUtils.log("Failed to create version directory", ELoggerLevel.ERROR);
           return;
         }
         packageFile = new File(versionDirectory, packageFile.getName());
@@ -333,11 +333,11 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
         this.showFatalErrorMessage(MessageFormat.format(
             LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             packageFile.getName()));
-        LoggerUtils.log("Failed to find package file", fnfe, ELogLevel.ERROR);
+        LoggerUtils.log("Failed to find package file", fnfe, ELoggerLevel.ERROR);
       } catch (IOException ioe) {
         this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
             "mui.exception.io.package.downloadFailed"));
-        LoggerUtils.log("Failed to download package files", ioe, ELogLevel.ERROR);
+        LoggerUtils.log("Failed to download package files", ioe, ELoggerLevel.ERROR);
       } finally {
         connection.disconnect();
       }
@@ -374,7 +374,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
           File nativesDirectory = new File(binDirectory, "natives");
           if (!nativesDirectory.mkdirs() && !nativesDirectory.exists()) {
-            LoggerUtils.log("Failed to create natives directory", ELogLevel.ERROR);
+            LoggerUtils.log("Failed to create natives directory", ELoggerLevel.ERROR);
             return;
           }
           File nativeFile = new File(nativesDirectory, entry.getName());
@@ -397,14 +397,14 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
         this.showFatalErrorMessage(MessageFormat.format(
             LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             archiveFile.getName()));
-        LoggerUtils.log("Failed to find package file", fnfe, ELogLevel.ERROR);
+        LoggerUtils.log("Failed to find package file", fnfe, ELoggerLevel.ERROR);
       } catch (IOException ioe) {
         this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
             "mui.exception.io.package.extractFailed"));
-        LoggerUtils.log("Failed to extract package files", ioe, ELogLevel.ERROR);
+        LoggerUtils.log("Failed to extract package files", ioe, ELoggerLevel.ERROR);
       } finally {
         if (!archiveFile.delete()) {
-          LoggerUtils.log("Failed to delete package file", ELogLevel.ERROR);
+          LoggerUtils.log("Failed to delete package file", ELoggerLevel.ERROR);
         }
       }
     }
@@ -439,11 +439,11 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       jarUrls[jarFiles.length] = minecraftJarFile.toURI().toURL();
 
       this.updatePercentage = 85 + ((jarUrls.length * 5) / jarUrls.length);
-      LoggerUtils.log(Arrays.toString(jarUrls), ELogLevel.INFO);
+      LoggerUtils.log(Arrays.toString(jarUrls), ELoggerLevel.INFO);
     } catch (MalformedURLException murle) {
       this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
           "mui.exception.io.classpath.updateFailed"));
-      LoggerUtils.log("Failed to update classpath", murle, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to update classpath", murle, ELoggerLevel.ERROR);
       return;
     }
 
@@ -483,7 +483,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     } catch (Throwable t) {
       this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
           "mui.exception.t.minecraft.updateFailed"));
-      LoggerUtils.log("Failed to update Minecraft", t, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to update Minecraft", t, ELoggerLevel.ERROR);
     } finally {
       EState.setInstance(EState.DONE_STATE);
       this.updateStateMessage = EState.DONE_STATE.getMessage();

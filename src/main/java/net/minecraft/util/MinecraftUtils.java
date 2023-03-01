@@ -1,7 +1,7 @@
 package net.minecraft.util;
 
 import ee.twentyten.EPlatform;
-import ee.twentyten.log.ELogLevel;
+import ee.twentyten.log.ELoggerLevel;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LauncherUtils;
@@ -49,7 +49,7 @@ public final class MinecraftUtils {
       MinecraftUtils.lwjglUrl = new URL("https://archive.org/download/lwjgl-2/lwjgl-2.6");
       MinecraftUtils.minecraftJarUrl = new URL("https://archive.org/download/mc-legacy");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create URL", murle, ELogLevel.ERROR);
+      LoggerUtils.log("Failed to create URL", murle, ELoggerLevel.ERROR);
     }
   }
 
