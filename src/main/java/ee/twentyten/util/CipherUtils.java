@@ -1,6 +1,6 @@
 package ee.twentyten.util;
 
-import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.log.ELevel;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
@@ -39,7 +39,7 @@ public final class CipherUtils {
       System.arraycopy(encryptedBytes, 0, finalBytes, ivBytes.length, encryptedBytes.length);
       return DatatypeConverter.printBase64Binary(finalBytes);
     } catch (GeneralSecurityException gse) {
-      LoggerUtils.log("Failed to encrypt value", gse, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to encrypt value", gse, ELevel.ERROR);
     }
     return null;
   }
@@ -63,7 +63,7 @@ public final class CipherUtils {
       byte[] decryptedBytes = configCipher.doFinal(encryptedDataBytes);
       return new String(decryptedBytes);
     } catch (GeneralSecurityException gse) {
-      LoggerUtils.log("Failed to decrypt value", gse, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to decrypt value", gse, ELevel.ERROR);
     }
     return null;
   }

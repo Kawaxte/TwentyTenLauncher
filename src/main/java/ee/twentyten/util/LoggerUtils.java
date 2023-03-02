@@ -1,6 +1,6 @@
 package ee.twentyten.util;
 
-import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.log.ELevel;
 import ee.twentyten.log.LauncherLoggerImpl;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -55,13 +55,13 @@ public final class LoggerUtils {
     return elements[4].getMethodName();
   }
 
-  public static String formatLogMessage(String message, ELoggerLevel level) {
+  public static String formatLogMessage(String message, ELevel level) {
     return new StringBuilder().append("[").append(LoggerUtils.getCurrentTime()).append("] [")
         .append(level).append("] ").append(LoggerUtils.getCallerClassName()).append("::")
         .append(LoggerUtils.getCallerMethodName()).append(" - ").append(message).toString();
   }
 
-  public static String formatLogMessage(String message, Throwable t, ELoggerLevel level) {
+  public static String formatLogMessage(String message, Throwable t, ELevel level) {
     StringBuilder sb = new StringBuilder();
     sb.append(formatLogMessage(message, level)).append(SystemUtils.lineSeparator);
     if (t != null) {
@@ -76,7 +76,7 @@ public final class LoggerUtils {
     return sb.toString();
   }
 
-  public static void log(String message, ELoggerLevel level) {
+  public static void log(String message, ELevel level) {
     String logMessage = LoggerUtils.formatLogMessage(message, level);
     if (LoggerUtils.isDebugging) {
       switch (level) {
@@ -92,7 +92,7 @@ public final class LoggerUtils {
     LoggerUtils.getInstance().log(logMessage);
   }
 
-  public static void log(String message, Throwable t, ELoggerLevel level) {
+  public static void log(String message, Throwable t, ELevel level) {
     String logMessage = LoggerUtils.formatLogMessage(message, t, level);
     if (LoggerUtils.isDebugging) {
       switch (level) {
@@ -109,6 +109,6 @@ public final class LoggerUtils {
   }
 
   public static void logMinecraft() {
-    LoggerUtils.getInstance().logMinecraft();
+    LoggerUtils.getInstance().logGame();
   }
 }

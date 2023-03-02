@@ -1,7 +1,7 @@
 package net.minecraft.util;
 
 import ee.twentyten.EPlatform;
-import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.log.ELevel;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LauncherUtils;
@@ -47,7 +47,7 @@ public final class MinecraftUtils {
       MinecraftUtils.lwjglUrl = new URL("https://archive.org/download/lwjgl-2/lwjgl-2.6");
       MinecraftUtils.minecraftJarUrl = new URL("https://archive.org/download/mc-legacy");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create URL", murle, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to create URL", murle, ELevel.ERROR);
     }
   }
 
@@ -55,7 +55,7 @@ public final class MinecraftUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static boolean isMinecraftCached() {
+  public static boolean isGameCached() {
     EPlatform platform = EPlatform.getPlatform();
 
     File binDirectory = new File(LauncherUtils.workingDirectory, "bin");

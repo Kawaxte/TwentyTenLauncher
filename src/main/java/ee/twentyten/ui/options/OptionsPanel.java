@@ -1,7 +1,7 @@
 package ee.twentyten.ui.options;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.log.ELevel;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
@@ -90,7 +90,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
           try {
             Desktop.getDesktop().open(LauncherUtils.workingDirectory);
           } catch (IOException ioe) {
-            LoggerUtils.log("Failed to open Minecraft directory", ioe, ELoggerLevel.ERROR);
+            LoggerUtils.log("Failed to open Minecraft directory", ioe, ELevel.ERROR);
           }
         }
       }

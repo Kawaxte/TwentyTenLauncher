@@ -1,12 +1,12 @@
 package ee.twentyten.ui.launcher;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.custom.component.CustomJLabel;
+import ee.twentyten.custom.component.JHyperlink;
 import ee.twentyten.custom.component.TransparentJButton;
 import ee.twentyten.custom.component.TransparentJCheckBox;
 import ee.twentyten.custom.ui.CustomJPanel;
 import ee.twentyten.custom.ui.TransparentPanelUI;
-import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.log.ELevel;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.OptionsDialog;
 import ee.twentyten.util.LanguageUtils;
@@ -43,7 +43,7 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
   private final JPasswordField passwordField;
   private final TransparentJButton optionsButton;
   private final TransparentJCheckBox rememberPasswordCheckBox;
-  private final CustomJLabel linkLabel;
+  private final JHyperlink linkLabel;
   private final TransparentJButton loginButton;
 
   {
@@ -54,7 +54,7 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
     this.optionsButton = new TransparentJButton("llp.button.optionsButton");
     this.rememberPasswordCheckBox = new TransparentJCheckBox(
         "llp.checkbox.rememberPasswordCheckBox");
-    this.linkLabel = new CustomJLabel(
+    this.linkLabel = new JHyperlink(
         LauncherUtils.isOutdated ? "llp.label.linkLabel.updateLauncher"
             : "llp.label.linkLabel.needAccount", JLabel.CENTER);
     this.loginButton = new TransparentJButton("llp.button.loginButton");
@@ -68,9 +68,9 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
             d.browse(LauncherUtils.isOutdated ? LauncherUtils.latestReleaseUrl.toURI()
                 : LauncherUtils.registrationUrl.toURI());
           } catch (IOException ioe) {
-            LoggerUtils.log("Failed to launch browser", ioe, ELoggerLevel.ERROR);
+            LoggerUtils.log("Failed to launch browser", ioe, ELevel.ERROR);
           } catch (URISyntaxException urise) {
-            LoggerUtils.log("Failed to resolve URI", urise, ELoggerLevel.ERROR);
+            LoggerUtils.log("Failed to resolve URI", urise, ELevel.ERROR);
           }
         }
       }

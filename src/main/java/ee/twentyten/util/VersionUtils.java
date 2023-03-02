@@ -1,6 +1,6 @@
 package ee.twentyten.util;
 
-import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.log.ELevel;
 import ee.twentyten.ui.options.VersionOptionsGroupBox;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -28,7 +28,7 @@ public final class VersionUtils {
       VersionUtils.versionsFileUrl = new URL(
           "https://raw.githubusercontent.com/sojlabjoi/TwentyTenLauncher/stable/versions.json");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create URL", murle, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to create URL", murle, ELevel.ERROR);
     }
   }
 
@@ -41,7 +41,7 @@ public final class VersionUtils {
     if (!VersionUtils.versionsDirectory.exists()) {
       boolean isDirectoryCreated = VersionUtils.versionsDirectory.mkdirs();
       if (!isDirectoryCreated) {
-        LoggerUtils.log("Failed to create versions directory", ELoggerLevel.ERROR);
+        LoggerUtils.log("Failed to create versions directory", ELevel.ERROR);
       }
     }
     if (!versionsFile.exists()) {

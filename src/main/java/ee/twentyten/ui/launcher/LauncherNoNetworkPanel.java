@@ -71,14 +71,14 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
   private void buildMiddlePanel() {
     JPanel middlePanel = new JPanel(new BorderLayout(), true);
     middlePanel.setUI(new TransparentPanelUI());
-    if (!MinecraftUtils.isMinecraftCached()) {
+    if (!MinecraftUtils.isGameCached()) {
       middlePanel.add(this.playOnlineLabel, BorderLayout.SOUTH);
     }
     this.add(middlePanel, BorderLayout.CENTER);
   }
 
   private void buildBottomPanel() {
-    this.playOfflineButton.setEnabled(MinecraftUtils.isMinecraftCached());
+    this.playOfflineButton.setEnabled(MinecraftUtils.isGameCached());
 
     JPanel bottomPanel = new JPanel(new GridLayout(1, 2), true);
     bottomPanel.setUI(new TransparentPanelUI());

@@ -2,9 +2,9 @@ package ee.twentyten.util;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.Launcher;
-import ee.twentyten.log.ELoggerLevel;
-import ee.twentyten.request.ERequestHeader;
-import ee.twentyten.request.ERequestMethod;
+import ee.twentyten.log.ELevel;
+import ee.twentyten.request.EHeader;
+import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import java.awt.Container;
 import java.io.BufferedReader;
@@ -55,7 +55,7 @@ public final class LauncherUtils {
       LauncherUtils.latestReleaseUrl = new URL(
           "https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create URL", murle, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to create URL", murle, ELevel.ERROR);
     }
   }
 
@@ -71,7 +71,7 @@ public final class LauncherUtils {
 
     File workingDirectory = LauncherUtils.workingDirectories.get(platform);
     if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
-      LoggerUtils.log("Failed to create working directory", ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to create working directory", ELevel.ERROR);
     }
     return workingDirectory;
   }
@@ -103,7 +103,7 @@ public final class LauncherUtils {
         @Override
         public Boolean call() {
           JSONObject latestRelease = RequestUtils.performJsonRequest(
-              LauncherUtils.apiLatestReleaseUrl, ERequestMethod.GET, ERequestHeader.JSON);
+              LauncherUtils.apiLatestReleaseUrl, EMethod.GET, EHeader.JSON);
           Objects.requireNonNull(latestRelease, "latestRelease == null!");
 
           String latestVersion = latestRelease.getString("tag_name");
@@ -115,9 +115,9 @@ public final class LauncherUtils {
         LauncherUtils.isOutdated = updateFuture.get();
         LauncherUtils.isUpdateChecked = true;
       } catch (ExecutionException ee) {
-        LoggerUtils.log("Failed to check for updates", ee, ELoggerLevel.ERROR);
+        LoggerUtils.log("Failed to check for updates", ee, ELevel.ERROR);
       } catch (InterruptedException ie) {
-        LoggerUtils.log("Interrupted while checking for updates", ie, ELoggerLevel.ERROR);
+        LoggerUtils.log("Interrupted while checking for updates", ie, ELevel.ERROR);
       } finally {
         updateService.shutdown();
       }
@@ -162,19 +162,19 @@ public final class LauncherUtils {
     arguments.add(Launcher.class.getCanonicalName());
 
     ProcessBuilder pb = new ProcessBuilder(arguments);
-    LoggerUtils.log(arguments.toString(), ELoggerLevel.INFO);
+    LoggerUtils.log(arguments.toString(), ELevel.INFO);
     try {
       Process p = pb.start();
 
       String errorStreamMessage = LauncherUtils.getErrorStream(p);
       if (!errorStreamMessage.isEmpty()) {
-        LoggerUtils.log(errorStreamMessage, ELoggerLevel.ERROR);
+        LoggerUtils.log(errorStreamMessage, ELevel.ERROR);
       }
       System.exit(p.waitFor());
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to start process", ioe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to start process", ioe, ELevel.ERROR);
     } catch (InterruptedException ie) {
-      LoggerUtils.log("Interrupted while waiting for process to finish", ie, ELoggerLevel.ERROR);
+      LoggerUtils.log("Interrupted while waiting for process to finish", ie, ELevel.ERROR);
       System.exit(1);
     }
   }
@@ -188,7 +188,7 @@ public final class LauncherUtils {
         sb.append(line).append(SystemUtils.lineSeparator);
       }
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to read error stream from process", ioe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to read error stream from process", ioe, ELevel.ERROR);
     }
     return sb.toString();
   }

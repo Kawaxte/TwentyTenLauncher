@@ -5,8 +5,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 abstract class HttpsConnectionRequest {
 
-  public abstract HttpsURLConnection perform(URL url, ERequestMethod method, ERequestHeader header);
+  public abstract HttpsURLConnection perform(URL url, EMethod method, EHeader header);
 
-  public abstract HttpsURLConnection perform(URL url, ERequestMethod method, ERequestHeader header,
+  public abstract HttpsURLConnection perform(URL url, EMethod method, EHeader header,
       Object data);
 }

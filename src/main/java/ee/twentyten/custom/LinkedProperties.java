@@ -1,6 +1,6 @@
 package ee.twentyten.custom;
 
-import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.log.ELevel;
 import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.SystemUtils;
 import java.io.IOException;
@@ -100,7 +100,7 @@ public class LinkedProperties extends Properties {
         os.write(SystemUtils.lineSeparator.getBytes(StandardCharsets.UTF_8));
       }
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to write bytes to output stream", ioe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to write bytes to output stream", ioe, ELevel.ERROR);
     }
   }
 }

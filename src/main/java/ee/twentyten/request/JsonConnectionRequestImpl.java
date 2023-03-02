@@ -1,6 +1,6 @@
 package ee.twentyten.request;
 
-import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.log.ELevel;
 import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.RequestUtils;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import org.json.JSONObject;
 public class JsonConnectionRequestImpl extends JsonConnectionRequest {
 
   @Override
-  public JSONObject perform(URL url, ERequestMethod method, ERequestHeader header) {
+  public JSONObject perform(URL url, EMethod method, EHeader header) {
     HttpsURLConnection connection = null;
     try {
       connection = RequestUtils.openHttpsConnection(url);
@@ -25,7 +25,7 @@ public class JsonConnectionRequestImpl extends JsonConnectionRequest {
         connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
     } catch (ProtocolException pe) {
-      LoggerUtils.log("Failed to set request method", pe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to set request method", pe, ELevel.ERROR);
     } finally {
       if (connection != null) {
         connection.disconnect();
@@ -35,7 +35,7 @@ public class JsonConnectionRequestImpl extends JsonConnectionRequest {
   }
 
   @Override
-  public JSONObject perform(URL url, ERequestMethod method, ERequestHeader header, Object data) {
+  public JSONObject perform(URL url, EMethod method, EHeader header, Object data) {
     HttpsURLConnection connection = null;
     try {
       connection = RequestUtils.openHttpsConnection(url);
@@ -51,9 +51,9 @@ public class JsonConnectionRequestImpl extends JsonConnectionRequest {
         osw.write(data.toString());
       }
     } catch (ProtocolException pe) {
-      LoggerUtils.log("Failed to set request method", pe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to set request method", pe, ELevel.ERROR);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to write data to output stream", ioe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to write data to output stream", ioe, ELevel.ERROR);
     } finally {
       if (connection != null) {
         connection.disconnect();

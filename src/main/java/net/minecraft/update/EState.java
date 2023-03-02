@@ -5,21 +5,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 public enum EState {
-  INIT_STATE(LanguageUtils
+  INIT(LanguageUtils
       .getString(LanguageUtils.getBundle(), "es.state.initState")),
-  CACHE_STATE(LanguageUtils
-      .getString(LanguageUtils.getBundle(), "es.state.cacheState")),
-  DETERMINE_STATE(LanguageUtils
-      .getString(LanguageUtils.getBundle(), "es.state.determineState")),
-  RETRIEVE_STATE(LanguageUtils
-      .getString(LanguageUtils.getBundle(), "es.state.retrieveState")),
-  DOWNLOAD_STATE(LanguageUtils
-      .getString(LanguageUtils.getBundle(), "es.state.downloadState")),
-  EXTRACT_STATE(LanguageUtils
-      .getString(LanguageUtils.getBundle(), "es.state.extractState")),
-  UPDATE_STATE(LanguageUtils
-      .getString(LanguageUtils.getBundle(), "es.state.updateState")),
-  DONE_STATE(LanguageUtils
+  CHECK_CACHE(LanguageUtils
+      .getString(LanguageUtils.getBundle(), "es.state.checkCacheState")),
+  DETERMINE_PACKAGE(LanguageUtils
+      .getString(LanguageUtils.getBundle(), "es.state.determinePackageState")),
+  DOWNLOAD_PACKAGE(LanguageUtils
+      .getString(LanguageUtils.getBundle(), "es.state.downloadPackageState")),
+  EXTRACT_PACKAGE(LanguageUtils
+      .getString(LanguageUtils.getBundle(), "es.state.extractPackageState")),
+  UPDATE_CLASSPATH(LanguageUtils
+      .getString(LanguageUtils.getBundle(), "es.state.updateClasspathState")),
+  DONE(LanguageUtils
       .getString(LanguageUtils.getBundle(), "es.state.doneState"));
 
   @Getter

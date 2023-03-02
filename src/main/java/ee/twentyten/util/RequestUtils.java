@@ -1,8 +1,8 @@
 package ee.twentyten.util;
 
-import ee.twentyten.log.ELoggerLevel;
-import ee.twentyten.request.ERequestHeader;
-import ee.twentyten.request.ERequestMethod;
+import ee.twentyten.log.ELevel;
+import ee.twentyten.request.EHeader;
+import ee.twentyten.request.EMethod;
 import ee.twentyten.request.HttpsConnectionRequestImpl;
 import ee.twentyten.request.JsonConnectionRequestImpl;
 import java.io.BufferedReader;
@@ -40,9 +40,9 @@ public final class RequestUtils {
       String formattedResponse = MessageFormat.format("{0} {1} ({2})", responseCode,
           responseMessage, connectionUrl);
       LoggerUtils.log(formattedResponse,
-          responseCode / 100 != 2 ? ELoggerLevel.ERROR : ELoggerLevel.INFO);
+          responseCode / 100 != 2 ? ELevel.ERROR : ELevel.INFO);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to get HTTPS response", ioe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to get HTTPS response", ioe, ELevel.ERROR);
     }
     return connection;
   }
@@ -56,7 +56,7 @@ public final class RequestUtils {
       String formattedResponse = MessageFormat.format("{0} {1} ({2})", responseCode,
           responseMessage, connectionUrl);
       LoggerUtils.log(formattedResponse,
-          responseCode / 100 != 2 ? ELoggerLevel.ERROR : ELoggerLevel.INFO);
+          responseCode / 100 != 2 ? ELevel.ERROR : ELevel.INFO);
 
       try (InputStreamReader isr = new InputStreamReader(
           responseCode >= 400 ? connection.getErrorStream() : connection.getInputStream(),
@@ -69,7 +69,7 @@ public final class RequestUtils {
         jsonResponse = sb.toString();
       }
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to get HTTPS response", ioe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to get HTTPS response", ioe, ELevel.ERROR);
     }
 
     Objects.requireNonNull(jsonResponse, "jsonResponse == null!");
@@ -88,29 +88,29 @@ public final class RequestUtils {
       connection.setConnectTimeout(15000);
       connection.setReadTimeout(60000);
     } catch (GeneralSecurityException gse) {
-      LoggerUtils.log("Failed to create SSL context", gse, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to create SSL context", gse, ELevel.ERROR);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to open HTTPS connection", ioe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to open HTTPS connection", ioe, ELevel.ERROR);
     }
     return connection;
   }
 
-  public static HttpsURLConnection performHttpsRequest(URL url, ERequestMethod method,
-      ERequestHeader header) {
+  public static HttpsURLConnection performHttpsRequest(URL url, EMethod method,
+      EHeader header) {
     return RequestUtils.httpsRequest.perform(url, method, header);
   }
 
-  public static HttpsURLConnection performHttpsRequest(URL url, ERequestMethod method,
-      ERequestHeader header, Object data) {
+  public static HttpsURLConnection performHttpsRequest(URL url, EMethod method,
+      EHeader header, Object data) {
     return RequestUtils.httpsRequest.perform(url, method, header, data);
   }
 
-  public static JSONObject performJsonRequest(URL url, ERequestMethod method,
-      ERequestHeader header) {
+  public static JSONObject performJsonRequest(URL url, EMethod method,
+      EHeader header) {
     return RequestUtils.jsonRequest.perform(url, method, header);
   }
 
-  public static JSONObject performJsonRequest(URL url, ERequestMethod method, ERequestHeader header,
+  public static JSONObject performJsonRequest(URL url, EMethod method, EHeader header,
       Object data) {
     return RequestUtils.jsonRequest.perform(url, method, header, data);
   }
