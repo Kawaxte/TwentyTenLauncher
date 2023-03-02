@@ -1,6 +1,6 @@
 package net.minecraft.update.ui;
 
-import ee.twentyten.log.ELoggerLevel;
+import ee.twentyten.log.ELevel;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.FileUtils;
@@ -30,7 +30,7 @@ import javax.swing.JApplet;
 import javax.swing.Timer;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.update.MinecraftUpdaterImpl;
+import net.minecraft.update.GameUpdaterImpl;
 
 public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
 
@@ -39,13 +39,11 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
   private static MinecraftUpdaterApplet instance;
   public Map<String, String> parameters;
   public Applet minecraftApplet;
-  private MinecraftUpdaterImpl updater;
+  private GameUpdaterImpl updater;
   private boolean appletActive;
   private boolean isUpdateAvailable;
 
   {
-    this.updater = new MinecraftUpdaterImpl();
-
     this.parameters = new HashMap<>();
     this.minecraftApplet = null;
     this.appletActive = false;
@@ -68,7 +66,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
       System.setProperty("http.proxyPort", String.valueOf(proxyPort));
       System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
     }
-    this.updater = new MinecraftUpdaterImpl();
+    this.updater = new GameUpdaterImpl();
   }
 
   private void replace(Applet applet) {
@@ -111,7 +109,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     g2d.drawString(title, titleX, titleY);
   }
 
-  private void drawSubtaskMessageString(Graphics2D g2d, String title, int width, int height) {
+  private void drawTaskMessageString(Graphics2D g2d, String title, int width, int height) {
     g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
     g2d.setColor(Color.LIGHT_GRAY);
 
@@ -133,11 +131,11 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     g2d.fillRect(rectX, rectY, rectWidth + 1, rectHeight);
 
     g2d.setColor(Color.GREEN.darker().darker());
-    g2d.fillRect(rectX, rectY, (this.updater.getUpdatePercentage() * (rectWidth)) / 100,
+    g2d.fillRect(rectX, rectY, (this.updater.getPercentage() * (rectWidth)) / 100,
         rectHeight - 1);
 
     g2d.setColor(Color.GREEN.darker());
-    g2d.fillRect(rectX, rectY + 1, ((this.updater.getUpdatePercentage() * (rectWidth)) / 100) - 2,
+    g2d.fillRect(rectX, rectY + 1, ((this.updater.getPercentage() * (rectWidth)) / 100) - 2,
         rectHeight - 4);
   }
 
@@ -151,7 +149,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create document base URL", murle, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to create document base URL", murle, ELevel.ERROR);
     }
     return null;
   }
@@ -161,7 +159,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create code base URL", murle, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to create code base URL", murle, ELevel.ERROR);
     }
     return null;
   }
@@ -202,7 +200,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
       public void run() {
         MinecraftUpdaterApplet.this.updater.run();
         if (!MinecraftUpdaterApplet.this.updater.isFatalErrorOccurred()) {
-          Applet minecraftApplet = MinecraftUpdaterApplet.this.updater.createMinecraftAppletInstance();
+          Applet minecraftApplet = MinecraftUpdaterApplet.this.updater.loadMinecraftApplet();
           MinecraftUpdaterApplet.this.replace(minecraftApplet);
         }
       }
@@ -281,11 +279,11 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
       }
       this.drawTitleString(g2d, title, appletWidth, appletHeight);
 
-      String stateMessage = this.updater.getUpdateStateMessage();
+      String stateMessage = this.updater.getStateMessage();
       this.drawStateMessageString(g2d, stateMessage, appletWidth, appletHeight);
 
-      String subtaskMessage = this.updater.getUpdateTaskMessage();
-      this.drawSubtaskMessageString(g2d, subtaskMessage, appletWidth, appletHeight);
+      String taskMessage = this.updater.getTaskMessage();
+      this.drawTaskMessageString(g2d, taskMessage, appletWidth, appletHeight);
 
       if (!this.updater.isFatalErrorOccurred()) {
         this.drawPercentageRect(g2d, appletWidth, appletHeight);
