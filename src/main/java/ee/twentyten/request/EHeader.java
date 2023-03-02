@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ERequestHeader {
+public enum EHeader {
   X_WWW_FORM_URLENCODED {
     @Override
     public Map<String, String> setHeader() {
