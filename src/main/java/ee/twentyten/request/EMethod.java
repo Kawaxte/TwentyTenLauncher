@@ -1,16 +1,16 @@
 package ee.twentyten.request;
 
-public enum ERequestMethod {
+public enum EMethod {
   GET("GET"), POST("POST"), HEAD("HEAD");
 
   private final String method;
 
-  ERequestMethod(String method) {
+  EMethod(String method) {
     this.method = method;
   }
 
-  public static ERequestMethod getMethod(String method) {
-    for (ERequestMethod m : ERequestMethod.values()) {
+  public static EMethod getMethod(String method) {
+    for (EMethod m : EMethod.values()) {
       if (m.method.equals(method)) {
         return m;
       }
