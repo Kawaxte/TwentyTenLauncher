@@ -1,9 +1,9 @@
 package net.minecraft.update;
 
 import ee.twentyten.EPlatform;
-import ee.twentyten.log.ELoggerLevel;
-import ee.twentyten.request.ERequestHeader;
-import ee.twentyten.request.ERequestMethod;
+import ee.twentyten.log.ELevel;
+import ee.twentyten.request.EHeader;
+import ee.twentyten.request.EMethod;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LanguageUtils;
@@ -31,90 +31,34 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.net.ssl.HttpsURLConnection;
-import lombok.Getter;
 import net.minecraft.util.MinecraftUtils;
 
-public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
+public class GameUpdaterImpl extends GameUpdater implements Runnable {
 
-  private URL[] packageUrls;
-  @Getter
-  private String updateStateMessage;
-  @Getter
-  private String updateTaskMessage;
-  @Getter
-  private int updatePercentage;
-  @Getter
-  private boolean isFatalErrorOccurred;
-  private boolean isNativesLoaded;
-  private ClassLoader minecraftAppletLoader;
-
-  public Applet createMinecraftAppletInstance() {
+  public Applet loadMinecraftApplet() {
     try {
       return (Applet) this.minecraftAppletLoader.loadClass("net.minecraft.client.MinecraftApplet")
           .newInstance();
     } catch (InstantiationException ie) {
-      this.showFatalErrorMessage(MessageFormat.format(
+      this.setFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.instantation.class"),
           "MinecraftApplet"));
-      LoggerUtils.log("Failed to instantiate MinecraftApplet class", ie, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to instantiate MinecraftApplet class", ie, ELevel.ERROR);
     } catch (IllegalAccessException iae) {
-      this.showFatalErrorMessage(MessageFormat.format(
+      this.setFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.illegalAccess.class"),
           "MinecraftApplet"));
-      LoggerUtils.log("Failed to access MinecraftApplet class", iae, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to access MinecraftApplet class", iae, ELevel.ERROR);
     } catch (ClassNotFoundException cnfe) {
-      this.showFatalErrorMessage(MessageFormat.format(
+      this.setFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.classNotFound"),
           "MinecraftApplet"));
-      LoggerUtils.log("Failed to find MinecraftApplet class", cnfe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to find MinecraftApplet class", cnfe, ELevel.ERROR);
     }
     return null;
-  }
-
-  public void showFatalErrorMessage(String message) {
-    this.isFatalErrorOccurred = true;
-
-    this.updateStateMessage = MessageFormat.format(
-        LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.fatalErrorMessage"),
-        EState.getInstance().ordinal(), message);
-    this.updateTaskMessage = "";
-  }
-
-  private boolean isContentLengthAvailable(final URL url, String urlString) {
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-    Future<Integer> contentLengthFuture = executor.submit(new Callable<Integer>() {
-      @Override
-      public Integer call() {
-        return FileUtils.getContentLength(url);
-      }
-    });
-
-    try {
-      int contentLength = contentLengthFuture.get();
-      if (contentLength == -1) {
-        Throwable fnfe = new FileNotFoundException(MessageFormat.format(
-            LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
-            urlString));
-
-        this.showFatalErrorMessage(fnfe.getMessage());
-        LoggerUtils.log("Failed to check content length", fnfe, ELoggerLevel.ERROR);
-        return true;
-      }
-      return false;
-    } catch (InterruptedException | ExecutionException e) {
-      LoggerUtils.log("Failed to get content length", e, ELoggerLevel.ERROR);
-      return true;
-    } finally {
-      executor.shutdown();
-    }
   }
 
   private void unloadNativeLibraries() {
@@ -129,15 +73,15 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       Vector<?> libraries = (Vector<?>) declaredField.get(this.getClass().getClassLoader());
       libraries.clear();
     } catch (NoSuchFieldException nsfe) {
-      this.showFatalErrorMessage(MessageFormat.format(
+      this.setFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fieldNotFound"),
           "loadedLibraryNames"));
-      LoggerUtils.log("Failed to find loadedLibraryNames field", nsfe, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to find loadedLibraryNames field", nsfe, ELevel.ERROR);
     } catch (IllegalAccessException iae) {
-      this.showFatalErrorMessage(MessageFormat.format(
+      this.setFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.illegalAccess.field"),
           "loadedLibraryNames"));
-      LoggerUtils.log("Failed to access loadedLibraryNames field", iae, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to access loadedLibraryNames field", iae, ELevel.ERROR);
     }
   }
 
@@ -148,24 +92,16 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       File nativesDirectory = new File(directory, "natives");
       System.setProperty(libraryPath, nativesDirectory.getAbsolutePath());
       LoggerUtils.log(MessageFormat.format("{0}={1}", libraryPath, System.getProperty(libraryPath)),
-          ELoggerLevel.INFO);
+          ELevel.INFO);
     }
     this.isNativesLoaded = true;
   }
 
   @Override
-  public void initLoader() {
-    EState.setInstance(EState.INIT_STATE);
-    this.updateStateMessage = EState.INIT_STATE.getMessage();
-    this.updateTaskMessage = "";
-    this.updatePercentage = 0;
-  }
-
-  @Override
-  public void determinePackages() {
-    EState.setInstance(EState.DETERMINE_STATE);
-    this.updateStateMessage = EState.DETERMINE_STATE.getMessage();
-    this.updatePercentage = 5;
+  void determine() {
+    EState.setInstance(EState.DETERMINE_PACKAGE);
+    this.stateMessage = EState.DETERMINE_PACKAGE.getMessage();
+    this.percentage = 5;
 
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
@@ -198,89 +134,40 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
         default:
           throw new IllegalStateException(String.valueOf(platform));
       }
-      if (this.isContentLengthAvailable(lwjglNativesUrl,
-          FileUtils.getFileName(lwjglNativesUrl))) {
+      if (this.isContentLengthAvailable(lwjglNativesUrl, FileUtils.getFileName(lwjglNativesUrl))) {
         return;
       }
       MinecraftUtils.checkForLwjglNativeLibraryFiles(platform, packageUrls, lwjglNativesUrl);
 
       URL minecraftJarUrl = new URL(MessageFormat.format("{0}/{1}", MinecraftUtils.minecraftJarUrl,
           MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion())));
-      if (this.isContentLengthAvailable(minecraftJarUrl,
-          FileUtils.getFileName(minecraftJarUrl))) {
+      if (this.isContentLengthAvailable(minecraftJarUrl, FileUtils.getFileName(minecraftJarUrl))) {
         return;
       }
       MinecraftUtils.checkForMinecraftJarFile(packageUrls, minecraftJarUrl);
 
-      this.packageUrls = packageUrls.toArray(new URL[0]);
-      LoggerUtils.log(Arrays.toString(this.packageUrls), ELoggerLevel.INFO);
+      this.urls = packageUrls.toArray(new URL[0]);
+      LoggerUtils.log(Arrays.toString(this.urls), ELevel.INFO);
     } catch (MalformedURLException murle) {
-      this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
+      this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
           "mui.exception.io.package.determineFailed"));
-      LoggerUtils.log("Failed to determine package URLs", murle, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to determine package URLs", murle, ELevel.ERROR);
     }
   }
 
   @Override
-  public int retrievePackages(int[] sizes, int size) {
-    EState.setInstance(EState.RETRIEVE_STATE);
-    this.updateStateMessage = EState.RETRIEVE_STATE.getMessage();
+  void download() {
+    EState.setInstance(EState.DOWNLOAD_PACKAGE);
+    this.stateMessage = EState.DOWNLOAD_PACKAGE.getMessage();
+    this.percentage = 10;
 
-    List<Callable<Integer>> retrieveTasks = new ArrayList<>();
-
-    final HttpsURLConnection[] connection = {null};
-    for (final URL fileUrl : this.packageUrls) {
-      retrieveTasks.add(new Callable<Integer>() {
-        @Override
-        public Integer call() {
-          connection[0] = RequestUtils.performHttpsRequest(fileUrl, ERequestMethod.HEAD,
-              ERequestHeader.NO_CACHE);
-          Objects.requireNonNull(connection[0], "connection == null!");
-          try {
-            return connection[0].getContentLength();
-          } finally {
-            connection[0].disconnect();
-          }
-        }
-      });
-    }
-
-    ExecutorService retrieveService = Executors.newFixedThreadPool(this.packageUrls.length);
-    try {
-      List<Future<Integer>> retrieveFutures = retrieveService.invokeAll(retrieveTasks);
-      for (int i = 0; i < retrieveFutures.size(); i++) {
-        Future<Integer> retrieveFuture = retrieveFutures.get(i);
-
-        int fileSize = retrieveFuture.get();
-        sizes[i] = fileSize;
-        size += fileSize;
-        this.updatePercentage = 5 + (((i + 1) * 5) / this.packageUrls.length);
-      }
-    } catch (ExecutionException ee) {
-      this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "mui.exception.io.package.retrieveFailed"));
-      LoggerUtils.log("Failed to retrieve package sizes", ee, ELoggerLevel.ERROR);
-    } catch (InterruptedException ie) {
-      LoggerUtils.log("Interrupted while retrieving package sizes", ie, ELoggerLevel.ERROR);
-    } finally {
-      retrieveService.shutdown();
-    }
-    return size;
-  }
-
-  @Override
-  public void downloadPackages() {
-    int[] fileSizes = new int[this.packageUrls.length];
-    int currentFileSize = 0;
-    int totalFileSize = this.retrievePackages(fileSizes, currentFileSize);
-
-    EState.setInstance(EState.DOWNLOAD_STATE);
-    this.updateStateMessage = EState.DOWNLOAD_STATE.getMessage();
-    this.updatePercentage = 10;
-    for (URL fileUrl : this.packageUrls) {
+    int[] fileSizes = new int[this.urls.length];
+    int currentDownloadSize = 0;
+    int totalDownloadSize = this.getTotalDownloadSize(fileSizes, currentDownloadSize);
+    for (URL fileUrl : this.urls) {
       File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
       if (!binDirectory.mkdirs() && !binDirectory.exists()) {
-        LoggerUtils.log("Failed to create bin directory", ELoggerLevel.ERROR);
+        LoggerUtils.log("Failed to create bin directory", ELevel.ERROR);
         return;
       }
 
@@ -290,64 +177,62 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
         File versionDirectory = new File(VersionUtils.versionsDirectory,
             ConfigUtils.getInstance().getSelectedVersion());
         if (!versionDirectory.mkdirs() && !versionDirectory.exists()) {
-          LoggerUtils.log("Failed to create version directory", ELoggerLevel.ERROR);
+          LoggerUtils.log("Failed to create version directory", ELevel.ERROR);
           return;
         }
         packageFile = new File(versionDirectory, packageFile.getName());
       }
 
-      HttpsURLConnection connection = RequestUtils.performHttpsRequest(fileUrl, ERequestMethod.GET,
-          ERequestHeader.NO_CACHE);
+      HttpsURLConnection connection = RequestUtils.performHttpsRequest(fileUrl, EMethod.GET,
+          EHeader.NO_CACHE);
       Objects.requireNonNull(connection, "connection == null!");
       try (InputStream is = connection.getInputStream(); FileOutputStream fos = new FileOutputStream(
           packageFile)) {
         int bufferSize;
-        int downloadedFileSize = 0;
+        int downloadedSize = 0;
         byte[] buffer = new byte[65536];
         long downloadStartTime = System.currentTimeMillis();
         String downloadSpeedMessage = "";
         while ((bufferSize = is.read(buffer, 0, buffer.length)) != -1) {
           fos.write(buffer, 0, bufferSize);
 
-          currentFileSize += bufferSize;
-          this.updateTaskMessage = MessageFormat.format(
+          currentDownloadSize += bufferSize;
+          this.taskMessage = MessageFormat.format(
               LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.subtaskDownload"),
-              FileUtils.getFileName(fileUrl), (currentFileSize * 100) / totalFileSize);
-          this.updatePercentage = 10 + ((currentFileSize * 45) / totalFileSize);
+              FileUtils.getFileName(fileUrl), (currentDownloadSize * 100) / totalDownloadSize);
+          this.percentage = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
 
-          downloadedFileSize += bufferSize;
+          downloadedSize += bufferSize;
           long downloadElapsedTime = System.currentTimeMillis() - downloadStartTime;
           if (downloadElapsedTime >= 1000L) {
-            double downloadSpeed = downloadedFileSize / (double) downloadElapsedTime;
+            double downloadSpeed = downloadedSize / (double) downloadElapsedTime;
             downloadSpeed = (downloadSpeed * 100.0d) / 100.0d;
             downloadSpeedMessage = MessageFormat.format(" @ {0,number,#.##} KB/sec", downloadSpeed);
 
-            downloadedFileSize = 0;
+            downloadedSize = 0;
             downloadStartTime += 1000L;
           }
-          this.updateTaskMessage = this.updateTaskMessage.concat(downloadSpeedMessage);
+          this.taskMessage = this.taskMessage.concat(downloadSpeedMessage);
         }
       } catch (FileNotFoundException fnfe) {
-        this.showFatalErrorMessage(MessageFormat.format(
+        this.setFatalErrorMessage(MessageFormat.format(
             LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             packageFile.getName()));
-        LoggerUtils.log("Failed to find package file", fnfe, ELoggerLevel.ERROR);
+        LoggerUtils.log("Failed to find package file", fnfe, ELevel.ERROR);
       } catch (IOException ioe) {
-        this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
+        this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
             "mui.exception.io.package.downloadFailed"));
-        LoggerUtils.log("Failed to download package files", ioe, ELoggerLevel.ERROR);
-      } finally {
-        connection.disconnect();
+        LoggerUtils.log("Failed to download package files", ioe, ELevel.ERROR);
       }
     }
-    this.updateTaskMessage = "";
+    this.taskMessage = "";
   }
 
   @Override
-  public void extractDownloadedPackages() {
-    EState.setInstance(EState.EXTRACT_STATE);
-    this.updateStateMessage = EState.EXTRACT_STATE.getMessage();
-    this.updatePercentage = 60;
+  void extract() {
+    EState.setInstance(EState.EXTRACT_PACKAGE);
+    this.stateMessage = EState.EXTRACT_PACKAGE.getMessage();
+    this.percentage = 60;
 
     File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
     File[] archiveFiles = binDirectory.listFiles(new FilenameFilter() {
@@ -358,8 +243,8 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     });
     Objects.requireNonNull(archiveFiles, "packageFiles == null!");
 
-    int currentArchiveSize = 0;
-    int totalArchiveSize = 0;
+    int currentExtractSize = 0;
+    int totalExtractSuze = 0;
     for (File archiveFile : archiveFiles) {
       try (ZipFile zipFile = new ZipFile(archiveFile)) {
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -368,11 +253,11 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
           if (entry.isDirectory()) {
             continue;
           }
-          totalArchiveSize += entry.getSize();
+          totalExtractSuze += entry.getSize();
 
           File nativesDirectory = new File(binDirectory, "natives");
           if (!nativesDirectory.mkdirs() && !nativesDirectory.exists()) {
-            LoggerUtils.log("Failed to create natives directory", ELoggerLevel.ERROR);
+            LoggerUtils.log("Failed to create natives directory", ELevel.ERROR);
             return;
           }
           File nativeFile = new File(nativesDirectory, entry.getName());
@@ -383,37 +268,37 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
             while ((bufferSize = is.read(buffer, 0, buffer.length)) != -1) {
               fos.write(buffer, 0, bufferSize);
 
-              currentArchiveSize += bufferSize;
-              this.updateTaskMessage = MessageFormat.format(
+              currentExtractSize += bufferSize;
+              this.taskMessage = MessageFormat.format(
                   LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.subtaskExtract"),
-                  archiveFile.getName(), (currentArchiveSize * 100) / totalArchiveSize);
-              this.updatePercentage = 60 + ((currentArchiveSize * 20) / totalArchiveSize);
+                  archiveFile.getName(), (currentExtractSize * 100) / totalExtractSuze);
+              this.percentage = 60 + ((currentExtractSize * 20) / totalExtractSuze);
             }
           }
         }
       } catch (FileNotFoundException fnfe) {
-        this.showFatalErrorMessage(MessageFormat.format(
+        this.setFatalErrorMessage(MessageFormat.format(
             LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             archiveFile.getName()));
-        LoggerUtils.log("Failed to find package file", fnfe, ELoggerLevel.ERROR);
+        LoggerUtils.log("Failed to find package file", fnfe, ELevel.ERROR);
       } catch (IOException ioe) {
-        this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
+        this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
             "mui.exception.io.package.extractFailed"));
-        LoggerUtils.log("Failed to extract package files", ioe, ELoggerLevel.ERROR);
+        LoggerUtils.log("Failed to extract package files", ioe, ELevel.ERROR);
       } finally {
         if (!archiveFile.delete()) {
-          LoggerUtils.log("Failed to delete package file", ELoggerLevel.ERROR);
+          LoggerUtils.log("Failed to delete package file", ELevel.ERROR);
         }
       }
     }
-    this.updateTaskMessage = "";
+    this.taskMessage = "";
   }
 
   @Override
-  public void updateClasspath() {
-    EState.setInstance(EState.UPDATE_STATE);
-    this.updateStateMessage = EState.UPDATE_STATE.getMessage();
-    this.updatePercentage = 85;
+  void update() {
+    EState.setInstance(EState.UPDATE_CLASSPATH);
+    this.stateMessage = EState.UPDATE_CLASSPATH.getMessage();
+    this.percentage = 85;
 
     File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
     File[] jarFiles = binDirectory.listFiles(new FilenameFilter() {
@@ -436,12 +321,12 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
           MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion()));
       jarUrls[jarFiles.length] = minecraftJarFile.toURI().toURL();
 
-      this.updatePercentage = 85 + ((jarUrls.length * 5) / jarUrls.length);
-      LoggerUtils.log(Arrays.toString(jarUrls), ELoggerLevel.INFO);
+      this.percentage = 85 + ((jarUrls.length * 5) / jarUrls.length);
+      LoggerUtils.log(Arrays.toString(jarUrls), ELevel.INFO);
     } catch (MalformedURLException murle) {
-      this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
+      this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
           "mui.exception.io.classpath.updateFailed"));
-      LoggerUtils.log("Failed to update classpath", murle, ELoggerLevel.ERROR);
+      LoggerUtils.log("Failed to update classpath", murle, ELevel.ERROR);
       return;
     }
 
@@ -465,27 +350,32 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
   @Override
   public void run() {
-    this.initLoader();
+    EState.setInstance(EState.INIT);
+    this.stateMessage = EState.INIT.getMessage();
+    this.taskMessage = "";
+    this.percentage = 0;
 
-    EState.setInstance(EState.CACHE_STATE);
-    this.updateStateMessage = EState.CACHE_STATE.getMessage();
     try {
-      boolean isCached = MinecraftUtils.isMinecraftCached();
-      this.updatePercentage = 5;
-      if (!isCached) {
-        this.determinePackages();
-        this.downloadPackages();
-        this.extractDownloadedPackages();
+      EState.setInstance(EState.CHECK_CACHE);
+      this.stateMessage = EState.CHECK_CACHE.getMessage();
+      this.percentage = 5;
+
+      if (!MinecraftUtils.isGameCached()) {
+        this.determine();
+        this.download();
+        this.extract();
       }
-      this.updateClasspath();
+      this.update();
     } catch (Throwable t) {
-      this.showFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "mui.exception.t.minecraft.updateFailed"));
-      LoggerUtils.log("Failed to update Minecraft", t, ELoggerLevel.ERROR);
+      this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
+          "mui.throwable.minecraft.updateFailed"));
+      LoggerUtils.log("Failed to update Minecraft", t, ELevel.ERROR);
     } finally {
-      EState.setInstance(EState.DONE_STATE);
-      this.updateStateMessage = EState.DONE_STATE.getMessage();
-      this.updatePercentage = 95;
+      if (!this.isFatalErrorOccurred()) {
+        EState.setInstance(EState.DONE);
+        this.stateMessage = EState.DONE.getMessage();
+        this.percentage = 95;
+      }
     }
   }
 }
