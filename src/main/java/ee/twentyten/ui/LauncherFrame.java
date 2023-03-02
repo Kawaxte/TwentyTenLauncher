@@ -38,7 +38,7 @@ public class LauncherFrame extends JFrame {
 
   public static void main(String... args) {
     LookAndFeelUtils.setLookAndFeel();
-    SystemUtils.setLauncherVersion(1, 1, 3, 23, 1, true);
+    SystemUtils.setLauncherVersion(1, 2, 3, 23, 1, true);
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override
