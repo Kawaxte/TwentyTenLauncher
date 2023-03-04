@@ -6,6 +6,7 @@ import ee.twentyten.custom.ui.CustomJPanel;
 import ee.twentyten.custom.ui.TransparentPanelUI;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.RequestUtils;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -17,12 +18,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import lombok.Getter;
 import lombok.Setter;
 
+
+@Getter
 public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionListener {
 
   @Getter
@@ -33,6 +37,8 @@ public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionL
   private final JProgressBar expiresInProgressBar;
   private final TransparentJButton openBrowserButton;
   private final TransparentJButton cancelButton;
+  @Setter
+  private URL verificationUri;
 
   {
     this.copyUserCodeLabel = new JLabel("lmlp.label.copyUserCodeLabel", JLabel.CENTER);
@@ -52,7 +58,9 @@ public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionL
 
       @Override
       public void mousePressed(MouseEvent event) {
-        LauncherMicrosoftLoginPanel.this.openBrowserButton.setEnabled(true);
+        if (!LauncherMicrosoftLoginPanel.this.openBrowserButton.isEnabled()) {
+          LauncherMicrosoftLoginPanel.this.openBrowserButton.setEnabled(true);
+        }
       }
 
       @Override
@@ -77,6 +85,15 @@ public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionL
     this.setTextToComponents(LanguageUtils.getBundle());
   }
 
+  public LauncherMicrosoftLoginPanel(String userCode, String verificationUri, int expiresIn) {
+    this();
+    this.userCodeLabel.setText(userCode);
+    this.verificationUri = RequestUtils.createURL(verificationUri);
+    this.expiresInProgressBar.setMinimum(0);
+    this.expiresInProgressBar.setMaximum(expiresIn);
+    this.expiresInProgressBar.setValue(expiresIn);
+  }
+
   public void setTextToComponents(UTF8ResourceBundle bundle) {
     LanguageUtils.setTextToComponent(bundle, this.copyUserCodeLabel,
         "lmlp.label.copyUserCodeLabel");
@@ -86,8 +103,7 @@ public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionL
   }
 
   private void buildTopPanel() {
-    Font userCodeFont = new Font(Font.SANS_SERIF, Font.BOLD, 24);
-    this.userCodeLabel.setFont(userCodeFont);
+    this.userCodeLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 24));
 
     JPanel topPanel = new JPanel(new BorderLayout(), true);
     topPanel.setUI(new TransparentPanelUI());
@@ -116,7 +132,10 @@ public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionL
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
-    if (source == this.cancelButton) {
+    if (source.equals(this.openBrowserButton)) {
+      LauncherUtils.browseDesktop(this.verificationUri);
+    }
+    if (source.equals(this.cancelButton)) {
       LauncherUtils.addPanel(LauncherPanel.getInstance(), new LauncherPanel());
     }
   }
