@@ -41,7 +41,7 @@ abstract class GameUpdater {
         @Override
         public Integer call() {
           connection[0] = RequestUtils.performHttpsRequest(fileUrl, EMethod.HEAD,
-              EHeader.NO_CACHE);
+              EHeader.NO_CACHE.getHeader());
           Objects.requireNonNull(connection[0], "connection == null!");
           try {
             return connection[0].getContentLength();
@@ -65,10 +65,11 @@ abstract class GameUpdater {
       }
     } catch (ExecutionException ee) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "mui.exception.io.package.retrieveFailed"));
-      LoggerUtils.log("Failed to retrieve package sizes", ee, ELevel.ERROR);
+          "gui.exception.io.package.retrieveFailed"));
+      LoggerUtils.logMessage("Failed to retrieve package sizes", ee, ELevel.ERROR);
     } catch (InterruptedException ie) {
-      LoggerUtils.log("Interrupted while retrieving package sizes", ie, ELevel.ERROR);
+      Thread.currentThread().interrupt();
+      LoggerUtils.logMessage("Interrupted while retrieving package sizes", ie, ELevel.ERROR);
     } finally {
       retrieveService.shutdown();
     }
@@ -79,7 +80,7 @@ abstract class GameUpdater {
     this.isFatalErrorOccurred = true;
 
     this.stateMessage = MessageFormat.format(
-        LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.fatalErrorMessage"),
+        LanguageUtils.getString(LanguageUtils.getBundle(), "gui.string.fatalErrorMessage"),
         EState.getInstance().ordinal(), message);
     this.taskMessage = "";
   }
@@ -97,27 +98,33 @@ abstract class GameUpdater {
       int contentLength = contentLengthFuture.get();
       if (contentLength == -1) {
         Throwable fnfe = new FileNotFoundException(MessageFormat.format(
-            LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fileNotFound"),
             urlString));
 
         this.setFatalErrorMessage(fnfe.getMessage());
-        LoggerUtils.log("Failed to check content length", fnfe, ELevel.ERROR);
+        LoggerUtils.logMessage("Failed to check content length", fnfe, ELevel.ERROR);
         return true;
       }
       return false;
-    } catch (InterruptedException | ExecutionException e) {
-      LoggerUtils.log("Failed to get content length", e, ELevel.ERROR);
+    } catch (ExecutionException ee) {
+      this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
+          "gui.exception.io.package.retrieveFailed"));
+      LoggerUtils.logMessage("Failed to check content length", ee, ELevel.ERROR);
+      return true;
+    } catch (InterruptedException ie) {
+      Thread.currentThread().interrupt();
+      LoggerUtils.logMessage("Interrupted while checking content length", ie, ELevel.ERROR);
       return true;
     } finally {
       executor.shutdown();
     }
   }
 
-  abstract void determine();
+  abstract void determinePackage();
 
-  abstract void download();
+  abstract void downloadPackage();
 
-  abstract void extract();
+  abstract void extractPackage();
 
-  abstract void update();
+  abstract void updateClasspath();
 }
