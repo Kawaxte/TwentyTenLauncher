@@ -1,5 +1,6 @@
 package ee.twentyten.ui.launcher;
 
+import com.microsoft.util.MicrosoftUtils;
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.custom.component.TransparentJButton;
 import ee.twentyten.util.FileUtils;
@@ -33,13 +34,9 @@ public class LauncherPanel extends JPanel implements ActionListener {
   @Getter
   private final TransparentJButton microsoftLoginButton;
   private final LauncherLoginPanel loginPanel;
-  private final LauncherMicrosoftLoginPanel microsoftLoginPanel;
-  private final LauncherNoNetworkPanel noNetworkPanel;
 
   {
     this.loginPanel = new LauncherLoginPanel();
-    this.microsoftLoginPanel = new LauncherMicrosoftLoginPanel();
-    this.noNetworkPanel = new LauncherNoNetworkPanel();
 
     this.microsoftLoginButton = new TransparentJButton(
         LanguageUtils.getString("lp.button.microsoftLoginButton"));
@@ -137,12 +134,12 @@ public class LauncherPanel extends JPanel implements ActionListener {
     Object source = event.getSource();
     if (source == this.microsoftLoginButton) {
       if (LauncherUtils.isLauncherOutdated()) {
-        LauncherUtils.addPanelWithErrorMessage(this, this.noNetworkPanel,
-            LanguageUtils.getString(LanguageUtils.getBundle(),
+        LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
+            new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
         return;
       }
-      LauncherUtils.addPanel(this, this.microsoftLoginPanel);
+      MicrosoftUtils.authenticateWithMicrosoft();
     }
   }
 }
