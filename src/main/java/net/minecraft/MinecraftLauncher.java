@@ -5,7 +5,7 @@ import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LauncherUtils;
 import java.text.MessageFormat;
-import net.minecraft.update.ui.MinecraftUpdaterApplet;
+import net.minecraft.update.ui.GameUpdaterApplet;
 
 public class MinecraftLauncher {
 
@@ -26,25 +26,25 @@ public class MinecraftLauncher {
   }
 
   public void launch() {
-    MinecraftUpdaterApplet updaterApplet = new MinecraftUpdaterApplet();
+    GameUpdaterApplet updaterApplet = new GameUpdaterApplet();
     updaterApplet.parameters.put("username", "Player");
     this.initAndStart(updaterApplet);
   }
 
   public void launch(String username, String sessionId) {
-    MinecraftUpdaterApplet updaterApplet = new MinecraftUpdaterApplet();
+    GameUpdaterApplet updaterApplet = new GameUpdaterApplet();
     updaterApplet.parameters.put("username", username);
     updaterApplet.parameters.put("sessionid", sessionId);
     this.initAndStart(updaterApplet);
   }
 
-  private void initAndStart(MinecraftUpdaterApplet mua) {
-    mua.init();
+  private void initAndStart(GameUpdaterApplet gua) {
+    gua.init();
 
     LauncherUtils.setContentPaneToContainer(LauncherPanel.getInstance(),
-        LauncherFrame.getInstance(), mua);
+        LauncherFrame.getInstance(), gua);
 
-    mua.start();
+    gua.start();
     LauncherFrame.getInstance().setTitle(this.formatTitle());
   }
 }
