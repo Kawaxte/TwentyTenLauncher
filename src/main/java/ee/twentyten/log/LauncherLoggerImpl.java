@@ -19,7 +19,7 @@ public class LauncherLoggerImpl extends LauncherLogger {
   }
 
   @Override
-  public void logGame() {
+  public void log() {
     try {
       PrintStream ps = new PrintStream(new FileOutputStream(this.getGameLogFile(), true));
       System.setOut(ps);
