@@ -33,8 +33,7 @@ With this launcher, you can sign in with your Mojang or Microsoft account and ch
 languages and legacy versions of Minecraft to play. The launcher is designed to give you an
 authentic experience of playing the game as it was in the past.
 
-> Please note that this application needs at least Java 7 or a newer version to be installed on your
-> computer to work properly.
+> Please note that this application needs at least Java 7 or a newer version to run.
 
 <h2 align="center">Managing Issues and Contributions</h2>
 <p align="center">
