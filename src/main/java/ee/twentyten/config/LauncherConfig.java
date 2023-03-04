@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 abstract class LauncherConfig {
 
-  /* GENERAL */
+  // General
   String selectedLanguage;
   boolean isShowBetaVersionsSelected;
   boolean isShowAlphaVersionsSelected;
@@ -23,21 +23,22 @@ abstract class LauncherConfig {
   String selectedVersion;
   String clientToken;
 
-  /* YGGDRASIL AUTHENTICATION */
+  // Yggdrasil Authentication
   String yggdrasilUsername;
   String yggdrasilPassword;
   boolean isYggdrasilPasswordSaved;
   String yggdrasilAccessToken;
-  String yggdrasilProfileId;
   String yggdrasilProfileName;
-
-  /* MICROSOFT AUTHENTICATION */
-  String microsoftAccessToken;
-  int microsoftAccessTokenExpiresIn;
-  String microsoftRefreshToken;
-  String microsoftProfileId;
-  String microsoftProfileName;
+  String yggdrasilProfileId;
   String yggdrasilSessionId;
+
+  // Microsoft Authentication
+  String microsoftAccessToken;
+  long microsoftAccessTokenExpiresIn;
+  String microsoftRefreshToken;
+  long microsoftRefreshTokenExpiresIn;
+  String microsoftProfileName;
+  String microsoftProfileId;
   String microsoftSessionId;
 
   File getConfigFile() {
@@ -49,7 +50,7 @@ abstract class LauncherConfig {
           throw new IOException("Failed to create config file");
         }
       } catch (IOException ioe) {
-        LoggerUtils.log(ioe.getMessage(), ioe, ELevel.ERROR);
+        LoggerUtils.logMessage(ioe.getMessage(), ioe, ELevel.ERROR);
       }
     }
     return configFile;
@@ -73,19 +74,25 @@ abstract class LauncherConfig {
     this.isYggdrasilPasswordSaved = Boolean.parseBoolean(
         clp.getProperty("isYggdrasilPasswordSaved", "false"));
     this.yggdrasilAccessToken = clp.getProperty("yggdrasilAccessToken", null);
-    this.yggdrasilProfileId = clp.getProperty("yggdrasilProfileId", null);
     this.yggdrasilProfileName = clp.getProperty("yggdrasilProfileName", null);
-    this.yggdrasilSessionId = clp.getProperty("yggdrasilSessionId");
+    this.yggdrasilProfileId = clp.getProperty("yggdrasilProfileId", null);
+    this.yggdrasilSessionId = clp.getProperty("yggdrasilSessionId",
+        ConfigUtils.formatSessionId(this.clientToken, this.yggdrasilAccessToken,
+            this.yggdrasilProfileId));
   }
 
   void getMicrosoftProperties(LinkedProperties clp) {
     this.microsoftAccessToken = clp.getProperty("microsoftAccessToken", null);
-    this.microsoftAccessTokenExpiresIn = Integer.parseInt(
-        clp.getProperty("microsoftAccessTokenExpiresIn", Integer.toString(0)));
+    this.microsoftAccessTokenExpiresIn = Long.parseLong(
+        clp.getProperty("microsoftAccessTokenExpiresIn", String.valueOf(-1)));
     this.microsoftRefreshToken = clp.getProperty("microsoftRefreshToken", null);
-    this.microsoftProfileId = clp.getProperty("microsoftProfileId", null);
+    this.microsoftRefreshTokenExpiresIn = Long.parseLong(
+        clp.getProperty("microsoftRefreshTokenExpiresIn", String.valueOf(-1)));
     this.microsoftProfileName = clp.getProperty("microsoftProfileName", null);
-    this.microsoftSessionId = clp.getProperty("microsoftSessionId");
+    this.microsoftProfileId = clp.getProperty("microsoftProfileId", null);
+    this.microsoftSessionId = clp.getProperty("microsoftSessionId",
+        ConfigUtils.formatSessionId(this.clientToken, this.yggdrasilAccessToken,
+            this.yggdrasilProfileId));
   }
 
   void setGeneralProperties(LinkedProperties clp) {
@@ -115,8 +122,10 @@ abstract class LauncherConfig {
   void setMicrosoftProperties(LinkedProperties clp) {
     clp.setProperty("microsoftAccessToken", this.microsoftAccessToken);
     clp.setProperty("microsoftAccessTokenExpiresIn",
-        Integer.toString(this.microsoftAccessTokenExpiresIn));
+        Long.toString(this.microsoftAccessTokenExpiresIn));
     clp.setProperty("microsoftRefreshToken", this.microsoftRefreshToken);
+    clp.setProperty("microsoftRefreshTokenExpiresIn",
+        Long.toString(this.microsoftRefreshTokenExpiresIn));
     clp.setProperty("microsoftProfileId", this.microsoftProfileId);
     clp.setProperty("microsoftProfileName", this.microsoftProfileName);
     clp.setProperty("microsoftSessionId",
@@ -124,7 +133,7 @@ abstract class LauncherConfig {
             this.microsoftProfileId));
   }
 
-  public abstract void load();
+  public abstract void read();
 
-  public abstract void save();
+  public abstract void write();
 }
