@@ -44,19 +44,19 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
           .newInstance();
     } catch (InstantiationException ie) {
       this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.instantation.class"),
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.instantation.class"),
           "MinecraftApplet"));
-      LoggerUtils.log("Failed to instantiate MinecraftApplet class", ie, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to instantiate MinecraftApplet class", ie, ELevel.ERROR);
     } catch (IllegalAccessException iae) {
       this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.illegalAccess.class"),
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.illegalAccess.class"),
           "MinecraftApplet"));
-      LoggerUtils.log("Failed to access MinecraftApplet class", iae, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to access MinecraftApplet class", iae, ELevel.ERROR);
     } catch (ClassNotFoundException cnfe) {
       this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.classNotFound"),
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.classNotFound"),
           "MinecraftApplet"));
-      LoggerUtils.log("Failed to find MinecraftApplet class", cnfe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to find MinecraftApplet class", cnfe, ELevel.ERROR);
     }
     return null;
   }
@@ -74,14 +74,14 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       libraries.clear();
     } catch (NoSuchFieldException nsfe) {
       this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fieldNotFound"),
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fieldNotFound"),
           "loadedLibraryNames"));
-      LoggerUtils.log("Failed to find loadedLibraryNames field", nsfe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to find loadedLibraryNames field", nsfe, ELevel.ERROR);
     } catch (IllegalAccessException iae) {
       this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.illegalAccess.field"),
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.illegalAccess.field"),
           "loadedLibraryNames"));
-      LoggerUtils.log("Failed to access loadedLibraryNames field", iae, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to access loadedLibraryNames field", iae, ELevel.ERROR);
     }
   }
 
@@ -91,14 +91,15 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
     for (String libraryPath : libraryPaths) {
       File nativesDirectory = new File(directory, "natives");
       System.setProperty(libraryPath, nativesDirectory.getAbsolutePath());
-      LoggerUtils.log(MessageFormat.format("{0}={1}", libraryPath, System.getProperty(libraryPath)),
+      LoggerUtils.logMessage(
+          MessageFormat.format("{0}={1}", libraryPath, System.getProperty(libraryPath)),
           ELevel.INFO);
     }
     this.isNativesLoaded = true;
   }
 
   @Override
-  void determine() {
+  void determinePackage() {
     EState.setInstance(EState.DETERMINE_PACKAGE);
     this.stateMessage = EState.DETERMINE_PACKAGE.getMessage();
     this.percentage = 5;
@@ -147,16 +148,16 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       MinecraftUtils.checkForMinecraftJarFile(packageUrls, minecraftJarUrl);
 
       this.urls = packageUrls.toArray(new URL[0]);
-      LoggerUtils.log(Arrays.toString(this.urls), ELevel.INFO);
+      LoggerUtils.logMessage(Arrays.toString(this.urls), ELevel.INFO);
     } catch (MalformedURLException murle) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "mui.exception.io.package.determineFailed"));
-      LoggerUtils.log("Failed to determine package URLs", murle, ELevel.ERROR);
+          "gui.exception.io.package.determineFailed"));
+      LoggerUtils.logMessage("Failed to determine package URLs", murle, ELevel.ERROR);
     }
   }
 
   @Override
-  void download() {
+  void downloadPackage() {
     EState.setInstance(EState.DOWNLOAD_PACKAGE);
     this.stateMessage = EState.DOWNLOAD_PACKAGE.getMessage();
     this.percentage = 10;
@@ -167,7 +168,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
     for (URL fileUrl : this.urls) {
       File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
       if (!binDirectory.mkdirs() && !binDirectory.exists()) {
-        LoggerUtils.log("Failed to create bin directory", ELevel.ERROR);
+        LoggerUtils.logMessage("Failed to create bin directory", ELevel.ERROR);
         return;
       }
 
@@ -177,14 +178,14 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         File versionDirectory = new File(VersionUtils.versionsDirectory,
             ConfigUtils.getInstance().getSelectedVersion());
         if (!versionDirectory.mkdirs() && !versionDirectory.exists()) {
-          LoggerUtils.log("Failed to create version directory", ELevel.ERROR);
+          LoggerUtils.logMessage("Failed to create version directory", ELevel.ERROR);
           return;
         }
         packageFile = new File(versionDirectory, packageFile.getName());
       }
 
       HttpsURLConnection connection = RequestUtils.performHttpsRequest(fileUrl, EMethod.GET,
-          EHeader.NO_CACHE);
+          EHeader.NO_CACHE.getHeader());
       Objects.requireNonNull(connection, "connection == null!");
       try (InputStream is = connection.getInputStream(); FileOutputStream fos = new FileOutputStream(
           packageFile)) {
@@ -198,7 +199,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
 
           currentDownloadSize += bufferSize;
           this.taskMessage = MessageFormat.format(
-              LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.subtaskDownload"),
+              LanguageUtils.getString(LanguageUtils.getBundle(), "gui.string.downloadTask"),
               FileUtils.getFileName(fileUrl), (currentDownloadSize * 100) / totalDownloadSize);
           this.percentage = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
 
@@ -216,20 +217,20 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         }
       } catch (FileNotFoundException fnfe) {
         this.setFatalErrorMessage(MessageFormat.format(
-            LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fileNotFound"),
             packageFile.getName()));
-        LoggerUtils.log("Failed to find package file", fnfe, ELevel.ERROR);
+        LoggerUtils.logMessage("Failed to find package file", fnfe, ELevel.ERROR);
       } catch (IOException ioe) {
         this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-            "mui.exception.io.package.downloadFailed"));
-        LoggerUtils.log("Failed to download package files", ioe, ELevel.ERROR);
+            "gui.exception.io.package.downloadFailed"));
+        LoggerUtils.logMessage("Failed to download package files", ioe, ELevel.ERROR);
       }
     }
     this.taskMessage = "";
   }
 
   @Override
-  void extract() {
+  void extractPackage() {
     EState.setInstance(EState.EXTRACT_PACKAGE);
     this.stateMessage = EState.EXTRACT_PACKAGE.getMessage();
     this.percentage = 60;
@@ -257,7 +258,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
 
           File nativesDirectory = new File(binDirectory, "natives");
           if (!nativesDirectory.mkdirs() && !nativesDirectory.exists()) {
-            LoggerUtils.log("Failed to create natives directory", ELevel.ERROR);
+            LoggerUtils.logMessage("Failed to create natives directory", ELevel.ERROR);
             return;
           }
           File nativeFile = new File(nativesDirectory, entry.getName());
@@ -270,7 +271,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
 
               currentExtractSize += bufferSize;
               this.taskMessage = MessageFormat.format(
-                  LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.subtaskExtract"),
+                  LanguageUtils.getString(LanguageUtils.getBundle(), "gui.string.extractTask"),
                   archiveFile.getName(), (currentExtractSize * 100) / totalExtractSuze);
               this.percentage = 60 + ((currentExtractSize * 20) / totalExtractSuze);
             }
@@ -278,16 +279,16 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         }
       } catch (FileNotFoundException fnfe) {
         this.setFatalErrorMessage(MessageFormat.format(
-            LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fileNotFound"),
             archiveFile.getName()));
-        LoggerUtils.log("Failed to find package file", fnfe, ELevel.ERROR);
+        LoggerUtils.logMessage("Failed to find package file", fnfe, ELevel.ERROR);
       } catch (IOException ioe) {
         this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-            "mui.exception.io.package.extractFailed"));
-        LoggerUtils.log("Failed to extract package files", ioe, ELevel.ERROR);
+            "gui.exception.io.package.extractFailed"));
+        LoggerUtils.logMessage("Failed to extract package files", ioe, ELevel.ERROR);
       } finally {
         if (!archiveFile.delete()) {
-          LoggerUtils.log("Failed to delete package file", ELevel.ERROR);
+          LoggerUtils.logMessage("Failed to delete package file", ELevel.ERROR);
         }
       }
     }
@@ -295,7 +296,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
   }
 
   @Override
-  void update() {
+  void updateClasspath() {
     EState.setInstance(EState.UPDATE_CLASSPATH);
     this.stateMessage = EState.UPDATE_CLASSPATH.getMessage();
     this.percentage = 85;
@@ -322,11 +323,11 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       jarUrls[jarFiles.length] = minecraftJarFile.toURI().toURL();
 
       this.percentage = 85 + ((jarUrls.length * 5) / jarUrls.length);
-      LoggerUtils.log(Arrays.toString(jarUrls), ELevel.INFO);
+      LoggerUtils.logMessage(Arrays.toString(jarUrls), ELevel.INFO);
     } catch (MalformedURLException murle) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "mui.exception.io.classpath.updateFailed"));
-      LoggerUtils.log("Failed to update classpath", murle, ELevel.ERROR);
+          "gui.exception.io.classpath.updateFailed"));
+      LoggerUtils.logMessage("Failed to update classpath", murle, ELevel.ERROR);
       return;
     }
 
@@ -361,15 +362,15 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       this.percentage = 5;
 
       if (!MinecraftUtils.isGameCached()) {
-        this.determine();
-        this.download();
-        this.extract();
+        this.determinePackage();
+        this.downloadPackage();
+        this.extractPackage();
       }
-      this.update();
+      this.updateClasspath();
     } catch (Throwable t) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "mui.throwable.minecraft.updateFailed"));
-      LoggerUtils.log("Failed to update Minecraft", t, ELevel.ERROR);
+          "gui.throwable.minecraft.updateFailed"));
+      LoggerUtils.logMessage("Failed to update Minecraft", t, ELevel.ERROR);
     } finally {
       if (!this.isFatalErrorOccurred()) {
         EState.setInstance(EState.DONE);
