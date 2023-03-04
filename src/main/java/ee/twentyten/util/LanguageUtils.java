@@ -127,7 +127,7 @@ public final class LanguageUtils {
         }
       });
       ConfigUtils.getInstance().setSelectedLanguage(selectedLanguage);
-      ConfigUtils.saveConfig();
+      ConfigUtils.writeToConfig();
     }
   }
 
