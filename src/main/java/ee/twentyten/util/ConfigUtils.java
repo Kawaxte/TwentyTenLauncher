@@ -43,11 +43,11 @@ public final class ConfigUtils {
         .append(uuid).toString();
   }
 
-  public static void loadConfig() {
-    ConfigUtils.getInstance().load();
+  public static void readFromConfig() {
+    ConfigUtils.getInstance().read();
   }
 
-  public static void saveConfig() {
-    ConfigUtils.getInstance().save();
+  public static void writeToConfig() {
+    ConfigUtils.getInstance().write();
   }
 }
