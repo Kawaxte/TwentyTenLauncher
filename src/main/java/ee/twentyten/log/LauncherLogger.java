@@ -14,7 +14,7 @@ abstract class LauncherLogger {
     EPlatform platform = EPlatform.getPlatform();
 
     StringBuilder sb = new StringBuilder();
-    sb.append("twentyten_");
+    sb.append("twentyten_log");
     sb.append(platform == EPlatform.WINDOWS ? ".txt" : ".log");
 
     File logFile = new File(LauncherUtils.workingDirectory, sb.toString());
@@ -60,5 +60,5 @@ abstract class LauncherLogger {
 
   public abstract void log(String message);
 
-  public abstract void logGame();
+  public abstract void log();
 }
