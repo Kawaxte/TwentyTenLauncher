@@ -13,7 +13,7 @@ import java.io.IOException;
 public class LauncherConfigImpl extends LauncherConfig {
 
   @Override
-  public void load() {
+  public void read() {
     File configFile = this.getConfigFile();
     String configFilePath = configFile.getAbsolutePath();
     try (FileInputStream fis = new FileInputStream(configFile)) {
@@ -25,18 +25,18 @@ public class LauncherConfigImpl extends LauncherConfig {
       this.getMicrosoftProperties(clp);
 
       if (clp.isEmpty()) {
-        this.save();
+        this.write();
       }
-      LoggerUtils.log(configFilePath, ELevel.INFO);
+      LoggerUtils.logMessage(configFilePath, ELevel.INFO);
     } catch (FileNotFoundException fnfe) {
-      LoggerUtils.log("Coudn't find config file", fnfe, ELevel.ERROR);
+      LoggerUtils.logMessage("Coudn't find config file", fnfe, ELevel.ERROR);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to load config file", ioe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to write config file", ioe, ELevel.ERROR);
     }
   }
 
   @Override
-  public void save() {
+  public void write() {
     File configFile = this.getConfigFile();
     String configFilePath = configFile.getAbsolutePath();
     try (FileOutputStream fos = new FileOutputStream(configFile)) {
@@ -54,11 +54,11 @@ public class LauncherConfigImpl extends LauncherConfig {
       this.setMicrosoftProperties(clpMicrosoft);
       clpMicrosoft.store(fos, "MICROSOFT AUTHENTICATION");
 
-      LoggerUtils.log(configFilePath, ELevel.INFO);
+      LoggerUtils.logMessage(configFilePath, ELevel.INFO);
     } catch (FileNotFoundException fnfe) {
-      LoggerUtils.log("Coudn't find config file", fnfe, ELevel.ERROR);
+      LoggerUtils.logMessage("Coudn't find config file", fnfe, ELevel.ERROR);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to save config file", ioe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to read config file", ioe, ELevel.ERROR);
     }
   }
 }
