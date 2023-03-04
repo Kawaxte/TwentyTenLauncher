@@ -47,7 +47,7 @@ public final class MinecraftUtils {
       MinecraftUtils.lwjglUrl = new URL("https://archive.org/download/lwjgl-2/lwjgl-2.6");
       MinecraftUtils.minecraftJarUrl = new URL("https://archive.org/download/mc-legacy");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create URL", murle, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to create URL", murle, ELevel.ERROR);
     }
   }
 
@@ -140,6 +140,7 @@ public final class MinecraftUtils {
   }
 
   public static void launchMinecraft(String username, String sessionId) {
+    LoggerUtils.logMessage(username, ELevel.INFO);
     MinecraftUtils.getInstance().launch(username, sessionId);
   }
 }
