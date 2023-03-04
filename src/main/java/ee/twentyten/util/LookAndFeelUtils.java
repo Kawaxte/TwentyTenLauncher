@@ -22,15 +22,15 @@ public final class LookAndFeelUtils {
   public static void setLookAndFeel() {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      LoggerUtils.log(UIManager.getLookAndFeel().getClass().getCanonicalName(), ELevel.INFO);
+      LoggerUtils.logMessage(UIManager.getLookAndFeel().getClass().getCanonicalName(), ELevel.INFO);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      LoggerUtils.log("Can't set look and feel", ulafe, ELevel.ERROR);
+      LoggerUtils.logMessage("Can't set look and feel", ulafe, ELevel.ERROR);
     } catch (ClassNotFoundException cnfe) {
-      LoggerUtils.log("Failed to find look and feel class", cnfe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to find look and feel class", cnfe, ELevel.ERROR);
     } catch (InstantiationException ie) {
-      LoggerUtils.log("Failed to instantiate look and feel class", ie, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to instantiate look and feel class", ie, ELevel.ERROR);
     } catch (IllegalAccessException iae) {
-      LoggerUtils.log("Failed to access look and feel class", iae, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to access look and feel class", iae, ELevel.ERROR);
     }
   }
 
@@ -67,7 +67,7 @@ public final class LookAndFeelUtils {
         }
       }
     } catch (Win32Exception w32e) {
-      LoggerUtils.log("Failed to read registry key", w32e, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to read registry key", w32e, ELevel.ERROR);
     }
     return false;
   }
@@ -86,7 +86,7 @@ public final class LookAndFeelUtils {
         return keyValues.get("ThemeActive").equals("0");
       }
     } catch (Win32Exception w32e) {
-      LoggerUtils.log("Failed to read registry key", w32e, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to read registry key", w32e, ELevel.ERROR);
     }
     return false;
   }
@@ -109,7 +109,7 @@ public final class LookAndFeelUtils {
         return Objects.equals(currentThemeLines[3], classicThemeLines[3]);
       }
     } catch (Win32Exception w32e) {
-      LoggerUtils.log("Failed to read registry key", w32e, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to read registry key", w32e, ELevel.ERROR);
     }
     return false;
   }
