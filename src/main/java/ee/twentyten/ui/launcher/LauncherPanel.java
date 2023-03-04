@@ -132,7 +132,7 @@ public class LauncherPanel extends JPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
-    if (source == this.microsoftLoginButton) {
+    if (source.equals(this.microsoftLoginButton)) {
       if (LauncherUtils.isLauncherOutdated()) {
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
