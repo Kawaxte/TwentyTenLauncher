@@ -90,7 +90,7 @@ abstract class MicrosoftAuthentication {
       @Override
       public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (source == progressBarTimer) {
+        if (source.equals(progressBarTimer)) {
           progressBar.setValue(progressBar.getValue() - 1);
           if (progressBar.getValue() == 0 || isAuthorised) {
             progressBarTimer.stop();
