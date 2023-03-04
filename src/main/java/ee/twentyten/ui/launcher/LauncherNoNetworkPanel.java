@@ -90,7 +90,10 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
-    if (source == this.tryAgainButton) {
+    if (source.equals(this.playOfflineButton)) {
+      MinecraftUtils.launchMinecraft();
+    }
+    if (source.equals(this.tryAgainButton)) {
       LauncherUtils.addPanel(LauncherPanel.getInstance(), new LauncherPanel());
     }
   }
