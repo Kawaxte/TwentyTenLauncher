@@ -1,19 +1,14 @@
 package ee.twentyten.ui.options;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.log.ELevel;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.VersionUtils;
-import java.awt.Desktop;
-import java.awt.Desktop.Action;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import lombok.Getter;
@@ -81,21 +76,10 @@ public class OptionsPanel extends JPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
-    if (source == this.openGameDirectoryButton) {
-      boolean isDesktopSupported = Desktop.isDesktopSupported();
-      if (isDesktopSupported) {
-        Desktop desktop = Desktop.getDesktop();
-        boolean isSupported = desktop.isSupported(Action.OPEN);
-        if (isSupported) {
-          try {
-            Desktop.getDesktop().open(LauncherUtils.workingDirectory);
-          } catch (IOException ioe) {
-            LoggerUtils.log("Failed to open Minecraft directory", ioe, ELevel.ERROR);
-          }
-        }
-      }
+    if (source.equals(this.openGameDirectoryButton)) {
+      LauncherUtils.openDesktop(LauncherUtils.workingDirectory);
     }
-    if (source == this.saveOptionsButton) {
+    if (source.equals(this.saveOptionsButton)) {
       LanguageUtils.updateSelectedLanguage(LanguageOptionsGroupBox.getInstance());
       VersionUtils.updateSelectedVersion(VersionOptionsGroupBox.getInstance());
     }
