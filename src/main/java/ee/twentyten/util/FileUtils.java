@@ -34,7 +34,7 @@ public final class FileUtils {
       try {
         return ImageIO.read(imageFileInput);
       } catch (IOException ioe) {
-        LoggerUtils.log("Failed to read image resource", ioe, ELevel.ERROR);
+        LoggerUtils.logMessage("Failed to read image resource", ioe, ELevel.ERROR);
       }
     }
     return null;
@@ -50,7 +50,7 @@ public final class FileUtils {
         sb.append(line).append("\n");
       }
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to read file contents", ioe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to read file contents", ioe, ELevel.ERROR);
     }
     return sb.toString();
   }
@@ -61,7 +61,7 @@ public final class FileUtils {
       String json = new String(fileBytes, StandardCharsets.UTF_8);
       return new JSONObject(json);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to read JSON file contents", ioe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to read JSON file contents", ioe, ELevel.ERROR);
     }
     return new JSONObject();
   }
@@ -69,13 +69,12 @@ public final class FileUtils {
   public static void downloadFile(URL url, File targetFile) {
     HttpsURLConnection connection = null;
     try {
-      connection = RequestUtils.performHttpsRequest(url, EMethod.GET,
-          EHeader.NO_CACHE);
+      connection = RequestUtils.performHttpsRequest(url, EMethod.GET, EHeader.NO_CACHE.getHeader());
       try (InputStream is = connection.getInputStream()) {
         Files.copy(is, targetFile.toPath());
       }
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to download file", ioe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to download file", ioe, ELevel.ERROR);
     } finally {
       if (connection != null) {
         connection.disconnect();
@@ -84,9 +83,8 @@ public final class FileUtils {
   }
 
   public static synchronized int getContentLength(URL url) {
-    HttpsURLConnection connection;
-    connection = RequestUtils.performHttpsRequest(url, EMethod.HEAD,
-        EHeader.NO_CACHE);
+    HttpsURLConnection connection = RequestUtils.performHttpsRequest(url, EMethod.HEAD,
+        EHeader.NO_CACHE.getHeader());
     return connection.getContentLength();
   }
 }
