@@ -38,7 +38,7 @@ public class LinkedProperties extends Properties {
       value = "";
     }
     if (value.matches("^[0-9]+$")) {
-      return this.linkedMap.put(key, Integer.parseInt(value));
+      return this.linkedMap.put(key, Long.parseLong(value));
     }
     if (value.matches("^(true|false)$")) {
       return this.linkedMap.put(key, Boolean.parseBoolean(value));
@@ -86,9 +86,9 @@ public class LinkedProperties extends Properties {
             Boolean boolValue = (Boolean) value;
             os.write(boolValue.toString().getBytes(StandardCharsets.UTF_8));
             break;
-          case "Integer":
-            Integer intValue = (Integer) value;
-            os.write(intValue.toString().getBytes(StandardCharsets.UTF_8));
+          case "Long":
+            long longValue = (long) value;
+            os.write(Long.toString(longValue).getBytes(StandardCharsets.UTF_8));
             break;
           case "String":
             String strValue = (String) value;
@@ -100,7 +100,7 @@ public class LinkedProperties extends Properties {
         os.write(SystemUtils.lineSeparator.getBytes(StandardCharsets.UTF_8));
       }
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to write bytes to output stream", ioe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to write bytes to output stream", ioe, ELevel.ERROR);
     }
   }
 }
