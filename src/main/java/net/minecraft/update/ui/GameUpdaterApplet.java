@@ -32,11 +32,11 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.update.GameUpdaterImpl;
 
-public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
+public class GameUpdaterApplet extends JApplet implements AppletStub {
 
   @Getter
   @Setter
-  private static MinecraftUpdaterApplet instance;
+  private static GameUpdaterApplet instance;
   public Map<String, String> parameters;
   public Applet minecraftApplet;
   private GameUpdaterImpl updater;
@@ -50,8 +50,8 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     this.isUpdateAvailable = false;
   }
 
-  public MinecraftUpdaterApplet() {
-    MinecraftUpdaterApplet.setInstance(this);
+  public GameUpdaterApplet() {
+    GameUpdaterApplet.setInstance(this);
   }
 
   public void init(String username, String sessionId) {
@@ -74,7 +74,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     applet.setStub(this);
     applet.setSize(this.getWidth(), this.getHeight());
 
-    LoggerUtils.logMinecraft();
+    LoggerUtils.logPrintln();
 
     this.add(this.minecraftApplet);
     applet.init();
@@ -149,7 +149,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create document base URL", murle, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to create document base URL", murle, ELevel.ERROR);
     }
     return null;
   }
@@ -159,7 +159,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     try {
       return new URL("http://www.minecraft.net/game/");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create code base URL", murle, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to create code base URL", murle, ELevel.ERROR);
     }
     return null;
   }
@@ -198,10 +198,10 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     Thread updaterThread = new Thread(new Runnable() {
       @Override
       public void run() {
-        MinecraftUpdaterApplet.this.updater.run();
-        if (!MinecraftUpdaterApplet.this.updater.isFatalErrorOccurred()) {
-          Applet minecraftApplet = MinecraftUpdaterApplet.this.updater.loadMinecraftApplet();
-          MinecraftUpdaterApplet.this.replace(minecraftApplet);
+        GameUpdaterApplet.this.updater.run();
+        if (!GameUpdaterApplet.this.updater.isFatalErrorOccurred()) {
+          Applet minecraftApplet = GameUpdaterApplet.this.updater.loadMinecraftApplet();
+          GameUpdaterApplet.this.replace(minecraftApplet);
         }
       }
     });
@@ -214,8 +214,8 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
       @Override
       public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (MinecraftUpdaterApplet.this.minecraftApplet == null) {
-          MinecraftUpdaterApplet.this.update(MinecraftUpdaterApplet.this.getGraphics());
+        if (GameUpdaterApplet.this.minecraftApplet == null) {
+          GameUpdaterApplet.this.update(GameUpdaterApplet.this.getGraphics());
         } else {
           ((Timer) source).stop();
         }
@@ -273,9 +273,9 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
         g2d.drawImage(bgImage, gridX, gridY, bgWidth, bgHeight, this);
       }
 
-      String title = LanguageUtils.getString(LanguageUtils.getBundle(), "mua.string.title");
+      String title = LanguageUtils.getString(LanguageUtils.getBundle(), "gua.string.title");
       if (this.updater.isFatalErrorOccurred()) {
-        title = LanguageUtils.getString(LanguageUtils.getBundle(), "mua.string.title.fatalError");
+        title = LanguageUtils.getString(LanguageUtils.getBundle(), "gua.string.title.fatalError");
       }
       this.drawTitleString(g2d, title, appletWidth, appletHeight);
 
