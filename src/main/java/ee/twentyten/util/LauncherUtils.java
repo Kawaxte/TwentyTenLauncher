@@ -7,11 +7,13 @@ import ee.twentyten.request.EHeader;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import org.json.JSONObject;
 
 public final class LauncherUtils {
@@ -55,7 +58,7 @@ public final class LauncherUtils {
       LauncherUtils.latestReleaseUrl = new URL(
           "https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create URL", murle, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to create URL", murle, ELevel.ERROR);
     }
   }
 
@@ -71,7 +74,7 @@ public final class LauncherUtils {
 
     File workingDirectory = LauncherUtils.workingDirectories.get(platform);
     if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
-      LoggerUtils.log("Failed to create working directory", ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to create working directory", ELevel.ERROR);
     }
     return workingDirectory;
   }
@@ -92,18 +95,19 @@ public final class LauncherUtils {
       ThreadFactory updateFactory = new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
-          Thread t = new Thread(r);
-          t.setName(MessageFormat.format("update-{0}", t.getId()));
-          t.setDaemon(true);
-          return t;
+          Thread updateThread = new Thread(r);
+          updateThread.setName(MessageFormat.format("update-{0}", updateThread.getId()));
+          updateThread.setDaemon(true);
+          return updateThread;
         }
       };
+
       ExecutorService updateService = Executors.newSingleThreadExecutor(updateFactory);
       Future<Boolean> updateFuture = updateService.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() {
           JSONObject latestRelease = RequestUtils.performJsonRequest(
-              LauncherUtils.apiLatestReleaseUrl, EMethod.GET, EHeader.JSON);
+              LauncherUtils.apiLatestReleaseUrl, EMethod.GET, EHeader.JSON.getHeader());
           Objects.requireNonNull(latestRelease, "latestRelease == null!");
 
           String latestVersion = latestRelease.getString("tag_name");
@@ -115,9 +119,10 @@ public final class LauncherUtils {
         LauncherUtils.isOutdated = updateFuture.get();
         LauncherUtils.isUpdateChecked = true;
       } catch (ExecutionException ee) {
-        LoggerUtils.log("Failed to check for updates", ee, ELevel.ERROR);
+        LoggerUtils.logMessage("Failed to check for updates", ee, ELevel.ERROR);
       } catch (InterruptedException ie) {
-        LoggerUtils.log("Interrupted while checking for updates", ie, ELevel.ERROR);
+        Thread.currentThread().interrupt();
+        LoggerUtils.logMessage("Interrupted while checking for updates", ie, ELevel.ERROR);
       } finally {
         updateService.shutdown();
       }
@@ -125,29 +130,7 @@ public final class LauncherUtils {
     return LauncherUtils.isOutdated;
   }
 
-  public static void addPanel(JComponent oldComp, JComponent newComp) {
-    oldComp.removeAll();
-
-    oldComp.add(newComp);
-
-    oldComp.revalidate();
-    oldComp.repaint();
-  }
-
-  public static void addPanelWithErrorMessage(JComponent oldComp, JComponent newComp,
-      String message) {
-    oldComp.removeAll();
-
-    oldComp.add(newComp);
-    if (newComp instanceof LauncherNoNetworkPanel) {
-      LauncherNoNetworkPanel.getInstance().getErrorLabel().setText(message);
-    }
-
-    oldComp.revalidate();
-    oldComp.repaint();
-  }
-
-  public static void buildProcess() {
+  public static void buildAndCreateProcess() {
     EPlatform platform = EPlatform.getPlatform();
 
     List<String> arguments = new ArrayList<>();
@@ -162,20 +145,87 @@ public final class LauncherUtils {
     arguments.add(Launcher.class.getCanonicalName());
 
     ProcessBuilder pb = new ProcessBuilder(arguments);
-    LoggerUtils.log(arguments.toString(), ELevel.INFO);
+    LoggerUtils.logMessage(arguments.toString(), ELevel.INFO);
     try {
       Process p = pb.start();
 
       String errorStreamMessage = LauncherUtils.getErrorStream(p);
       if (!errorStreamMessage.isEmpty()) {
-        LoggerUtils.log(errorStreamMessage, ELevel.ERROR);
+        LoggerUtils.logMessage(errorStreamMessage, ELevel.ERROR);
       }
       System.exit(p.waitFor());
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to start process", ioe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to start process", ioe, ELevel.ERROR);
     } catch (InterruptedException ie) {
-      LoggerUtils.log("Interrupted while waiting for process to finish", ie, ELevel.ERROR);
+      Thread.currentThread().interrupt();
+      LoggerUtils.logMessage("Interrupted while waiting for process to finish", ie, ELevel.ERROR);
       System.exit(1);
+    }
+  }
+
+  public static void addPanel(final JComponent oldComp, final JComponent newComp) {
+    if (SwingUtilities.isEventDispatchThread()) {
+      oldComp.removeAll();
+      oldComp.add(newComp);
+      oldComp.revalidate();
+      oldComp.repaint();
+    } else {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          LauncherUtils.addPanel(oldComp, newComp);
+        }
+      });
+    }
+  }
+
+  public static void addPanelWithErrorMessage(final JComponent oldComp, final JComponent newComp,
+      final String message) {
+    if (SwingUtilities.isEventDispatchThread()) {
+      oldComp.removeAll();
+      oldComp.add(newComp);
+      if (newComp instanceof LauncherNoNetworkPanel) {
+        LauncherNoNetworkPanel.getInstance().getErrorLabel().setText(message);
+      }
+      oldComp.revalidate();
+      oldComp.repaint();
+    } else {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          LauncherUtils.addPanelWithErrorMessage(oldComp, newComp, message);
+        }
+      });
+    }
+  }
+
+  public static void openDesktop(File directory) {
+    boolean isDesktopSupported = Desktop.isDesktopSupported();
+    if (isDesktopSupported) {
+      try {
+        Desktop d = Desktop.getDesktop();
+        if (d.isSupported(Desktop.Action.OPEN)) {
+          d.open(directory);
+        }
+      } catch (IOException ioe) {
+        LoggerUtils.logMessage("Failed to open directory", ioe, ELevel.ERROR);
+      }
+    }
+  }
+
+  public static void browseDesktop(URL url) {
+    boolean isDesktopSupported = Desktop.isDesktopSupported();
+    if (isDesktopSupported) {
+      try {
+        Desktop d = Desktop.getDesktop();
+        if (d.isSupported(Desktop.Action.BROWSE)) {
+          d.browse(url.toURI());
+        }
+      } catch (IOException ioe) {
+        LoggerUtils.logMessage("Failed to open browser", ioe, ELevel.ERROR);
+      } catch (URISyntaxException urise) {
+        LoggerUtils.logMessage("Failed to resolve URI", urise, ELevel.ERROR);
+      }
     }
   }
 
@@ -188,7 +238,7 @@ public final class LauncherUtils {
         sb.append(line).append(SystemUtils.lineSeparator);
       }
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to read error stream from process", ioe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to read error stream from process", ioe, ELevel.ERROR);
     }
     return sb.toString();
   }
