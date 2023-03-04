@@ -29,17 +29,17 @@ public final class LoggerUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static char[] getCurrentDateAndTime() {
+  public static char[] getCurrentTime() {
     Date currentTime = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
     String formattedTime = sdf.format(currentTime);
     return formattedTime.toCharArray();
   }
 
-  private static char[] getCurrentTime() {
+  public static char[] getCurrentDateAndTime() {
     Date currentTime = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
 
     String formattedTime = sdf.format(currentTime);
     return formattedTime.toCharArray();
@@ -76,7 +76,7 @@ public final class LoggerUtils {
     return sb.toString();
   }
 
-  public static void log(String message, ELevel level) {
+  public static void logMessage(String message, ELevel level) {
     String logMessage = LoggerUtils.formatLogMessage(message, level);
     if (LoggerUtils.isDebugging) {
       switch (level) {
@@ -92,7 +92,7 @@ public final class LoggerUtils {
     LoggerUtils.getInstance().log(logMessage);
   }
 
-  public static void log(String message, Throwable t, ELevel level) {
+  public static void logMessage(String message, Throwable t, ELevel level) {
     String logMessage = LoggerUtils.formatLogMessage(message, t, level);
     if (LoggerUtils.isDebugging) {
       switch (level) {
@@ -108,7 +108,7 @@ public final class LoggerUtils {
     LoggerUtils.getInstance().log(logMessage);
   }
 
-  public static void logMinecraft() {
-    LoggerUtils.getInstance().logGame();
+  public static void logPrintln() {
+    LoggerUtils.getInstance().log();
   }
 }
