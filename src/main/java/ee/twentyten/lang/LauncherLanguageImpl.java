@@ -23,14 +23,14 @@ public class LauncherLanguageImpl extends LauncherLanguage {
       try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
         this.bundle = new UTF8ResourceBundle(isr);
       } catch (IOException ioe2) {
-        LoggerUtils.log("Failed to load locale file", ioe2, ELevel.ERROR);
+        LoggerUtils.logMessage("Failed to load locale file", ioe2, ELevel.ERROR);
       }
 
       URL localeFileInput = this.getClass().getClassLoader().getResource(localeFileName);
       Objects.requireNonNull(localeFileInput, "localeFileInput == null!");
-      LoggerUtils.log(localeFileInput.getPath(), ELevel.INFO);
+      LoggerUtils.logMessage(localeFileInput.getPath(), ELevel.INFO);
     } catch (IOException ioe1) {
-      LoggerUtils.log("Failed to load locale file", ioe1, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to load locale file", ioe1, ELevel.ERROR);
     }
   }
 }
