@@ -6,22 +6,16 @@ import ee.twentyten.custom.component.TransparentJButton;
 import ee.twentyten.custom.component.TransparentJCheckBox;
 import ee.twentyten.custom.ui.CustomJPanel;
 import ee.twentyten.custom.ui.TransparentPanelUI;
-import ee.twentyten.log.ELevel;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.OptionsDialog;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.LoggerUtils;
 import java.awt.BorderLayout;
-import java.awt.Desktop;
-import java.awt.Desktop.Action;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -29,7 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.MinecraftUtils;
 
 @Getter
 public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
@@ -54,25 +47,15 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
     this.optionsButton = new TransparentJButton("llp.button.optionsButton");
     this.rememberPasswordCheckBox = new TransparentJCheckBox(
         "llp.checkbox.rememberPasswordCheckBox");
-    this.linkLabel = new JHyperlink(
-        LauncherUtils.isOutdated ? "llp.label.linkLabel.updateLauncher"
-            : "llp.label.linkLabel.needAccount", JLabel.CENTER);
+    this.linkLabel = new JHyperlink(LauncherUtils.isOutdated ? "llp.label.linkLabel.updateLauncher"
+        : "llp.label.linkLabel.needAccount", JLabel.CENTER);
     this.loginButton = new TransparentJButton("llp.button.loginButton");
 
     MouseAdapter adapter = new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent event) {
-        Desktop d = Desktop.getDesktop();
-        if (d.isSupported(Action.BROWSE)) {
-          try {
-            d.browse(LauncherUtils.isOutdated ? LauncherUtils.latestReleaseUrl.toURI()
-                : LauncherUtils.registrationUrl.toURI());
-          } catch (IOException ioe) {
-            LoggerUtils.log("Failed to launch browser", ioe, ELevel.ERROR);
-          } catch (URISyntaxException urise) {
-            LoggerUtils.log("Failed to resolve URI", urise, ELevel.ERROR);
-          }
-        }
+        LauncherUtils.browseDesktop(LauncherUtils.isOutdated ? LauncherUtils.latestReleaseUrl
+            : LauncherUtils.registrationUrl);
       }
     };
     this.linkLabel.addMouseListener(adapter);
@@ -137,7 +120,7 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
-    if (source == this.optionsButton) {
+    if (source.equals(this.optionsButton)) {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
@@ -145,14 +128,13 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
         }
       });
     }
-    if (source == this.loginButton) {
+    if (source.equals(this.loginButton)) {
       if (LauncherUtils.isLauncherOutdated()) {
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
-        return;
       }
-      MinecraftUtils.launchMinecraft();
+      //todo yggdrasil
     }
   }
 }
