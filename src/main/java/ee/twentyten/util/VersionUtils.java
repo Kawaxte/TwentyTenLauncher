@@ -28,7 +28,7 @@ public final class VersionUtils {
       VersionUtils.versionsFileUrl = new URL(
           "https://raw.githubusercontent.com/sojlabjoi/TwentyTenLauncher/stable/versions.json");
     } catch (MalformedURLException murle) {
-      LoggerUtils.log("Failed to create URL", murle, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to create URL", murle, ELevel.ERROR);
     }
   }
 
@@ -41,7 +41,7 @@ public final class VersionUtils {
     if (!VersionUtils.versionsDirectory.exists()) {
       boolean isDirectoryCreated = VersionUtils.versionsDirectory.mkdirs();
       if (!isDirectoryCreated) {
-        LoggerUtils.log("Failed to create versions directory", ELevel.ERROR);
+        LoggerUtils.logMessage("Failed to create versions directory", ELevel.ERROR);
       }
     }
     if (!versionsFile.exists()) {
@@ -147,7 +147,7 @@ public final class VersionUtils {
         ConfigUtils.getInstance().getSelectedVersion());
     if (isVersionChanged) {
       ConfigUtils.getInstance().setSelectedVersion(selectedVersion);
-      ConfigUtils.saveConfig();
+      ConfigUtils.writeToConfig();
     }
   }
 }
