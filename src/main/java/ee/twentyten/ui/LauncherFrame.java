@@ -1,6 +1,8 @@
 package ee.twentyten.ui;
 
 import ee.twentyten.ui.launcher.LauncherPanel;
+import ee.twentyten.util.AuthenticationUtils;
+import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LookAndFeelUtils;
 import ee.twentyten.util.SystemUtils;
@@ -38,7 +40,15 @@ public class LauncherFrame extends JFrame {
 
   public static void main(String... args) {
     LookAndFeelUtils.setLookAndFeel();
-    SystemUtils.setLauncherVersion(1, 2, 3, 23, 1, true);
+    SystemUtils.setLauncherVersion(1, 5, 3, 23, 1, true);
+
+    if (AuthenticationUtils.isMicrosoftSessionValid(
+        ConfigUtils.getInstance().getMicrosoftAccessToken(),
+        ConfigUtils.getInstance().getMicrosoftRefreshToken())) {
+      AuthenticationUtils.checkMinecraftTokenExpirationTime(
+          ConfigUtils.getInstance().getMicrosoftRefreshToken(),
+          ConfigUtils.getInstance().getMicrosoftAccessTokenExpiresIn());
+    }
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override
