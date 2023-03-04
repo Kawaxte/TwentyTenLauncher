@@ -96,7 +96,7 @@ public class VersionOptionsGroupBox extends JGroupBox implements ActionListener 
     Object source = event.getSource();
 
     for (int i = 0; i < this.showVersionCheckBoxes.length; i++) {
-      if (source == this.showVersionCheckBoxes[i]) {
+      if (source.equals(this.showVersionCheckBoxes[i])) {
         switch (i) {
           case 0:
             ConfigUtils.getInstance()
