@@ -8,23 +8,23 @@ import java.io.OutputStreamWriter;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.net.ssl.HttpsURLConnection;
 
 public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
 
   @Override
-  public HttpsURLConnection perform(URL url, EMethod method, EHeader header) {
+  public HttpsURLConnection perform(URL url, EMethod method, Map<String, String> header) {
     HttpsURLConnection connection = null;
     try {
       connection = RequestUtils.openHttpsConnection(url);
       connection.setRequestMethod(method.name());
 
-      Map<String, String> headers = header.setHeader();
-      for (Map.Entry<String, String> entry : headers.entrySet()) {
+      for (Entry<String, String> entry : header.entrySet()) {
         connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
     } catch (ProtocolException pe) {
-      LoggerUtils.log("Failed to set request method", pe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to set request method", pe, ELevel.ERROR);
     } finally {
       if (connection != null) {
         connection.disconnect();
@@ -34,15 +34,14 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
   }
 
   @Override
-  public HttpsURLConnection perform(URL url, EMethod method, EHeader header,
+  public HttpsURLConnection perform(URL url, EMethod method, Map<String, String> header,
       Object data) {
     HttpsURLConnection connection = null;
     try {
       connection = RequestUtils.openHttpsConnection(url);
       connection.setRequestMethod(method.name());
 
-      Map<String, String> headers = header.setHeader();
-      for (Map.Entry<String, String> entry : headers.entrySet()) {
+      for (Map.Entry<String, String> entry : header.entrySet()) {
         connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
 
@@ -51,9 +50,9 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
         osw.write(data.toString());
       }
     } catch (ProtocolException pe) {
-      LoggerUtils.log("Failed to set request method", pe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to set request method", pe, ELevel.ERROR);
     } catch (IOException ioe) {
-      LoggerUtils.log("Failed to write data to output stream", ioe, ELevel.ERROR);
+      LoggerUtils.logMessage("Failed to write data to output stream", ioe, ELevel.ERROR);
     } finally {
       if (connection != null) {
         connection.disconnect();
