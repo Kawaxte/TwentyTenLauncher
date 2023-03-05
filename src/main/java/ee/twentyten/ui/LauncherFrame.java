@@ -49,6 +49,10 @@ public class LauncherFrame extends JFrame {
           ConfigUtils.getInstance().getMicrosoftRefreshToken(),
           ConfigUtils.getInstance().getMicrosoftAccessTokenExpiresIn());
     }
+    if (AuthenticationUtils.isYggdrasilSessionValid(
+        ConfigUtils.getInstance().getYggdrasilAccessToken())) {
+      AuthenticationUtils.validateAndRefreshAccessToken(ConfigUtils.getInstance().getClientToken());
+    }
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override
