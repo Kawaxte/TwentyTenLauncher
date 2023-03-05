@@ -64,7 +64,7 @@ public class LauncherPanel extends JPanel implements ActionListener {
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.anchor = GridBagConstraints.CENTER;
     gbc.fill = GridBagConstraints.NONE;
-    gbc.insets.top = 23;
+    gbc.insets.top = 16;
     this.add(this.loginPanel, gbc);
 
     gbc.gridy = 1;
@@ -133,13 +133,16 @@ public class LauncherPanel extends JPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source.equals(this.microsoftLoginButton)) {
+      if (!LauncherUtils.isNetworkAvailableForMicrosoft()) {
+        return;
+      }
       if (LauncherUtils.isLauncherOutdated()) {
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
         return;
       }
-      MicrosoftUtils.authenticateWithMicrosoft();
+      MicrosoftUtils.loginWithMicrosoft();
     }
   }
 }
