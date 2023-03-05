@@ -1,5 +1,6 @@
 package ee.twentyten.ui.launcher;
 
+import com.mojang.util.YggdrasilUtils;
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.custom.component.JHyperlink;
 import ee.twentyten.custom.component.TransparentJButton;
@@ -8,6 +9,7 @@ import ee.twentyten.custom.ui.CustomJPanel;
 import ee.twentyten.custom.ui.TransparentPanelUI;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.OptionsDialog;
+import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import java.awt.BorderLayout;
@@ -101,6 +103,12 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
     middlePanel1.add(this.optionsButton, 2);
     this.add(middlePanel1, BorderLayout.WEST);
 
+    boolean isPasswordSaved = ConfigUtils.getInstance().isYggdrasilPasswordSaved();
+    this.usernameField.setText(ConfigUtils.getInstance().getYggdrasilUsername());
+    this.passwordField.setText(
+        isPasswordSaved ? ConfigUtils.getInstance().getYggdrasilPassword() : "");
+    this.rememberPasswordCheckBox.setSelected(ConfigUtils.getInstance().isYggdrasilPasswordSaved());
+
     JPanel middlePanel2 = new JPanel(new GridLayout(3, 1, 0, 2), true);
     middlePanel2.setUI(new TransparentPanelUI());
     middlePanel2.add(this.usernameField, 0);
@@ -129,12 +137,16 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
       });
     }
     if (source.equals(this.loginButton)) {
+      if (!LauncherUtils.isNetworkAvailableForYggdrasil()) {
+        return;
+      }
       if (LauncherUtils.isLauncherOutdated()) {
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
+        return;
       }
-      //todo yggdrasil
+      YggdrasilUtils.loginWithYggdrasil();
     }
   }
 }
