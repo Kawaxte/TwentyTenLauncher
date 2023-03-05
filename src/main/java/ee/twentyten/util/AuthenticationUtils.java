@@ -1,6 +1,7 @@
 package ee.twentyten.util;
 
 import com.microsoft.util.MicrosoftUtils;
+import com.mojang.util.YggdrasilUtils;
 import ee.twentyten.log.ELevel;
 import ee.twentyten.request.EHeader;
 import ee.twentyten.request.EMethod;
@@ -11,17 +12,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
+import javax.swing.SwingWorker;
 import org.json.JSONObject;
 
 public final class AuthenticationUtils {
 
   private static final Pattern JWT_PATTERN = Pattern.compile(
       "^([a-zA-Z0-9_-]+\\.){2}[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*$");
+  public static URL sessionserverProfileUrl;
   public static URL mcservicesProfileUrl;
 
   static {
     try {
+      AuthenticationUtils.sessionserverProfileUrl = new URL(
+          "https://sessionserver.mojang.com/session/minecraft/profile");
       AuthenticationUtils.mcservicesProfileUrl = new URL(
           "https://api.minecraftservices.com/minecraft/profile");
     } catch (MalformedURLException murle) {
@@ -33,19 +39,23 @@ public final class AuthenticationUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static JSONObject checkMinecraftProfile(String accessToken) {
+  public static JSONObject checkYggdrasilProfile(String profileId) {
+    try {
+      AuthenticationUtils.sessionserverProfileUrl = new URL(
+          AuthenticationUtils.sessionserverProfileUrl.toString() + "/" + profileId);
+    } catch (MalformedURLException murle) {
+      LoggerUtils.logMessage("Failed to create URL", murle, ELevel.ERROR);
+    }
+    return RequestUtils.performJsonRequest(
+        AuthenticationUtils.sessionserverProfileUrl, EMethod.GET, EHeader.JSON.getHeader());
+  }
+
+  public static JSONObject checkMicrosoftProfile(String accessToken) {
     Map<String, String> header = new HashMap<>();
     header.put("Authorization", MessageFormat.format("Bearer {0}", accessToken));
     header.putAll(EHeader.JSON.getHeader());
     return RequestUtils.performJsonRequest(AuthenticationUtils.mcservicesProfileUrl, EMethod.GET,
         header);
-  }
-
-  public static boolean isMicrosoftSessionValid(String accessToken, String refreshToken) {
-    if (accessToken == null || refreshToken == null) {
-      return false;
-    }
-    return JWT_PATTERN.matcher(accessToken).matches() && refreshToken.startsWith("M.R3_BL2.");
   }
 
   public static boolean isYggdrasilSessionValid(String accessToken) {
@@ -55,13 +65,33 @@ public final class AuthenticationUtils {
     return JWT_PATTERN.matcher(accessToken).matches();
   }
 
-  public static boolean isMinecraftProfileValid(String accessToken, String profileName,
+  public static boolean isMicrosoftSessionValid(String accessToken, String refreshToken) {
+    if (accessToken == null || refreshToken == null) {
+      return false;
+    }
+    return JWT_PATTERN.matcher(accessToken).matches() && refreshToken.startsWith("M.R3_BL2.");
+  }
+
+  public static boolean isYggdrasilProfileValid(String profileId) {
+    if (profileId == null) {
+      return false;
+    }
+
+    JSONObject profileResult = AuthenticationUtils.checkYggdrasilProfile(profileId);
+
+    String profileNameFromApi = profileResult.getString("name");
+    String profileIdFromApi = profileResult.getString("id");
+    return ConfigUtils.getInstance().getYggdrasilProfileName().equals(profileNameFromApi)
+        && profileId.equals(profileIdFromApi);
+  }
+
+  public static boolean isMicrosoftProfileValid(String accessToken, String profileName,
       String profileId) {
     if (accessToken == null || profileName == null || profileId == null) {
       return false;
     }
 
-    JSONObject profileResult = AuthenticationUtils.checkMinecraftProfile(accessToken);
+    JSONObject profileResult = AuthenticationUtils.checkMicrosoftProfile(accessToken);
 
     String profileNameFromApi = profileResult.getString("name");
     String profileIdFromApi = profileResult.getString("id");
@@ -95,6 +125,48 @@ public final class AuthenticationUtils {
     LoggerUtils.logMessage(
         MessageFormat.format("{0} ({1,number,#})", expirationTimeString, timeRemainingInSeconds),
         ELevel.INFO);
+  }
+
+  public static void validateAndRefreshAccessToken(final String clientToken) {
+    SwingWorker<JSONObject, Void> validateAndRefreshWorker = new SwingWorker<JSONObject, Void>() {
+      @Override
+      protected JSONObject doInBackground() {
+        JSONObject validateAccessTokenResult = YggdrasilUtils.validate(
+            ConfigUtils.getInstance().getYggdrasilAccessToken(), clientToken);
+        if (validateAccessTokenResult.has("error")) {
+          LoggerUtils.logMessage("Failed to validate access token", ELevel.ERROR);
+          validateAccessTokenResult = YggdrasilUtils.refresh(
+              ConfigUtils.getInstance().getYggdrasilAccessToken(), clientToken, true);
+          if (validateAccessTokenResult.has("error")) {
+            YggdrasilUtils.isAccessTokenExpired = true;
+            LoggerUtils.logMessage("Failed to refresh access token", ELevel.ERROR);
+            return null;
+          }
+        }
+        return validateAccessTokenResult;
+      }
+
+      @Override
+      protected void done() {
+        try {
+          JSONObject validateAccessTokenResult = this.get();
+          if (validateAccessTokenResult != null && !validateAccessTokenResult.isEmpty()) {
+            String newAccessToken = validateAccessTokenResult.getString("accessToken");
+            String newClientToken = validateAccessTokenResult.getString("clientToken");
+            ConfigUtils.getInstance().setYggdrasilAccessToken(newAccessToken);
+            ConfigUtils.getInstance().setClientToken(newClientToken);
+            ConfigUtils.writeToConfig();
+          }
+        } catch (ExecutionException ee) {
+          LoggerUtils.logMessage("Failed to validate and refresh access token", ee, ELevel.ERROR);
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+          LoggerUtils.logMessage("Interrupted while validating and refreshing access token", ie,
+              ELevel.ERROR);
+        }
+      }
+    };
+    validateAndRefreshWorker.execute();
   }
 
   private static void refreshMinecraftToken(String refreshToken) {
