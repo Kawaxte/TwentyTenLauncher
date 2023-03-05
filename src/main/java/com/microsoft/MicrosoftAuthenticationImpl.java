@@ -5,14 +5,15 @@ import ee.twentyten.log.ELevel;
 import ee.twentyten.request.EHeader;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherMicrosoftLoginPanel;
+import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.AuthenticationUtils;
 import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.RequestUtils;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
@@ -30,22 +31,21 @@ import org.json.JSONObject;
 public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
 
   @Override
-  public void authenticate() {
-    final JSONObject authenticateResult = this.acquireUserCode(this.clientId);
+  public void login() {
+    final JSONObject loginResult = this.acquireUserCode(this.clientId);
 
-    final String deviceCode = authenticateResult.getString("device_code");
-    String userCode = authenticateResult.getString("user_code");
-    String verificationUri = authenticateResult.getString("verification_uri");
-    final int interval = authenticateResult.getInt("interval");
-    final int expiresIn = authenticateResult.getInt("expires_in");
+    final String deviceCode = loginResult.getString("device_code");
+    String userCode = loginResult.getString("user_code");
+    String verificationUri = loginResult.getString("verification_uri");
+    final int interval = loginResult.getInt("interval");
+    final int expiresIn = loginResult.getInt("expires_in");
     if (userCode != null && verificationUri != null) {
       LauncherUtils.addPanel(LauncherPanel.getInstance(),
           new LauncherMicrosoftLoginPanel(userCode, verificationUri, expiresIn));
       final SwingWorker<JSONObject, Void> pollingWorker = new SwingWorker<JSONObject, Void>() {
         @Override
         protected JSONObject doInBackground() {
-          return MicrosoftAuthenticationImpl.this.pollForAccessToken(deviceCode, expiresIn,
-              interval);
+          return MicrosoftAuthenticationImpl.this.loginPoll(deviceCode, expiresIn, interval);
         }
 
         @Override
@@ -53,6 +53,9 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
           try {
             MicrosoftUtils.pollingResult = this.get();
           } catch (ExecutionException ee) {
+            LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
+                new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
+                    "lp.label.errorLabel.loginFailed"));
             LoggerUtils.logMessage("Failed to authenticate with Microsoft", ee, ELevel.ERROR);
           } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
@@ -60,33 +63,22 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
                 ELevel.ERROR);
           } finally {
             if (MicrosoftUtils.pollingResult != null) {
-              String minecraftToken = MicrosoftUtils.pollingResult.getString("access_token");
-              int minecraftTokenExpiresIn = MicrosoftUtils.pollingResult.getInt("expires_in");
-              long minecraftTokenObtainTime =
-                  System.currentTimeMillis() + (minecraftTokenExpiresIn * 1000L);
-              Date minecraftTokenObtainDate = new Date(minecraftTokenObtainTime);
-              ConfigUtils.getInstance().setMicrosoftAccessToken(minecraftToken);
-              ConfigUtils.getInstance()
-                  .setMicrosoftAccessTokenExpiresIn(minecraftTokenObtainDate.getTime());
+              String minecraftToken = MicrosoftAuthenticationImpl.this.getAndSetMinecraftToken();
 
               MicrosoftUtils.pollingResult = MicrosoftUtils.acquireMinecraftStore(minecraftToken);
               if (MicrosoftUtils.pollingResult.has("items")) {
                 MicrosoftUtils.pollingResult = MicrosoftUtils.acquireMinecraftProfile(
                     minecraftToken);
 
-                String profileName = MicrosoftUtils.pollingResult.getString("name");
-                String profileId = MicrosoftUtils.pollingResult.getString("id");
-                ConfigUtils.getInstance().setMicrosoftProfileName(profileName);
-                ConfigUtils.getInstance().setMicrosoftProfileId(profileId);
-                ConfigUtils.getInstance().setMicrosoftSessionId(
-                    ConfigUtils.formatSessionId(ConfigUtils.getInstance().getClientToken(),
-                        ConfigUtils.getInstance().getMicrosoftAccessToken(),
-                        ConfigUtils.getInstance().getMicrosoftProfileId()));
+                MicrosoftAuthenticationImpl.this.getAndSetMicrosoftProfile();
                 ConfigUtils.writeToConfig();
 
-                MinecraftUtils.launchMinecraft(ConfigUtils.getInstance().getMicrosoftProfileName(),
-                    ConfigUtils.getInstance().getMicrosoftSessionId());
+                String profileName = ConfigUtils.getInstance().getMicrosoftProfileName();
+                String sessionId = ConfigUtils.getInstance().getMicrosoftSessionId();
+                MinecraftUtils.launchMinecraft(profileName, sessionId);
               } else {
+                ConfigUtils.writeToConfig();
+
                 MinecraftUtils.launchMinecraft();
               }
             }
@@ -98,8 +90,7 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
   }
 
   @Override
-  public JSONObject pollForAccessToken(final String deviceCode, final int expiresIn,
-      final int interval) {
+  public JSONObject loginPoll(final String deviceCode, final int expiresIn, final int interval) {
     final ScheduledExecutorService pollingService = Executors.newSingleThreadScheduledExecutor();
     final AtomicBoolean isAuthorised = new AtomicBoolean(false);
     final AtomicBoolean isExpired = new AtomicBoolean(false);
@@ -118,22 +109,14 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
               pollingTask);
         } else {
           isAuthorised.set(true);
-          MicrosoftAuthenticationImpl.this.accessToken = accessTokenResult.getString(
-              "access_token");
-          String refreshToken = accessTokenResult.getString("refresh_token");
-          int refreshTokenExpiresIn = accessTokenResult.getInt("expires_in");
-          long refreshTokenObtainTime =
-              System.currentTimeMillis() + (refreshTokenExpiresIn * 1000L);
-          Date refreshTokenObtainDate = new Date(refreshTokenObtainTime);
-          ConfigUtils.getInstance().setMicrosoftRefreshToken(refreshToken);
-          ConfigUtils.getInstance()
-              .setMicrosoftRefreshTokenExpiresIn(refreshTokenObtainDate.getTime());
+          MicrosoftAuthenticationImpl.this.getAndSetRefreshToken(accessTokenResult);
 
           LauncherMicrosoftLoginPanel.getInstance().getCopyUserCodeLabel().setVisible(false);
           LauncherMicrosoftLoginPanel.getInstance().getUserCodeLabel().setVisible(false);
           LauncherMicrosoftLoginPanel.getInstance().getExpiresInProgressBar()
               .setIndeterminate(true);
           LauncherMicrosoftLoginPanel.getInstance().getOpenBrowserButton().setVisible(false);
+
           pollingTask[0].cancel(true);
         }
         MicrosoftAuthenticationImpl.this.startProgressBar(
@@ -144,6 +127,9 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
     try {
       pollingTask[0].get(expiresIn, TimeUnit.SECONDS);
     } catch (ExecutionException ee) {
+      LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
+          new LauncherNoNetworkPanel(),
+          LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.loginFailed"));
       LoggerUtils.logMessage("Failed to poll for access token", ee, ELevel.ERROR);
     } catch (CancellationException ce) {
       if (!isAuthorised.get() && !isExpired.get()) {
