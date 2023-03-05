@@ -110,13 +110,14 @@ public final class RequestUtils {
     return RequestUtils.httpsRequest.perform(url, method, header);
   }
 
+  /*
   public static HttpsURLConnection performHttpsRequest(URL url, EMethod method,
       Map<String, String> header, Object data) {
     return RequestUtils.httpsRequest.perform(url, method, header, data);
   }
+  */
 
-  public static JSONObject performJsonRequest(URL url, EMethod method,
-      Map<String, String> header) {
+  public static JSONObject performJsonRequest(URL url, EMethod method, Map<String, String> header) {
     return RequestUtils.jsonRequest.perform(url, method, header);
   }
 
