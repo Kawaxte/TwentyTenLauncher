@@ -57,11 +57,11 @@ public final class MicrosoftUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static void authenticateWithMicrosoft() {
+  public static void loginWithMicrosoft() {
     if (AuthenticationUtils.isMicrosoftSessionValid(
         ConfigUtils.getInstance().getMicrosoftAccessToken(),
         ConfigUtils.getInstance().getMicrosoftRefreshToken())) {
-      if (!AuthenticationUtils.isMinecraftProfileValid(
+      if (!AuthenticationUtils.isMicrosoftProfileValid(
           ConfigUtils.getInstance().getMicrosoftAccessToken(),
           ConfigUtils.getInstance().getMicrosoftProfileName(),
           ConfigUtils.getInstance().getMicrosoftProfileId())) {
@@ -72,7 +72,7 @@ public final class MicrosoftUtils {
           ConfigUtils.getInstance().getMicrosoftSessionId());
       return;
     }
-    MicrosoftUtils.getInstance().authenticate();
+    MicrosoftUtils.getInstance().login();
   }
 
   public static JSONObject refreshMinecraftToken(String clientId, String refreshToken) {
