@@ -1,13 +1,16 @@
 package com.microsoft;
 
+import com.microsoft.util.MicrosoftUtils;
 import ee.twentyten.log.ELevel;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
+import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JProgressBar;
@@ -30,35 +33,66 @@ abstract class MicrosoftAuthentication {
     switch ((int) xErr) {
       case (int) 2148916233L:
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
-            new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
-                "lp.label.errorLabel.2148916233"));
+            new LauncherNoNetworkPanel(),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.2148916233"));
         LoggerUtils.logMessage("Xbox Live not linked to Microsoft account", ELevel.ERROR);
         break;
       case (int) 2148916235L:
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
-            new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
-                "lp.label.errorLabel.2148916235"));
+            new LauncherNoNetworkPanel(),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.2148916235"));
         LoggerUtils.logMessage("Xbox Live not available in this region", ELevel.ERROR);
         break;
       case (int) 2148916236L:
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
-            new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
-                "lp.label.errorLabel.2148916236"));
+            new LauncherNoNetworkPanel(),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.2148916236"));
         LoggerUtils.logMessage("Adult verification required in this region", ELevel.ERROR);
         break;
       case (int) 2148916237L:
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
-            new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
-                "lp.label.errorLabel.2148916237"));
+            new LauncherNoNetworkPanel(),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.2148916237"));
         LoggerUtils.logMessage("Age verification required in this region", ELevel.ERROR);
         break;
       case (int) 2148916238L:
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
-            new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
-                "lp.label.errorLabel.2148916238"));
+            new LauncherNoNetworkPanel(),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.2148916238"));
         LoggerUtils.logMessage("Required to be part of a family account", ELevel.ERROR);
         break;
     }
+  }
+
+  void getAndSetRefreshToken(final JSONObject accessTokenResult) {
+    this.accessToken = accessTokenResult.getString("access_token");
+    String refreshToken = accessTokenResult.getString("refresh_token");
+    int refreshTokenExpiresIn = accessTokenResult.getInt("expires_in");
+    long refreshTokenObtainTime = System.currentTimeMillis() + (refreshTokenExpiresIn * 1000L);
+    Date refreshTokenObtainDate = new Date(refreshTokenObtainTime);
+    ConfigUtils.getInstance().setMicrosoftRefreshToken(refreshToken);
+    ConfigUtils.getInstance().setMicrosoftRefreshTokenExpiresIn(refreshTokenObtainDate.getTime());
+  }
+
+  String getAndSetMinecraftToken() {
+    String minecraftToken = MicrosoftUtils.pollingResult.getString("access_token");
+    int minecraftTokenExpiresIn = MicrosoftUtils.pollingResult.getInt("expires_in");
+    long minecraftTokenObtainTime = System.currentTimeMillis() + (minecraftTokenExpiresIn * 1000L);
+    Date minecraftTokenObtainDate = new Date(minecraftTokenObtainTime);
+    ConfigUtils.getInstance().setMicrosoftAccessToken(minecraftToken);
+    ConfigUtils.getInstance().setMicrosoftAccessTokenExpiresIn(minecraftTokenObtainDate.getTime());
+    return minecraftToken;
+  }
+
+  void getAndSetMicrosoftProfile() {
+    String profileName = MicrosoftUtils.pollingResult.getString("name");
+    String profileId = MicrosoftUtils.pollingResult.getString("id");
+    ConfigUtils.getInstance().setMicrosoftProfileName(profileName);
+    ConfigUtils.getInstance().setMicrosoftProfileId(profileId);
+    ConfigUtils.getInstance().setMicrosoftSessionId(
+        ConfigUtils.formatSessionId(ConfigUtils.getInstance().getClientToken(),
+            ConfigUtils.getInstance().getMicrosoftAccessToken(),
+            ConfigUtils.getInstance().getMicrosoftProfileId()));
   }
 
   void handleDeviceCodeErrors(final JSONObject result, final AtomicBoolean isExpired,
@@ -103,9 +137,9 @@ abstract class MicrosoftAuthentication {
     progressBarTimer.start();
   }
 
-  public abstract void authenticate();
+  public abstract void login();
 
-  public abstract JSONObject pollForAccessToken(String deviceCode, int expiresIn, int interval);
+  public abstract JSONObject loginPoll(String deviceCode, int expiresIn, int interval);
 
   public abstract JSONObject acquireUserCode(String clientId);
 
