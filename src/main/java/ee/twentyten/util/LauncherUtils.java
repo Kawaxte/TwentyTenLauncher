@@ -6,15 +6,18 @@ import ee.twentyten.log.ELevel;
 import ee.twentyten.request.EHeader;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
+import ee.twentyten.ui.launcher.LauncherPanel;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,6 +91,38 @@ public final class LauncherUtils {
 
     oldCont.revalidate();
     oldCont.repaint();
+  }
+
+  public static boolean isNetworkAvailableForYggdrasil() {
+    InetAddress address;
+    try {
+      address = InetAddress.getByName("authserver.mojang.com");
+      return !address.isReachable(15000);
+    } catch (UnknownHostException uhe) {
+      LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
+          new LauncherNoNetworkPanel(), MessageFormat.format(
+              LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.noNetwork"),
+              uhe.getMessage()));
+    } catch (IOException ioe) {
+      LoggerUtils.logMessage("Failed to check for network connection", ioe, ELevel.ERROR);
+    }
+    return true;
+  }
+
+  public static boolean isNetworkAvailableForMicrosoft() {
+    InetAddress address;
+    try {
+      address = InetAddress.getByName("login.microsoftonline.com");
+      return !address.isReachable(15000);
+    } catch (UnknownHostException uhe) {
+      LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
+          new LauncherNoNetworkPanel(), MessageFormat.format(
+              LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.noNetwork"),
+              uhe.getMessage()));
+    } catch (IOException ioe) {
+      LoggerUtils.logMessage("Failed to check for network connection", ioe, ELevel.ERROR);
+    }
+    return true;
   }
 
   public static boolean isLauncherOutdated() {
