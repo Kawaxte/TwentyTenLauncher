@@ -3,14 +3,14 @@
   <a href="https://www.azul.com/downloads/?version=java-7-lts&package=jre">
     <img src="https://img.shields.io/badge/Java-7%2B-blue.svg">
   </a>
-  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
-    <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher?label=latest">
+  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
+    <img src="https://img.shields.io/github/v/release/sojlabjoi/TwentyTenLauncher?label=latest">
   </a>
-  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases">
-    <img src="https://img.shields.io/github/v/release/sojlabjoi/AlphacraftLauncher?include_prereleases&label=pre-release">
+  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases">
+    <img src="https://img.shields.io/github/v/release/sojlabjoi/TwentyTenLauncher?include_prereleases&label=pre-release">
   </a>
-  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/blob/stable/LICENSE">
-    <img src="https://img.shields.io/github/license/sojlabjoi/AlphacraftLauncher">
+  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/blob/stable/LICENSE">
+    <img src="https://img.shields.io/github/license/sojlabjoi/TwentyTenLauncher">
   </a>
 </p>
 <div align="center">
@@ -19,11 +19,11 @@
   </a>
 </div>
 <p align="center">
-  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
-    <img src="https://img.shields.io/github/downloads/sojlabjoi/AlphacraftLauncher/latest/total.svg">
+  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
+    <img src="https://img.shields.io/github/downloads/sojlabjoi/TwentyTenLauncher/latest/total.svg">
   </a>
-  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases">
-    <img src="https://img.shields.io/github/downloads-pre/sojlabjoi/AlphacraftLauncher/latest/total?label=downloads%40pre-release">
+  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases">
+    <img src="https://img.shields.io/github/downloads-pre/sojlabjoi/TwentyTenLauncher/latest/total?label=downloads%40pre-release">
   </a>
 </p>
 
@@ -42,11 +42,11 @@ authentic experience of playing the game as it was in the past.
 
 <h2 align="center">Managing Issues and Contributions</h2>
 <p align="center">
-  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/issues">
-    <img src="https://img.shields.io/github/issues/sojlabjoi/AlphacraftLauncher">
+  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/issues">
+    <img src="https://img.shields.io/github/issues/sojlabjoi/TwentyTenLauncher">
   </a>
-  <a href="https://github.com/sojlabjoi/AlphacraftLauncher/pulls">
-    <img src="https://img.shields.io/github/issues-pr/sojlabjoi/AlphacraftLauncher">
+  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/pulls">
+    <img src="https://img.shields.io/github/issues-pr/sojlabjoi/TwentyTenLauncher">
   </a>
 </p>
 
