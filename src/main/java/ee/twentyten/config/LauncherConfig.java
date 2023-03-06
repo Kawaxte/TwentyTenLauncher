@@ -91,8 +91,8 @@ abstract class LauncherConfig {
     this.microsoftProfileName = clp.getProperty("microsoftProfileName", null);
     this.microsoftProfileId = clp.getProperty("microsoftProfileId", null);
     this.microsoftSessionId = clp.getProperty("microsoftSessionId",
-        ConfigUtils.formatSessionId(this.clientToken, this.yggdrasilAccessToken,
-            this.yggdrasilProfileId));
+        ConfigUtils.formatSessionId(this.clientToken, this.microsoftAccessToken,
+            this.microsoftProfileId));
   }
 
   void setGeneralProperties(LinkedProperties clp) {
