@@ -28,7 +28,6 @@ public final class MicrosoftUtils {
   public static URL mcservicesStoreUrl;
   public static URL mcservicesProfileUrl;
   public static JSONObject pollingResult;
-  public static boolean isMinecraftTokenExpired;
   @Getter
   @Setter
   private static MicrosoftAuthenticationImpl instance;

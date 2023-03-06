@@ -117,7 +117,6 @@ public final class AuthenticationUtils {
     long timeRemaining = accessTokenExpiresIn - currentTime;
     long timeRemainingInSeconds = timeRemaining / 1000L;
     if (timeRemainingInSeconds <= 60) {
-      MicrosoftUtils.isMinecraftTokenExpired = true;
       AuthenticationUtils.refreshMinecraftToken(refreshToken);
     }
 
