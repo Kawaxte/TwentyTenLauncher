@@ -81,10 +81,4 @@ public final class FileUtils {
       }
     }
   }
-
-  public static synchronized int getContentLength(URL url) {
-    HttpsURLConnection connection = RequestUtils.performHttpsRequest(url, EMethod.HEAD,
-        EHeader.NO_CACHE.getHeader());
-    return connection.getContentLength();
-  }
 }
