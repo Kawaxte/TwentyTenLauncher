@@ -10,9 +10,6 @@ import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.RequestUtils;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import javax.swing.SwingUtilities;
 import net.minecraft.util.MinecraftUtils;
 import org.json.JSONObject;
 
@@ -20,52 +17,43 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
 
   @Override
   public void login() {
-    final String username = LauncherLoginPanel.getInstance().getUsernameField().getText();
-    final String password = new String(
+    String username = LauncherLoginPanel.getInstance().getUsernameField().getText();
+    String password = new String(
         LauncherLoginPanel.getInstance().getPasswordField().getPassword());
-    final boolean isPasswordSaved = LauncherLoginPanel.getInstance().getRememberPasswordCheckBox()
+    boolean isPasswordSaved = LauncherLoginPanel.getInstance().getRememberPasswordCheckBox()
         .isSelected();
+    
+    JSONObject loginResult = YggdrasilAuthenticationImpl.this.authenticate(username,
+        password, ConfigUtils.getInstance().getClientToken(), true);
+    if (loginResult.has("error")) {
+      LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
+          new LauncherNoNetworkPanel(),
+          LanguageUtils.getString(LanguageUtils.getBundle(),
+              "lp.label.errorLabel.loginFailed"));
+      return;
+    }
 
-    ExecutorService loginService = Executors.newSingleThreadExecutor();
-    loginService.submit(new Runnable() {
-      @Override
-      public void run() {
-        final JSONObject loginResult = YggdrasilAuthenticationImpl.this.authenticate(username,
-            password, ConfigUtils.getInstance().getClientToken(), true);
+    ConfigUtils.getInstance().setYggdrasilUsername(username);
+    ConfigUtils.getInstance().setYggdrasilPassword(isPasswordSaved ? password : "");
+    ConfigUtils.getInstance().setYggdrasilPasswordSaved(isPasswordSaved);
 
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            if (loginResult.has("error")) {
-              LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
-                  new LauncherNoNetworkPanel(),
-                  LanguageUtils.getString(LanguageUtils.getBundle(),
-                      "lp.label.errorLabel.loginFailed"));
-              return;
-            }
+    String accessToken = loginResult.getString("accessToken");
+    ConfigUtils.getInstance().setYggdrasilAccessToken(accessToken);
 
-            String accessToken = loginResult.getString("accessToken");
-            ConfigUtils.getInstance().setYggdrasilUsername(username);
-            ConfigUtils.getInstance().setYggdrasilPassword(isPasswordSaved ? password : "");
-            ConfigUtils.getInstance().setYggdrasilPasswordSaved(isPasswordSaved);
-            ConfigUtils.getInstance().setYggdrasilAccessToken(accessToken);
+    String[] availableProfiles = new String[loginResult.getJSONArray("availableProfiles").length()];
+    if (availableProfiles.length == 0) {
+      ConfigUtils.writeToConfig();
 
-            if (loginResult.has("selectedProfile")) {
-              YggdrasilAuthenticationImpl.this.getAndSetYggdrasilProfile(accessToken, loginResult);
+      MinecraftUtils.launchMinecraft();
+      return;
+    }
 
-              ConfigUtils.writeToConfig();
+    YggdrasilAuthenticationImpl.this.getAndSetYggdrasilProfile(accessToken, loginResult);
 
-              MinecraftUtils.launchMinecraft(ConfigUtils.getInstance().getYggdrasilProfileName(),
-                  ConfigUtils.getInstance().getYggdrasilSessionId());
-            } else {
-              ConfigUtils.writeToConfig();
+    ConfigUtils.writeToConfig();
 
-              MinecraftUtils.launchMinecraft();
-            }
-          }
-        });
-      }
-    });
+    MinecraftUtils.launchMinecraft(ConfigUtils.getInstance().getYggdrasilProfileName(),
+        ConfigUtils.getInstance().getYggdrasilSessionId());
   }
 
   @Override
