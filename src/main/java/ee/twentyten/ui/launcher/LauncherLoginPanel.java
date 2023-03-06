@@ -137,16 +137,16 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
       });
     }
     if (source.equals(this.loginButton)) {
-      if (!LauncherUtils.isNetworkAvailableForYggdrasil()) {
+      if (LauncherUtils.isNetworkNotAvailable("authserver.mojang.com")) {
         return;
       }
       if (LauncherUtils.isLauncherOutdated()) {
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
-        return;
+      } else {
+        YggdrasilUtils.loginWithYggdrasil();
       }
-      YggdrasilUtils.loginWithYggdrasil();
     }
   }
 }
