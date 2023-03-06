@@ -10,6 +10,7 @@ import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.RequestUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
@@ -55,6 +56,28 @@ public final class MicrosoftUtils {
 
   private MicrosoftUtils() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
+  }
+
+  public static void getAndSetNewRefreshToken(final JSONObject result) {
+    String newRefreshToken = result.getString("refresh_token");
+    int newRefreshTokenExpiresIn = result.getInt("expires_in");
+    long newRefreshTokenObtainTime =
+        System.currentTimeMillis() + (newRefreshTokenExpiresIn * 1000L);
+    Date newRefreshTokenObtainDate = new Date(newRefreshTokenObtainTime);
+    ConfigUtils.getInstance().setMicrosoftRefreshToken(newRefreshToken);
+    ConfigUtils.getInstance()
+        .setMicrosoftRefreshTokenExpiresIn(newRefreshTokenObtainDate.getTime());
+  }
+
+  public static void getAndSetNewMinecraftToken(final JSONObject[] result) {
+    String newMinecraftToken = result[0].getString("access_token");
+    int newMinecraftTokenExpiresIn = result[0].getInt("expires_in");
+    long newMinecraftTokenObtainTime =
+        System.currentTimeMillis() + (newMinecraftTokenExpiresIn * 1000L);
+    Date newMinecraftTokenObtainDate = new Date(newMinecraftTokenObtainTime);
+    ConfigUtils.getInstance().setMicrosoftAccessToken(newMinecraftToken);
+    ConfigUtils.getInstance()
+        .setMicrosoftAccessTokenExpiresIn(newMinecraftTokenObtainDate.getTime());
   }
 
   public static void loginWithMicrosoft() {
