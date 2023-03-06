@@ -7,11 +7,13 @@ public final class SystemUtils {
   public static String lineSeparator;
   public static String launcherVersion;
   public static String osVersion;
+  public static String javaVersion;
 
   static {
     SystemUtils.lineSeparator = System.getProperty("line.separator");
     SystemUtils.launcherVersion = System.getProperty("ee.twentyten.launcher.version");
     SystemUtils.osVersion = System.getProperty("os.version");
+    SystemUtils.javaVersion = System.getProperty("java.version");
   }
 
   private SystemUtils() {
