@@ -7,12 +7,18 @@ import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.RequestUtils;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -28,7 +34,7 @@ abstract class GameUpdater {
   public String taskMessage;
   public int percentage;
   public boolean isFatalErrorOccurred;
-  boolean isNativesLoaded;
+  boolean isLibrariesLoaded;
   URL[] urls;
   ClassLoader minecraftAppletLoader;
 
@@ -85,7 +91,7 @@ abstract class GameUpdater {
     this.taskMessage = "";
   }
 
-  boolean isContentLengthAvailable(final URL url, String urlString) {
+  boolean isContentLengthAvailable(final URL url, String fileName) {
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Future<Integer> contentLengthFuture = executor.submit(new Callable<Integer>() {
       @Override
@@ -99,7 +105,7 @@ abstract class GameUpdater {
       if (contentLength == -1) {
         Throwable fnfe = new FileNotFoundException(MessageFormat.format(
             LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fileNotFound"),
-            urlString));
+            fileName));
 
         this.setFatalErrorMessage(fnfe.getMessage());
         LoggerUtils.logMessage("Failed to check content length", fnfe, ELevel.ERROR);
@@ -117,6 +123,74 @@ abstract class GameUpdater {
       return true;
     } finally {
       executor.shutdown();
+    }
+  }
+
+  protected void unloadLibrariesOnJavaSeven(File directory)
+      throws NoSuchFieldException, IllegalAccessException {
+    Field loadedLibraryNames = ClassLoader.class.getDeclaredField("loadedLibraryNames");
+    loadedLibraryNames.setAccessible(true);
+
+    Object loadedLibrary = loadedLibraryNames.get(this.getClass().getClassLoader());
+
+    List<?> libraries = (List<?>) loadedLibrary;
+    for (int i = 0; i < libraries.size(); i++) {
+      String library = (String) libraries.get(i);
+      if (library.startsWith(directory.getAbsolutePath())) {
+        libraries.remove(i);
+        i--;
+      }
+    }
+  }
+
+  protected void unloadLibrariesOnJavaEight(File directory)
+      throws NoSuchFieldException, IllegalAccessException {
+    Field loadedLibraryNames = ClassLoader.class.getDeclaredField("loadedLibraryNames");
+    loadedLibraryNames.setAccessible(true);
+
+    Object loadedLibrary = loadedLibraryNames.get(this.getClass().getClassLoader());
+
+    List<?> libraries;
+    switch (loadedLibrary.getClass().getName()) {
+      case "java.util.ArrayList":
+        libraries = (List<?>) loadedLibrary;
+        break;
+      case "java.util.HashSet":
+        libraries = new ArrayList<Object>((Set<?>) loadedLibrary);
+        break;
+      case "java.util.Vector":
+        libraries = new ArrayList<Object>((Vector<?>) loadedLibrary);
+        break;
+      case "[Ljava.lang.String;":
+        libraries = Arrays.asList((String[]) loadedLibrary);
+        break;
+      default:
+        throw new IllegalArgumentException(loadedLibrary.getClass().getName());
+    }
+
+    Iterator<?> iterator = libraries.iterator();
+    while (iterator.hasNext()) {
+      String library = (String) iterator.next();
+      if (library.startsWith(directory.getAbsolutePath())) {
+        iterator.remove();
+      }
+    }
+  }
+
+  protected void unloadLibrariesOnJavaEleven(File directory)
+      throws NoSuchFieldException, IllegalAccessException {
+    Field loadedLibraryNames = ClassLoader.class.getDeclaredField("loadedLibraryNames");
+    loadedLibraryNames.setAccessible(true);
+
+    Object loadedLibrary = loadedLibraryNames.get(this.getClass().getClassLoader());
+
+    Set<?> loadedLibraries = (Set<?>) loadedLibrary;
+    Iterator<?> libraries = loadedLibraries.iterator();
+    while (libraries.hasNext()) {
+      String library = (String) libraries.next();
+      if (library.startsWith(directory.getAbsolutePath())) {
+        libraries.remove();
+      }
     }
   }
 
