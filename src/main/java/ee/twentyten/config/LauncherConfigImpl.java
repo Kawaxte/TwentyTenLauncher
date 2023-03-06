@@ -48,7 +48,7 @@ public class LauncherConfigImpl extends LauncherConfig {
 
       LinkedProperties clpYggdrasil = new LinkedProperties();
       this.setYggdrasilProperties(clpYggdrasil);
-      clpYggdrasil.store(fos, "MOJANG AUTHENTICATION");
+      clpYggdrasil.store(fos, "YGGDRASIL AUTHENTICATION");
 
       LinkedProperties clpMicrosoft = new LinkedProperties();
       this.setMicrosoftProperties(clpMicrosoft);
