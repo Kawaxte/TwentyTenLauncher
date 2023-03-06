@@ -6,8 +6,8 @@
   <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
     <img src="https://img.shields.io/github/v/release/sojlabjoi/TwentyTenLauncher?label=latest">
   </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases">
-    <img src="https://img.shields.io/github/v/release/sojlabjoi/TwentyTenLauncher?include_prereleases&label=pre-release">
+  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
+    <img src="https://img.shields.io/github/downloads/sojlabjoi/TwentyTenLauncher/latest/total.svg">
   </a>
   <a href="https://github.com/sojlabjoi/TwentyTenLauncher/blob/stable/LICENSE">
     <img src="https://img.shields.io/github/license/sojlabjoi/TwentyTenLauncher">
@@ -18,14 +18,6 @@
     <img src="https://i.imgur.com/XI2qib8.png">
   </a>
 </div>
-<p align="center">
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
-    <img src="https://img.shields.io/github/downloads/sojlabjoi/TwentyTenLauncher/latest/total.svg">
-  </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases">
-    <img src="https://img.shields.io/github/downloads-pre/sojlabjoi/TwentyTenLauncher/latest/total?label=downloads%40pre-release">
-  </a>
-</p>
 
 ---
 
