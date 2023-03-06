@@ -8,7 +8,7 @@ import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Base64;
 
 public final class CipherUtils {
 
@@ -37,7 +37,7 @@ public final class CipherUtils {
       byte[] finalBytes = new byte[ivBytes.length + encryptedBytes.length];
       System.arraycopy(ivBytes, 0, finalBytes, 0, ivBytes.length);
       System.arraycopy(encryptedBytes, 0, finalBytes, ivBytes.length, encryptedBytes.length);
-      return DatatypeConverter.printBase64Binary(finalBytes);
+      return Base64.encodeBase64String(finalBytes);
     } catch (GeneralSecurityException gse) {
       LoggerUtils.logMessage("Failed to encrypt value", gse, ELevel.ERROR);
     }
@@ -52,7 +52,7 @@ public final class CipherUtils {
     byte[] keyBytes = Arrays.copyOf("passwordFile".getBytes(StandardCharsets.UTF_8), 16);
     SecretKeySpec sks = new SecretKeySpec(keyBytes, "AES");
 
-    byte[] encryptedBytes = DatatypeConverter.parseBase64Binary(value);
+    byte[] encryptedBytes = Base64.decodeBase64(value);
     byte[] ivBytes = Arrays.copyOfRange(encryptedBytes, 0, 16);
     byte[] encryptedDataBytes = Arrays.copyOfRange(encryptedBytes, 16, encryptedBytes.length);
     IvParameterSpec ips = new IvParameterSpec(ivBytes);
