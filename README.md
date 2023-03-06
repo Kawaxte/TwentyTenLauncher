@@ -13,6 +13,11 @@
     <img src="https://img.shields.io/github/license/sojlabjoi/AlphacraftLauncher">
   </a>
 </p>
+<div align="center">
+  <a href="https://i.imgur.com/XI2qib8.png">
+    <img src="https://i.imgur.com/XI2qib8.png">
+  </a>
+</div>
 <p align="center">
   <a href="https://github.com/sojlabjoi/AlphacraftLauncher/releases/latest">
     <img src="https://img.shields.io/github/downloads/sojlabjoi/AlphacraftLauncher/latest/total.svg">
@@ -21,11 +26,6 @@
     <img src="https://img.shields.io/github/downloads-pre/sojlabjoi/AlphacraftLauncher/latest/total?label=downloads%40pre-release">
   </a>
 </p>
-<div align="center">
-  <a href="https://i.imgur.com/XI2qib8.png">
-    <img src="https://i.imgur.com/XI2qib8.png">
-  </a>
-</div>
 
 ---
 
