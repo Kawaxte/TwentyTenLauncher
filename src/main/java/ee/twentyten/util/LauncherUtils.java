@@ -30,9 +30,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import org.json.JSONObject;
 
 public final class LauncherUtils {
@@ -93,51 +96,57 @@ public final class LauncherUtils {
     oldCont.repaint();
   }
 
-  public static boolean isNetworkAvailableForYggdrasil() {
-    InetAddress address;
-    try {
-      address = InetAddress.getByName("authserver.mojang.com");
-      return !address.isReachable(15000);
-    } catch (UnknownHostException uhe) {
-      LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
-          new LauncherNoNetworkPanel(), MessageFormat.format(
-              LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.noNetwork"),
-              uhe.getMessage()));
-    } catch (IOException ioe) {
-      LoggerUtils.logMessage("Failed to check for network connection", ioe, ELevel.ERROR);
-    }
-    return true;
-  }
+  public static boolean isNetworkNotAvailable(final String hostName) {
+    final boolean[] isNetworkNotAvailable = {true};
+    new SwingWorker<Boolean, Void>() {
+      @Override
+      protected Boolean doInBackground() {
+        try {
+          InetAddress address = InetAddress.getByName(hostName);
+          return !address.isReachable(1000);
+        } catch (UnknownHostException uhe) {
+          LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
+              new LauncherNoNetworkPanel(), MessageFormat.format(
+                  LanguageUtils.getString(LanguageUtils.getBundle(),
+                      "lp.label.errorLabel.noNetwork"), uhe.getMessage()));
+        } catch (IOException ioe) {
+          LoggerUtils.logMessage(MessageFormat.format("Can't connect to {0}", hostName), ioe,
+              ELevel.ERROR);
+        }
+        return true;
+      }
 
-  public static boolean isNetworkAvailableForMicrosoft() {
-    InetAddress address;
-    try {
-      address = InetAddress.getByName("login.microsoftonline.com");
-      return !address.isReachable(15000);
-    } catch (UnknownHostException uhe) {
-      LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
-          new LauncherNoNetworkPanel(), MessageFormat.format(
-              LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.noNetwork"),
-              uhe.getMessage()));
-    } catch (IOException ioe) {
-      LoggerUtils.logMessage("Failed to check for network connection", ioe, ELevel.ERROR);
-    }
-    return true;
+      @Override
+      protected void done() {
+        try {
+          isNetworkNotAvailable[0] = !get(15, TimeUnit.SECONDS);
+        } catch (ExecutionException ee) {
+          LoggerUtils.logMessage("Failed to check for network availability", ee, ELevel.ERROR);
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+          LoggerUtils.logMessage("Interrupted while checking for network availability", ie,
+              ELevel.ERROR);
+        } catch (TimeoutException te) {
+          LoggerUtils.logMessage("Timeout while checking for network availability", te,
+              ELevel.ERROR);
+        }
+      }
+    }.execute();
+    return !isNetworkNotAvailable[0];
   }
 
   public static boolean isLauncherOutdated() {
     if (!LauncherUtils.isUpdateChecked) {
-      ThreadFactory updateFactory = new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-          Thread updateThread = new Thread(r);
-          updateThread.setName(MessageFormat.format("update-{0}", updateThread.getId()));
-          updateThread.setDaemon(true);
-          return updateThread;
-        }
-      };
-
-      ExecutorService updateService = Executors.newSingleThreadExecutor(updateFactory);
+      ExecutorService updateService = Executors.newSingleThreadExecutor(
+          new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+              Thread t = new Thread(r);
+              t.setName(MessageFormat.format("updateThread-{0}", t.getId()));
+              t.setDaemon(true);
+              return t;
+            }
+          });
       Future<Boolean> updateFuture = updateService.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() {
@@ -150,6 +159,7 @@ public final class LauncherUtils {
           return currentVersion.compareTo(latestVersion) < 0;
         }
       });
+
       try {
         LauncherUtils.isOutdated = updateFuture.get();
         LauncherUtils.isUpdateChecked = true;
@@ -159,7 +169,7 @@ public final class LauncherUtils {
         Thread.currentThread().interrupt();
         LoggerUtils.logMessage("Interrupted while checking for updates", ie, ELevel.ERROR);
       } finally {
-        updateService.shutdown();
+        updateService.shutdownNow();
       }
     }
     return LauncherUtils.isOutdated;
