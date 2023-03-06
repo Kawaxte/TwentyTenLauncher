@@ -62,9 +62,9 @@ public final class YggdrasilUtils {
         MinecraftUtils.launchMinecraft(ConfigUtils.getInstance().getYggdrasilProfileName(),
             ConfigUtils.getInstance().getYggdrasilSessionId());
       }
-    } else {
-      YggdrasilUtils.getInstance().login();
+      return;
     }
+    YggdrasilUtils.getInstance().login();
   }
 
   public static JSONObject validate(String accessToken, String clientToken) {
