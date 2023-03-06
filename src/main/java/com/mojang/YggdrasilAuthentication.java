@@ -5,16 +5,14 @@ import org.json.JSONObject;
 
 public abstract class YggdrasilAuthentication {
 
-  void getAndSetYggdrasilProfile(final String accessToken, final JSONObject loginResult) {
-    String profileName = loginResult.getJSONObject("selectedProfile").getString("name");
-    String profileId = loginResult.getJSONObject("selectedProfile").getString("id");
+  void getAndSetYggdrasilProfile(final String accessToken, final JSONObject result) {
+    String profileName = result.getJSONObject("selectedProfile").getString("name");
+    String profileId = result.getJSONObject("selectedProfile").getString("id");
     ConfigUtils.getInstance().setYggdrasilProfileName(profileName);
     ConfigUtils.getInstance().setYggdrasilProfileId(profileId);
-    ConfigUtils.getInstance().setYggdrasilSessionId(accessToken);
-    ConfigUtils.getInstance().setMicrosoftSessionId(
-        ConfigUtils.formatSessionId(ConfigUtils.getInstance().getClientToken(),
-            ConfigUtils.getInstance().getYggdrasilAccessToken(),
-            ConfigUtils.getInstance().getYggdrasilProfileId()));
+    ConfigUtils.getInstance().setYggdrasilSessionId(
+        ConfigUtils.formatSessionId(ConfigUtils.getInstance().getClientToken(), accessToken,
+            profileId));
   }
 
   public abstract void login();
