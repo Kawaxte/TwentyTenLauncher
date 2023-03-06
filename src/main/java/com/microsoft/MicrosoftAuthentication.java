@@ -18,7 +18,7 @@ import javax.swing.Timer;
 import lombok.Getter;
 import org.json.JSONObject;
 
-abstract class MicrosoftAuthentication {
+public abstract class MicrosoftAuthentication {
 
   @Getter
   String clientId;
@@ -64,10 +64,10 @@ abstract class MicrosoftAuthentication {
     }
   }
 
-  void getAndSetRefreshToken(final JSONObject accessTokenResult) {
-    this.accessToken = accessTokenResult.getString("access_token");
-    String refreshToken = accessTokenResult.getString("refresh_token");
-    int refreshTokenExpiresIn = accessTokenResult.getInt("expires_in");
+  void getAndSetRefreshToken(final JSONObject result) {
+    this.accessToken = result.getString("access_token");
+    String refreshToken = result.getString("refresh_token");
+    int refreshTokenExpiresIn = result.getInt("expires_in");
     long refreshTokenObtainTime = System.currentTimeMillis() + (refreshTokenExpiresIn * 1000L);
     Date refreshTokenObtainDate = new Date(refreshTokenObtainTime);
     ConfigUtils.getInstance().setMicrosoftRefreshToken(refreshToken);
