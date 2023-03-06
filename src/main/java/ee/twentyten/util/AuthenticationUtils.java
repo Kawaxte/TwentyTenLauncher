@@ -8,7 +8,6 @@ import ee.twentyten.request.EMethod;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -42,12 +41,13 @@ public final class AuthenticationUtils {
   public static JSONObject checkYggdrasilProfile(String profileId) {
     try {
       AuthenticationUtils.sessionserverProfileUrl = new URL(
-          AuthenticationUtils.sessionserverProfileUrl.toString() + "/" + profileId);
+          MessageFormat.format("{0}/{1}", AuthenticationUtils.sessionserverProfileUrl.toString(),
+              profileId));
     } catch (MalformedURLException murle) {
       LoggerUtils.logMessage("Failed to create URL", murle, ELevel.ERROR);
     }
-    return RequestUtils.performJsonRequest(
-        AuthenticationUtils.sessionserverProfileUrl, EMethod.GET, EHeader.JSON.getHeader());
+    return RequestUtils.performJsonRequest(AuthenticationUtils.sessionserverProfileUrl, EMethod.GET,
+        EHeader.JSON.getHeader());
   }
 
   public static JSONObject checkMicrosoftProfile(String accessToken) {
@@ -72,8 +72,8 @@ public final class AuthenticationUtils {
     return JWT_PATTERN.matcher(accessToken).matches() && refreshToken.startsWith("M.R3_BL2.");
   }
 
-  public static boolean isYggdrasilProfileValid(String profileId) {
-    if (profileId == null) {
+  public static boolean isYggdrasilProfileValid(final String profileId) {
+    if (profileId.isEmpty()) {
       return false;
     }
 
@@ -169,21 +169,41 @@ public final class AuthenticationUtils {
     validateAndRefreshWorker.execute();
   }
 
-  private static void refreshMinecraftToken(String refreshToken) {
-    JSONObject refreshResult = MicrosoftUtils.refreshMinecraftToken(
-        MicrosoftUtils.getInstance().getClientId(), refreshToken);
+  private static void refreshMinecraftToken(final String refreshToken) {
+    final JSONObject[] refreshResult = new JSONObject[1];
+    SwingWorker<JSONObject, Void> refreshWorker = new SwingWorker<JSONObject, Void>() {
+      @Override
+      protected JSONObject doInBackground() {
+        refreshResult[0] = MicrosoftUtils.refreshMinecraftToken(
+            MicrosoftUtils.getInstance().getClientId(), refreshToken);
+        return refreshResult[0];
+      }
 
-    String newRefreshToken = refreshResult.getString("refresh_token");
-    int newRefreshTokenExpiresIn = refreshResult.getInt("expires_in");
-    long newRefreshTokenObtainTime =
-        System.currentTimeMillis() + (newRefreshTokenExpiresIn * 1000L);
-    Date newRefreshTokenObtainDate = new Date(newRefreshTokenObtainTime);
-    ConfigUtils.getInstance().setMicrosoftRefreshToken(newRefreshToken);
-    ConfigUtils.getInstance()
-        .setMicrosoftRefreshTokenExpiresIn(newRefreshTokenObtainDate.getTime());
+      @Override
+      protected void done() {
+        try {
+          JSONObject result = this.get();
+          if (result != null && !result.isEmpty()) {
+            MicrosoftUtils.getAndSetNewRefreshToken(result);
 
-    String newAccessToken = refreshResult.getString("access_token");
-    MicrosoftUtils.acquireXblToken(newAccessToken);
+            String newAccessToken = result.getString("access_token");
+            refreshResult[0] = MicrosoftUtils.acquireXblToken(newAccessToken);
+          }
+        } catch (ExecutionException ee) {
+          LoggerUtils.logMessage("Failed to refresh Minecraft token", ee, ELevel.ERROR);
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+          LoggerUtils.logMessage("Interrupted while refreshing Minecraft token", ie, ELevel.ERROR);
+        } finally {
+          if (refreshResult[0].has("access_token")) {
+            MicrosoftUtils.getAndSetNewMinecraftToken(refreshResult);
+
+            ConfigUtils.writeToConfig();
+          }
+        }
+      }
+    };
+    refreshWorker.execute();
   }
 
   private static String formatExpirationTime(long expirationTime) {
