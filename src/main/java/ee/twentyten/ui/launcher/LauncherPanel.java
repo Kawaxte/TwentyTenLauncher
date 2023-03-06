@@ -133,16 +133,16 @@ public class LauncherPanel extends JPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source.equals(this.microsoftLoginButton)) {
-      if (!LauncherUtils.isNetworkAvailableForMicrosoft()) {
+      if (LauncherUtils.isNetworkNotAvailable("login.microsoftonline.com")) {
         return;
       }
       if (LauncherUtils.isLauncherOutdated()) {
         LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
-        return;
+      } else {
+        MicrosoftUtils.loginWithMicrosoft();
       }
-      MicrosoftUtils.loginWithMicrosoft();
     }
   }
 }
