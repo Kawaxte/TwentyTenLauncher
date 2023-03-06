@@ -10,6 +10,7 @@ import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.RequestUtils;
+import ee.twentyten.util.SystemUtils;
 import ee.twentyten.util.VersionUtils;
 import java.applet.Applet;
 import java.io.File;
@@ -18,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
-import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.net.ssl.HttpsURLConnection;
@@ -61,17 +60,21 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
     return null;
   }
 
-  private void unloadNativeLibraries() {
-    if (this.isNativesLoaded) {
+  private void unloadLibraries(File directory) {
+    if (this.isLibrariesLoaded) {
       return;
     }
 
     try {
-      Field declaredField = ClassLoader.class.getDeclaredField("loadedLibraryNames");
-      declaredField.setAccessible(true);
-
-      Vector<?> libraries = (Vector<?>) declaredField.get(this.getClass().getClassLoader());
-      libraries.clear();
+      if (SystemUtils.javaVersion.startsWith("1.7")) {
+        this.unloadLibrariesOnJavaSeven(directory);
+      }
+      if (SystemUtils.javaVersion.startsWith("1.8")) {
+        this.unloadLibrariesOnJavaEight(directory);
+      }
+      if (SystemUtils.javaVersion.startsWith("11")) {
+        this.unloadLibrariesOnJavaEleven(directory);
+      }
     } catch (NoSuchFieldException nsfe) {
       this.setFatalErrorMessage(MessageFormat.format(
           LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fieldNotFound"),
@@ -85,17 +88,16 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
     }
   }
 
-  private void loadNativeLibraries(File directory) {
+  private void loadLibraries(File directory) {
     String[] libraryPaths = new String[]{"org.lwjgl.librarypath",
         "net.java.games.input.librarypath"};
     for (String libraryPath : libraryPaths) {
-      File nativesDirectory = new File(directory, "natives");
-      System.setProperty(libraryPath, nativesDirectory.getAbsolutePath());
+      System.setProperty(libraryPath, directory.getAbsolutePath());
       LoggerUtils.logMessage(
           MessageFormat.format("{0}={1}", libraryPath, System.getProperty(libraryPath)),
           ELevel.INFO);
     }
-    this.isNativesLoaded = true;
+    this.isLibrariesLoaded = true;
   }
 
   @Override
@@ -345,8 +347,10 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
             }
           });
     }
-    this.unloadNativeLibraries();
-    this.loadNativeLibraries(binDirectory);
+
+    File nativesDirectory = new File(binDirectory, "natives");
+    this.unloadLibraries(nativesDirectory);
+    this.loadLibraries(nativesDirectory);
   }
 
   @Override
