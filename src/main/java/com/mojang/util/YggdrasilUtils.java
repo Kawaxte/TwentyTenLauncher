@@ -42,16 +42,18 @@ public final class YggdrasilUtils {
   }
 
   public static void loginWithYggdrasil() {
-    boolean isUsernameValid = Objects.equals(
-        LauncherLoginPanel.getInstance().getUsernameField().getText(),
-        ConfigUtils.getInstance().getYggdrasilUsername());
-    boolean isPasswordValid = Objects.equals(
-        new String(LauncherLoginPanel.getInstance().getPasswordField().getPassword()),
-        ConfigUtils.getInstance().getYggdrasilPassword());
-    boolean isPasswordSavedValid = Objects.equals(
-        LauncherLoginPanel.getInstance().getRememberPasswordCheckBox().isSelected(),
-        ConfigUtils.getInstance().isYggdrasilPasswordSaved());
-    if (isUsernameValid && isPasswordValid && isPasswordSavedValid) {
+    String username = LauncherLoginPanel.getInstance().getUsernameField().getText();
+    String password = new String(LauncherLoginPanel.getInstance().getPasswordField().getPassword());
+    boolean isPasswordSaved = LauncherLoginPanel.getInstance().getRememberPasswordCheckBox()
+        .isSelected();
+
+    boolean isUsernameValid =
+        Objects.equals(username, ConfigUtils.getInstance().getYggdrasilUsername())
+            && !username.isEmpty();
+    boolean isPasswordValid =
+        Objects.equals(password, ConfigUtils.getInstance().getYggdrasilPassword())
+            && !password.isEmpty();
+    if (isUsernameValid && isPasswordValid) {
       if (AuthenticationUtils.isYggdrasilSessionValid(
           ConfigUtils.getInstance().getYggdrasilAccessToken())) {
         if (!AuthenticationUtils.isYggdrasilProfileValid(
@@ -64,7 +66,7 @@ public final class YggdrasilUtils {
       }
       return;
     }
-    YggdrasilUtils.getInstance().login();
+    YggdrasilUtils.getInstance().login(username, password, isPasswordSaved);
   }
 
   public static JSONObject validate(String accessToken, String clientToken) {
