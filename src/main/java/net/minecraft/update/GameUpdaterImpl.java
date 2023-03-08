@@ -319,7 +319,6 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
     }
 
     File nativesDirectory = new File(binDirectory, "natives");
-    this.unloadLibraries(nativesDirectory);
     this.loadLibraries(nativesDirectory);
   }
 
