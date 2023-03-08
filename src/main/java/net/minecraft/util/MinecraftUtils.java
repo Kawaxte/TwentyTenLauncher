@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.MinecraftLauncher;
+import net.minecraft.MinecraftLauncherImpl;
 
 public final class MinecraftUtils {
 
@@ -29,10 +29,10 @@ public final class MinecraftUtils {
   public static String[] lwjglWindowsNatives;
   @Getter
   @Setter
-  private static MinecraftLauncher instance;
+  private static MinecraftLauncherImpl instance;
 
   static {
-    MinecraftUtils.setInstance(new MinecraftLauncher());
+    MinecraftUtils.setInstance(new MinecraftLauncherImpl());
 
     MinecraftUtils.lwjglJars = new String[]{"jinput.jar", "lwjgl.jar", "lwjgl_util.jar"};
     MinecraftUtils.lwjglMacosxNatives = new String[]{"libinput_osx.jnilib", "liblwjgl.jnilib",
