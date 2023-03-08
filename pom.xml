@@ -38,6 +38,40 @@
         <groupId>org.apache.maven.plugins</groupId>
         <version>3.1.1</version>
       </plugin>
+      <plugin>
+        <!-- https://mvnrepository.com/artifact/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin -->
+        <artifactId>launch4j-maven-plugin</artifactId>
+        <configuration>
+          <classPath>
+            <mainClass>ee.twentyten.Launcher</mainClass>
+          </classPath>
+          <errTitle>launch4j</errTitle>
+          <headerType>gui</headerType>
+          <icon>${project.basedir}/src/main/resources/icon/favicon.ico</icon>
+          <jar>${project.build.directory}/${project.build.finalName}-shaded.jar</jar>
+          <jre>
+            <jdkPreference>preferJre</jdkPreference>
+            <minVersion>1.7.0</minVersion>
+          </jre>
+          <messages>
+            <jreVersionErr>This application requires Java Runtime Environment 1.7.0</jreVersionErr>
+            <launcherErr>An error occurred while launching the application.</launcherErr>
+            <startupErr>An error occurred while starting the application.</startupErr>
+          </messages>
+          <outfile>${project.build.directory}/TwentyTen_${project.version}.exe</outfile>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>launch4j</goal>
+            </goals>
+            <id>l4j-clui</id>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+        <version>1.7.25</version>
+      </plugin>
     </plugins>
   </build>
 
