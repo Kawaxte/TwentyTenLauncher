@@ -76,13 +76,27 @@ public final class LauncherUtils {
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
 
-    LauncherUtils.mapWorkingDirectoryToPlatform(platform);
+    LauncherUtils.mapWorkingDirectoryToPlatforms(platform);
 
     File workingDirectory = LauncherUtils.workingDirectories.get(platform);
     if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
       LoggerUtils.logMessage("Failed to create working directory", ELevel.ERROR);
     }
     return workingDirectory;
+  }
+
+  private static String getErrorStream(Process p) {
+    StringBuilder sb = new StringBuilder();
+    try (InputStreamReader isr = new InputStreamReader(
+        p.getErrorStream()); BufferedReader br = new BufferedReader(isr)) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        sb.append(line).append(SystemUtils.lineSeparator);
+      }
+    } catch (IOException ioe) {
+      LoggerUtils.logMessage("Failed to read error stream from process", ioe, ELevel.ERROR);
+    }
+    return sb.toString();
   }
 
   public static void setContentPaneToContainer(JComponent c, Container oldCont, Container newCont) {
@@ -94,6 +108,32 @@ public final class LauncherUtils {
 
     oldCont.revalidate();
     oldCont.repaint();
+  }
+
+  private static void setGlobalArguments(EPlatform platform, List<String> args) {
+    switch (platform) {
+      case MACOSX:
+      case LINUX:
+      case WINDOWS:
+        args.add("-Dsun.java2d.opengl=false");
+        break;
+      default:
+        break;
+    }
+  }
+
+  private static void setPlatformSpecificArguments(EPlatform platform, List<String> args) {
+    switch (platform) {
+      case LINUX:
+        args.add("-Dsun.java2d.xrender=True");
+        args.add("-Dsun.java2d.pmoffscreen=false");
+        break;
+      case WINDOWS:
+        args.add("-Dsun.java2d.d3d=false");
+        break;
+      default:
+        break;
+    }
   }
 
   public static boolean isNetworkNotAvailable(final String hostName) {
@@ -137,16 +177,15 @@ public final class LauncherUtils {
 
   public static boolean isLauncherOutdated() {
     if (!LauncherUtils.isUpdateChecked) {
-      ExecutorService updateService = Executors.newSingleThreadExecutor(
-          new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-              Thread t = new Thread(r);
-              t.setName(MessageFormat.format("updateThread-{0}", t.getId()));
-              t.setDaemon(true);
-              return t;
-            }
-          });
+      ExecutorService updateService = Executors.newSingleThreadExecutor(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+          Thread t = new Thread(r);
+          t.setName(MessageFormat.format("updateThread-{0}", t.getId()));
+          t.setDaemon(true);
+          return t;
+        }
+      });
       Future<Boolean> updateFuture = updateService.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() {
@@ -177,14 +216,16 @@ public final class LauncherUtils {
 
   public static void buildAndCreateProcess() {
     EPlatform platform = EPlatform.getPlatform();
+    Objects.requireNonNull(platform, "platform == null!");
 
     List<String> arguments = new ArrayList<>();
     arguments.add(platform == EPlatform.WINDOWS ? "javaw" : "java");
     arguments.add("-Xmx1024m");
     arguments.add("-Xms512m");
-    arguments.add("-Dsun.java2d.d3d=false");
-    arguments.add("-Dsun.java2d.opengl=false");
-    arguments.add("-Dsun.java2d.pmoffscreen=false");
+
+    LauncherUtils.setGlobalArguments(platform, arguments);
+    LauncherUtils.setPlatformSpecificArguments(platform, arguments);
+
     arguments.add("-cp");
     arguments.add(System.getProperty("java.class.path"));
     arguments.add(Launcher.class.getCanonicalName());
@@ -274,21 +315,7 @@ public final class LauncherUtils {
     }
   }
 
-  private static String getErrorStream(Process p) {
-    StringBuilder sb = new StringBuilder();
-    try (InputStreamReader isr = new InputStreamReader(
-        p.getErrorStream()); BufferedReader br = new BufferedReader(isr)) {
-      String line;
-      while ((line = br.readLine()) != null) {
-        sb.append(line).append(SystemUtils.lineSeparator);
-      }
-    } catch (IOException ioe) {
-      LoggerUtils.logMessage("Failed to read error stream from process", ioe, ELevel.ERROR);
-    }
-    return sb.toString();
-  }
-
-  private static void mapWorkingDirectoryToPlatform(EPlatform platform) {
+  private static void mapWorkingDirectoryToPlatforms(EPlatform platform) {
     String userHome = System.getProperty("user.home", ".");
     String appData = System.getenv("APPDATA");
 
