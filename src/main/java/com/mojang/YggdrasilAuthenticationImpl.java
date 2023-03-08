@@ -3,7 +3,6 @@ package com.mojang;
 import com.mojang.util.YggdrasilUtils;
 import ee.twentyten.request.EHeader;
 import ee.twentyten.request.EMethod;
-import ee.twentyten.ui.launcher.LauncherLoginPanel;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigUtils;
@@ -16,20 +15,13 @@ import org.json.JSONObject;
 public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
 
   @Override
-  public void login() {
-    String username = LauncherLoginPanel.getInstance().getUsernameField().getText();
-    String password = new String(
-        LauncherLoginPanel.getInstance().getPasswordField().getPassword());
-    boolean isPasswordSaved = LauncherLoginPanel.getInstance().getRememberPasswordCheckBox()
-        .isSelected();
-    
-    JSONObject loginResult = YggdrasilAuthenticationImpl.this.authenticate(username,
-        password, ConfigUtils.getInstance().getClientToken(), true);
+  public void login(String username, String password, boolean isPasswordSaved) {
+    JSONObject loginResult = YggdrasilAuthenticationImpl.this.authenticate(username, password,
+        ConfigUtils.getInstance().getClientToken(), true);
     if (loginResult.has("error")) {
       LauncherUtils.addPanelWithErrorMessage(LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(),
-          LanguageUtils.getString(LanguageUtils.getBundle(),
-              "lp.label.errorLabel.loginFailed"));
+          LanguageUtils.getString(LanguageUtils.getBundle(), "lp.label.errorLabel.loginFailed"));
       return;
     }
 
@@ -42,6 +34,9 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
 
     String[] availableProfiles = new String[loginResult.getJSONArray("availableProfiles").length()];
     if (availableProfiles.length == 0) {
+      ConfigUtils.getInstance().setYggdrasilProfileName(null);
+      ConfigUtils.getInstance().setYggdrasilProfileId(null);
+
       ConfigUtils.writeToConfig();
 
       MinecraftUtils.launchMinecraft();
