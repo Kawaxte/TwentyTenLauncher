@@ -9,23 +9,17 @@ import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.RequestUtils;
-import ee.twentyten.util.SystemUtils;
 import java.applet.Applet;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -170,102 +164,6 @@ abstract class GameUpdater {
       LoggerUtils.logMessage("Failed to find MinecraftApplet class", cnfe, ELevel.ERROR);
     }
     return null;
-  }
-
-  void unloadLibrariesOnJavaSeven(File directory)
-      throws NoSuchFieldException, IllegalAccessException {
-    Field loadedLibraryNames = ClassLoader.class.getDeclaredField("loadedLibraryNames");
-    loadedLibraryNames.setAccessible(true);
-
-    Object loadedLibrary = loadedLibraryNames.get(this.getClass().getClassLoader());
-
-    List<?> libraries = (List<?>) loadedLibrary;
-    for (int i = 0; i < libraries.size(); i++) {
-      String library = (String) libraries.get(i);
-      if (library.startsWith(directory.getAbsolutePath())) {
-        libraries.remove(i);
-        i--;
-      }
-    }
-  }
-
-  void unloadLibrariesOnJavaEight(File directory)
-      throws NoSuchFieldException, IllegalAccessException {
-    Field loadedLibraryNames = ClassLoader.class.getDeclaredField("loadedLibraryNames");
-    loadedLibraryNames.setAccessible(true);
-
-    Object loadedLibrary = loadedLibraryNames.get(this.getClass().getClassLoader());
-
-    List<?> libraries;
-    switch (loadedLibrary.getClass().getName()) {
-      case "java.util.ArrayList":
-        libraries = (List<?>) loadedLibrary;
-        break;
-      case "java.util.HashSet":
-        libraries = new ArrayList<Object>((Set<?>) loadedLibrary);
-        break;
-      case "java.util.Vector":
-        libraries = new ArrayList<Object>((Vector<?>) loadedLibrary);
-        break;
-      case "[Ljava.lang.String;":
-        libraries = Arrays.asList((String[]) loadedLibrary);
-        break;
-      default:
-        throw new IllegalArgumentException(loadedLibrary.getClass().getName());
-    }
-
-    Iterator<?> iterator = libraries.iterator();
-    while (iterator.hasNext()) {
-      String library = (String) iterator.next();
-      if (library.startsWith(directory.getAbsolutePath())) {
-        iterator.remove();
-      }
-    }
-  }
-
-  void unloadLibrariesOnJavaEleven(File directory)
-      throws NoSuchFieldException, IllegalAccessException {
-    Field loadedLibraryNames = ClassLoader.class.getDeclaredField("loadedLibraryNames");
-    loadedLibraryNames.setAccessible(true);
-
-    Object loadedLibrary = loadedLibraryNames.get(this.getClass().getClassLoader());
-
-    Set<?> loadedLibraries = (Set<?>) loadedLibrary;
-    Iterator<?> libraries = loadedLibraries.iterator();
-    while (libraries.hasNext()) {
-      String library = (String) libraries.next();
-      if (library.startsWith(directory.getAbsolutePath())) {
-        libraries.remove();
-      }
-    }
-  }
-
-  void unloadLibraries(File directory) {
-    if (this.isLibrariesLoaded) {
-      return;
-    }
-
-    try {
-      if (SystemUtils.javaVersion.startsWith("1.7")) {
-        this.unloadLibrariesOnJavaSeven(directory);
-      }
-      if (SystemUtils.javaVersion.startsWith("1.8")) {
-        this.unloadLibrariesOnJavaEight(directory);
-      }
-      if (SystemUtils.javaVersion.startsWith("11")) {
-        this.unloadLibrariesOnJavaEleven(directory);
-      }
-    } catch (NoSuchFieldException nsfe) {
-      this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fieldNotFound"),
-          "loadedLibraryNames"));
-      LoggerUtils.logMessage("Failed to find loadedLibraryNames field", nsfe, ELevel.ERROR);
-    } catch (IllegalAccessException iae) {
-      this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.illegalAccess.field"),
-          "loadedLibraryNames"));
-      LoggerUtils.logMessage("Failed to access loadedLibraryNames field", iae, ELevel.ERROR);
-    }
   }
 
   void loadLibraries(File directory) {
