@@ -9,6 +9,8 @@ import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.RequestUtils;
+import ee.twentyten.util.SystemUtils;
+import java.applet.Applet;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -147,7 +149,30 @@ abstract class GameUpdater {
             MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion())));
   }
 
-  protected void unloadLibrariesOnJavaSeven(File directory)
+  public Applet loadMinecraftApplet() {
+    try {
+      return (Applet) this.minecraftApplet.loadClass("net.minecraft.client.MinecraftApplet")
+          .newInstance();
+    } catch (InstantiationException ie) {
+      this.setFatalErrorMessage(MessageFormat.format(
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.instantation.class"),
+          "MinecraftApplet"));
+      LoggerUtils.logMessage("Failed to instantiate MinecraftApplet class", ie, ELevel.ERROR);
+    } catch (IllegalAccessException iae) {
+      this.setFatalErrorMessage(MessageFormat.format(
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.illegalAccess.class"),
+          "MinecraftApplet"));
+      LoggerUtils.logMessage("Failed to access MinecraftApplet class", iae, ELevel.ERROR);
+    } catch (ClassNotFoundException cnfe) {
+      this.setFatalErrorMessage(MessageFormat.format(
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.classNotFound"),
+          "MinecraftApplet"));
+      LoggerUtils.logMessage("Failed to find MinecraftApplet class", cnfe, ELevel.ERROR);
+    }
+    return null;
+  }
+
+  void unloadLibrariesOnJavaSeven(File directory)
       throws NoSuchFieldException, IllegalAccessException {
     Field loadedLibraryNames = ClassLoader.class.getDeclaredField("loadedLibraryNames");
     loadedLibraryNames.setAccessible(true);
@@ -164,7 +189,7 @@ abstract class GameUpdater {
     }
   }
 
-  protected void unloadLibrariesOnJavaEight(File directory)
+  void unloadLibrariesOnJavaEight(File directory)
       throws NoSuchFieldException, IllegalAccessException {
     Field loadedLibraryNames = ClassLoader.class.getDeclaredField("loadedLibraryNames");
     loadedLibraryNames.setAccessible(true);
@@ -198,7 +223,7 @@ abstract class GameUpdater {
     }
   }
 
-  protected void unloadLibrariesOnJavaEleven(File directory)
+  void unloadLibrariesOnJavaEleven(File directory)
       throws NoSuchFieldException, IllegalAccessException {
     Field loadedLibraryNames = ClassLoader.class.getDeclaredField("loadedLibraryNames");
     loadedLibraryNames.setAccessible(true);
@@ -213,6 +238,46 @@ abstract class GameUpdater {
         libraries.remove();
       }
     }
+  }
+
+  void unloadLibraries(File directory) {
+    if (this.isLibrariesLoaded) {
+      return;
+    }
+
+    try {
+      if (SystemUtils.javaVersion.startsWith("1.7")) {
+        this.unloadLibrariesOnJavaSeven(directory);
+      }
+      if (SystemUtils.javaVersion.startsWith("1.8")) {
+        this.unloadLibrariesOnJavaEight(directory);
+      }
+      if (SystemUtils.javaVersion.startsWith("11")) {
+        this.unloadLibrariesOnJavaEleven(directory);
+      }
+    } catch (NoSuchFieldException nsfe) {
+      this.setFatalErrorMessage(MessageFormat.format(
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fieldNotFound"),
+          "loadedLibraryNames"));
+      LoggerUtils.logMessage("Failed to find loadedLibraryNames field", nsfe, ELevel.ERROR);
+    } catch (IllegalAccessException iae) {
+      this.setFatalErrorMessage(MessageFormat.format(
+          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.illegalAccess.field"),
+          "loadedLibraryNames"));
+      LoggerUtils.logMessage("Failed to access loadedLibraryNames field", iae, ELevel.ERROR);
+    }
+  }
+
+  void loadLibraries(File directory) {
+    String[] libraryPaths = new String[]{"org.lwjgl.librarypath",
+        "net.java.games.input.librarypath"};
+    for (String libraryPath : libraryPaths) {
+      System.setProperty(libraryPath, directory.getAbsolutePath());
+      LoggerUtils.logMessage(
+          MessageFormat.format("{0}={1}", libraryPath, System.getProperty(libraryPath)),
+          ELevel.INFO);
+    }
+    this.isLibrariesLoaded = true;
   }
 
   abstract void determinePackage();
