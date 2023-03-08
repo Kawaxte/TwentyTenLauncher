@@ -40,7 +40,7 @@ public class LauncherFrame extends JFrame {
 
   public static void main(String... args) {
     LookAndFeelUtils.setLookAndFeel();
-    SystemUtils.setLauncherVersion(1, 8, 3, 23, 3, true);
+    SystemUtils.setLauncherVersion(1, 9, 3, 23, 3, false);
 
     if (AuthenticationUtils.isMicrosoftSessionValid(
         ConfigUtils.getInstance().getMicrosoftAccessToken(),
