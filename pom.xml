@@ -7,6 +7,7 @@
   <build>
     <plugins>
       <plugin>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
         <artifactId>maven-shade-plugin</artifactId>
         <configuration>
           <artifactSet>
@@ -102,7 +103,7 @@
       <version>1.15</version>
     </dependency>
   </dependencies>
-  <groupId>ee.sojla</groupId>
+  <groupId>ee.twentyten</groupId>
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
