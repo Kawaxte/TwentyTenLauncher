@@ -1,15 +1,15 @@
-package com.mojang;
+package ee.twentyten.minecraft.auth;
 
-import com.mojang.util.YggdrasilUtils;
 import ee.twentyten.request.EHeader;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.ConnectionRequestUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.RequestUtils;
-import net.minecraft.util.MinecraftUtils;
+import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.YggdrasilAuthenticationUtils;
 import org.json.JSONObject;
 
 public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
@@ -64,7 +64,9 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     payload.put("password", password);
     payload.put("clientToken", clientToken);
     payload.put("requestUser", requestUser);
-    return RequestUtils.performJsonRequest(YggdrasilUtils.authserverAuthenticateUrl, EMethod.POST,
+    return ConnectionRequestUtils.performJsonRequest(
+        YggdrasilAuthenticationUtils.authserverAuthenticateUrl,
+        EMethod.POST,
         EHeader.JSON.getHeader(), payload);
   }
 
@@ -73,7 +75,9 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     JSONObject payload = new JSONObject();
     payload.put("accessToken", accessToken);
     payload.put("clientToken", clientToken);
-    return RequestUtils.performJsonRequest(YggdrasilUtils.authserverValidateUrl, EMethod.POST,
+    return ConnectionRequestUtils.performJsonRequest(
+        YggdrasilAuthenticationUtils.authserverValidateUrl,
+        EMethod.POST,
         EHeader.JSON.getHeader(), payload);
   }
 
@@ -83,7 +87,9 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     payload.put("accessToken", accessToken);
     payload.put("clientToken", clientToken);
     payload.put("requestUser", requestUser);
-    return RequestUtils.performJsonRequest(YggdrasilUtils.authserverRefreshUrl, EMethod.POST,
+    return ConnectionRequestUtils.performJsonRequest(
+        YggdrasilAuthenticationUtils.authserverRefreshUrl,
+        EMethod.POST,
         EHeader.JSON.getHeader(), payload);
   }
 }

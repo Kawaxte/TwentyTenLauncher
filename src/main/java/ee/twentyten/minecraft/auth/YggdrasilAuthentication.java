@@ -1,4 +1,4 @@
-package com.mojang;
+package ee.twentyten.minecraft.auth;
 
 import ee.twentyten.util.ConfigUtils;
 import org.json.JSONObject;
