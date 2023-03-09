@@ -189,7 +189,7 @@ public final class LauncherUtils {
       Future<Boolean> updateFuture = updateService.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() {
-          JSONObject latestRelease = RequestUtils.performJsonRequest(
+          JSONObject latestRelease = ConnectionRequestUtils.performJsonRequest(
               LauncherUtils.apiLatestReleaseUrl, EMethod.GET, EHeader.JSON.getHeader());
           Objects.requireNonNull(latestRelease, "latestRelease == null!");
 
@@ -316,22 +316,21 @@ public final class LauncherUtils {
   }
 
   private static void mapWorkingDirectoryToPlatforms(EPlatform platform) {
-    String userHome = System.getProperty("user.home", ".");
     String appData = System.getenv("APPDATA");
 
     File workingDirectory;
     switch (platform) {
       case MACOSX:
-        workingDirectory = new File(userHome, "Library/Application Support/minecraft");
+        workingDirectory = new File(SystemUtils.userHome, "Library/Application Support/minecraft");
         LauncherUtils.workingDirectories.put(platform, workingDirectory);
         break;
       case LINUX:
-        workingDirectory = new File(userHome, "minecraft");
+        workingDirectory = new File(SystemUtils.userHome, "minecraft");
         LauncherUtils.workingDirectories.put(platform, workingDirectory);
         break;
       case WINDOWS:
-        workingDirectory =
-            appData != null ? new File(appData, ".minecraft") : new File(userHome, ".minecraft");
+        workingDirectory = appData != null ? new File(appData, ".minecraft")
+            : new File(SystemUtils.userHome, ".minecraft");
         LauncherUtils.workingDirectories.put(platform, workingDirectory);
         break;
       default:
