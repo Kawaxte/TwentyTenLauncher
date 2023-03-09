@@ -1,8 +1,8 @@
 package ee.twentyten.request;
 
 import ee.twentyten.log.ELevel;
+import ee.twentyten.util.ConnectionRequestUtils;
 import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.RequestUtils;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.ProtocolException;
@@ -17,7 +17,7 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
   public HttpsURLConnection perform(URL url, EMethod method, Map<String, String> header) {
     HttpsURLConnection connection = null;
     try {
-      connection = RequestUtils.openHttpsConnection(url);
+      connection = ConnectionRequestUtils.openHttpsConnection(url);
       connection.setRequestMethod(method.name());
 
       for (Entry<String, String> entry : header.entrySet()) {
@@ -30,7 +30,7 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
         connection.disconnect();
       }
     }
-    return RequestUtils.getResponse(connection);
+    return ConnectionRequestUtils.getResponse(connection);
   }
 
   @Override
@@ -38,7 +38,7 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
       Object data) {
     HttpsURLConnection connection = null;
     try {
-      connection = RequestUtils.openHttpsConnection(url);
+      connection = ConnectionRequestUtils.openHttpsConnection(url);
       connection.setRequestMethod(method.name());
 
       for (Map.Entry<String, String> entry : header.entrySet()) {
@@ -58,6 +58,6 @@ public class HttpsConnectionRequestImpl extends HttpsConnectionRequest {
         connection.disconnect();
       }
     }
-    return RequestUtils.getResponse(connection);
+    return ConnectionRequestUtils.getResponse(connection);
   }
 }
