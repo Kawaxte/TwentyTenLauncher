@@ -1,6 +1,5 @@
 package ee.twentyten.ui.launcher;
 
-import com.mojang.util.YggdrasilUtils;
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.custom.component.JHyperlink;
 import ee.twentyten.custom.component.TransparentJButton;
@@ -12,6 +11,7 @@ import ee.twentyten.ui.OptionsDialog;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.YggdrasilAuthenticationUtils;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -145,7 +145,7 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
       } else {
-        YggdrasilUtils.loginWithYggdrasil();
+        YggdrasilAuthenticationUtils.loginWithYggdrasil();
       }
     }
   }
