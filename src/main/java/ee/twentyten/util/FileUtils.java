@@ -40,10 +40,10 @@ public final class FileUtils {
     return null;
   }
 
-  public static String readFile(String fileName) {
+  public static String readFile(String name) {
     StringBuilder sb = new StringBuilder();
     try (FileInputStream fis = new FileInputStream(
-        fileName); InputStreamReader isr = new InputStreamReader(fis,
+        name); InputStreamReader isr = new InputStreamReader(fis,
         StandardCharsets.UTF_8); BufferedReader br = new BufferedReader(isr)) {
       String line;
       while ((line = br.readLine()) != null) {
@@ -55,9 +55,9 @@ public final class FileUtils {
     return sb.toString();
   }
 
-  public static JSONObject readJsonFile(File jsonFile) {
+  public static JSONObject readJsonFile(File f) {
     try {
-      byte[] fileBytes = Files.readAllBytes(jsonFile.toPath());
+      byte[] fileBytes = Files.readAllBytes(f.toPath());
       String json = new String(fileBytes, StandardCharsets.UTF_8);
       return new JSONObject(json);
     } catch (IOException ioe) {
@@ -66,12 +66,13 @@ public final class FileUtils {
     return new JSONObject();
   }
 
-  public static void downloadFile(URL url, File targetFile) {
+  public static void downloadFile(URL url, File f) {
     HttpsURLConnection connection = null;
     try {
-      connection = RequestUtils.performHttpsRequest(url, EMethod.GET, EHeader.NO_CACHE.getHeader());
+      connection = ConnectionRequestUtils.performHttpsRequest(url, EMethod.GET,
+          EHeader.NO_CACHE.getHeader());
       try (InputStream is = connection.getInputStream()) {
-        Files.copy(is, targetFile.toPath());
+        Files.copy(is, f.toPath());
       }
     } catch (IOException ioe) {
       LoggerUtils.logMessage("Failed to download file", ioe, ELevel.ERROR);
