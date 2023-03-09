@@ -9,6 +9,7 @@ public final class SystemUtils {
   public static String osName;
   public static String osVersion;
   public static String javaVersion;
+  public static String userHome;
 
   static {
     SystemUtils.lineSeparator = System.getProperty("line.separator");
@@ -16,6 +17,7 @@ public final class SystemUtils {
     SystemUtils.osName = System.getProperty("os.name", "generic");
     SystemUtils.osVersion = System.getProperty("os.version");
     SystemUtils.javaVersion = System.getProperty("java.version");
+    SystemUtils.userHome = System.getProperty("user.home", ".");
   }
 
   private SystemUtils() {
