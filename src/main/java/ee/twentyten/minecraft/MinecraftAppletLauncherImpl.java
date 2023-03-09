@@ -1,15 +1,15 @@
-package net.minecraft;
+package ee.twentyten.minecraft;
 
+import ee.twentyten.minecraft.update.ui.MinecraftUpdaterApplet;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.LauncherUtils;
-import net.minecraft.update.ui.GameUpdaterApplet;
 
-public class MinecraftLauncherImpl extends MinecraftLauncher {
+public class MinecraftAppletLauncherImpl extends MinecraftAppletLauncher {
 
   @Override
   public void launch() {
-    GameUpdaterApplet gua = new GameUpdaterApplet();
+    MinecraftUpdaterApplet gua = new MinecraftUpdaterApplet();
     gua.parameters.put("username", "Player");
     gua.init();
 
@@ -22,7 +22,7 @@ public class MinecraftLauncherImpl extends MinecraftLauncher {
 
   @Override
   public void launch(String username, String sessionId) {
-    GameUpdaterApplet gua = new GameUpdaterApplet();
+    MinecraftUpdaterApplet gua = new MinecraftUpdaterApplet();
     gua.parameters.put("username", username);
     gua.parameters.put("sessionid", sessionId);
     gua.init();

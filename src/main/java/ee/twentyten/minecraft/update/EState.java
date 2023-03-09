@@ -1,4 +1,4 @@
-package net.minecraft.update;
+package ee.twentyten.minecraft.update;
 
 import ee.twentyten.util.LanguageUtils;
 import lombok.Getter;

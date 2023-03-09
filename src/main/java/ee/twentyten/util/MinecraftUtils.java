@@ -1,12 +1,8 @@
-package net.minecraft.util;
+package ee.twentyten.util;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.log.ELevel;
-import ee.twentyten.util.ConfigUtils;
-import ee.twentyten.util.FileUtils;
-import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.VersionUtils;
+import ee.twentyten.minecraft.MinecraftAppletLauncherImpl;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,7 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.MinecraftLauncherImpl;
 
 public final class MinecraftUtils {
 
@@ -29,10 +24,10 @@ public final class MinecraftUtils {
   public static String[] lwjglWindowsNatives;
   @Getter
   @Setter
-  private static MinecraftLauncherImpl instance;
+  private static MinecraftAppletLauncherImpl instance;
 
   static {
-    MinecraftUtils.setInstance(new MinecraftLauncherImpl());
+    MinecraftUtils.setInstance(new MinecraftAppletLauncherImpl());
 
     MinecraftUtils.lwjglJars = new String[]{"jinput.jar", "lwjgl.jar", "lwjgl_util.jar"};
     MinecraftUtils.lwjglMacosxNatives = new String[]{"libinput_osx.jnilib", "liblwjgl.jnilib",
@@ -126,7 +121,7 @@ public final class MinecraftUtils {
   }
 
   public static void checkForMinecraftJarFile(List<URL> urls, URL url) {
-    File versionDirectory = new File(VersionUtils.versionsDirectory,
+    File versionDirectory = new File(OptionsUtils.versionsDirectory,
         ConfigUtils.getInstance().getSelectedVersion());
     File minecraftJarFile = new File(versionDirectory,
         MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion()));

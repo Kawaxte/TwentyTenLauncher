@@ -1,14 +1,15 @@
-package net.minecraft.update;
+package ee.twentyten.minecraft.update;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.log.ELevel;
 import ee.twentyten.request.EHeader;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.ConnectionRequestUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.RequestUtils;
+import ee.twentyten.util.MinecraftUtils;
 import java.applet.Applet;
 import java.io.File;
 import java.io.IOException;
@@ -29,10 +30,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.net.ssl.HttpsURLConnection;
 import lombok.Getter;
-import net.minecraft.util.MinecraftUtils;
 
 @Getter
-abstract class GameUpdater {
+abstract class MinecraftUpdater {
 
   public String stateMessage;
   public String taskMessage;
@@ -50,7 +50,7 @@ abstract class GameUpdater {
       retrieveTasks.add(new Callable<Integer>() {
         @Override
         public Integer call() {
-          connection[0] = RequestUtils.performHttpsRequest(fileUrl, EMethod.HEAD,
+          connection[0] = ConnectionRequestUtils.performHttpsRequest(fileUrl, EMethod.HEAD,
               EHeader.NO_CACHE.getHeader());
           Objects.requireNonNull(connection[0], "connection == null!");
           try {
@@ -75,7 +75,7 @@ abstract class GameUpdater {
       }
     } catch (ExecutionException ee) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "gui.exception.io.package.retrieveFailed"));
+          "mui.exception.io.package.retrieveFailed"));
       LoggerUtils.logMessage("Failed to retrieve package sizes", ee, ELevel.ERROR);
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
@@ -108,7 +108,7 @@ abstract class GameUpdater {
     this.isFatalErrorOccurred = true;
 
     this.stateMessage = MessageFormat.format(
-        LanguageUtils.getString(LanguageUtils.getBundle(), "gui.string.fatalErrorMessage"),
+        LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.fatalErrorMessage"),
         EState.getInstance().ordinal(), message);
     this.taskMessage = "";
   }
@@ -149,17 +149,17 @@ abstract class GameUpdater {
           .newInstance();
     } catch (InstantiationException ie) {
       this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.instantation.class"),
+          LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.instantation.class"),
           "MinecraftApplet"));
       LoggerUtils.logMessage("Failed to instantiate MinecraftApplet class", ie, ELevel.ERROR);
     } catch (IllegalAccessException iae) {
       this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.illegalAccess.class"),
+          LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.illegalAccess.class"),
           "MinecraftApplet"));
       LoggerUtils.logMessage("Failed to access MinecraftApplet class", iae, ELevel.ERROR);
     } catch (ClassNotFoundException cnfe) {
       this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.classNotFound"),
+          LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.classNotFound"),
           "MinecraftApplet"));
       LoggerUtils.logMessage("Failed to find MinecraftApplet class", cnfe, ELevel.ERROR);
     }

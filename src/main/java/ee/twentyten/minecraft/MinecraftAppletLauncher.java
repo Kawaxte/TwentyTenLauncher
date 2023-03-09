@@ -1,9 +1,9 @@
-package net.minecraft;
+package ee.twentyten.minecraft;
 
 import ee.twentyten.util.ConfigUtils;
 import java.text.MessageFormat;
 
-abstract class MinecraftLauncher {
+abstract class MinecraftAppletLauncher {
 
   String getTitle() {
     String selectedVersion = ConfigUtils.getInstance().getSelectedVersion();

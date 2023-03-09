@@ -1,12 +1,13 @@
-package net.minecraft.update.ui;
+package ee.twentyten.minecraft.update.ui;
 
 import ee.twentyten.log.ELevel;
+import ee.twentyten.minecraft.update.MinecraftUpdaterImpl;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.VersionUtils;
+import ee.twentyten.util.OptionsUtils;
 import java.applet.Applet;
 import java.applet.AppletStub;
 import java.awt.BorderLayout;
@@ -33,16 +34,15 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.update.GameUpdaterImpl;
 
-public class GameUpdaterApplet extends JApplet implements AppletStub {
+public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
 
   @Getter
   @Setter
-  private static GameUpdaterApplet instance;
+  private static MinecraftUpdaterApplet instance;
   public Map<String, String> parameters;
   public Applet minecraftApplet;
-  private GameUpdaterImpl updater;
+  private MinecraftUpdaterImpl updater;
   private boolean isAppletActive;
   private boolean isUpdateAvailable;
 
@@ -53,23 +53,23 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
     this.isUpdateAvailable = false;
   }
 
-  public GameUpdaterApplet() {
-    GameUpdaterApplet.setInstance(this);
+  public MinecraftUpdaterApplet() {
+    MinecraftUpdaterApplet.setInstance(this);
   }
 
   public void init(String username, String sessionId) {
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
 
-    File versionsFile = new File(VersionUtils.versionsDirectory, "versions.json");
+    File versionsFile = new File(OptionsUtils.versionsDirectory, "versions.json");
     String selectedVersion = ConfigUtils.getInstance().getSelectedVersion();
     if (versionsFile.exists() && selectedVersion != null) {
-      int proxyPort = VersionUtils.getProxyPort(selectedVersion);
+      int proxyPort = OptionsUtils.getProxyPort(selectedVersion);
       System.setProperty("http.proxyHost", "betacraft.uk");
       System.setProperty("http.proxyPort", String.valueOf(proxyPort));
       System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
     }
-    this.updater = new GameUpdaterImpl();
+    this.updater = new MinecraftUpdaterImpl();
   }
 
   private void replace(Applet applet) {
@@ -198,9 +198,9 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
     new SwingWorker<Applet, Void>() {
       @Override
       protected Applet doInBackground() {
-        GameUpdaterApplet.this.updater.run();
-        return !GameUpdaterApplet.this.updater.isFatalErrorOccurred()
-            ? GameUpdaterApplet.this.updater.loadMinecraftApplet() : null;
+        MinecraftUpdaterApplet.this.updater.run();
+        return !MinecraftUpdaterApplet.this.updater.isFatalErrorOccurred()
+            ? MinecraftUpdaterApplet.this.updater.loadMinecraftApplet() : null;
       }
 
       @Override
@@ -208,7 +208,7 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
         try {
           Applet minecraftApplet = this.get();
           if (minecraftApplet != null) {
-            GameUpdaterApplet.this.replace(minecraftApplet);
+            MinecraftUpdaterApplet.this.replace(minecraftApplet);
           }
         } catch (ExecutionException ie) {
           LoggerUtils.logMessage("Failed to replace applet", ie, ELevel.ERROR);
@@ -223,8 +223,8 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
       @Override
       public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (GameUpdaterApplet.this.minecraftApplet == null) {
-          GameUpdaterApplet.this.update(GameUpdaterApplet.this.getGraphics());
+        if (MinecraftUpdaterApplet.this.minecraftApplet == null) {
+          MinecraftUpdaterApplet.this.update(MinecraftUpdaterApplet.this.getGraphics());
         } else {
           ((Timer) source).stop();
         }

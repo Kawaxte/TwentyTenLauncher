@@ -1,16 +1,17 @@
-package net.minecraft.update;
+package ee.twentyten.minecraft.update;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.log.ELevel;
 import ee.twentyten.request.EHeader;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.ConnectionRequestUtils;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.RequestUtils;
-import ee.twentyten.util.VersionUtils;
+import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.OptionsUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -38,11 +39,10 @@ import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.net.ssl.HttpsURLConnection;
-import net.minecraft.util.MinecraftUtils;
 
-public class GameUpdaterImpl extends GameUpdater implements Runnable {
+public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
-  public GameUpdaterImpl() {
+  public MinecraftUpdaterImpl() {
     EState.setInstance(EState.INIT);
     this.stateMessage = EState.INIT.getMessage();
     this.taskMessage = "";
@@ -78,7 +78,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         Future<Integer> future = determineService.submit(new Callable<Integer>() {
           @Override
           public Integer call() {
-            HttpsURLConnection connection = RequestUtils.performHttpsRequest(packageUrl,
+            HttpsURLConnection connection = ConnectionRequestUtils.performHttpsRequest(packageUrl,
                 EMethod.HEAD, EHeader.NO_CACHE.getHeader());
             return connection.getContentLength();
           }
@@ -95,7 +95,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         } catch (ExecutionException ee) {
           if (contentLengths.get(packageUrls[i].toString()) == -1) {
             this.setFatalErrorMessage(MessageFormat.format(
-                LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fileNotFound"),
+                LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
                 fileName));
             LoggerUtils.logMessage(MessageFormat.format("Failed to find {0}", fileName), ee,
                 ELevel.ERROR);
@@ -119,7 +119,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       LoggerUtils.logMessage(Arrays.toString(this.urls), ELevel.INFO);
     } catch (MalformedURLException murle) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "gui.exception.io.package.determineFailed"));
+          "mui.exception.io.package.determineFailed"));
       LoggerUtils.logMessage("Failed to determine package URLs", murle, ELevel.ERROR);
     }
   }
@@ -143,7 +143,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       File packageFile = new File(binDirectory, FileUtils.getFileName(fileUrl));
       if (Objects.equals(packageFile.getName(),
           MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion()))) {
-        File versionDirectory = new File(VersionUtils.versionsDirectory,
+        File versionDirectory = new File(OptionsUtils.versionsDirectory,
             ConfigUtils.getInstance().getSelectedVersion());
         if (!versionDirectory.mkdirs() && !versionDirectory.exists()) {
           LoggerUtils.logMessage("Failed to create version directory", ELevel.ERROR);
@@ -152,7 +152,8 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         packageFile = new File(versionDirectory, packageFile.getName());
       }
 
-      HttpsURLConnection connection = RequestUtils.performHttpsRequest(fileUrl, EMethod.GET,
+      HttpsURLConnection connection = ConnectionRequestUtils.performHttpsRequest(fileUrl,
+          EMethod.GET,
           EHeader.NO_CACHE.getHeader());
       Objects.requireNonNull(connection, "connection == null!");
       try (InputStream is = connection.getInputStream(); FileOutputStream fos = new FileOutputStream(
@@ -167,7 +168,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
 
           currentDownloadSize += bufferSize;
           this.taskMessage = MessageFormat.format(
-              LanguageUtils.getString(LanguageUtils.getBundle(), "gui.string.downloadTask"),
+              LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.downloadTask"),
               FileUtils.getFileName(fileUrl), (currentDownloadSize * 100) / totalDownloadSize);
           this.percentage = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
 
@@ -185,12 +186,12 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         }
       } catch (FileNotFoundException fnfe) {
         this.setFatalErrorMessage(MessageFormat.format(
-            LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fileNotFound"),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             packageFile.getName()));
         LoggerUtils.logMessage("Failed to find package file", fnfe, ELevel.ERROR);
       } catch (IOException ioe) {
         this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-            "gui.exception.io.package.downloadFailed"));
+            "mui.exception.io.package.downloadFailed"));
         LoggerUtils.logMessage("Failed to download package files", ioe, ELevel.ERROR);
       }
     }
@@ -243,7 +244,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
 
               currentExtractSize += bufferSize;
               this.taskMessage = MessageFormat.format(
-                  LanguageUtils.getString(LanguageUtils.getBundle(), "gui.string.extractTask"),
+                  LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.extractTask"),
                   entry.getName(), (currentExtractSize * 100) / totalExtractSize);
               this.percentage = 60 + ((currentExtractSize * 20) / totalExtractSize);
             }
@@ -251,12 +252,12 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         }
       } catch (FileNotFoundException fnfe) {
         this.setFatalErrorMessage(MessageFormat.format(
-            LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fileNotFound"),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             archiveFile.getName()));
         LoggerUtils.logMessage("Failed to find package file", fnfe, ELevel.ERROR);
       } catch (IOException ioe) {
         this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-            "gui.exception.io.package.extractFailed"));
+            "mui.exception.io.package.extractFailed"));
         LoggerUtils.logMessage("Failed to extract package files", ioe, ELevel.ERROR);
       } finally {
         if (!archiveFile.delete()) {
@@ -288,7 +289,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         jarUrls[i] = jarFiles[i].toURI().toURL();
       }
 
-      File versionDirectory = new File(VersionUtils.versionsDirectory,
+      File versionDirectory = new File(OptionsUtils.versionsDirectory,
           ConfigUtils.getInstance().getSelectedVersion());
       File minecraftJarFile = new File(versionDirectory,
           MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion()));
@@ -298,7 +299,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       LoggerUtils.logMessage(Arrays.toString(jarUrls), ELevel.INFO);
     } catch (MalformedURLException murle) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "gui.exception.io.classpath.updateFailed"));
+          "mui.exception.io.classpath.updateFailed"));
       LoggerUtils.logMessage("Failed to update classpath", murle, ELevel.ERROR);
       return;
     }
@@ -339,7 +340,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       this.updateClasspath();
     } catch (Throwable t) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "gui.throwable.minecraft.updateFailed"));
+          "mui.throwable.minecraft.updateFailed"));
       LoggerUtils.logMessage("Failed to update Minecraft", t, ELevel.ERROR);
     } finally {
       if (!this.isFatalErrorOccurred()) {
