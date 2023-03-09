@@ -19,17 +19,17 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import org.json.JSONObject;
 
-public final class RequestUtils {
+public final class ConnectionRequestUtils {
 
   private static HttpsConnectionRequestImpl httpsRequest;
   private static JsonConnectionRequestImpl jsonRequest;
 
   static {
-    RequestUtils.httpsRequest = new HttpsConnectionRequestImpl();
-    RequestUtils.jsonRequest = new JsonConnectionRequestImpl();
+    ConnectionRequestUtils.httpsRequest = new HttpsConnectionRequestImpl();
+    ConnectionRequestUtils.jsonRequest = new JsonConnectionRequestImpl();
   }
 
-  private RequestUtils() {
+  private ConnectionRequestUtils() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
@@ -107,7 +107,7 @@ public final class RequestUtils {
 
   public static HttpsURLConnection performHttpsRequest(URL url, EMethod method,
       Map<String, String> header) {
-    return RequestUtils.httpsRequest.perform(url, method, header);
+    return ConnectionRequestUtils.httpsRequest.perform(url, method, header);
   }
 
   /*
@@ -118,11 +118,11 @@ public final class RequestUtils {
   */
 
   public static JSONObject performJsonRequest(URL url, EMethod method, Map<String, String> header) {
-    return RequestUtils.jsonRequest.perform(url, method, header);
+    return ConnectionRequestUtils.jsonRequest.perform(url, method, header);
   }
 
   public static JSONObject performJsonRequest(URL url, EMethod method, Map<String, String> header,
       Object data) {
-    return RequestUtils.jsonRequest.perform(url, method, header, data);
+    return ConnectionRequestUtils.jsonRequest.perform(url, method, header, data);
   }
 }
