@@ -1,14 +1,16 @@
-package net.minecraft.update.ui;
+package ee.twentyten.minecraft.update.ui;
 
 import ee.twentyten.log.ELevel;
+import ee.twentyten.minecraft.update.MinecraftUpdaterImpl;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.VersionUtils;
+import ee.twentyten.util.OptionsUtils;
 import java.applet.Applet;
 import java.applet.AppletStub;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -23,50 +25,51 @@ import java.awt.image.VolatileImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JApplet;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.update.GameUpdaterImpl;
 
-public class GameUpdaterApplet extends JApplet implements AppletStub {
+public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
 
   @Getter
   @Setter
-  private static GameUpdaterApplet instance;
+  private static MinecraftUpdaterApplet instance;
   public Map<String, String> parameters;
   public Applet minecraftApplet;
-  private GameUpdaterImpl updater;
-  private boolean appletActive;
+  private MinecraftUpdaterImpl updater;
+  private boolean isAppletActive;
   private boolean isUpdateAvailable;
 
   {
     this.parameters = new HashMap<>();
     this.minecraftApplet = null;
-    this.appletActive = false;
+    this.isAppletActive = false;
     this.isUpdateAvailable = false;
   }
 
-  public GameUpdaterApplet() {
-    GameUpdaterApplet.setInstance(this);
+  public MinecraftUpdaterApplet() {
+    MinecraftUpdaterApplet.setInstance(this);
   }
 
   public void init(String username, String sessionId) {
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
 
-    File versionsFile = new File(VersionUtils.versionsDirectory, "versions.json");
+    File versionsFile = new File(OptionsUtils.versionsDirectory, "versions.json");
     String selectedVersion = ConfigUtils.getInstance().getSelectedVersion();
     if (versionsFile.exists() && selectedVersion != null) {
-      int proxyPort = VersionUtils.getProxyPort(selectedVersion);
+      int proxyPort = OptionsUtils.getProxyPort(selectedVersion);
       System.setProperty("http.proxyHost", "betacraft.uk");
       System.setProperty("http.proxyPort", String.valueOf(proxyPort));
       System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
     }
-    this.updater = new GameUpdaterImpl();
+    this.updater = new MinecraftUpdaterImpl();
   }
 
   private void replace(Applet applet) {
@@ -74,13 +77,18 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
     applet.setStub(this);
     applet.setSize(this.getWidth(), this.getHeight());
 
+    JPanel minecraftPanel = new JPanel();
+    minecraftPanel.setBackground(Color.BLACK);
+    minecraftPanel.setLayout(new BorderLayout());
+    minecraftPanel.add(this.minecraftApplet, BorderLayout.CENTER);
+
     LoggerUtils.logPrintln();
 
-    this.add(this.minecraftApplet);
     applet.init();
-    this.appletActive = true;
+    this.isAppletActive = true;
     applet.start();
 
+    this.add(minecraftPanel);
     this.revalidate();
     this.repaint();
   }
@@ -131,8 +139,7 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
     g2d.fillRect(rectX, rectY, rectWidth + 1, rectHeight);
 
     g2d.setColor(Color.GREEN.darker().darker());
-    g2d.fillRect(rectX, rectY, (this.updater.getPercentage() * (rectWidth)) / 100,
-        rectHeight - 1);
+    g2d.fillRect(rectX, rectY, (this.updater.getPercentage() * (rectWidth)) / 100, rectHeight - 1);
 
     g2d.setColor(Color.GREEN.darker());
     g2d.fillRect(rectX, rectY + 1, ((this.updater.getPercentage() * (rectWidth)) / 100) - 2,
@@ -141,7 +148,7 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
 
   @Override
   public boolean isActive() {
-    return this.appletActive;
+    return this.isAppletActive;
   }
 
   @Override
@@ -169,13 +176,6 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
     return this.parameters.containsKey(name) ? this.parameters.get(name) : null;
   }
 
-  /*
-  @Override
-  public AppletContext getAppletContext() {
-    return null;
-  }
-  */
-
   @Override
   public void init() {
     if (this.minecraftApplet != null) {
@@ -195,40 +195,48 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
       return;
     }
 
-    Thread updaterThread = new Thread(new Runnable() {
+    new SwingWorker<Applet, Void>() {
       @Override
-      public void run() {
-        GameUpdaterApplet.this.updater.run();
-        if (!GameUpdaterApplet.this.updater.isFatalErrorOccurred()) {
-          Applet minecraftApplet = GameUpdaterApplet.this.updater.loadMinecraftApplet();
-          GameUpdaterApplet.this.replace(minecraftApplet);
+      protected Applet doInBackground() {
+        MinecraftUpdaterApplet.this.updater.run();
+        return !MinecraftUpdaterApplet.this.updater.isFatalErrorOccurred()
+            ? MinecraftUpdaterApplet.this.updater.loadMinecraftApplet() : null;
+      }
+
+      @Override
+      protected void done() {
+        try {
+          Applet minecraftApplet = this.get();
+          if (minecraftApplet != null) {
+            MinecraftUpdaterApplet.this.replace(minecraftApplet);
+          }
+        } catch (ExecutionException ie) {
+          LoggerUtils.logMessage("Failed to replace applet", ie, ELevel.ERROR);
+        } catch (InterruptedException ie) {
+          LoggerUtils.logMessage("Interrupted while replacing applet", ie, ELevel.ERROR);
         }
       }
-    });
-    updaterThread.setName(MessageFormat.format("updater-{0}", updaterThread.getId()));
-    updaterThread.setDaemon(true);
-    updaterThread.start();
+    }.execute();
     this.isUpdateAvailable = true;
 
-    final Timer repaintTimer = new Timer(10, new ActionListener() {
+    new Timer(10, new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (GameUpdaterApplet.this.minecraftApplet == null) {
-          GameUpdaterApplet.this.update(GameUpdaterApplet.this.getGraphics());
+        if (MinecraftUpdaterApplet.this.minecraftApplet == null) {
+          MinecraftUpdaterApplet.this.update(MinecraftUpdaterApplet.this.getGraphics());
         } else {
           ((Timer) source).stop();
         }
       }
-    });
-    repaintTimer.start();
+    }).start();
   }
 
   @Override
   public void stop() {
     if (this.minecraftApplet != null) {
       this.minecraftApplet.stop();
-      this.appletActive = false;
+      this.isAppletActive = false;
     }
   }
 
@@ -296,10 +304,10 @@ public class GameUpdaterApplet extends JApplet implements AppletStub {
 
   @Override
   public void appletResize(int width, int height) {
-    if (this.minecraftApplet != null) {
-      this.minecraftApplet.resize(width, height);
-      return;
-    }
     super.setSize(width, height);
+    if (this.minecraftApplet != null) {
+      this.minecraftApplet.resize(this.getContentPane().getWidth(),
+          this.getContentPane().getHeight());
+    }
   }
 }

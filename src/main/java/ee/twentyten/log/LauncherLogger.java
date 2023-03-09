@@ -36,7 +36,7 @@ abstract class LauncherLogger {
     EPlatform platform = EPlatform.getPlatform();
 
     StringBuilder sb = new StringBuilder();
-    sb.append(MessageFormat.format("{0}_", ConfigUtils.getInstance().getSelectedVersion()));
+    sb.append(MessageFormat.format("{0}_log-", ConfigUtils.getInstance().getSelectedVersion()));
     sb.append(LoggerUtils.getCurrentDateAndTime());
     sb.append(platform == EPlatform.WINDOWS ? ".txt" : ".log");
 

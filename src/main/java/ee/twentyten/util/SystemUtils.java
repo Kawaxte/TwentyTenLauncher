@@ -6,14 +6,18 @@ public final class SystemUtils {
 
   public static String lineSeparator;
   public static String launcherVersion;
+  public static String osName;
   public static String osVersion;
   public static String javaVersion;
+  public static String userHome;
 
   static {
     SystemUtils.lineSeparator = System.getProperty("line.separator");
     SystemUtils.launcherVersion = System.getProperty("ee.twentyten.launcher.version");
+    SystemUtils.osName = System.getProperty("os.name", "generic");
     SystemUtils.osVersion = System.getProperty("os.version");
     SystemUtils.javaVersion = System.getProperty("java.version");
+    SystemUtils.userHome = System.getProperty("user.home", ".");
   }
 
   private SystemUtils() {

@@ -38,10 +38,10 @@ public final class LoggerUtils {
   }
 
   public static char[] getCurrentDateAndTime() {
-    Date currentTime = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
+    Date currentDate = new Date();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
 
-    String formattedTime = sdf.format(currentTime);
+    String formattedTime = sdf.format(currentDate);
     return formattedTime.toCharArray();
   }
 

@@ -28,8 +28,8 @@ abstract class LauncherConfig {
   String yggdrasilPassword;
   boolean isYggdrasilPasswordSaved;
   String yggdrasilAccessToken;
-  String yggdrasilProfileName;
   String yggdrasilProfileId;
+  String yggdrasilProfileName;
   String yggdrasilSessionId;
 
   // Microsoft Authentication
@@ -37,8 +37,8 @@ abstract class LauncherConfig {
   long microsoftAccessTokenExpiresIn;
   String microsoftRefreshToken;
   long microsoftRefreshTokenExpiresIn;
-  String microsoftProfileName;
   String microsoftProfileId;
+  String microsoftProfileName;
   String microsoftSessionId;
 
   File getConfigFile() {
@@ -74,8 +74,8 @@ abstract class LauncherConfig {
     this.isYggdrasilPasswordSaved = Boolean.parseBoolean(
         clp.getProperty("isYggdrasilPasswordSaved", "false"));
     this.yggdrasilAccessToken = clp.getProperty("yggdrasilAccessToken", null);
-    this.yggdrasilProfileName = clp.getProperty("yggdrasilProfileName", null);
     this.yggdrasilProfileId = clp.getProperty("yggdrasilProfileId", null);
+    this.yggdrasilProfileName = clp.getProperty("yggdrasilProfileName", null);
     this.yggdrasilSessionId = clp.getProperty("yggdrasilSessionId",
         ConfigUtils.formatSessionId(this.clientToken, this.yggdrasilAccessToken,
             this.yggdrasilProfileId));
@@ -88,8 +88,8 @@ abstract class LauncherConfig {
     this.microsoftRefreshToken = clp.getProperty("microsoftRefreshToken", null);
     this.microsoftRefreshTokenExpiresIn = Long.parseLong(
         clp.getProperty("microsoftRefreshTokenExpiresIn", String.valueOf(-1)));
-    this.microsoftProfileName = clp.getProperty("microsoftProfileName", null);
     this.microsoftProfileId = clp.getProperty("microsoftProfileId", null);
+    this.microsoftProfileName = clp.getProperty("microsoftProfileName", null);
     this.microsoftSessionId = clp.getProperty("microsoftSessionId",
         ConfigUtils.formatSessionId(this.clientToken, this.microsoftAccessToken,
             this.microsoftProfileId));

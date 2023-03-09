@@ -1,4 +1,4 @@
-package com.mojang;
+package ee.twentyten.minecraft.auth;
 
 import ee.twentyten.util.ConfigUtils;
 import org.json.JSONObject;
@@ -15,7 +15,7 @@ public abstract class YggdrasilAuthentication {
             profileId));
   }
 
-  public abstract void login();
+  public abstract void login(String username, String password, boolean isPasswordSaved);
 
   public abstract JSONObject authenticate(String username, String password, String clientToken,
       boolean requestUser);

@@ -6,6 +6,7 @@ import ee.twentyten.custom.ui.CustomJPanel;
 import ee.twentyten.custom.ui.TransparentPanelUI;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.MinecraftUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -16,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.MinecraftUtils;
 
 public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListener {
 

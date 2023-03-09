@@ -4,7 +4,7 @@ import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.VersionUtils;
+import ee.twentyten.util.OptionsUtils;
 
 public class Launcher {
 
@@ -15,7 +15,7 @@ public class Launcher {
 
     ConfigUtils.readFromConfig();
     LanguageUtils.loadLocale();
-    VersionUtils.getVersionsFile();
+    OptionsUtils.getVersionsFile();
 
     LauncherFrame.main(args);
   }

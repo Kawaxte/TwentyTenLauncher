@@ -1,18 +1,17 @@
-package net.minecraft.update;
+package ee.twentyten.minecraft.update;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.log.ELevel;
 import ee.twentyten.request.EHeader;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.ConnectionRequestUtils;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.RequestUtils;
-import ee.twentyten.util.SystemUtils;
-import ee.twentyten.util.VersionUtils;
-import java.applet.Applet;
+import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.OptionsUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -28,145 +27,112 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.net.ssl.HttpsURLConnection;
-import net.minecraft.util.MinecraftUtils;
 
-public class GameUpdaterImpl extends GameUpdater implements Runnable {
+public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
-  public Applet loadMinecraftApplet() {
-    try {
-      return (Applet) this.minecraftAppletLoader.loadClass("net.minecraft.client.MinecraftApplet")
-          .newInstance();
-    } catch (InstantiationException ie) {
-      this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.instantation.class"),
-          "MinecraftApplet"));
-      LoggerUtils.logMessage("Failed to instantiate MinecraftApplet class", ie, ELevel.ERROR);
-    } catch (IllegalAccessException iae) {
-      this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.illegalAccess.class"),
-          "MinecraftApplet"));
-      LoggerUtils.logMessage("Failed to access MinecraftApplet class", iae, ELevel.ERROR);
-    } catch (ClassNotFoundException cnfe) {
-      this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.classNotFound"),
-          "MinecraftApplet"));
-      LoggerUtils.logMessage("Failed to find MinecraftApplet class", cnfe, ELevel.ERROR);
-    }
-    return null;
-  }
-
-  private void unloadLibraries(File directory) {
-    if (this.isLibrariesLoaded) {
-      return;
-    }
-
-    try {
-      if (SystemUtils.javaVersion.startsWith("1.7")) {
-        this.unloadLibrariesOnJavaSeven(directory);
-      }
-      if (SystemUtils.javaVersion.startsWith("1.8")) {
-        this.unloadLibrariesOnJavaEight(directory);
-      }
-      if (SystemUtils.javaVersion.startsWith("11")) {
-        this.unloadLibrariesOnJavaEleven(directory);
-      }
-    } catch (NoSuchFieldException nsfe) {
-      this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fieldNotFound"),
-          "loadedLibraryNames"));
-      LoggerUtils.logMessage("Failed to find loadedLibraryNames field", nsfe, ELevel.ERROR);
-    } catch (IllegalAccessException iae) {
-      this.setFatalErrorMessage(MessageFormat.format(
-          LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.illegalAccess.field"),
-          "loadedLibraryNames"));
-      LoggerUtils.logMessage("Failed to access loadedLibraryNames field", iae, ELevel.ERROR);
-    }
-  }
-
-  private void loadLibraries(File directory) {
-    String[] libraryPaths = new String[]{"org.lwjgl.librarypath",
-        "net.java.games.input.librarypath"};
-    for (String libraryPath : libraryPaths) {
-      System.setProperty(libraryPath, directory.getAbsolutePath());
-      LoggerUtils.logMessage(
-          MessageFormat.format("{0}={1}", libraryPath, System.getProperty(libraryPath)),
-          ELevel.INFO);
-    }
-    this.isLibrariesLoaded = true;
+  public MinecraftUpdaterImpl() {
+    EState.setInstance(EState.INIT);
+    this.stateMessage = EState.INIT.getMessage();
+    this.taskMessage = "";
+    this.percentage = 0;
   }
 
   @Override
   void determinePackage() {
+    EPlatform platform = EPlatform.getPlatform();
+    Objects.requireNonNull(platform, "platform == null!");
+
     EState.setInstance(EState.DETERMINE_PACKAGE);
     this.stateMessage = EState.DETERMINE_PACKAGE.getMessage();
     this.percentage = 5;
 
-    EPlatform platform = EPlatform.getPlatform();
-    Objects.requireNonNull(platform, "platform == null!");
     try {
-      List<URL> packageUrls = new ArrayList<>();
+      URL[] lwjglJarUrls = new URL[MinecraftUtils.lwjglJars.length];
+      for (int i = 0; i < MinecraftUtils.lwjglJars.length; i++) {
+        lwjglJarUrls[i] = new URL(
+            MessageFormat.format("{0}/{1}", MinecraftUtils.lwjglUrl, MinecraftUtils.lwjglJars[i]));
+      }
+      URL lwjglNativesUrl = new URL(
+          MessageFormat.format("{0}/natives-{1}.zip", MinecraftUtils.lwjglUrl,
+              platform.toString().toLowerCase()));
+      URL minecraftJarUrl = new URL(
+          MessageFormat.format("{0}/{1}.jar", MinecraftUtils.minecraftJarUrl,
+              ConfigUtils.getInstance().getSelectedVersion()));
+      URL[] packageUrls = {minecraftJarUrl, lwjglNativesUrl};
 
-      URL lwjglJarUrl;
-      for (String lwjglJar : MinecraftUtils.lwjglJars) {
-        lwjglJarUrl = new URL(MessageFormat.format("{0}/{1}", MinecraftUtils.lwjglUrl, lwjglJar));
-        if (this.isContentLengthAvailable(lwjglJarUrl, FileUtils.getFileName(lwjglJarUrl))) {
-          return;
+      List<Future<Integer>> determineFutures = new ArrayList<>();
+      ExecutorService determineService = Executors.newFixedThreadPool(packageUrls.length);
+      for (final URL packageUrl : packageUrls) {
+        Future<Integer> future = determineService.submit(new Callable<Integer>() {
+          @Override
+          public Integer call() {
+            HttpsURLConnection connection = ConnectionRequestUtils.performHttpsRequest(packageUrl,
+                EMethod.HEAD, EHeader.NO_CACHE.getHeader());
+            return connection.getContentLength();
+          }
+        });
+        determineFutures.add(future);
+      }
+
+      Map<String, Integer> contentLengths = new HashMap<>();
+      for (int i = 0; i < packageUrls.length; i++) {
+        String fileName = FileUtils.getFileName(packageUrls[i]);
+        try {
+          int contentLength = determineFutures.get(i).get();
+          contentLengths.put(packageUrls[i].toString(), contentLength);
+        } catch (ExecutionException ee) {
+          if (contentLengths.get(packageUrls[i].toString()) == -1) {
+            this.setFatalErrorMessage(MessageFormat.format(
+                LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
+                fileName));
+            LoggerUtils.logMessage(MessageFormat.format("Failed to find {0}", fileName), ee,
+                ELevel.ERROR);
+            return;
+          }
+          LoggerUtils.logMessage("Failed to determine content length", ee, ELevel.ERROR);
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+          LoggerUtils.logMessage("Interrupted while determining content length", ie, ELevel.ERROR);
         }
-        MinecraftUtils.checkForLwjglJarFiles(packageUrls, lwjglJarUrl);
       }
 
-      URL lwjglNativesUrl;
-      switch (platform) {
-        case MACOSX:
-          lwjglNativesUrl = new URL(
-              MessageFormat.format("{0}/natives-macosx.zip", MinecraftUtils.lwjglUrl));
-          break;
-        case LINUX:
-          lwjglNativesUrl = new URL(
-              MessageFormat.format("{0}/natives-linux.zip", MinecraftUtils.lwjglUrl));
-          break;
-        case WINDOWS:
-          lwjglNativesUrl = new URL(
-              MessageFormat.format("{0}/natives-windows.zip", MinecraftUtils.lwjglUrl));
-          break;
-        default:
-          throw new IllegalStateException(String.valueOf(platform));
+      List<URL> urls = new ArrayList<>();
+      for (URL lwjglJarUrl : lwjglJarUrls) {
+        MinecraftUtils.checkForLwjglJarFiles(urls, lwjglJarUrl);
       }
-      if (this.isContentLengthAvailable(lwjglNativesUrl, FileUtils.getFileName(lwjglNativesUrl))) {
-        return;
-      }
-      MinecraftUtils.checkForLwjglNativeLibraryFiles(platform, packageUrls, lwjglNativesUrl);
+      MinecraftUtils.checkForLwjglNativeLibraryFiles(platform, urls, lwjglNativesUrl);
+      MinecraftUtils.checkForMinecraftJarFile(urls, minecraftJarUrl);
 
-      URL minecraftJarUrl = new URL(MessageFormat.format("{0}/{1}", MinecraftUtils.minecraftJarUrl,
-          MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion())));
-      if (this.isContentLengthAvailable(minecraftJarUrl, FileUtils.getFileName(minecraftJarUrl))) {
-        return;
-      }
-      MinecraftUtils.checkForMinecraftJarFile(packageUrls, minecraftJarUrl);
-
-      this.urls = packageUrls.toArray(new URL[0]);
+      this.urls = urls.toArray(new URL[0]);
       LoggerUtils.logMessage(Arrays.toString(this.urls), ELevel.INFO);
     } catch (MalformedURLException murle) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "gui.exception.io.package.determineFailed"));
+          "mui.exception.io.package.determineFailed"));
       LoggerUtils.logMessage("Failed to determine package URLs", murle, ELevel.ERROR);
     }
   }
 
   @Override
   void downloadPackage() {
-    EState.setInstance(EState.DOWNLOAD_PACKAGE);
-    this.stateMessage = EState.DOWNLOAD_PACKAGE.getMessage();
-    this.percentage = 10;
-
     int[] fileSizes = new int[this.urls.length];
     int currentDownloadSize = 0;
     int totalDownloadSize = this.getTotalDownloadSize(fileSizes, currentDownloadSize);
+
+    EState.setInstance(EState.DOWNLOAD_PACKAGE);
+    this.stateMessage = EState.DOWNLOAD_PACKAGE.getMessage();
+    this.percentage = 10;
     for (URL fileUrl : this.urls) {
       File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
       if (!binDirectory.mkdirs() && !binDirectory.exists()) {
@@ -177,7 +143,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       File packageFile = new File(binDirectory, FileUtils.getFileName(fileUrl));
       if (Objects.equals(packageFile.getName(),
           MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion()))) {
-        File versionDirectory = new File(VersionUtils.versionsDirectory,
+        File versionDirectory = new File(OptionsUtils.versionsDirectory,
             ConfigUtils.getInstance().getSelectedVersion());
         if (!versionDirectory.mkdirs() && !versionDirectory.exists()) {
           LoggerUtils.logMessage("Failed to create version directory", ELevel.ERROR);
@@ -186,7 +152,8 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         packageFile = new File(versionDirectory, packageFile.getName());
       }
 
-      HttpsURLConnection connection = RequestUtils.performHttpsRequest(fileUrl, EMethod.GET,
+      HttpsURLConnection connection = ConnectionRequestUtils.performHttpsRequest(fileUrl,
+          EMethod.GET,
           EHeader.NO_CACHE.getHeader());
       Objects.requireNonNull(connection, "connection == null!");
       try (InputStream is = connection.getInputStream(); FileOutputStream fos = new FileOutputStream(
@@ -201,7 +168,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
 
           currentDownloadSize += bufferSize;
           this.taskMessage = MessageFormat.format(
-              LanguageUtils.getString(LanguageUtils.getBundle(), "gui.string.downloadTask"),
+              LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.downloadTask"),
               FileUtils.getFileName(fileUrl), (currentDownloadSize * 100) / totalDownloadSize);
           this.percentage = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
 
@@ -219,12 +186,12 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         }
       } catch (FileNotFoundException fnfe) {
         this.setFatalErrorMessage(MessageFormat.format(
-            LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fileNotFound"),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             packageFile.getName()));
         LoggerUtils.logMessage("Failed to find package file", fnfe, ELevel.ERROR);
       } catch (IOException ioe) {
         this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-            "gui.exception.io.package.downloadFailed"));
+            "mui.exception.io.package.downloadFailed"));
         LoggerUtils.logMessage("Failed to download package files", ioe, ELevel.ERROR);
       }
     }
@@ -233,10 +200,6 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
 
   @Override
   void extractPackage() {
-    EState.setInstance(EState.EXTRACT_PACKAGE);
-    this.stateMessage = EState.EXTRACT_PACKAGE.getMessage();
-    this.percentage = 60;
-
     File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
     File[] archiveFiles = binDirectory.listFiles(new FilenameFilter() {
       @Override
@@ -247,46 +210,54 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
     Objects.requireNonNull(archiveFiles, "packageFiles == null!");
 
     int currentExtractSize = 0;
-    int totalExtractSuze = 0;
+    int totalExtractSize = this.getTotalExtractSize(archiveFiles, currentExtractSize);
+
+    EState.setInstance(EState.EXTRACT_PACKAGE);
+    this.stateMessage = EState.EXTRACT_PACKAGE.getMessage();
+    this.percentage = 60;
     for (File archiveFile : archiveFiles) {
       try (ZipFile zipFile = new ZipFile(archiveFile)) {
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
           ZipEntry entry = entries.nextElement();
-          if (entry.isDirectory()) {
+          if (!entry.isDirectory() && entry.getName().indexOf(47) != -1) {
             continue;
           }
-          totalExtractSuze += entry.getSize();
 
           File nativesDirectory = new File(binDirectory, "natives");
           if (!nativesDirectory.mkdirs() && !nativesDirectory.exists()) {
             LoggerUtils.logMessage("Failed to create natives directory", ELevel.ERROR);
             return;
           }
-          File nativeFile = new File(nativesDirectory, entry.getName());
+
+          File libraryName = new File(nativesDirectory, entry.getName());
+          if (libraryName.exists() && !libraryName.delete()) {
+            continue;
+          }
+
           try (InputStream is = zipFile.getInputStream(
-              entry); FileOutputStream fos = new FileOutputStream(nativeFile)) {
+              entry); FileOutputStream fos = new FileOutputStream(libraryName)) {
             int bufferSize;
-            byte[] buffer = new byte[16384];
+            byte[] buffer = new byte[65536];
             while ((bufferSize = is.read(buffer, 0, buffer.length)) != -1) {
               fos.write(buffer, 0, bufferSize);
 
               currentExtractSize += bufferSize;
               this.taskMessage = MessageFormat.format(
-                  LanguageUtils.getString(LanguageUtils.getBundle(), "gui.string.extractTask"),
-                  archiveFile.getName(), (currentExtractSize * 100) / totalExtractSuze);
-              this.percentage = 60 + ((currentExtractSize * 20) / totalExtractSuze);
+                  LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.extractTask"),
+                  entry.getName(), (currentExtractSize * 100) / totalExtractSize);
+              this.percentage = 60 + ((currentExtractSize * 20) / totalExtractSize);
             }
           }
         }
       } catch (FileNotFoundException fnfe) {
         this.setFatalErrorMessage(MessageFormat.format(
-            LanguageUtils.getString(LanguageUtils.getBundle(), "gui.exception.fileNotFound"),
+            LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             archiveFile.getName()));
         LoggerUtils.logMessage("Failed to find package file", fnfe, ELevel.ERROR);
       } catch (IOException ioe) {
         this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-            "gui.exception.io.package.extractFailed"));
+            "mui.exception.io.package.extractFailed"));
         LoggerUtils.logMessage("Failed to extract package files", ioe, ELevel.ERROR);
       } finally {
         if (!archiveFile.delete()) {
@@ -318,7 +289,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
         jarUrls[i] = jarFiles[i].toURI().toURL();
       }
 
-      File versionDirectory = new File(VersionUtils.versionsDirectory,
+      File versionDirectory = new File(OptionsUtils.versionsDirectory,
           ConfigUtils.getInstance().getSelectedVersion());
       File minecraftJarFile = new File(versionDirectory,
           MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion()));
@@ -328,14 +299,14 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       LoggerUtils.logMessage(Arrays.toString(jarUrls), ELevel.INFO);
     } catch (MalformedURLException murle) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "gui.exception.io.classpath.updateFailed"));
+          "mui.exception.io.classpath.updateFailed"));
       LoggerUtils.logMessage("Failed to update classpath", murle, ELevel.ERROR);
       return;
     }
 
-    if (this.minecraftAppletLoader == null) {
+    if (this.minecraftApplet == null) {
       final URL[] finalJarUrls = jarUrls;
-      this.minecraftAppletLoader = AccessController.doPrivileged(
+      this.minecraftApplet = AccessController.doPrivileged(
           new PrivilegedAction<URLClassLoader>() {
             @Override
             public URLClassLoader run() {
@@ -349,23 +320,19 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
     }
 
     File nativesDirectory = new File(binDirectory, "natives");
-    this.unloadLibraries(nativesDirectory);
     this.loadLibraries(nativesDirectory);
   }
 
   @Override
   public void run() {
-    EState.setInstance(EState.INIT);
-    this.stateMessage = EState.INIT.getMessage();
-    this.taskMessage = "";
-    this.percentage = 0;
+    EPlatform platform = EPlatform.getPlatform();
+    Objects.requireNonNull(platform, "platform == null!");
 
+    EState.setInstance(EState.CHECK_CACHE);
+    this.stateMessage = EState.CHECK_CACHE.getMessage();
+    this.percentage = 5;
     try {
-      EState.setInstance(EState.CHECK_CACHE);
-      this.stateMessage = EState.CHECK_CACHE.getMessage();
-      this.percentage = 5;
-
-      if (!MinecraftUtils.isGameCached()) {
+      if (!this.isGameCached(platform)) {
         this.determinePackage();
         this.downloadPackage();
         this.extractPackage();
@@ -373,7 +340,7 @@ public class GameUpdaterImpl extends GameUpdater implements Runnable {
       this.updateClasspath();
     } catch (Throwable t) {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
-          "gui.throwable.minecraft.updateFailed"));
+          "mui.throwable.minecraft.updateFailed"));
       LoggerUtils.logMessage("Failed to update Minecraft", t, ELevel.ERROR);
     } finally {
       if (!this.isFatalErrorOccurred()) {

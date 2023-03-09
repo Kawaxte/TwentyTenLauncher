@@ -1,6 +1,5 @@
-package com.microsoft;
+package ee.twentyten.minecraft.auth;
 
-import com.microsoft.util.MicrosoftUtils;
 import ee.twentyten.log.ELevel;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
@@ -8,6 +7,7 @@ import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.MicrosoftAuthenticationUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
@@ -75,8 +75,8 @@ public abstract class MicrosoftAuthentication {
   }
 
   String getAndSetMinecraftToken() {
-    String minecraftToken = MicrosoftUtils.pollingResult.getString("access_token");
-    int minecraftTokenExpiresIn = MicrosoftUtils.pollingResult.getInt("expires_in");
+    String minecraftToken = MicrosoftAuthenticationUtils.pollingResult.getString("access_token");
+    int minecraftTokenExpiresIn = MicrosoftAuthenticationUtils.pollingResult.getInt("expires_in");
     long minecraftTokenObtainTime = System.currentTimeMillis() + (minecraftTokenExpiresIn * 1000L);
     Date minecraftTokenObtainDate = new Date(minecraftTokenObtainTime);
     ConfigUtils.getInstance().setMicrosoftAccessToken(minecraftToken);
@@ -85,8 +85,8 @@ public abstract class MicrosoftAuthentication {
   }
 
   void getAndSetMicrosoftProfile() {
-    String profileName = MicrosoftUtils.pollingResult.getString("name");
-    String profileId = MicrosoftUtils.pollingResult.getString("id");
+    String profileName = MicrosoftAuthenticationUtils.pollingResult.getString("name");
+    String profileId = MicrosoftAuthenticationUtils.pollingResult.getString("id");
     ConfigUtils.getInstance().setMicrosoftProfileName(profileName);
     ConfigUtils.getInstance().setMicrosoftProfileId(profileId);
     ConfigUtils.getInstance().setMicrosoftSessionId(

@@ -7,6 +7,7 @@
   <build>
     <plugins>
       <plugin>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
         <artifactId>maven-shade-plugin</artifactId>
         <configuration>
           <artifactSet>
@@ -38,6 +39,40 @@
         <groupId>org.apache.maven.plugins</groupId>
         <version>3.1.1</version>
       </plugin>
+      <plugin>
+        <!-- https://mvnrepository.com/artifact/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin -->
+        <artifactId>launch4j-maven-plugin</artifactId>
+        <configuration>
+          <classPath>
+            <mainClass>ee.twentyten.Launcher</mainClass>
+          </classPath>
+          <errTitle>launch4j</errTitle>
+          <headerType>gui</headerType>
+          <icon>${project.basedir}/src/main/resources/icon/favicon.ico</icon>
+          <jar>${project.build.directory}/${project.build.finalName}-shaded.jar</jar>
+          <jre>
+            <jdkPreference>preferJre</jdkPreference>
+            <minVersion>1.7.0</minVersion>
+          </jre>
+          <messages>
+            <jreVersionErr>This application requires Java Runtime Environment 1.7.0</jreVersionErr>
+            <launcherErr>An error occurred while launching the application.</launcherErr>
+            <startupErr>An error occurred while starting the application.</startupErr>
+          </messages>
+          <outfile>${project.build.directory}/TwentyTen_${project.version}.exe</outfile>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>launch4j</goal>
+            </goals>
+            <id>l4j-clui</id>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+        <version>1.7.25</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -68,7 +103,7 @@
       <version>1.15</version>
     </dependency>
   </dependencies>
-  <groupId>ee.sojla</groupId>
+  <groupId>ee.twentyten</groupId>
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
@@ -76,6 +111,12 @@
     <maven.compiler.target>1.7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <version>20230306</version>
+  <repositories>
+    <repository>
+      <id>scijava.public</id>
+      <url>https://maven.scijava.org/content/repositories/public/</url>
+    </repository>
+  </repositories>
+  <version>20230309</version>
 
 </project>

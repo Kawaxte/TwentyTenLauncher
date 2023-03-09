@@ -1,8 +1,8 @@
 package ee.twentyten.request;
 
 import ee.twentyten.log.ELevel;
+import ee.twentyten.util.ConnectionRequestUtils;
 import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.RequestUtils;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.ProtocolException;
@@ -17,7 +17,7 @@ public class JsonConnectionRequestImpl extends JsonConnectionRequest {
   public JSONObject perform(URL url, EMethod method, Map<String, String> header) {
     HttpsURLConnection connection = null;
     try {
-      connection = RequestUtils.openHttpsConnection(url);
+      connection = ConnectionRequestUtils.openHttpsConnection(url);
       connection.setRequestMethod(method.name());
 
       for (Map.Entry<String, String> entry : header.entrySet()) {
@@ -30,14 +30,14 @@ public class JsonConnectionRequestImpl extends JsonConnectionRequest {
         connection.disconnect();
       }
     }
-    return RequestUtils.getJsonResponse(connection);
+    return ConnectionRequestUtils.getJsonResponse(connection);
   }
 
   @Override
   public JSONObject perform(URL url, EMethod method, Map<String, String> header, Object data) {
     HttpsURLConnection connection = null;
     try {
-      connection = RequestUtils.openHttpsConnection(url);
+      connection = ConnectionRequestUtils.openHttpsConnection(url);
       connection.setRequestMethod(method.name());
 
       for (Map.Entry<String, String> entry : header.entrySet()) {
@@ -57,6 +57,6 @@ public class JsonConnectionRequestImpl extends JsonConnectionRequest {
         connection.disconnect();
       }
     }
-    return RequestUtils.getJsonResponse(connection);
+    return ConnectionRequestUtils.getJsonResponse(connection);
   }
 }
