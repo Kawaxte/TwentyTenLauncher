@@ -4,7 +4,7 @@ import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.custom.component.JGroupBox;
 import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.LanguageUtils;
-import ee.twentyten.util.VersionUtils;
+import ee.twentyten.util.OptionsUtils;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -57,7 +57,7 @@ public class VersionOptionsGroupBox extends JGroupBox implements ActionListener 
     this.buildTopPanel();
     this.buildMiddlePanel();
 
-    VersionUtils.updateVersionComboBox(this);
+    OptionsUtils.updateVersionComboBox(this);
     this.setTextToContainers(LanguageUtils.getBundle());
     this.setTextToComponents(LanguageUtils.getBundle());
   }
@@ -113,7 +113,7 @@ public class VersionOptionsGroupBox extends JGroupBox implements ActionListener 
           default:
             break;
         }
-        VersionUtils.updateVersionComboBox(this);
+        OptionsUtils.updateVersionComboBox(this);
       }
     }
   }
