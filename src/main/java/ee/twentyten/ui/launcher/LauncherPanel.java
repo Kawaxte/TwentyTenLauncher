@@ -1,12 +1,12 @@
 package ee.twentyten.ui.launcher;
 
-import com.microsoft.util.MicrosoftUtils;
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.custom.component.TransparentJButton;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
 import ee.twentyten.util.LookAndFeelUtils;
+import ee.twentyten.util.MicrosoftAuthenticationUtils;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -141,7 +141,7 @@ public class LauncherPanel extends JPanel implements ActionListener {
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
       } else {
-        MicrosoftUtils.loginWithMicrosoft();
+        MicrosoftAuthenticationUtils.loginWithMicrosoft();
       }
     }
   }
