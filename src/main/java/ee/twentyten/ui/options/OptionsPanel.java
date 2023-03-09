@@ -3,7 +3,7 @@ package ee.twentyten.ui.options;
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.util.LanguageUtils;
 import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.VersionUtils;
+import ee.twentyten.util.OptionsUtils;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -81,7 +81,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     }
     if (source.equals(this.saveOptionsButton)) {
       LanguageUtils.updateSelectedLanguage(LanguageOptionsGroupBox.getInstance());
-      VersionUtils.updateSelectedVersion(VersionOptionsGroupBox.getInstance());
+      OptionsUtils.updateSelectedVersion(VersionOptionsGroupBox.getInstance());
     }
   }
 }
