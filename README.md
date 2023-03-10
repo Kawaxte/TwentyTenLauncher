@@ -1,4 +1,9 @@
-<h1 align="center">TwentyTen Launcher</h1>
+<div align="center">
+  <a href="https://i.imgur.com/pNjev9Y.png">
+    <img src="https://i.imgur.com/pNjev9Y.png">
+  </a>
+</div>
+
 <p align="center">
   <a href="https://www.azul.com/downloads/?version=java-7-lts&package=jre">
     <img src="https://img.shields.io/badge/Java-7%2B-blue.svg">
@@ -13,24 +18,19 @@
     <img src="https://img.shields.io/github/license/sojlabjoi/TwentyTenLauncher">
   </a>
 </p>
-<div align="center">
-  <a href="https://i.imgur.com/XI2qib8.png">
-    <img src="https://i.imgur.com/XI2qib8.png">
-  </a>
-</div>
 
 ---
 
 __TwentyTen Launcher__ is a third-party Minecraft launcher that offers a selection of legacy
 Minecraft
-versions from June 2010 and January 2011. It is named after the year the original launcher was
+versions from June 2010 up to January 2011. It is named after the year the original launcher was
 released and is based on the November 2010 build of the original launcher.
 
 With this launcher, you can sign in with your Mojang or Microsoft account and choose different
 languages and legacy versions of Minecraft to play. The launcher is designed to give you an
 authentic experience of playing the game as it was in the past.
 
-> Please note that this application needs at least Java 7 or a newer version to run.
+> _Please note that this application requires at least Java 7 or greater to run._
 
 <h2 align="center">Managing Issues and Contributions</h2>
 <p align="center">
@@ -41,6 +41,8 @@ authentic experience of playing the game as it was in the past.
     <img src="https://img.shields.io/github/issues-pr/sojlabjoi/TwentyTenLauncher">
   </a>
 </p>
+
+---
 
 We encourage the community to help us improve our launcher by reporting issues and suggesting new
 features. To do this, we use GitHub's issue tracker and pull request feature.
@@ -70,8 +72,10 @@ the launcher, please follow these steps:
    Provide a detailed explanation of your changes and any relevant information.
 5. Wait for the pull request to be reviewed and merged.
 
-<h2 align="center">Localisation</h2>
+----
 
-If you would like to help make the launcher accessible to players from around the
-world, [click here](https://explore.transifex.com/xte/twentyten) to translate the
-launcher to various languages. Your contribution will be greatly appreciated!
+<div align="center">
+  <a href="https://i.imgur.com/XI2qib8.png">
+    <img src="https://i.imgur.com/XI2qib8.png">
+  </a>
+</div>
