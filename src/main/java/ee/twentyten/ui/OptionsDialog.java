@@ -34,7 +34,7 @@ public class OptionsDialog extends JDialog {
     this.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosed(WindowEvent event) {
-        DiscordRichPresenceUtils.updateRichPresence("");
+        DiscordRichPresenceUtils.updateRichPresence("Idle");
       }
     });
   }
