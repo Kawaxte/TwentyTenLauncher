@@ -63,7 +63,7 @@ public class LauncherFrame extends JFrame implements WindowFocusListener {
 
   public static void main(String... args) {
     LookAndFeelUtils.setLookAndFeel();
-    SystemUtils.setLauncherVersion(1, 12, 3, 23, 5, true);
+    SystemUtils.setLauncherVersion(1, 12, 3, 23, 5, false);
 
     if (AuthenticationUtils.isMicrosoftSessionValid(
         ConfigUtils.getInstance().getMicrosoftAccessToken(),
