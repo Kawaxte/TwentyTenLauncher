@@ -1,8 +1,8 @@
 package ee.twentyten.custom;
 
 import ee.twentyten.log.ELevel;
-import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.SystemUtils;
+import ee.twentyten.util.log.LoggerUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
