@@ -2,6 +2,7 @@ package ee.twentyten.minecraft.update.ui;
 
 import ee.twentyten.log.ELevel;
 import ee.twentyten.minecraft.update.MinecraftUpdaterImpl;
+import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.config.ConfigUtils;
@@ -44,6 +45,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
   @Setter
   private static MinecraftUpdaterApplet instance;
   public Map<String, String> parameters;
+  @Getter
   public Applet minecraftApplet;
   private MinecraftUpdaterImpl updater;
   private boolean isAppletActive;
@@ -91,8 +93,9 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     this.repaint();
 
     DiscordRichPresenceUtils.updateRichPresence(
-        MessageFormat.format("as {0}", MinecraftUtils.getInstance().getUsername()),
-        MessageFormat.format("Playing {0}", MinecraftUtils.getVersion()));
+        MessageFormat.format("Playing {0}", LauncherFrame.getInstance().getTitle()),
+        MessageFormat.format("{0} | {1}", MinecraftUtils.getInstance().getUsername(),
+            MinecraftUtils.getVersion()));
   }
 
   private void drawTitleString(Graphics2D g2d, String title, int width, int height) {
