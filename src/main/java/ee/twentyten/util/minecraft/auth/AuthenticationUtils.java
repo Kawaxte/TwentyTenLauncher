@@ -1,8 +1,11 @@
-package ee.twentyten.util;
+package ee.twentyten.util.minecraft.auth;
 
 import ee.twentyten.log.ELevel;
-import ee.twentyten.request.EHeader;
+import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -44,18 +47,25 @@ public final class AuthenticationUtils {
     } catch (MalformedURLException murle) {
       LoggerUtils.logMessage("Failed to create URL", murle, ELevel.ERROR);
     }
-    return ConnectionRequestUtils.performJsonRequest(AuthenticationUtils.sessionserverProfileUrl,
-        EMethod.GET,
-        EHeader.JSON.getHeader());
+    return new ConnectionRequest.Builder()
+        .setUrl(AuthenticationUtils.sessionserverProfileUrl)
+        .setMethod(EMethod.GET)
+        .setHeaders(ConnectionRequestUtils.JSON)
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   public static JSONObject checkMicrosoftProfile(String accessToken) {
     Map<String, String> header = new HashMap<>();
     header.put("Authorization", MessageFormat.format("Bearer {0}", accessToken));
-    header.putAll(EHeader.JSON.getHeader());
-    return ConnectionRequestUtils.performJsonRequest(AuthenticationUtils.mcservicesProfileUrl,
-        EMethod.GET,
-        header);
+    header.putAll(ConnectionRequestUtils.JSON);
+
+    return new ConnectionRequest.Builder()
+        .setUrl(AuthenticationUtils.mcservicesProfileUrl)
+        .setMethod(EMethod.GET)
+        .setHeaders(header)
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   public static boolean isYggdrasilSessionValid(String accessToken) {
@@ -154,6 +164,7 @@ public final class AuthenticationUtils {
             String newClientToken = validateAccessTokenResult.getString("clientToken");
             ConfigUtils.getInstance().setYggdrasilAccessToken(newAccessToken);
             ConfigUtils.getInstance().setClientToken(newClientToken);
+
             ConfigUtils.writeToConfig();
           }
         } catch (ExecutionException ee) {
