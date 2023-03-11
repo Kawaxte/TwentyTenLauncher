@@ -81,7 +81,7 @@ public final class MinecraftUtils {
       default:
         break;
     }
-    return MessageFormat.format("Minecraft {0}", selectedVersion);
+    return selectedVersion;
   }
 
   private static void setLwjglMacosxNativesForArchitecture() {
