@@ -7,17 +7,28 @@ public final class SystemUtils {
   public static String lineSeparator;
   public static String launcherVersion;
   public static String osName;
+  public static String osArch;
   public static String osVersion;
   public static String javaVersion;
+  public static String sunArchDataModel;
+  public static String javaClasspath;
   public static String userHome;
+  public static String appData;
+  public static String temp;
 
   static {
     SystemUtils.lineSeparator = System.getProperty("line.separator");
     SystemUtils.launcherVersion = System.getProperty("ee.twentyten.launcher.version");
     SystemUtils.osName = System.getProperty("os.name", "generic");
+    SystemUtils.osArch = System.getProperty("os.arch", "generic");
     SystemUtils.osVersion = System.getProperty("os.version");
     SystemUtils.javaVersion = System.getProperty("java.version");
+    SystemUtils.sunArchDataModel = System.getProperty("sun.arch.data.model");
+    SystemUtils.javaClasspath = System.getProperty("java.class.path");
     SystemUtils.userHome = System.getProperty("user.home", ".");
+
+    SystemUtils.appData = System.getenv("APPDATA");
+    SystemUtils.temp = System.getenv("TEMP");
   }
 
   private SystemUtils() {
