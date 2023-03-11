@@ -1,6 +1,7 @@
-package ee.twentyten.util;
+package ee.twentyten.util.config;
 
 import ee.twentyten.log.ELevel;
+import ee.twentyten.util.log.LoggerUtils;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
