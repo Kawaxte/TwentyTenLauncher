@@ -130,7 +130,7 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source.equals(this.optionsButton)) {
-      DiscordRichPresenceUtils.updateRichPresence("In Options");
+      DiscordRichPresenceUtils.updateRichPresence("Setting Launcher Options");
 
       SwingUtilities.invokeLater(new Runnable() {
         @Override
