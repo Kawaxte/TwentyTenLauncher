@@ -1,7 +1,11 @@
-package ee.twentyten.util;
+package ee.twentyten.util.launcher.options;
 
 import ee.twentyten.log.ELevel;
 import ee.twentyten.ui.options.VersionOptionsGroupBox;
+import ee.twentyten.util.FileUtils;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.log.LoggerUtils;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,7 +17,7 @@ import javax.swing.DefaultComboBoxModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public final class OptionsUtils {
+public final class VersionUtils {
 
   public static File versionsDirectory;
   public static Map<String, String> versionMap;
@@ -21,43 +25,41 @@ public final class OptionsUtils {
   private static URL versionsFileUrl;
 
   static {
-    OptionsUtils.versionsDirectory = new File(LauncherUtils.workingDirectory, "versions");
-    OptionsUtils.versionTypes = new String[]{"beta", "alpha", "infdev"};
+    VersionUtils.versionsDirectory = new File(LauncherUtils.workingDirectory, "versions");
+    VersionUtils.versionTypes = new String[]{"beta", "alpha", "infdev"};
 
     try {
-      OptionsUtils.versionsFileUrl = new URL(
+      VersionUtils.versionsFileUrl = new URL(
           "https://raw.githubusercontent.com/sojlabjoi/TwentyTenLauncher/stable/versions.json");
     } catch (MalformedURLException murle) {
       LoggerUtils.logMessage("Failed to create URL", murle, ELevel.ERROR);
     }
   }
 
-  private OptionsUtils() {
+  private VersionUtils() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
   public static void getVersionsFile() {
-    File versionsFile = new File(OptionsUtils.versionsDirectory, "versions.json");
-    if (!OptionsUtils.versionsDirectory.exists()) {
-      boolean isDirectoryCreated = OptionsUtils.versionsDirectory.mkdirs();
-      if (!isDirectoryCreated) {
-        LoggerUtils.logMessage("Failed to create versions directory", ELevel.ERROR);
-      }
+    File versionsFile = new File(VersionUtils.versionsDirectory, "versions.json");
+    if (!VersionUtils.versionsDirectory.exists() && !VersionUtils.versionsDirectory.mkdirs()) {
+      LoggerUtils.logMessage("Failed to create versions directory", ELevel.ERROR);
+      return;
     }
     if (!versionsFile.exists()) {
-      FileUtils.downloadFile(OptionsUtils.versionsFileUrl, versionsFile);
+      FileUtils.downloadFile(VersionUtils.versionsFileUrl, versionsFile);
     }
   }
 
   public static int getProxyPort(String version) {
-    File versionsFile = new File(OptionsUtils.versionsDirectory, "versions.json");
-    JSONObject versionJson = FileUtils.readJsonFile(versionsFile);
+    File versionsFile = new File(VersionUtils.versionsDirectory, "versions.json");
+    JSONObject versionJson = FileUtils.readJsonFileContents(versionsFile);
 
-    String versionType = OptionsUtils.getVersionType(version);
+    String versionType = VersionUtils.getVersionType(version);
     for (String versionTypeKey : versionJson.keySet()) {
       if (versionTypeKey.equals(versionType)) {
         JSONArray versionArray = versionJson.getJSONArray(versionTypeKey);
-        return OptionsUtils.getProxyPortFromVersionArray(versionArray, version);
+        return VersionUtils.getProxyPortFromVersionArray(versionArray, version);
       }
     }
     return Integer.parseInt("80");
@@ -87,13 +89,13 @@ public final class OptionsUtils {
   }
 
   public static void updateVersionComboBox(VersionOptionsGroupBox vogb) {
-    OptionsUtils.versionMap = new HashMap<>();
+    VersionUtils.versionMap = new HashMap<>();
 
     DefaultComboBoxModel<String> versionModel = new DefaultComboBoxModel<>();
-    for (String versionType : OptionsUtils.versionTypes) {
-      File versionFile = new File(OptionsUtils.versionsDirectory, "versions.json");
+    for (String versionType : VersionUtils.versionTypes) {
+      File versionFile = new File(VersionUtils.versionsDirectory, "versions.json");
       if (versionFile.exists()) {
-        JSONObject versionsJson = FileUtils.readJsonFile(versionFile);
+        JSONObject versionsJson = FileUtils.readJsonFileContents(versionFile);
         JSONArray versionsArray = versionsJson.getJSONArray(versionType);
         for (int i = versionsArray.length() - 1; i >= 0; i--) {
           JSONObject versionJson = versionsArray.getJSONObject(i);
@@ -105,9 +107,9 @@ public final class OptionsUtils {
                   : Objects.equals(versionType, "alpha") ? MessageFormat.format("Alpha v{0}",
                       versionId.substring(1))
                       : MessageFormat.format("Infdev {0}", versionId.substring(3));
-          if (new File(OptionsUtils.versionsDirectory,
+          if (new File(VersionUtils.versionsDirectory,
               MessageFormat.format("{0}{1}{2}.jar", versionId, File.separator, versionId)).exists()
-              && OptionsUtils.versionsDirectory.exists() && new File(OptionsUtils.versionsDirectory,
+              && VersionUtils.versionsDirectory.exists() && new File(VersionUtils.versionsDirectory,
               versionId).exists()) {
             versionName = MessageFormat.format("<html><b>{0}</b></html>", versionName);
           }
@@ -122,14 +124,14 @@ public final class OptionsUtils {
               ConfigUtils.getInstance().isShowInfdevVersionsSelected() && Objects.equals(
                   versionType, "infdev");
           if (isBetaVersionSelected || isAlphaVersionSelected || isInfdevVersionSelected) {
-            OptionsUtils.versionMap.put(versionName, versionId);
+            VersionUtils.versionMap.put(versionName, versionId);
             versionModel.addElement(versionName);
           }
         }
       }
     }
     String selectedVersion = ConfigUtils.getInstance().getSelectedVersion();
-    for (Map.Entry<String, String> entry : OptionsUtils.versionMap.entrySet()) {
+    for (Map.Entry<String, String> entry : VersionUtils.versionMap.entrySet()) {
       if (Objects.equals(entry.getValue(), selectedVersion)) {
         versionModel.setSelectedItem(entry.getKey());
         break;
@@ -141,7 +143,7 @@ public final class OptionsUtils {
   public static void updateSelectedVersion(VersionOptionsGroupBox vogb) {
     String selectedVersion = (String) vogb.getUseVersionComboBox().getSelectedItem();
     if (selectedVersion != null) {
-      selectedVersion = OptionsUtils.versionMap.get(selectedVersion);
+      selectedVersion = VersionUtils.versionMap.get(selectedVersion);
     }
     boolean isVersionChanged = !Objects.equals(selectedVersion,
         ConfigUtils.getInstance().getSelectedVersion());
