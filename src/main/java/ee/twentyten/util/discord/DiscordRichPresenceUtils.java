@@ -122,10 +122,9 @@ public final class DiscordRichPresenceUtils {
     EPlatform platform = EPlatform.getPlatform();
     Objects.requireNonNull(platform, "platform == null!");
 
+    URL libraryFileUrl;
     File tempDirectory;
     Path tempLibraryPath;
-
-    URL libraryFileUrl;
     switch (platform) {
       case MACOSX:
         tempDirectory = Paths.get(SystemUtils.userHome, "Library", "Application Support",
@@ -153,6 +152,11 @@ public final class DiscordRichPresenceUtils {
         break;
       default:
         throw new UnsupportedOperationException(String.valueOf(platform));
+    }
+
+    if (!tempDirectory.exists() && !tempDirectory.mkdirs()) {
+      LoggerUtils.logMessage("Failed to create temp directory", ELevel.ERROR);
+      return;
     }
     DiscordRichPresenceUtils.loadLibrary(tempLibraryPath, libraryFileUrl);
   }
