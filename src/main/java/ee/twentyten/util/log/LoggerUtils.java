@@ -1,7 +1,8 @@
-package ee.twentyten.util;
+package ee.twentyten.util.log;
 
 import ee.twentyten.log.ELevel;
 import ee.twentyten.log.LauncherLoggerImpl;
+import ee.twentyten.util.SystemUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -39,7 +40,7 @@ public final class LoggerUtils {
 
   public static char[] getCurrentDateAndTime() {
     Date currentDate = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
     String formattedTime = sdf.format(currentDate);
     return formattedTime.toCharArray();
