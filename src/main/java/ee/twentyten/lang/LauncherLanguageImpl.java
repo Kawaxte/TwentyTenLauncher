@@ -2,7 +2,7 @@ package ee.twentyten.lang;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.log.ELevel;
-import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.log.LoggerUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
