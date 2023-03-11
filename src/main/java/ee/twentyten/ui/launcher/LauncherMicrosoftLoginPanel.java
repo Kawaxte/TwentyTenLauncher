@@ -1,12 +1,12 @@
 package ee.twentyten.ui.launcher;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.custom.component.TransparentJButton;
 import ee.twentyten.custom.ui.CustomJPanel;
 import ee.twentyten.custom.ui.TransparentPanelUI;
-import ee.twentyten.util.ConnectionRequestUtils;
-import ee.twentyten.util.LanguageUtils;
-import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.custom.ui.component.TransparentJButton;
+import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -88,7 +88,7 @@ public class LauncherMicrosoftLoginPanel extends CustomJPanel implements ActionL
   public LauncherMicrosoftLoginPanel(String userCode, String verificationUri, int expiresIn) {
     this();
     this.userCodeLabel.setText(userCode);
-    this.verificationUri = ConnectionRequestUtils.createURL(verificationUri);
+    this.verificationUri = ConnectionRequestUtils.createURLFromString(verificationUri);
     this.expiresInProgressBar.setMinimum(0);
     this.expiresInProgressBar.setMaximum(expiresIn);
     this.expiresInProgressBar.setValue(expiresIn);
