@@ -54,7 +54,17 @@ public final class DiscordRichPresenceUtils {
     IDiscordDynamicLib.DISCORD_EXPORT.Discord_RunCallbacks();
   }
 
-  public static void buildAndUpdateRichPresence(final String state, final String details) {
+  public static void updateRichPresence(final String state) {
+    if (DiscordRichPresenceUtils.getInstance() != null) {
+      DiscordRichPresenceUtils.setInstance(new DiscordRichPresence.Builder(
+          DiscordRichPresenceUtils.getInstance())
+          .setState(state)
+          .build());
+      DiscordRichPresenceUtils.discordUpdatePresence(DiscordRichPresenceUtils.getInstance());
+    }
+  }
+
+  public static void buildAndUpdateRichPresence(final String state) {
     DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(
         new IReadyCallback() {
           @Override
@@ -65,7 +75,6 @@ public final class DiscordRichPresenceUtils {
 
             DiscordRichPresenceUtils.setInstance(new DiscordRichPresence.Builder()
                 .setState(state)
-                .setDetails(details)
                 .setStartTimestamp(System.currentTimeMillis() / 1000L)
                 .setLargeImage("favicon_rpc", "https://github.com/Kawaxte/TwentyTenLauncher")
                 .build());
