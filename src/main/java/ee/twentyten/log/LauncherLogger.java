@@ -1,9 +1,9 @@
 package ee.twentyten.log;
 
 import ee.twentyten.EPlatform;
-import ee.twentyten.util.ConfigUtils;
-import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.log.LoggerUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -32,7 +32,7 @@ abstract class LauncherLogger {
     return logFile;
   }
 
-  File getGameLogFile() {
+  File getMinecraftLogFile() {
     EPlatform platform = EPlatform.getPlatform();
 
     StringBuilder sb = new StringBuilder();
@@ -42,7 +42,8 @@ abstract class LauncherLogger {
 
     File logsDirectory = new File(LauncherUtils.workingDirectory, "logs");
     if (!logsDirectory.exists() && !logsDirectory.mkdirs()) {
-      throw new RuntimeException("Failed to create logs directory");
+      LoggerUtils.logMessage("Failed to create logs directory", ELevel.ERROR);
+      return null;
     }
     File minecraftLogFile = new File(logsDirectory, sb.toString());
     if (!minecraftLogFile.exists()) {
