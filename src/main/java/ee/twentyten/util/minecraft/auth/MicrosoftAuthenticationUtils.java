@@ -109,7 +109,7 @@ public final class MicrosoftAuthenticationUtils {
         .setUrl(MicrosoftAuthenticationUtils.msonlineTokenUrl)
         .setMethod(EMethod.POST)
         .setHeaders(ConnectionRequestUtils.X_WWW_FORM_URLENCODED)
-        .setBody(data)
+        .setBody(AuthenticationUtils.ofFormData(data))
         .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
         .build().performJsonRequest();
   }
