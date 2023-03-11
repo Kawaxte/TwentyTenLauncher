@@ -50,8 +50,9 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     this.taskMessage = "";
     this.percentage = 0;
 
-    DiscordRichPresenceUtils.updateRichPresence("",
-        MessageFormat.format("Updating Minecraft", MinecraftUtils.getVersion()));
+    DiscordRichPresenceUtils.updateRichPresence("Updating Minecraft",
+        MessageFormat.format("{0} | {1}", MinecraftUtils.getInstance().getUsername(),
+            MinecraftUtils.getVersion()));
   }
 
   @Override
@@ -311,7 +312,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     EState.setInstance(EState.EXTRACT_PACKAGE);
     this.stateMessage = EState.EXTRACT_PACKAGE.getMessage();
     this.percentage = 60;
-    
+
     for (File archiveFile : archiveFiles) {
       try (ZipFile zipFile = new ZipFile(archiveFile)) {
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -369,10 +370,6 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
   @Override
   void updateClasspath() {
-    EState.setInstance(EState.UPDATE_CLASSPATH);
-    this.stateMessage = EState.UPDATE_CLASSPATH.getMessage();
-    this.percentage = 85;
-
     File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
     File[] jarFiles = binDirectory.listFiles(new FilenameFilter() {
       @Override
@@ -381,6 +378,10 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       }
     });
     Objects.requireNonNull(jarFiles, "jarFiles == null!");
+
+    EState.setInstance(EState.UPDATE_CLASSPATH);
+    this.stateMessage = EState.UPDATE_CLASSPATH.getMessage();
+    this.percentage = 85;
 
     URL[] jarUrls = new URL[jarFiles.length + 1];
     try {
@@ -430,6 +431,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     EState.setInstance(EState.CHECK_CACHE);
     this.stateMessage = EState.CHECK_CACHE.getMessage();
     this.percentage = 5;
+
     try {
       if (!this.isMinecraftCached(platform)) {
         this.determinePackage();
