@@ -1,8 +1,11 @@
-package ee.twentyten.util;
+package ee.twentyten.util.minecraft.auth;
 
 import ee.twentyten.log.ELevel;
 import ee.twentyten.minecraft.auth.YggdrasilAuthenticationImpl;
 import ee.twentyten.ui.launcher.LauncherLoginPanel;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.minecraft.MinecraftUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
