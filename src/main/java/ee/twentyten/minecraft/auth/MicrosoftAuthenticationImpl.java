@@ -7,6 +7,7 @@ import ee.twentyten.ui.launcher.LauncherMicrosoftLoginPanel;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.discord.DiscordRichPresenceUtils;
 import ee.twentyten.util.launcher.LauncherUtils;
 import ee.twentyten.util.launcher.options.LanguageUtils;
 import ee.twentyten.util.log.LoggerUtils;
@@ -32,6 +33,8 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
 
   @Override
   public void login() {
+    DiscordRichPresenceUtils.updateRichPresence("Logging in with Microsoft");
+
     final JSONObject loginResult = this.acquireUserCode(this.clientId);
 
     final String deviceCode = loginResult.getString("device_code");
