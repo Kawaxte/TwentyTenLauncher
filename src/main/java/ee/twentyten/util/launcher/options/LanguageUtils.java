@@ -1,7 +1,7 @@
-package ee.twentyten.util;
+package ee.twentyten.util.launcher.options;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.custom.component.JGroupBox;
+import ee.twentyten.custom.ui.component.JGroupBox;
 import ee.twentyten.lang.ELanguage;
 import ee.twentyten.lang.LauncherLanguageImpl;
 import ee.twentyten.ui.OptionsDialog;
@@ -12,6 +12,7 @@ import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.ui.options.LanguageOptionsGroupBox;
 import ee.twentyten.ui.options.OptionsPanel;
 import ee.twentyten.ui.options.VersionOptionsGroupBox;
+import ee.twentyten.util.config.ConfigUtils;
 import java.awt.Container;
 import java.text.MessageFormat;
 import java.util.HashMap;
