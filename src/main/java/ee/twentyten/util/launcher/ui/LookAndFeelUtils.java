@@ -1,9 +1,12 @@
-package ee.twentyten.util;
+package ee.twentyten.util.launcher.ui;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinReg;
 import ee.twentyten.log.ELevel;
+import ee.twentyten.util.FileUtils;
+import ee.twentyten.util.SystemUtils;
+import ee.twentyten.util.log.LoggerUtils;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
@@ -99,12 +102,12 @@ public final class LookAndFeelUtils {
       String SystemRoot = System.getenv("SystemRoot");
       String currentThemePath = (String) keyValues.get("CurrentTheme");
       if (!currentThemePath.isEmpty()) {
-        String currentThemeContents = FileUtils.readFile(currentThemePath);
+        String currentThemeContents = FileUtils.readFileContents(currentThemePath);
         String[] currentThemeLines = currentThemeContents.split("\\r?\\n");
 
         String classicThemePath = MessageFormat.format(
             "{0}\\Resources\\Ease of Access Themes\\classic.theme", SystemRoot);
-        String classicThemeContents = FileUtils.readFile(classicThemePath);
+        String classicThemeContents = FileUtils.readFileContents(classicThemePath);
         String[] classicThemeLines = classicThemeContents.split("\\r?\\n");
         return Objects.equals(currentThemeLines[3], classicThemeLines[3]);
       }
