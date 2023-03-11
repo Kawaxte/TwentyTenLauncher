@@ -1,9 +1,13 @@
-package ee.twentyten.util;
+package ee.twentyten.util.minecraft.auth;
 
 import ee.twentyten.log.ELevel;
 import ee.twentyten.minecraft.auth.MicrosoftAuthenticationImpl;
-import ee.twentyten.request.EHeader;
+import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.minecraft.MinecraftUtils;
+import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -100,9 +104,14 @@ public final class MicrosoftAuthenticationUtils {
     data.put("grant_type", "refresh_token");
     data.put("refresh_token", refreshToken);
     data.put("scope", "XboxLive.signin offline_access");
-    return ConnectionRequestUtils.performJsonRequest(MicrosoftAuthenticationUtils.msonlineTokenUrl,
-        EMethod.POST,
-        EHeader.X_WWW_FORM_URLENCODED.getHeader(), AuthenticationUtils.ofFormData(data));
+
+    return new ConnectionRequest.Builder()
+        .setUrl(MicrosoftAuthenticationUtils.msonlineTokenUrl)
+        .setMethod(EMethod.POST)
+        .setHeaders(ConnectionRequestUtils.X_WWW_FORM_URLENCODED)
+        .setBody(data)
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   public static JSONObject acquireXblToken(String accessToken) {
