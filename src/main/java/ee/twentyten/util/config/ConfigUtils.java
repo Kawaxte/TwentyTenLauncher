@@ -1,6 +1,7 @@
-package ee.twentyten.util;
+package ee.twentyten.util.config;
 
 import ee.twentyten.config.LauncherConfigImpl;
+import ee.twentyten.util.SystemUtils;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
