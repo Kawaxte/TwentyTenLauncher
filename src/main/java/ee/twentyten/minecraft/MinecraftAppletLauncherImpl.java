@@ -18,6 +18,7 @@ public class MinecraftAppletLauncherImpl extends MinecraftAppletLauncher {
         LauncherFrame.getInstance(), gua);
 
     gua.start();
+    LauncherFrame.getInstance().setTitle("Minecraft");
   }
 
   @Override
@@ -31,5 +32,6 @@ public class MinecraftAppletLauncherImpl extends MinecraftAppletLauncher {
         LauncherFrame.getInstance(), gua);
 
     gua.start();
+    LauncherFrame.getInstance().setTitle("Minecraft");
   }
 }
