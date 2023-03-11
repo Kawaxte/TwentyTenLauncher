@@ -1,6 +1,6 @@
 <div align="center">
-  <a href="https://i.imgur.com/pNjev9Y.png">
-    <img src="https://i.imgur.com/pNjev9Y.png">
+  <a href="https://i.imgur.com/VxyZRcZ.png">
+    <img src="https://i.imgur.com/VxyZRcZ.png">
   </a>
 </div>
 
@@ -49,6 +49,8 @@ features. To do this, we use GitHub's issue tracker and pull request feature.
 
 <h3 align="center">Reporting Issues and Suggestions</h3>
 
+---
+
 If you encounter a problem or have an idea for a new feature, please follow these steps:
 
 1. Go to the [issue tracker](https://github.com/sojlabjoi/TwentyTenLauncher/issues) for this
@@ -61,6 +63,8 @@ If you encounter a problem or have an idea for a new feature, please follow thes
 
 <h3 align="center">Submitting Pull Requests</h3>
 
+---
+
 If you would like to submit a change or addition to
 the launcher, please follow these steps:
 
@@ -72,7 +76,7 @@ the launcher, please follow these steps:
    Provide a detailed explanation of your changes and any relevant information.
 5. Wait for the pull request to be reviewed and merged.
 
-----
+---
 
 <div align="center">
   <a href="https://i.imgur.com/XI2qib8.png">
