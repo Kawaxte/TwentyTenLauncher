@@ -15,4 +15,6 @@ public interface IDiscordDynamicLib extends Library {
   void Discord_RunCallbacks();
 
   void Discord_UpdatePresence(final DiscordRichPresence presence);
+
+  void Discord_ClearPresence();
 }
