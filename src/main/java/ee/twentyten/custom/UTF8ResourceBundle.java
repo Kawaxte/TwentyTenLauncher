@@ -21,8 +21,8 @@ public class UTF8ResourceBundle extends ResourceBundle {
 
   public UTF8ResourceBundle(InputStream is) throws IOException {
     this.customLookup = new HashMap<>();
-    try (InputStreamReader isr = new InputStreamReader(is,
-        StandardCharsets.UTF_8); BufferedReader br = new BufferedReader(isr)) {
+    try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+        BufferedReader br = new BufferedReader(isr)) {
       Properties props = new Properties();
       props.load(br);
       for (String key : props.stringPropertyNames()) {

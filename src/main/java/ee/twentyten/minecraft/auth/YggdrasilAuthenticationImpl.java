@@ -1,21 +1,24 @@
 package ee.twentyten.minecraft.auth;
 
-import ee.twentyten.request.EHeader;
+import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
-import ee.twentyten.util.ConfigUtils;
-import ee.twentyten.util.ConnectionRequestUtils;
-import ee.twentyten.util.LanguageUtils;
-import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.MinecraftUtils;
-import ee.twentyten.util.YggdrasilAuthenticationUtils;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.discord.DiscordRichPresenceUtils;
+import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.minecraft.MinecraftUtils;
+import ee.twentyten.util.minecraft.auth.YggdrasilAuthenticationUtils;
+import ee.twentyten.util.request.ConnectionRequestUtils;
 import org.json.JSONObject;
 
 public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
 
   @Override
   public void login(String username, String password, boolean isPasswordSaved) {
+    DiscordRichPresenceUtils.updateRichPresence("Logging in with Yggdrasil");
+    
     JSONObject loginResult = YggdrasilAuthenticationImpl.this.authenticate(username, password,
         ConfigUtils.getInstance().getClientToken(), true);
     if (loginResult.has("error")) {
@@ -34,8 +37,8 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
 
     String[] availableProfiles = new String[loginResult.getJSONArray("availableProfiles").length()];
     if (availableProfiles.length == 0) {
-      ConfigUtils.getInstance().setYggdrasilProfileName(null);
       ConfigUtils.getInstance().setYggdrasilProfileId(null);
+      ConfigUtils.getInstance().setYggdrasilProfileName(null);
 
       ConfigUtils.writeToConfig();
 
@@ -64,10 +67,14 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     payload.put("password", password);
     payload.put("clientToken", clientToken);
     payload.put("requestUser", requestUser);
-    return ConnectionRequestUtils.performJsonRequest(
-        YggdrasilAuthenticationUtils.authserverAuthenticateUrl,
-        EMethod.POST,
-        EHeader.JSON.getHeader(), payload);
+
+    return new ConnectionRequest.Builder()
+        .setUrl(YggdrasilAuthenticationUtils.authserverAuthenticateUrl)
+        .setMethod(EMethod.POST)
+        .setHeaders(ConnectionRequestUtils.JSON)
+        .setBody(payload)
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   @Override
@@ -75,10 +82,14 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     JSONObject payload = new JSONObject();
     payload.put("accessToken", accessToken);
     payload.put("clientToken", clientToken);
-    return ConnectionRequestUtils.performJsonRequest(
-        YggdrasilAuthenticationUtils.authserverValidateUrl,
-        EMethod.POST,
-        EHeader.JSON.getHeader(), payload);
+
+    return new ConnectionRequest.Builder()
+        .setUrl(YggdrasilAuthenticationUtils.authserverValidateUrl)
+        .setMethod(EMethod.POST)
+        .setHeaders(ConnectionRequestUtils.JSON)
+        .setBody(payload)
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   @Override
@@ -87,9 +98,13 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     payload.put("accessToken", accessToken);
     payload.put("clientToken", clientToken);
     payload.put("requestUser", requestUser);
-    return ConnectionRequestUtils.performJsonRequest(
-        YggdrasilAuthenticationUtils.authserverRefreshUrl,
-        EMethod.POST,
-        EHeader.JSON.getHeader(), payload);
+
+    return new ConnectionRequest.Builder()
+        .setUrl(YggdrasilAuthenticationUtils.authserverRefreshUrl)
+        .setMethod(EMethod.POST)
+        .setHeaders(ConnectionRequestUtils.JSON)
+        .setBody(payload)
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 }

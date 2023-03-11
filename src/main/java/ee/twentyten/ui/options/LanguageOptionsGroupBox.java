@@ -1,8 +1,8 @@
 package ee.twentyten.ui.options;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.custom.component.JGroupBox;
-import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.custom.ui.component.JGroupBox;
+import ee.twentyten.util.launcher.options.LanguageUtils;
 import java.awt.BorderLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;

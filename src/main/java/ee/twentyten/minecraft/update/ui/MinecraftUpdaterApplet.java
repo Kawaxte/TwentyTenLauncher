@@ -2,12 +2,15 @@ package ee.twentyten.minecraft.update.ui;
 
 import ee.twentyten.log.ELevel;
 import ee.twentyten.minecraft.update.MinecraftUpdaterImpl;
+import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.launcher.LauncherPanel;
-import ee.twentyten.util.ConfigUtils;
 import ee.twentyten.util.FileUtils;
-import ee.twentyten.util.LanguageUtils;
-import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.OptionsUtils;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.discord.DiscordRichPresenceUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.launcher.options.VersionUtils;
+import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.minecraft.MinecraftUtils;
 import java.applet.Applet;
 import java.applet.AppletStub;
 import java.awt.BorderLayout;
@@ -25,6 +28,7 @@ import java.awt.image.VolatileImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -41,6 +45,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
   @Setter
   private static MinecraftUpdaterApplet instance;
   public Map<String, String> parameters;
+  @Getter
   public Applet minecraftApplet;
   private MinecraftUpdaterImpl updater;
   private boolean isAppletActive;
@@ -53,23 +58,18 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     this.isUpdateAvailable = false;
   }
 
-  public MinecraftUpdaterApplet() {
+  public MinecraftUpdaterApplet(final String username, String sessionId) {
     MinecraftUpdaterApplet.setInstance(this);
-  }
-
-  public void init(String username, String sessionId) {
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
 
-    File versionsFile = new File(OptionsUtils.versionsDirectory, "versions.json");
-    String selectedVersion = ConfigUtils.getInstance().getSelectedVersion();
-    if (versionsFile.exists() && selectedVersion != null) {
-      int proxyPort = OptionsUtils.getProxyPort(selectedVersion);
+    File versionsFile = new File(VersionUtils.versionsDirectory, "versions.json");
+    if (versionsFile.exists() && ConfigUtils.getInstance().getSelectedVersion() != null) {
+      int proxyPort = VersionUtils.getProxyPort(ConfigUtils.getInstance().getSelectedVersion());
       System.setProperty("http.proxyHost", "betacraft.uk");
       System.setProperty("http.proxyPort", String.valueOf(proxyPort));
       System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
     }
-    this.updater = new MinecraftUpdaterImpl();
   }
 
   private void replace(Applet applet) {
@@ -91,6 +91,11 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     this.add(minecraftPanel);
     this.revalidate();
     this.repaint();
+
+    DiscordRichPresenceUtils.updateRichPresence(
+        MessageFormat.format("Playing {0}", LauncherFrame.getInstance().getTitle()),
+        MessageFormat.format("{0} | {1}", MinecraftUtils.getInstance().getUsername(),
+            MinecraftUtils.getVersion()));
   }
 
   private void drawTitleString(Graphics2D g2d, String title, int width, int height) {
@@ -163,12 +168,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
 
   @Override
   public URL getCodeBase() {
-    try {
-      return new URL("http://www.minecraft.net/game/");
-    } catch (MalformedURLException murle) {
-      LoggerUtils.logMessage("Failed to create code base URL", murle, ELevel.ERROR);
-    }
-    return null;
+    return super.getCodeBase();
   }
 
   @Override
@@ -182,7 +182,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
       this.minecraftApplet.init();
       return;
     }
-    this.init(this.getParameter("username"), this.getParameter("sessionid"));
+    this.updater = new MinecraftUpdaterImpl();
   }
 
   @Override

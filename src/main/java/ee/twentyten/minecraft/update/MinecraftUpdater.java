@@ -2,14 +2,15 @@ package ee.twentyten.minecraft.update;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.log.ELevel;
-import ee.twentyten.request.EHeader;
+import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
-import ee.twentyten.util.ConfigUtils;
-import ee.twentyten.util.ConnectionRequestUtils;
-import ee.twentyten.util.LanguageUtils;
-import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.SystemUtils;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.minecraft.MinecraftUtils;
+import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.applet.Applet;
 import java.io.File;
 import java.io.IOException;
@@ -50,14 +51,14 @@ abstract class MinecraftUpdater {
       retrieveTasks.add(new Callable<Integer>() {
         @Override
         public Integer call() {
-          connection[0] = ConnectionRequestUtils.performHttpsRequest(fileUrl, EMethod.HEAD,
-              EHeader.NO_CACHE.getHeader());
-          Objects.requireNonNull(connection[0], "connection == null!");
-          try {
-            return connection[0].getContentLength();
-          } finally {
-            connection[0].disconnect();
-          }
+          connection[0] = new ConnectionRequest.Builder()
+              .setUrl(fileUrl)
+              .setMethod(EMethod.HEAD)
+              .setHeaders(ConnectionRequestUtils.NO_CACHE)
+              .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+              .setUseCaches(false)
+              .build().performHttpsRequest();
+          return connection[0].getContentLength();
         }
       });
     }
@@ -113,23 +114,71 @@ abstract class MinecraftUpdater {
     this.taskMessage = "";
   }
 
-  boolean isGameCached(EPlatform platform) {
+  boolean isMinecraftCached(EPlatform platform) {
     File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
     Objects.requireNonNull(binDirectory, "binDirectory == null!");
-    for (String lwjglFile : MinecraftUtils.lwjglJars) {
-      if (!Files.exists(Paths.get(String.valueOf(binDirectory), lwjglFile))) {
-        return false;
-      }
+    if (this.isFilesExistInPath(MinecraftUtils.lwjglJars, binDirectory)) {
+      return false;
     }
 
     File nativesDirectory = new File(binDirectory, "natives");
     Objects.requireNonNull(nativesDirectory, "nativesDirectory == null!");
-    for (String nativeFile : platform == EPlatform.MACOSX ? MinecraftUtils.lwjglMacosxNatives
-        : platform == EPlatform.LINUX ? MinecraftUtils.lwjglLinuxNatives
-            : MinecraftUtils.lwjglWindowsNatives) {
-      if (!Files.exists(Paths.get(String.valueOf(nativesDirectory), nativeFile))) {
-        return false;
-      }
+
+    switch (platform) {
+      case MACOSX:
+        if (Objects.equals(SystemUtils.osArch, "aarch64")) {
+          if (this.isFilesExistInPath(MinecraftUtils.lwjglMacosxNativesForAARCH64,
+              nativesDirectory)) {
+            return false;
+          }
+        } else {
+          if (this.isFilesExistInPath(MinecraftUtils.lwjglMacosxNativesForAMD64,
+              nativesDirectory)) {
+            return false;
+          }
+        }
+        break;
+      case LINUX:
+        switch (SystemUtils.osArch) {
+          case "aarch64":
+            if (this.isFilesExistInPath(MinecraftUtils.LwjglLinuxNativesForAARCH64,
+                nativesDirectory)) {
+              return false;
+            }
+            break;
+          case "aarch32":
+            if (this.isFilesExistInPath(MinecraftUtils.lwjglLinuxNativesForAARCH32,
+                nativesDirectory)) {
+              return false;
+            }
+            break;
+          case "amd64":
+            if (this.isFilesExistInPath(MinecraftUtils.lwjglLinuxNativesForAMD64,
+                nativesDirectory)) {
+              return false;
+            }
+            break;
+          default:
+            if (this.isFilesExistInPath(MinecraftUtils.lwjglLinuxNativesForX86, nativesDirectory)) {
+              return false;
+            }
+            break;
+        }
+        break;
+      case WINDOWS:
+        if (Objects.equals(SystemUtils.osArch, "amd64")) {
+          if (this.isFilesExistInPath(MinecraftUtils.lwjglWindowsNativesForAMD64,
+              nativesDirectory)) {
+            return false;
+          }
+        } else {
+          if (this.isFilesExistInPath(MinecraftUtils.lwjglWindowsNativesForX86, nativesDirectory)) {
+            return false;
+          }
+        }
+        break;
+      default:
+        throw new IllegalStateException(String.valueOf(platform));
     }
 
     File versionsDirectory = new File(LauncherUtils.workingDirectory, "versions");
@@ -141,6 +190,15 @@ abstract class MinecraftUpdater {
     return Files.exists(
         Paths.get(String.valueOf(versionsDirectory), ConfigUtils.getInstance().getSelectedVersion(),
             MessageFormat.format("{0}.jar", ConfigUtils.getInstance().getSelectedVersion())));
+  }
+
+  private boolean isFilesExistInPath(String[] lwjglJars, File binDirectory) {
+    for (String lwjglFile : lwjglJars) {
+      if (!Files.exists(Paths.get(String.valueOf(binDirectory), lwjglFile))) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public Applet loadMinecraftApplet() {

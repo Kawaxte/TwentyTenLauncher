@@ -1,19 +1,20 @@
 package ee.twentyten.minecraft.auth;
 
 import ee.twentyten.log.ELevel;
-import ee.twentyten.request.EHeader;
+import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherMicrosoftLoginPanel;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
-import ee.twentyten.util.AuthenticationUtils;
-import ee.twentyten.util.ConfigUtils;
-import ee.twentyten.util.ConnectionRequestUtils;
-import ee.twentyten.util.LanguageUtils;
-import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.MicrosoftAuthenticationUtils;
-import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.discord.DiscordRichPresenceUtils;
+import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.minecraft.MinecraftUtils;
+import ee.twentyten.util.minecraft.auth.AuthenticationUtils;
+import ee.twentyten.util.minecraft.auth.MicrosoftAuthenticationUtils;
+import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,8 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
 
   @Override
   public void login() {
+    DiscordRichPresenceUtils.updateRichPresence("Logging in with Microsoft");
+
     final JSONObject loginResult = this.acquireUserCode(this.clientId);
 
     final String deviceCode = loginResult.getString("device_code");
@@ -72,12 +75,15 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
                     minecraftToken);
 
                 MicrosoftAuthenticationImpl.this.getAndSetMicrosoftProfile();
+
                 ConfigUtils.writeToConfig();
 
-                String profileName = ConfigUtils.getInstance().getMicrosoftProfileName();
-                String sessionId = ConfigUtils.getInstance().getMicrosoftSessionId();
-                MinecraftUtils.launchMinecraft(profileName, sessionId);
+                MinecraftUtils.launchMinecraft(ConfigUtils.getInstance().getMicrosoftProfileName(),
+                    ConfigUtils.getInstance().getMicrosoftSessionId());
               } else {
+                ConfigUtils.getInstance().setMicrosoftProfileId(null);
+                ConfigUtils.getInstance().setMicrosoftProfileName(null);
+
                 ConfigUtils.writeToConfig();
 
                 MinecraftUtils.launchMinecraft();
@@ -155,10 +161,14 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
     Map<Object, Object> data = new HashMap<>();
     data.put("client_id", clientId);
     data.put("scope", "XboxLive.signin offline_access");
-    return ConnectionRequestUtils.performJsonRequest(
-        MicrosoftAuthenticationUtils.msonlineUserCodeUrl,
-        EMethod.POST,
-        EHeader.X_WWW_FORM_URLENCODED.getHeader(), AuthenticationUtils.ofFormData(data));
+
+    return new ConnectionRequest.Builder()
+        .setUrl(MicrosoftAuthenticationUtils.msonlineUserCodeUrl)
+        .setMethod(EMethod.POST)
+        .setHeaders(ConnectionRequestUtils.X_WWW_FORM_URLENCODED)
+        .setBody(AuthenticationUtils.ofFormData(data))
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   @Override
@@ -167,9 +177,14 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
     data.put("client_id", clientId);
     data.put("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
     data.put("device_code", deviceCode);
-    return ConnectionRequestUtils.performJsonRequest(MicrosoftAuthenticationUtils.msonlineTokenUrl,
-        EMethod.POST,
-        EHeader.X_WWW_FORM_URLENCODED.getHeader(), AuthenticationUtils.ofFormData(data));
+
+    return new ConnectionRequest.Builder()
+        .setUrl(MicrosoftAuthenticationUtils.msonlineTokenUrl)
+        .setMethod(EMethod.POST)
+        .setHeaders(ConnectionRequestUtils.X_WWW_FORM_URLENCODED)
+        .setBody(AuthenticationUtils.ofFormData(data))
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   @Override
@@ -183,9 +198,14 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
     data.put("Properties", properties);
     data.put("RelyingParty", "http://auth.xboxlive.com");
     data.put("TokenType", "JWT");
-    return ConnectionRequestUtils.performJsonRequest(MicrosoftAuthenticationUtils.xblAuthUrl,
-        EMethod.POST,
-        EHeader.JSON.getHeader(), data);
+
+    return new ConnectionRequest.Builder()
+        .setUrl(MicrosoftAuthenticationUtils.xblAuthUrl)
+        .setMethod(EMethod.POST)
+        .setHeaders(ConnectionRequestUtils.JSON)
+        .setBody(String.valueOf(data))
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   @Override
@@ -198,39 +218,55 @@ public class MicrosoftAuthenticationImpl extends MicrosoftAuthentication {
     data.put("Properties", properties);
     data.put("RelyingParty", "rp://api.minecraftservices.com/");
     data.put("TokenType", "JWT");
-    return ConnectionRequestUtils.performJsonRequest(MicrosoftAuthenticationUtils.xstsAuthUrl,
-        EMethod.POST,
-        EHeader.JSON.getHeader(), data);
+
+    return new ConnectionRequest.Builder()
+        .setUrl(MicrosoftAuthenticationUtils.xstsAuthUrl)
+        .setMethod(EMethod.POST)
+        .setHeaders(ConnectionRequestUtils.JSON)
+        .setBody(String.valueOf(data))
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   @Override
   public JSONObject acquireMinecraftToken(String uhs, String xstsToken) {
     JSONObject data = new JSONObject();
     data.put("identityToken", MessageFormat.format("XBL3.0 x={0};{1}", uhs, xstsToken));
-    return ConnectionRequestUtils.performJsonRequest(
-        MicrosoftAuthenticationUtils.mcservicesLoginUrl,
-        EMethod.POST,
-        EHeader.JSON.getHeader(), data);
+
+    return new ConnectionRequest.Builder()
+        .setUrl(MicrosoftAuthenticationUtils.mcservicesLoginUrl)
+        .setMethod(EMethod.POST)
+        .setHeaders(ConnectionRequestUtils.JSON)
+        .setBody(String.valueOf(data))
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   @Override
   public JSONObject acquireMinecraftStore(String minecraftToken) {
     Map<String, String> header = new HashMap<>();
     header.put("Authorization", MessageFormat.format("Bearer {0}", minecraftToken));
-    header.putAll(EHeader.JSON.getHeader());
-    return ConnectionRequestUtils.performJsonRequest(
-        MicrosoftAuthenticationUtils.mcservicesStoreUrl,
-        EMethod.GET, header);
+    header.putAll(ConnectionRequestUtils.JSON);
+
+    return new ConnectionRequest.Builder()
+        .setUrl(MicrosoftAuthenticationUtils.mcservicesStoreUrl)
+        .setMethod(EMethod.GET)
+        .setHeaders(header)
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 
   @Override
   public JSONObject acquireMinecraftProfile(String minecraftToken) {
     Map<String, String> header = new HashMap<>();
     header.put("Authorization", MessageFormat.format("Bearer {0}", minecraftToken));
-    header.putAll(EHeader.JSON.getHeader());
-    return ConnectionRequestUtils.performJsonRequest(
-        MicrosoftAuthenticationUtils.mcservicesProfileUrl,
-        EMethod.GET,
-        header);
+    header.putAll(ConnectionRequestUtils.JSON);
+
+    return new ConnectionRequest.Builder()
+        .setUrl(MicrosoftAuthenticationUtils.mcservicesProfileUrl)
+        .setMethod(EMethod.GET)
+        .setHeaders(header)
+        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .build().performJsonRequest();
   }
 }
