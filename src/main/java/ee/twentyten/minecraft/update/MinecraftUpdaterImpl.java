@@ -49,10 +49,6 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
     this.stateMessage = EState.INIT.getMessage();
     this.taskMessage = "";
     this.percentage = 0;
-
-    DiscordRichPresenceUtils.updateRichPresence("Updating Minecraft",
-        MessageFormat.format("{0} | {1}", MinecraftUtils.getInstance().getUsername(),
-            MinecraftUtils.getVersion()));
   }
 
   @Override
@@ -434,6 +430,10 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
     try {
       if (!this.isMinecraftCached(platform)) {
+        DiscordRichPresenceUtils.updateRichPresence("Updating Minecraft",
+            MessageFormat.format("{0} | {1}",
+                MinecraftUtils.getInstance().getUsername(), MinecraftUtils.getVersion()));
+
         this.determinePackage();
         this.downloadPackage();
         this.extractPackage();
