@@ -1,12 +1,12 @@
 package ee.twentyten.ui.launcher;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.custom.component.TransparentJButton;
 import ee.twentyten.custom.ui.CustomJPanel;
 import ee.twentyten.custom.ui.TransparentPanelUI;
-import ee.twentyten.util.LanguageUtils;
-import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.custom.ui.component.TransparentJButton;
+import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.minecraft.MinecraftUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -71,14 +71,14 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
   private void buildMiddlePanel() {
     JPanel middlePanel = new JPanel(new BorderLayout(), true);
     middlePanel.setUI(new TransparentPanelUI());
-    if (!MinecraftUtils.isGameCached()) {
+    if (!MinecraftUtils.isMinecraftCached()) {
       middlePanel.add(this.playOnlineLabel, BorderLayout.SOUTH);
     }
     this.add(middlePanel, BorderLayout.CENTER);
   }
 
   private void buildBottomPanel() {
-    this.playOfflineButton.setEnabled(MinecraftUtils.isGameCached());
+    this.playOfflineButton.setEnabled(MinecraftUtils.isMinecraftCached());
 
     JPanel bottomPanel = new JPanel(new GridLayout(1, 2), true);
     bottomPanel.setUI(new TransparentPanelUI());
