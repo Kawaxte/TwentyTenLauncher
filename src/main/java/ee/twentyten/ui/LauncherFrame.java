@@ -10,6 +10,7 @@ import ee.twentyten.util.launcher.ui.LookAndFeelUtils;
 import ee.twentyten.util.minecraft.auth.AuthenticationUtils;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.text.MessageFormat;
@@ -47,6 +48,17 @@ public class LauncherFrame extends JFrame implements WindowFocusListener {
     this.setVisible(true);
 
     this.addWindowFocusListener(this);
+    this.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent event) {
+        if (LauncherFrame.this.idleService != null) {
+          LauncherFrame.this.idleService.shutdown();
+          LauncherFrame.this.idleService = null;
+        }
+        DiscordRichPresenceUtils.discordClearPresence();
+        DiscordRichPresenceUtils.discordShutdown();
+      }
+    });
   }
 
   public static void main(String... args) {
@@ -65,22 +77,15 @@ public class LauncherFrame extends JFrame implements WindowFocusListener {
       AuthenticationUtils.validateAndRefreshAccessToken(ConfigUtils.getInstance().getClientToken());
     }
 
-    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-      @Override
-      public void run() {
-        DiscordRichPresenceUtils.discordShutdown();
-      }
-    }));
+    DiscordRichPresenceUtils.buildAndUpdateRichPresence("Idle");
 
-    DiscordRichPresenceUtils.buildAndUpdateRichPresence("");
-
-    ScheduledExecutorService rpcService = Executors.newSingleThreadScheduledExecutor();
-    rpcService.scheduleAtFixedRate(new Runnable() {
+    ScheduledExecutorService callbackService = Executors.newSingleThreadScheduledExecutor();
+    callbackService.scheduleAtFixedRate(new Runnable() {
       @Override
       public void run() {
         DiscordRichPresenceUtils.discordRunCallbacks();
       }
-    }, 0, 2, TimeUnit.SECONDS);
+    }, 2, 2, TimeUnit.SECONDS);
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -98,7 +103,7 @@ public class LauncherFrame extends JFrame implements WindowFocusListener {
     }
     DiscordRichPresenceUtils.updateRichPresence(
         MinecraftUpdaterApplet.getInstance() != null && MinecraftUpdaterApplet.getInstance()
-            .getMinecraftApplet().isActive() ? "Playing Minecraft" : "");
+            .getMinecraftApplet().isActive() ? "Playing Minecraft" : "Idle");
   }
 
   @Override
@@ -108,9 +113,7 @@ public class LauncherFrame extends JFrame implements WindowFocusListener {
       @Override
       public void run() {
         if (!LauncherFrame.this.isActive()) {
-          DiscordRichPresenceUtils.updateRichPresence(
-              MinecraftUpdaterApplet.getInstance() != null && MinecraftUpdaterApplet.getInstance()
-                  .getMinecraftApplet().isActive() ? "AFK" : "Idling");
+          DiscordRichPresenceUtils.updateRichPresence("AFK");
         }
       }
     }, 5, 2, TimeUnit.MINUTES);
