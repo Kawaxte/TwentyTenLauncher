@@ -1,12 +1,13 @@
 package ee.twentyten.ui.launcher;
 
+import ee.twentyten.EPlatform;
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.custom.component.TransparentJButton;
+import ee.twentyten.custom.ui.component.TransparentJButton;
 import ee.twentyten.util.FileUtils;
-import ee.twentyten.util.LanguageUtils;
-import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.LookAndFeelUtils;
-import ee.twentyten.util.MicrosoftAuthenticationUtils;
+import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.launcher.ui.LookAndFeelUtils;
+import ee.twentyten.util.minecraft.auth.MicrosoftAuthenticationUtils;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -88,8 +89,11 @@ public class LauncherPanel extends JPanel implements ActionListener {
 
   @Override
   public void updateUI() {
-    if (LookAndFeelUtils.isUsingWindowsClassicTheme != LookAndFeelUtils.isWindowsClassic()) {
-      SwingUtilities.updateComponentTreeUI(this);
+    EPlatform platform = EPlatform.getPlatform();
+    if (platform == EPlatform.WINDOWS) {
+      if (LookAndFeelUtils.isUsingWindowsClassicTheme != LookAndFeelUtils.isWindowsClassic()) {
+        SwingUtilities.updateComponentTreeUI(this);
+      }
     }
     super.updateUI();
   }
