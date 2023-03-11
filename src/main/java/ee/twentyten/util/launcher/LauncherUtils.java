@@ -1,12 +1,16 @@
-package ee.twentyten.util;
+package ee.twentyten.util.launcher;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.Launcher;
 import ee.twentyten.log.ELevel;
-import ee.twentyten.request.EHeader;
+import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
+import ee.twentyten.util.SystemUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -81,22 +85,9 @@ public final class LauncherUtils {
     File workingDirectory = LauncherUtils.workingDirectories.get(platform);
     if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
       LoggerUtils.logMessage("Failed to create working directory", ELevel.ERROR);
+      return null;
     }
     return workingDirectory;
-  }
-
-  private static String getErrorStream(Process p) {
-    StringBuilder sb = new StringBuilder();
-    try (InputStreamReader isr = new InputStreamReader(
-        p.getErrorStream()); BufferedReader br = new BufferedReader(isr)) {
-      String line;
-      while ((line = br.readLine()) != null) {
-        sb.append(line).append(SystemUtils.lineSeparator);
-      }
-    } catch (IOException ioe) {
-      LoggerUtils.logMessage("Failed to read error stream from process", ioe, ELevel.ERROR);
-    }
-    return sb.toString();
   }
 
   public static void setContentPaneToContainer(JComponent c, Container oldCont, Container newCont) {
@@ -181,7 +172,7 @@ public final class LauncherUtils {
         @Override
         public Thread newThread(Runnable r) {
           Thread t = new Thread(r);
-          t.setName(MessageFormat.format("updateThread-{0}", t.getId()));
+          t.setName(MessageFormat.format("outdated-{0}", t.getId()));
           t.setDaemon(true);
           return t;
         }
@@ -189,9 +180,12 @@ public final class LauncherUtils {
       Future<Boolean> updateFuture = updateService.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() {
-          JSONObject latestRelease = ConnectionRequestUtils.performJsonRequest(
-              LauncherUtils.apiLatestReleaseUrl, EMethod.GET, EHeader.JSON.getHeader());
-          Objects.requireNonNull(latestRelease, "latestRelease == null!");
+          JSONObject latestRelease = new ConnectionRequest.Builder()
+              .setUrl(LauncherUtils.apiLatestReleaseUrl)
+              .setMethod(EMethod.GET)
+              .setHeaders(ConnectionRequestUtils.JSON)
+              .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+              .build().performJsonRequest();
 
           String latestVersion = latestRelease.getString("tag_name");
           String currentVersion = SystemUtils.launcherVersion;
@@ -222,29 +216,34 @@ public final class LauncherUtils {
     arguments.add(platform == EPlatform.WINDOWS ? "javaw" : "java");
     arguments.add("-Xmx1024m");
     arguments.add("-Xms512m");
-
     LauncherUtils.setGlobalArguments(platform, arguments);
     LauncherUtils.setPlatformSpecificArguments(platform, arguments);
-
     arguments.add("-cp");
-    arguments.add(System.getProperty("java.class.path"));
+    arguments.add(SystemUtils.javaClasspath);
     arguments.add(Launcher.class.getCanonicalName());
+    LoggerUtils.logMessage(String.valueOf(arguments), ELevel.INFO);
 
     ProcessBuilder pb = new ProcessBuilder(arguments);
-    LoggerUtils.logMessage(arguments.toString(), ELevel.INFO);
+    pb.redirectErrorStream(true);
     try {
       Process p = pb.start();
 
-      String errorStreamMessage = LauncherUtils.getErrorStream(p);
-      if (!errorStreamMessage.isEmpty()) {
-        LoggerUtils.logMessage(errorStreamMessage, ELevel.ERROR);
+      StringBuilder sb = new StringBuilder();
+      try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+        String line;
+        while ((line = br.readLine()) != null) {
+          sb.append(line).append(System.lineSeparator());
+        }
       }
+      LoggerUtils.logMessage(sb.toString(), ELevel.INFO);
+
       System.exit(p.waitFor());
     } catch (IOException ioe) {
       LoggerUtils.logMessage("Failed to start process", ioe, ELevel.ERROR);
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
       LoggerUtils.logMessage("Interrupted while waiting for process to finish", ie, ELevel.ERROR);
+
       System.exit(1);
     }
   }
@@ -316,8 +315,6 @@ public final class LauncherUtils {
   }
 
   private static void mapWorkingDirectoryToPlatforms(EPlatform platform) {
-    String appData = System.getenv("APPDATA");
-
     File workingDirectory;
     switch (platform) {
       case MACOSX:
@@ -325,11 +322,11 @@ public final class LauncherUtils {
         LauncherUtils.workingDirectories.put(platform, workingDirectory);
         break;
       case LINUX:
-        workingDirectory = new File(SystemUtils.userHome, "minecraft");
+        workingDirectory = new File(SystemUtils.userHome, ".minecraft");
         LauncherUtils.workingDirectories.put(platform, workingDirectory);
         break;
       case WINDOWS:
-        workingDirectory = appData != null ? new File(appData, ".minecraft")
+        workingDirectory = SystemUtils.appData != null ? new File(SystemUtils.appData, ".minecraft")
             : new File(SystemUtils.userHome, ".minecraft");
         LauncherUtils.workingDirectories.put(platform, workingDirectory);
         break;
