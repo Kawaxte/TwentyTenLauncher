@@ -117,6 +117,6 @@
       <url>https://maven.scijava.org/content/repositories/public/</url>
     </repository>
   </repositories>
-  <version>20230311_4</version>
+  <version>20230312_5</version>
 
 </project>
