@@ -50,6 +50,10 @@ public final class DiscordRichPresenceUtils {
     IDiscordDynamicLib.DISCORD_EXPORT.Discord_UpdatePresence(presence);
   }
 
+  public static void discordClearPresence() {
+    IDiscordDynamicLib.DISCORD_EXPORT.Discord_ClearPresence();
+  }
+
   public static void discordRunCallbacks() {
     IDiscordDynamicLib.DISCORD_EXPORT.Discord_RunCallbacks();
   }
