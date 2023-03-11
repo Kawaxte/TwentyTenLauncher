@@ -2,7 +2,7 @@ package ee.twentyten.ui;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.ui.options.OptionsPanel;
-import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import lombok.Getter;
