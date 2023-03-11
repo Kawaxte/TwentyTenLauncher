@@ -4,6 +4,7 @@ import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.custom.ui.CustomJPanel;
 import ee.twentyten.custom.ui.TransparentPanelUI;
 import ee.twentyten.custom.ui.component.TransparentJButton;
+import ee.twentyten.util.discord.DiscordRichPresenceUtils;
 import ee.twentyten.util.launcher.LauncherUtils;
 import ee.twentyten.util.launcher.options.LanguageUtils;
 import ee.twentyten.util.minecraft.MinecraftUtils;
@@ -95,6 +96,8 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     }
     if (source.equals(this.tryAgainButton)) {
       LauncherUtils.addPanel(LauncherPanel.getInstance(), new LauncherPanel());
+
+      DiscordRichPresenceUtils.updateRichPresence("Idle");
     }
   }
 }
