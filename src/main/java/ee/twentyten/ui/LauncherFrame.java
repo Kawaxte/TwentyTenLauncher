@@ -4,15 +4,11 @@ import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.FileUtils;
 import ee.twentyten.util.SystemUtils;
 import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.discord.DiscordRichPresenceUtils;
 import ee.twentyten.util.launcher.ui.LookAndFeelUtils;
 import ee.twentyten.util.minecraft.auth.AuthenticationUtils;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.text.MessageFormat;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import lombok.Getter;
@@ -41,23 +37,6 @@ public class LauncherFrame extends JFrame {
 
     this.setResizable(true);
     this.setVisible(true);
-
-    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-      @Override
-      public void run() {
-        DiscordRichPresenceUtils.discordShutdown();
-      }
-    }));
-
-    DiscordRichPresenceUtils.buildAndUpdateRichPresence("", "Idle");
-
-    ScheduledExecutorService rpcService = Executors.newSingleThreadScheduledExecutor();
-    rpcService.scheduleAtFixedRate(new Runnable() {
-      @Override
-      public void run() {
-        DiscordRichPresenceUtils.discordRunCallbacks();
-      }
-    }, 0, 2, TimeUnit.SECONDS);
   }
 
   public static void main(String... args) {
