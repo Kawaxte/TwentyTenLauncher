@@ -2,14 +2,14 @@ package ee.twentyten.minecraft.update;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.log.ELevel;
-import ee.twentyten.request.EHeader;
+import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
-import ee.twentyten.util.ConfigUtils;
-import ee.twentyten.util.ConnectionRequestUtils;
-import ee.twentyten.util.LanguageUtils;
-import ee.twentyten.util.LauncherUtils;
-import ee.twentyten.util.LoggerUtils;
-import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.minecraft.MinecraftUtils;
+import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.applet.Applet;
 import java.io.File;
 import java.io.IOException;
@@ -50,14 +50,14 @@ abstract class MinecraftUpdater {
       retrieveTasks.add(new Callable<Integer>() {
         @Override
         public Integer call() {
-          connection[0] = ConnectionRequestUtils.performHttpsRequest(fileUrl, EMethod.HEAD,
-              EHeader.NO_CACHE.getHeader());
-          Objects.requireNonNull(connection[0], "connection == null!");
-          try {
-            return connection[0].getContentLength();
-          } finally {
-            connection[0].disconnect();
-          }
+          connection[0] = new ConnectionRequest.Builder()
+              .setUrl(fileUrl)
+              .setMethod(EMethod.HEAD)
+              .setHeaders(ConnectionRequestUtils.NO_CACHE)
+              .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+              .setUseCaches(false)
+              .build().performHttpsRequest();
+          return connection[0].getContentLength();
         }
       });
     }
@@ -113,7 +113,7 @@ abstract class MinecraftUpdater {
     this.taskMessage = "";
   }
 
-  boolean isGameCached(EPlatform platform) {
+  boolean isMinecraftCached(EPlatform platform) {
     File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
     Objects.requireNonNull(binDirectory, "binDirectory == null!");
     for (String lwjglFile : MinecraftUtils.lwjglJars) {
