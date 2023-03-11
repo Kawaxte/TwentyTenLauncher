@@ -1,8 +1,10 @@
 package ee.twentyten.util;
 
 import ee.twentyten.log.ELevel;
-import ee.twentyten.request.EHeader;
+import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
+import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,22 +31,22 @@ public final class FileUtils {
   }
 
   public static BufferedImage readImageResource(String name, Class<?> clazz) {
-    URL imageFileInput = clazz.getClassLoader().getResource(name);
-    if (imageFileInput != null) {
+    URL imageFileUrl = clazz.getClassLoader().getResource(name);
+    if (imageFileUrl != null) {
       try {
-        return ImageIO.read(imageFileInput);
+        return ImageIO.read(imageFileUrl);
       } catch (IOException ioe) {
-        LoggerUtils.logMessage("Failed to read image resource", ioe, ELevel.ERROR);
+        LoggerUtils.logMessage("Failed to read image resource from URL", ioe, ELevel.ERROR);
       }
     }
     return null;
   }
 
-  public static String readFile(String name) {
+  public static String readFileContents(String name) {
     StringBuilder sb = new StringBuilder();
-    try (FileInputStream fis = new FileInputStream(
-        name); InputStreamReader isr = new InputStreamReader(fis,
-        StandardCharsets.UTF_8); BufferedReader br = new BufferedReader(isr)) {
+    try (FileInputStream fis = new FileInputStream(name);
+        InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+        BufferedReader br = new BufferedReader(isr)) {
       String line;
       while ((line = br.readLine()) != null) {
         sb.append(line).append("\n");
@@ -55,7 +57,7 @@ public final class FileUtils {
     return sb.toString();
   }
 
-  public static JSONObject readJsonFile(File f) {
+  public static JSONObject readJsonFileContents(File f) {
     try {
       byte[] fileBytes = Files.readAllBytes(f.toPath());
       String json = new String(fileBytes, StandardCharsets.UTF_8);
@@ -67,19 +69,17 @@ public final class FileUtils {
   }
 
   public static void downloadFile(URL url, File f) {
-    HttpsURLConnection connection = null;
     try {
-      connection = ConnectionRequestUtils.performHttpsRequest(url, EMethod.GET,
-          EHeader.NO_CACHE.getHeader());
+      HttpsURLConnection connection = new ConnectionRequest.Builder()
+          .setUrl(url)
+          .setMethod(EMethod.GET)
+          .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+          .build().performHttpsRequest();
       try (InputStream is = connection.getInputStream()) {
         Files.copy(is, f.toPath());
       }
     } catch (IOException ioe) {
-      LoggerUtils.logMessage("Failed to download file", ioe, ELevel.ERROR);
-    } finally {
-      if (connection != null) {
-        connection.disconnect();
-      }
+      LoggerUtils.logMessage("Failed to download file from URL", ioe, ELevel.ERROR);
     }
   }
 }
