@@ -9,6 +9,7 @@ import ee.twentyten.custom.ui.component.TransparentJCheckBox;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.OptionsDialog;
 import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.discord.DiscordRichPresenceUtils;
 import ee.twentyten.util.launcher.LauncherUtils;
 import ee.twentyten.util.launcher.options.LanguageUtils;
 import ee.twentyten.util.minecraft.auth.YggdrasilAuthenticationUtils;
@@ -129,6 +130,8 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source.equals(this.optionsButton)) {
+      DiscordRichPresenceUtils.updateRichPresence("In Options");
+
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
