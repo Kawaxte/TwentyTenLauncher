@@ -5,6 +5,7 @@ import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
 import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.discord.DiscordRichPresenceUtils;
 import ee.twentyten.util.launcher.LauncherUtils;
 import ee.twentyten.util.launcher.options.LanguageUtils;
 import ee.twentyten.util.minecraft.MinecraftUtils;
@@ -16,6 +17,8 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
 
   @Override
   public void login(String username, String password, boolean isPasswordSaved) {
+    DiscordRichPresenceUtils.updateRichPresence("Logging in with Yggdrasil");
+    
     JSONObject loginResult = YggdrasilAuthenticationImpl.this.authenticate(username, password,
         ConfigUtils.getInstance().getClientToken(), true);
     if (loginResult.has("error")) {
