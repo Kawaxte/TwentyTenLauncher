@@ -1,7 +1,6 @@
-package ee.twentyten.util.config;
+package ee.twentyten.util;
 
 import ee.twentyten.log.ELevel;
-import ee.twentyten.util.log.LoggerUtils;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
@@ -22,7 +21,7 @@ public final class CipherUtils {
       return "";
     }
 
-    byte[] keyBytes = Arrays.copyOf("passwordFile".getBytes(StandardCharsets.UTF_8), 16);
+    byte[] keyBytes = Arrays.copyOf("passwordFile" .getBytes(StandardCharsets.UTF_8), 16);
     SecretKeySpec sks = new SecretKeySpec(keyBytes, "AES");
 
     SecureRandom sr = new SecureRandom();
@@ -50,7 +49,7 @@ public final class CipherUtils {
       return "";
     }
 
-    byte[] keyBytes = Arrays.copyOf("passwordFile".getBytes(StandardCharsets.UTF_8), 16);
+    byte[] keyBytes = Arrays.copyOf("passwordFile" .getBytes(StandardCharsets.UTF_8), 16);
     SecretKeySpec sks = new SecretKeySpec(keyBytes, "AES");
 
     byte[] encryptedBytes = Base64.decodeBase64(value);
