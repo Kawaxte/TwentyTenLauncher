@@ -2,6 +2,7 @@ package ee.twentyten.discord;
 
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
+import ee.twentyten.discord.callback.IReadyCallback;
 
 @FieldOrder({"ready"})
 public class DiscordEventHandlers extends Structure {
