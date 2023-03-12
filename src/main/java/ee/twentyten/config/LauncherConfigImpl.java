@@ -2,8 +2,8 @@ package ee.twentyten.config;
 
 import ee.twentyten.custom.LinkedProperties;
 import ee.twentyten.log.ELevel;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.LoggerUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
