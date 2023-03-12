@@ -1,23 +1,23 @@
 package ee.twentyten.minecraft;
 
-import ee.twentyten.minecraft.update.ui.MinecraftUpdaterApplet;
+import ee.twentyten.minecraft.ui.MinecraftWrapper;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.launcher.LauncherPanel;
-import ee.twentyten.util.launcher.LauncherUtils;
+import ee.twentyten.util.LauncherUtils;
 
-public class MinecraftAppletLauncherImpl extends MinecraftAppletLauncher {
+public class MinecraftLauncherImpl extends MinecraftLauncher {
 
   @Override
   public void launch() {
     this.setUsername("Player");
 
-    MinecraftUpdaterApplet gua = new MinecraftUpdaterApplet("Player", null);
-    gua.init();
+    MinecraftWrapper wrapper = new MinecraftWrapper("Player", null);
+    wrapper.init();
 
     LauncherUtils.setContentPaneToContainer(LauncherPanel.getInstance(),
-        LauncherFrame.getInstance(), gua);
+        LauncherFrame.getInstance(), wrapper);
 
-    gua.start();
+    wrapper.start();
     LauncherFrame.getInstance().setTitle("Minecraft");
   }
 
@@ -25,13 +25,13 @@ public class MinecraftAppletLauncherImpl extends MinecraftAppletLauncher {
   public void launch(String username, String sessionId) {
     this.setUsername(username);
 
-    MinecraftUpdaterApplet gua = new MinecraftUpdaterApplet(username, sessionId);
-    gua.init();
+    MinecraftWrapper wrapper = new MinecraftWrapper(username, sessionId);
+    wrapper.init();
 
     LauncherUtils.setContentPaneToContainer(LauncherPanel.getInstance(),
-        LauncherFrame.getInstance(), gua);
+        LauncherFrame.getInstance(), wrapper);
 
-    gua.start();
+    wrapper.start();
     LauncherFrame.getInstance().setTitle("Minecraft");
   }
 }
