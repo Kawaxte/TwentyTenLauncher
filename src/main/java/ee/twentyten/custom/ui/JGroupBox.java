@@ -1,4 +1,4 @@
-package ee.twentyten.custom.ui.component;
+package ee.twentyten.custom.ui;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;

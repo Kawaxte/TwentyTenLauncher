@@ -1,12 +1,9 @@
-package ee.twentyten.util.launcher.ui;
+package ee.twentyten.util;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinReg;
 import ee.twentyten.log.ELevel;
-import ee.twentyten.util.FileUtils;
-import ee.twentyten.util.SystemUtils;
-import ee.twentyten.util.log.LoggerUtils;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;

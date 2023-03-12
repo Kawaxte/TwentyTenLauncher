@@ -1,4 +1,4 @@
-package ee.twentyten.custom.ui.component;
+package ee.twentyten.custom.ui;
 
 import java.awt.Cursor;
 import java.text.MessageFormat;

@@ -1,8 +1,7 @@
-package ee.twentyten.util.log;
+package ee.twentyten.util;
 
 import ee.twentyten.log.ELevel;
 import ee.twentyten.log.LauncherLoggerImpl;
-import ee.twentyten.util.SystemUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
