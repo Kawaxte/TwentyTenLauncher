@@ -5,7 +5,7 @@ import ee.twentyten.discord.DiscordEventHandlers;
 import ee.twentyten.discord.DiscordRichPresence;
 import ee.twentyten.discord.DiscordUser;
 import ee.twentyten.discord.IDiscordDynamicLib;
-import ee.twentyten.discord.callback.IReadyCallback;
+import ee.twentyten.discord.IReadyCallback;
 import ee.twentyten.log.ELevel;
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +69,7 @@ public final class DiscordUtils {
     DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(
         new IReadyCallback() {
           @Override
-          public void apply(DiscordUser request) {
+          public void onReady(DiscordUser request) {
             LoggerUtils.logMessage(
                 MessageFormat.format("{0}:{1}'#'{2}", request.getUserId(), request.getUsername(),
                     request.getDiscriminator()), ELevel.INFO);
