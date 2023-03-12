@@ -1,13 +1,13 @@
 package ee.twentyten.ui;
 
-import ee.twentyten.minecraft.update.ui.MinecraftUpdaterApplet;
+import ee.twentyten.minecraft.ui.MinecraftWrapper;
 import ee.twentyten.ui.launcher.LauncherPanel;
+import ee.twentyten.util.AuthenticationUtils;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.DiscordUtils;
 import ee.twentyten.util.FileUtils;
+import ee.twentyten.util.LookAndFeelUtils;
 import ee.twentyten.util.SystemUtils;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.discord.DiscordRichPresenceUtils;
-import ee.twentyten.util.launcher.ui.LookAndFeelUtils;
-import ee.twentyten.util.minecraft.auth.AuthenticationUtils;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -55,15 +55,15 @@ public class LauncherFrame extends JFrame implements WindowFocusListener {
           LauncherFrame.this.idleService.shutdown();
           LauncherFrame.this.idleService = null;
         }
-        DiscordRichPresenceUtils.discordClearPresence();
-        DiscordRichPresenceUtils.discordShutdown();
+        DiscordUtils.discordClearPresence();
+        DiscordUtils.discordShutdown();
       }
     });
   }
 
   public static void main(String... args) {
     LookAndFeelUtils.setLookAndFeel();
-    SystemUtils.setLauncherVersion(1, 12, 3, 23, 5, false);
+    SystemUtils.setLauncherVersion(1, 13, 3, 23, 5, true);
 
     if (AuthenticationUtils.isMicrosoftSessionValid(
         ConfigUtils.getInstance().getMicrosoftAccessToken(),
@@ -77,13 +77,13 @@ public class LauncherFrame extends JFrame implements WindowFocusListener {
       AuthenticationUtils.validateAndRefreshAccessToken(ConfigUtils.getInstance().getClientToken());
     }
 
-    DiscordRichPresenceUtils.buildAndUpdateRichPresence("Idle");
+    DiscordUtils.buildAndUpdateRichPresence("Idle");
 
     ScheduledExecutorService callbackService = Executors.newSingleThreadScheduledExecutor();
     callbackService.scheduleAtFixedRate(new Runnable() {
       @Override
       public void run() {
-        DiscordRichPresenceUtils.discordRunCallbacks();
+        DiscordUtils.discordRunCallbacks();
       }
     }, 2, 2, TimeUnit.SECONDS);
 
@@ -101,8 +101,8 @@ public class LauncherFrame extends JFrame implements WindowFocusListener {
       this.idleService.shutdown();
       this.idleService = null;
     }
-    DiscordRichPresenceUtils.updateRichPresence(
-        MinecraftUpdaterApplet.getInstance() != null && MinecraftUpdaterApplet.getInstance()
+    DiscordUtils.updateRichPresence(
+        MinecraftWrapper.getInstance() != null && MinecraftWrapper.getInstance()
             .getMinecraftApplet().isActive() ? "Playing Minecraft" : "Idle");
   }
 
@@ -113,7 +113,7 @@ public class LauncherFrame extends JFrame implements WindowFocusListener {
       @Override
       public void run() {
         if (!LauncherFrame.this.isActive()) {
-          DiscordRichPresenceUtils.updateRichPresence("AFK");
+          DiscordUtils.updateRichPresence("AFK");
         }
       }
     }, 5, 2, TimeUnit.MINUTES);
