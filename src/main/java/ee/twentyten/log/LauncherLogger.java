@@ -1,9 +1,9 @@
 package ee.twentyten.log;
 
 import ee.twentyten.EPlatform;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.LoggerUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
