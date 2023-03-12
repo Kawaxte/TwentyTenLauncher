@@ -1,14 +1,8 @@
-package ee.twentyten.util.minecraft;
+package ee.twentyten.util;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.log.ELevel;
-import ee.twentyten.minecraft.MinecraftAppletLauncherImpl;
-import ee.twentyten.util.FileUtils;
-import ee.twentyten.util.SystemUtils;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.launcher.options.VersionUtils;
-import ee.twentyten.util.log.LoggerUtils;
+import ee.twentyten.minecraft.MinecraftLauncherImpl;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,10 +35,10 @@ public final class MinecraftUtils {
   public static String[] lwjglWindowsNativesForX86;
   @Getter
   @Setter
-  private static MinecraftAppletLauncherImpl instance;
+  private static MinecraftLauncherImpl instance;
 
   static {
-    MinecraftUtils.setInstance(new MinecraftAppletLauncherImpl());
+    MinecraftUtils.setInstance(new MinecraftLauncherImpl());
 
     MinecraftUtils.lwjglJars = new String[]{"jinput.jar", "jutils.jar", "lwjgl.jar",
         "lwjgl_util.jar"};
@@ -55,8 +49,9 @@ public final class MinecraftUtils {
 
     try {
       MinecraftUtils.lwjglUrl = new URL(
-          "https://github.com/Kawaxte/TwentyTenLauncher/raw/nightly/libs/lwjgl");
-      MinecraftUtils.minecraftJarUrl = new URL("https://archive.org/download/mc-legacy");
+          "https://github.com/Kawaxte/TwentyTenLauncher/raw/nightly/libraries/lwjgl");
+      MinecraftUtils.minecraftJarUrl = new URL(
+          "https://github.com/Kawaxte/TwentyTenLauncher/raw/nightly/libraries/client");
     } catch (MalformedURLException murle) {
       LoggerUtils.logMessage("Failed to create URL", murle, ELevel.ERROR);
     }
@@ -66,22 +61,35 @@ public final class MinecraftUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static String getVersion() {
-    String selectedVersion = ConfigUtils.getInstance().getSelectedVersion();
-    switch (selectedVersion.charAt(0)) {
+  public static String getSubFolder(String version) {
+    switch (version.charAt(0)) {
       case 'b':
-        selectedVersion = MessageFormat.format("Beta {0}", selectedVersion.substring(1));
+        return "beta";
+      case 'a':
+        return "alpha";
+      case 'i':
+        return "infdev";
+      default:
+        break;
+    }
+    return null;
+  }
+
+  public static String getVersion(String version) {
+    switch (version.charAt(0)) {
+      case 'b':
+        version = MessageFormat.format("Beta {0}", version.substring(1));
         break;
       case 'a':
-        selectedVersion = MessageFormat.format("Alpha v{0}", selectedVersion.substring(1));
+        version = MessageFormat.format("Alpha v{0}", version.substring(1));
         break;
       case 'i':
-        selectedVersion = "Infdev";
+        version = "Infdev";
         break;
       default:
         break;
     }
-    return selectedVersion;
+    return version;
   }
 
   private static void setLwjglMacosxNativesForArchitecture() {
@@ -197,7 +205,8 @@ public final class MinecraftUtils {
                 : MinecraftUtils.lwjglWindowsNativesForX86);
         break;
       default:
-        throw new IllegalStateException(String.valueOf(platform));
+        LoggerUtils.logMessage(String.valueOf(platform), ELevel.ERROR);
+        break;
     }
   }
 
