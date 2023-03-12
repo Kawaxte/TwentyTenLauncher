@@ -1,4 +1,4 @@
-package ee.twentyten.util.launcher;
+package ee.twentyten.util;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.Launcher;
@@ -7,10 +7,6 @@ import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
-import ee.twentyten.util.SystemUtils;
-import ee.twentyten.util.launcher.options.LanguageUtils;
-import ee.twentyten.util.log.LoggerUtils;
-import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -183,8 +179,8 @@ public final class LauncherUtils {
           JSONObject latestRelease = new ConnectionRequest.Builder()
               .setUrl(LauncherUtils.apiLatestReleaseUrl)
               .setMethod(EMethod.GET)
-              .setHeaders(ConnectionRequestUtils.JSON)
-              .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+              .setHeaders(RequestUtils.JSON)
+              .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
               .build().performJsonRequest();
 
           String latestVersion = latestRelease.getString("tag_name");
@@ -331,7 +327,7 @@ public final class LauncherUtils {
         LauncherUtils.workingDirectories.put(platform, workingDirectory);
         break;
       default:
-        throw new UnsupportedOperationException(String.valueOf(platform));
+        throw new IllegalArgumentException(String.valueOf(platform));
     }
   }
 }
