@@ -1,19 +1,19 @@
-package ee.twentyten.minecraft.update;
+package ee.twentyten.minecraft;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.log.ELevel;
 import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.DiscordUtils;
 import ee.twentyten.util.FileUtils;
+import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.RequestUtils;
 import ee.twentyten.util.SystemUtils;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.discord.DiscordRichPresenceUtils;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.launcher.options.LanguageUtils;
-import ee.twentyten.util.launcher.options.VersionUtils;
-import ee.twentyten.util.log.LoggerUtils;
-import ee.twentyten.util.minecraft.MinecraftUtils;
-import ee.twentyten.util.request.ConnectionRequestUtils;
+import ee.twentyten.util.VersionUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -104,6 +104,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
                     "x86", MinecraftUtils.lwjglJars[i]));
             break;
           default:
+            LoggerUtils.logMessage("Failed to determine LWJGL jar URLs", ELevel.ERROR);
             break;
         }
       }
@@ -149,11 +150,14 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
                   "x86"));
           break;
         default:
+          LoggerUtils.logMessage("Failed to determine LWJGL natives URL", ELevel.ERROR);
           break;
       }
-      URL minecraftJarUrl = new URL(
-          MessageFormat.format("{0}/{1}.jar", MinecraftUtils.minecraftJarUrl,
-              ConfigUtils.getInstance().getSelectedVersion()));
+
+      URL minecraftJarUrl = new URL(MessageFormat.format("{0}/{1}/{2}.jar",
+          MinecraftUtils.minecraftJarUrl,
+          MinecraftUtils.getSubFolder(ConfigUtils.getInstance().getSelectedVersion()),
+          ConfigUtils.getInstance().getSelectedVersion()));
       URL[] packageUrls = {minecraftJarUrl, lwjglNativesUrl};
 
       List<Future<Integer>> determineFutures = new ArrayList<>();
@@ -165,8 +169,8 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
             HttpsURLConnection connection = new ConnectionRequest.Builder()
                 .setUrl(packageUrl)
                 .setMethod(EMethod.HEAD)
-                .setHeaders(ConnectionRequestUtils.NO_CACHE)
-                .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+                .setHeaders(RequestUtils.NO_CACHE)
+                .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
                 .setUseCaches(false)
                 .build().performHttpsRequest();
             return connection.getContentLength();
@@ -188,7 +192,6 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
                 fileName));
             LoggerUtils.logMessage(MessageFormat.format("Failed to find {0}", fileName), ee,
                 ELevel.ERROR);
-            return;
           }
           LoggerUtils.logMessage("Failed to determine content length", ee, ELevel.ERROR);
         } catch (InterruptedException ie) {
@@ -215,6 +218,10 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
   @Override
   void downloadPackage() {
+    if (this.isFatalErrorOccurred) {
+      return;
+    }
+
     int[] fileSizes = new int[this.urls.length];
     int currentDownloadSize = 0;
     int totalDownloadSize = this.getTotalDownloadSize(fileSizes, currentDownloadSize);
@@ -245,25 +252,26 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       HttpsURLConnection connection = new ConnectionRequest.Builder()
           .setUrl(fileUrl)
           .setMethod(EMethod.GET)
-          .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+          .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
           .build().performHttpsRequest();
       try (InputStream is = connection.getInputStream();
           FileOutputStream fos = new FileOutputStream(packageFile)) {
-        int bufferSize;
+        byte[] bufferSize = new byte[65536];
+        int bytesRead;
         int downloadedSize = 0;
-        byte[] buffer = new byte[65536];
-        long downloadStartTime = System.currentTimeMillis();
-        String downloadSpeedMessage = "";
-        while ((bufferSize = is.read(buffer, 0, buffer.length)) != -1) {
-          fos.write(buffer, 0, bufferSize);
 
-          currentDownloadSize += bufferSize;
+        String downloadSpeedMessage = "";
+        long downloadStartTime = System.currentTimeMillis();
+        while ((bytesRead = is.read(bufferSize, 0, bufferSize.length)) != -1) {
+          fos.write(bufferSize, 0, bytesRead);
+
+          currentDownloadSize += bytesRead;
           this.taskMessage = MessageFormat.format(
               LanguageUtils.getString(LanguageUtils.getBundle(), "mui.string.downloadTask"),
               FileUtils.getFileName(fileUrl), (currentDownloadSize * 100) / totalDownloadSize);
           this.percentage = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
 
-          downloadedSize += bufferSize;
+          downloadedSize += bytesRead;
           long downloadElapsedTime = System.currentTimeMillis() - downloadStartTime;
           if (downloadElapsedTime >= 1000L) {
             double downloadSpeed = downloadedSize / (double) downloadElapsedTime;
@@ -280,12 +288,10 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
             LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             packageFile.getName()));
         LoggerUtils.logMessage("Failed to find package file", fnfe, ELevel.ERROR);
-        return;
       } catch (IOException ioe) {
         this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
             "mui.exception.io.package.downloadFailed"));
         LoggerUtils.logMessage("Failed to download package files", ioe, ELevel.ERROR);
-        return;
       }
     }
     this.taskMessage = "";
@@ -293,6 +299,10 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
   @Override
   void extractPackage() {
+    if (this.isFatalErrorOccurred) {
+      return;
+    }
+
     File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
     File[] archiveFiles = binDirectory.listFiles(new FilenameFilter() {
       @Override
@@ -349,12 +359,10 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
             LanguageUtils.getString(LanguageUtils.getBundle(), "mui.exception.fileNotFound"),
             archiveFile.getName()));
         LoggerUtils.logMessage("Failed to find package file", fnfe, ELevel.ERROR);
-        return;
       } catch (IOException ioe) {
         this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
             "mui.exception.io.package.extractFailed"));
         LoggerUtils.logMessage("Failed to extract package files", ioe, ELevel.ERROR);
-        return;
       } finally {
         if (!archiveFile.delete()) {
           LoggerUtils.logMessage("Failed to delete package file", ELevel.ERROR);
@@ -366,6 +374,10 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
   @Override
   void updateClasspath() {
+    if (this.isFatalErrorOccurred) {
+      return;
+    }
+
     File binDirectory = new File(LauncherUtils.workingDirectory, "bin");
     File[] jarFiles = binDirectory.listFiles(new FilenameFilter() {
       @Override
@@ -397,7 +409,6 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
       this.setFatalErrorMessage(LanguageUtils.getString(LanguageUtils.getBundle(),
           "mui.exception.io.classpath.updateFailed"));
       LoggerUtils.logMessage("Failed to update classpath", murle, ELevel.ERROR);
-      return;
     }
 
     if (this.minecraftApplet == null) {
@@ -430,9 +441,10 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
 
     try {
       if (!this.isMinecraftCached(platform)) {
-        DiscordRichPresenceUtils.updateRichPresence("Updating Minecraft",
+        DiscordUtils.updateRichPresence("Updating Minecraft",
             MessageFormat.format("{0} | {1}",
-                MinecraftUtils.getInstance().getUsername(), MinecraftUtils.getVersion()));
+                MinecraftUtils.getInstance().getUsername(),
+                MinecraftUtils.getVersion(ConfigUtils.getInstance().getSelectedVersion())));
 
         this.determinePackage();
         this.downloadPackage();
@@ -443,7 +455,7 @@ public class MinecraftUpdaterImpl extends MinecraftUpdater implements Runnable {
           "mui.throwable.minecraft.updateFailed"));
       LoggerUtils.logMessage("Failed to update Minecraft", t, ELevel.ERROR);
     } finally {
-      if (!this.isFatalErrorOccurred()) {
+      if (!this.isFatalErrorOccurred) {
         this.updateClasspath();
 
         EState.setInstance(EState.DONE);
