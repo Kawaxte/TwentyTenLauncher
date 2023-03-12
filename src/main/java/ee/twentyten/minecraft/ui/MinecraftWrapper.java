@@ -1,16 +1,16 @@
-package ee.twentyten.minecraft.update.ui;
+package ee.twentyten.minecraft.ui;
 
 import ee.twentyten.log.ELevel;
-import ee.twentyten.minecraft.update.MinecraftUpdaterImpl;
+import ee.twentyten.minecraft.MinecraftUpdaterImpl;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.launcher.LauncherPanel;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.DiscordUtils;
 import ee.twentyten.util.FileUtils;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.discord.DiscordRichPresenceUtils;
-import ee.twentyten.util.launcher.options.LanguageUtils;
-import ee.twentyten.util.launcher.options.VersionUtils;
-import ee.twentyten.util.log.LoggerUtils;
-import ee.twentyten.util.minecraft.MinecraftUtils;
+import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.VersionUtils;
 import java.applet.Applet;
 import java.applet.AppletStub;
 import java.awt.BorderLayout;
@@ -39,11 +39,11 @@ import javax.swing.Timer;
 import lombok.Getter;
 import lombok.Setter;
 
-public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
+public class MinecraftWrapper extends JApplet implements AppletStub {
 
   @Getter
   @Setter
-  private static MinecraftUpdaterApplet instance;
+  private static MinecraftWrapper instance;
   public Map<String, String> parameters;
   @Getter
   public Applet minecraftApplet;
@@ -58,8 +58,8 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     this.isUpdateAvailable = false;
   }
 
-  public MinecraftUpdaterApplet(final String username, String sessionId) {
-    MinecraftUpdaterApplet.setInstance(this);
+  public MinecraftWrapper(final String username, String sessionId) {
+    MinecraftWrapper.setInstance(this);
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
 
@@ -92,10 +92,10 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     this.revalidate();
     this.repaint();
 
-    DiscordRichPresenceUtils.updateRichPresence(
+    DiscordUtils.updateRichPresence(
         MessageFormat.format("Playing {0}", LauncherFrame.getInstance().getTitle()),
         MessageFormat.format("{0} | {1}", MinecraftUtils.getInstance().getUsername(),
-            MinecraftUtils.getVersion()));
+            MinecraftUtils.getVersion(ConfigUtils.getInstance().getSelectedVersion())));
   }
 
   private void drawTitleString(Graphics2D g2d, String title, int width, int height) {
@@ -198,9 +198,9 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
     new SwingWorker<Applet, Void>() {
       @Override
       protected Applet doInBackground() {
-        MinecraftUpdaterApplet.this.updater.run();
-        return !MinecraftUpdaterApplet.this.updater.isFatalErrorOccurred()
-            ? MinecraftUpdaterApplet.this.updater.loadMinecraftApplet() : null;
+        MinecraftWrapper.this.updater.run();
+        return !MinecraftWrapper.this.updater.isFatalErrorOccurred()
+            ? MinecraftWrapper.this.updater.loadMinecraftApplet() : null;
       }
 
       @Override
@@ -208,7 +208,7 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
         try {
           Applet minecraftApplet = this.get();
           if (minecraftApplet != null) {
-            MinecraftUpdaterApplet.this.replace(minecraftApplet);
+            MinecraftWrapper.this.replace(minecraftApplet);
           }
         } catch (ExecutionException ie) {
           LoggerUtils.logMessage("Failed to replace applet", ie, ELevel.ERROR);
@@ -223,8 +223,8 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
       @Override
       public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (MinecraftUpdaterApplet.this.minecraftApplet == null) {
-          MinecraftUpdaterApplet.this.update(MinecraftUpdaterApplet.this.getGraphics());
+        if (MinecraftWrapper.this.minecraftApplet == null) {
+          MinecraftWrapper.this.update(MinecraftWrapper.this.getGraphics());
         } else {
           ((Timer) source).stop();
         }
@@ -281,9 +281,9 @@ public class MinecraftUpdaterApplet extends JApplet implements AppletStub {
         g2d.drawImage(bgImage, gridX, gridY, bgWidth, bgHeight, this);
       }
 
-      String title = LanguageUtils.getString(LanguageUtils.getBundle(), "gua.string.title");
+      String title = LanguageUtils.getString(LanguageUtils.getBundle(), "mw.string.title");
       if (this.updater.isFatalErrorOccurred()) {
-        title = LanguageUtils.getString(LanguageUtils.getBundle(), "gua.string.title.fatalError");
+        title = LanguageUtils.getString(LanguageUtils.getBundle(), "mw.string.title.fatalError");
       }
       this.drawTitleString(g2d, title, appletWidth, appletHeight);
 
