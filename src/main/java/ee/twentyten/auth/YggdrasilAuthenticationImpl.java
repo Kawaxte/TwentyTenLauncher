@@ -1,24 +1,24 @@
-package ee.twentyten.minecraft.auth;
+package ee.twentyten.auth;
 
 import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
 import ee.twentyten.ui.launcher.LauncherNoNetworkPanel;
 import ee.twentyten.ui.launcher.LauncherPanel;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.discord.DiscordRichPresenceUtils;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.launcher.options.LanguageUtils;
-import ee.twentyten.util.minecraft.MinecraftUtils;
-import ee.twentyten.util.minecraft.auth.YggdrasilAuthenticationUtils;
-import ee.twentyten.util.request.ConnectionRequestUtils;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.DiscordUtils;
+import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.RequestUtils;
+import ee.twentyten.util.YggdrasilUtils;
 import org.json.JSONObject;
 
 public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
 
   @Override
   public void login(String username, String password, boolean isPasswordSaved) {
-    DiscordRichPresenceUtils.updateRichPresence("Logging in with Yggdrasil");
-    
+    DiscordUtils.updateRichPresence("Logging in with Yggdrasil");
+
     JSONObject loginResult = YggdrasilAuthenticationImpl.this.authenticate(username, password,
         ConfigUtils.getInstance().getClientToken(), true);
     if (loginResult.has("error")) {
@@ -69,11 +69,11 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     payload.put("requestUser", requestUser);
 
     return new ConnectionRequest.Builder()
-        .setUrl(YggdrasilAuthenticationUtils.authserverAuthenticateUrl)
+        .setUrl(YggdrasilUtils.authserverAuthenticateUrl)
         .setMethod(EMethod.POST)
-        .setHeaders(ConnectionRequestUtils.JSON)
+        .setHeaders(RequestUtils.JSON)
         .setBody(payload)
-        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
         .build().performJsonRequest();
   }
 
@@ -84,11 +84,11 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     payload.put("clientToken", clientToken);
 
     return new ConnectionRequest.Builder()
-        .setUrl(YggdrasilAuthenticationUtils.authserverValidateUrl)
+        .setUrl(YggdrasilUtils.authserverValidateUrl)
         .setMethod(EMethod.POST)
-        .setHeaders(ConnectionRequestUtils.JSON)
+        .setHeaders(RequestUtils.JSON)
         .setBody(payload)
-        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
         .build().performJsonRequest();
   }
 
@@ -100,11 +100,11 @@ public class YggdrasilAuthenticationImpl extends YggdrasilAuthentication {
     payload.put("requestUser", requestUser);
 
     return new ConnectionRequest.Builder()
-        .setUrl(YggdrasilAuthenticationUtils.authserverRefreshUrl)
+        .setUrl(YggdrasilUtils.authserverRefreshUrl)
         .setMethod(EMethod.POST)
-        .setHeaders(ConnectionRequestUtils.JSON)
+        .setHeaders(RequestUtils.JSON)
         .setBody(payload)
-        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
         .build().performJsonRequest();
   }
 }

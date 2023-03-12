@@ -1,6 +1,6 @@
-package ee.twentyten.minecraft.auth;
+package ee.twentyten.auth;
 
-import ee.twentyten.util.config.ConfigUtils;
+import ee.twentyten.util.ConfigUtils;
 import org.json.JSONObject;
 
 public abstract class YggdrasilAuthentication {
