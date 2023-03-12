@@ -1,8 +1,8 @@
 package ee.twentyten.request;
 
 import ee.twentyten.log.ELevel;
-import ee.twentyten.util.log.LoggerUtils;
-import ee.twentyten.util.request.ConnectionRequestUtils;
+import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.RequestUtils;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.ProtocolException;
@@ -43,7 +43,7 @@ public class ConnectionRequestImpl extends ConnectionRequest {
         connection.disconnect();
       }
     }
-    return connection == null ? null : ConnectionRequestUtils.getHttpsResponse(connection);
+    return connection == null ? null : RequestUtils.getHttpsResponse(connection);
   }
 
   @Override
@@ -78,6 +78,6 @@ public class ConnectionRequestImpl extends ConnectionRequest {
         connection.disconnect();
       }
     }
-    return connection == null ? null : ConnectionRequestUtils.getJsonResponse(connection);
+    return connection == null ? null : RequestUtils.getJsonResponse(connection);
   }
 }
