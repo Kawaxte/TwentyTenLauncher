@@ -1,8 +1,8 @@
 package ee.twentyten.custom;
 
 import ee.twentyten.log.ELevel;
+import ee.twentyten.util.LoggerUtils;
 import ee.twentyten.util.SystemUtils;
-import ee.twentyten.util.log.LoggerUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -78,7 +78,7 @@ public class LinkedProperties extends Properties {
       for (Map.Entry<Object, Object> entry : entries) {
         String key = (String) entry.getKey();
         os.write(key.getBytes(StandardCharsets.UTF_8));
-        os.write("=".getBytes(StandardCharsets.UTF_8));
+        os.write("=" .getBytes(StandardCharsets.UTF_8));
 
         Object value = entry.getValue();
         switch (value.getClass().getSimpleName()) {
