@@ -5,9 +5,8 @@ import com.sun.jna.Structure.FieldOrder;
 import java.util.Objects;
 
 @FieldOrder({"state", "details", "startTimestamp", "endTimestamp", "largeImageKey",
-    "largeImageText",
-    "smallImageKey", "smallImageText", "partyId", "partySize", "partyMax", "matchSecret",
-    "spectateSecret", "joinSecret", "instance"})
+    "largeImageText", "smallImageKey", "smallImageText", "partyId", "partySize", "partyMax",
+    "matchSecret", "spectateSecret", "joinSecret", "instance"})
 public class DiscordRichPresence extends Structure {
 
   public String state;
