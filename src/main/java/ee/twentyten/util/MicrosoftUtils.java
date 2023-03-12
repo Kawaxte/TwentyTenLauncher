@@ -1,13 +1,9 @@
-package ee.twentyten.util.minecraft.auth;
+package ee.twentyten.util;
 
+import ee.twentyten.auth.MicrosoftAuthenticationImpl;
 import ee.twentyten.log.ELevel;
-import ee.twentyten.minecraft.auth.MicrosoftAuthenticationImpl;
 import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.log.LoggerUtils;
-import ee.twentyten.util.minecraft.MinecraftUtils;
-import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -17,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
 
-public final class MicrosoftAuthenticationUtils {
+public final class MicrosoftUtils {
 
   public static URL msonlineUserCodeUrl;
   public static URL msonlineTokenUrl;
@@ -32,29 +28,29 @@ public final class MicrosoftAuthenticationUtils {
   private static MicrosoftAuthenticationImpl instance;
 
   static {
-    MicrosoftAuthenticationUtils.setInstance(new MicrosoftAuthenticationImpl());
+    MicrosoftUtils.setInstance(new MicrosoftAuthenticationImpl());
 
     try {
-      MicrosoftAuthenticationUtils.msonlineUserCodeUrl = new URL(
+      MicrosoftUtils.msonlineUserCodeUrl = new URL(
           "https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode");
-      MicrosoftAuthenticationUtils.msonlineTokenUrl = new URL(
+      MicrosoftUtils.msonlineTokenUrl = new URL(
           "https://login.microsoftonline.com/consumers/oauth2/v2.0/token");
-      MicrosoftAuthenticationUtils.xblAuthUrl = new URL(
+      MicrosoftUtils.xblAuthUrl = new URL(
           "https://user.auth.xboxlive.com/user/authenticate");
-      MicrosoftAuthenticationUtils.xstsAuthUrl = new URL(
+      MicrosoftUtils.xstsAuthUrl = new URL(
           "https://xsts.auth.xboxlive.com/xsts/authorize");
-      MicrosoftAuthenticationUtils.mcservicesLoginUrl = new URL(
+      MicrosoftUtils.mcservicesLoginUrl = new URL(
           "https://api.minecraftservices.com/authentication/login_with_xbox");
-      MicrosoftAuthenticationUtils.mcservicesStoreUrl = new URL(
+      MicrosoftUtils.mcservicesStoreUrl = new URL(
           "https://api.minecraftservices.com/entitlements/mcstore");
-      MicrosoftAuthenticationUtils.mcservicesProfileUrl = new URL(
+      MicrosoftUtils.mcservicesProfileUrl = new URL(
           "https://api.minecraftservices.com/minecraft/profile");
     } catch (MalformedURLException murle) {
       LoggerUtils.logMessage("Failed to create URL", murle, ELevel.ERROR);
     }
   }
 
-  private MicrosoftAuthenticationUtils() {
+  private MicrosoftUtils() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
@@ -95,7 +91,7 @@ public final class MicrosoftAuthenticationUtils {
           ConfigUtils.getInstance().getMicrosoftSessionId());
       return;
     }
-    MicrosoftAuthenticationUtils.getInstance().login();
+    MicrosoftUtils.getInstance().login();
   }
 
   public static JSONObject refreshMinecraftToken(String clientId, String refreshToken) {
@@ -106,44 +102,44 @@ public final class MicrosoftAuthenticationUtils {
     data.put("scope", "XboxLive.signin offline_access");
 
     return new ConnectionRequest.Builder()
-        .setUrl(MicrosoftAuthenticationUtils.msonlineTokenUrl)
+        .setUrl(MicrosoftUtils.msonlineTokenUrl)
         .setMethod(EMethod.POST)
-        .setHeaders(ConnectionRequestUtils.X_WWW_FORM_URLENCODED)
+        .setHeaders(RequestUtils.X_WWW_FORM_URLENCODED)
         .setBody(AuthenticationUtils.ofFormData(data))
-        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
         .build().performJsonRequest();
   }
 
   public static JSONObject acquireXblToken(String accessToken) {
-    JSONObject xblTokenResult = MicrosoftAuthenticationUtils.getInstance()
+    JSONObject xblTokenResult = MicrosoftUtils.getInstance()
         .acquireXblToken(accessToken);
 
     String xblToken = xblTokenResult.getString("Token");
-    return MicrosoftAuthenticationUtils.acquireXstsToken(xblToken);
+    return MicrosoftUtils.acquireXstsToken(xblToken);
   }
 
   public static JSONObject acquireXstsToken(String xblToken) {
-    JSONObject xstsTokenResult = MicrosoftAuthenticationUtils.getInstance()
+    JSONObject xstsTokenResult = MicrosoftUtils.getInstance()
         .acquireXstsToken(xblToken);
     if (xstsTokenResult.has("XErr")) {
-      MicrosoftAuthenticationUtils.getInstance().handleXstsTokenErrors(xstsTokenResult);
+      MicrosoftUtils.getInstance().handleXstsTokenErrors(xstsTokenResult);
     }
 
     String uhs = xstsTokenResult.getJSONObject("DisplayClaims").getJSONArray("xui").getJSONObject(0)
         .getString("uhs");
     String xstsToken = xstsTokenResult.getString("Token");
-    return MicrosoftAuthenticationUtils.acquireMinecraftToken(uhs, xstsToken);
+    return MicrosoftUtils.acquireMinecraftToken(uhs, xstsToken);
   }
 
   public static JSONObject acquireMinecraftToken(String uhs, String xstsToken) {
-    return MicrosoftAuthenticationUtils.getInstance().acquireMinecraftToken(uhs, xstsToken);
+    return MicrosoftUtils.getInstance().acquireMinecraftToken(uhs, xstsToken);
   }
 
   public static JSONObject acquireMinecraftStore(String minecraftToken) {
-    return MicrosoftAuthenticationUtils.getInstance().acquireMinecraftStore(minecraftToken);
+    return MicrosoftUtils.getInstance().acquireMinecraftStore(minecraftToken);
   }
 
   public static JSONObject acquireMinecraftProfile(String minecraftToken) {
-    return MicrosoftAuthenticationUtils.getInstance().acquireMinecraftProfile(minecraftToken);
+    return MicrosoftUtils.getInstance().acquireMinecraftProfile(minecraftToken);
   }
 }
