@@ -1,6 +1,6 @@
-package ee.twentyten.minecraft.update;
+package ee.twentyten.minecraft;
 
-import ee.twentyten.util.launcher.options.LanguageUtils;
+import ee.twentyten.util.LanguageUtils;
 import lombok.Getter;
 import lombok.Setter;
 
