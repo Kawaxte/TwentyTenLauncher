@@ -49,8 +49,6 @@ features. To do this, we use GitHub's issue tracker and pull request feature.
 
 <h3 align="center">Reporting Issues and Suggestions</h3>
 
----
-
 If you encounter a problem or have an idea for a new feature, please follow these steps:
 
 1. Go to the [issue tracker](https://github.com/sojlabjoi/TwentyTenLauncher/issues) for this
@@ -62,8 +60,6 @@ If you encounter a problem or have an idea for a new feature, please follow thes
 6. Wait for the issue to be reviewed and resolved.
 
 <h3 align="center">Submitting Pull Requests</h3>
-
----
 
 If you would like to submit a change or addition to
 the launcher, please follow these steps:
