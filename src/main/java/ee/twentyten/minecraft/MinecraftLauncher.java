@@ -3,7 +3,7 @@ package ee.twentyten.minecraft;
 import lombok.Getter;
 import lombok.Setter;
 
-abstract class MinecraftAppletLauncher {
+abstract class MinecraftLauncher {
 
   @Getter
   @Setter
