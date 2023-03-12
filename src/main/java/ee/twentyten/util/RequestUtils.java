@@ -1,7 +1,6 @@
-package ee.twentyten.util.request;
+package ee.twentyten.util;
 
 import ee.twentyten.log.ELevel;
-import ee.twentyten.util.log.LoggerUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,7 +16,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import org.json.JSONObject;
 
-public final class ConnectionRequestUtils {
+public final class RequestUtils {
 
   public static final Map<String, String> X_WWW_FORM_URLENCODED;
   public static final Map<String, String> JSON;
@@ -44,7 +43,7 @@ public final class ConnectionRequestUtils {
     };
   }
 
-  private ConnectionRequestUtils() {
+  private RequestUtils() {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
