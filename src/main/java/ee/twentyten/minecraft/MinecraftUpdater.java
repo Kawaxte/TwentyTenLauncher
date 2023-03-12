@@ -1,16 +1,16 @@
-package ee.twentyten.minecraft.update;
+package ee.twentyten.minecraft;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.log.ELevel;
 import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.LoggerUtils;
+import ee.twentyten.util.MinecraftUtils;
+import ee.twentyten.util.RequestUtils;
 import ee.twentyten.util.SystemUtils;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.launcher.options.LanguageUtils;
-import ee.twentyten.util.log.LoggerUtils;
-import ee.twentyten.util.minecraft.MinecraftUtils;
-import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.applet.Applet;
 import java.io.File;
 import java.io.IOException;
@@ -54,8 +54,8 @@ abstract class MinecraftUpdater {
           connection[0] = new ConnectionRequest.Builder()
               .setUrl(fileUrl)
               .setMethod(EMethod.HEAD)
-              .setHeaders(ConnectionRequestUtils.NO_CACHE)
-              .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+              .setHeaders(RequestUtils.NO_CACHE)
+              .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
               .setUseCaches(false)
               .build().performHttpsRequest();
           return connection[0].getContentLength();
@@ -178,7 +178,8 @@ abstract class MinecraftUpdater {
         }
         break;
       default:
-        throw new IllegalStateException(String.valueOf(platform));
+        LoggerUtils.logMessage(String.valueOf(platform), ELevel.ERROR);
+        break;
     }
 
     File versionsDirectory = new File(LauncherUtils.workingDirectory, "versions");
