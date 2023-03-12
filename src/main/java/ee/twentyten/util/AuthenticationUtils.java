@@ -1,11 +1,8 @@
-package ee.twentyten.util.minecraft.auth;
+package ee.twentyten.util;
 
 import ee.twentyten.log.ELevel;
 import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.log.LoggerUtils;
-import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -50,21 +47,21 @@ public final class AuthenticationUtils {
     return new ConnectionRequest.Builder()
         .setUrl(AuthenticationUtils.sessionserverProfileUrl)
         .setMethod(EMethod.GET)
-        .setHeaders(ConnectionRequestUtils.JSON)
-        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .setHeaders(RequestUtils.JSON)
+        .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
         .build().performJsonRequest();
   }
 
   public static JSONObject checkMicrosoftProfile(String accessToken) {
     Map<String, String> header = new HashMap<>();
     header.put("Authorization", MessageFormat.format("Bearer {0}", accessToken));
-    header.putAll(ConnectionRequestUtils.JSON);
+    header.putAll(RequestUtils.JSON);
 
     return new ConnectionRequest.Builder()
         .setUrl(AuthenticationUtils.mcservicesProfileUrl)
         .setMethod(EMethod.GET)
         .setHeaders(header)
-        .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+        .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
         .build().performJsonRequest();
   }
 
@@ -140,14 +137,14 @@ public final class AuthenticationUtils {
     SwingWorker<JSONObject, Void> validateAndRefreshWorker = new SwingWorker<JSONObject, Void>() {
       @Override
       protected JSONObject doInBackground() {
-        JSONObject validateAccessTokenResult = YggdrasilAuthenticationUtils.validate(
+        JSONObject validateAccessTokenResult = YggdrasilUtils.validate(
             ConfigUtils.getInstance().getYggdrasilAccessToken(), clientToken);
         if (validateAccessTokenResult.has("error")) {
           LoggerUtils.logMessage("Failed to validate access token", ELevel.ERROR);
-          validateAccessTokenResult = YggdrasilAuthenticationUtils.refresh(
+          validateAccessTokenResult = YggdrasilUtils.refresh(
               ConfigUtils.getInstance().getYggdrasilAccessToken(), clientToken, true);
           if (validateAccessTokenResult.has("error")) {
-            YggdrasilAuthenticationUtils.isAccessTokenExpired = true;
+            YggdrasilUtils.isAccessTokenExpired = true;
             LoggerUtils.logMessage("Failed to refresh access token", ELevel.ERROR);
             return null;
           }
@@ -184,8 +181,8 @@ public final class AuthenticationUtils {
     SwingWorker<JSONObject, Void> refreshWorker = new SwingWorker<JSONObject, Void>() {
       @Override
       protected JSONObject doInBackground() {
-        refreshResult[0] = MicrosoftAuthenticationUtils.refreshMinecraftToken(
-            MicrosoftAuthenticationUtils.getInstance().getClientId(), refreshToken);
+        refreshResult[0] = MicrosoftUtils.refreshMinecraftToken(
+            MicrosoftUtils.getInstance().getClientId(), refreshToken);
         return refreshResult[0];
       }
 
@@ -194,10 +191,10 @@ public final class AuthenticationUtils {
         try {
           JSONObject result = this.get();
           if (result != null && !result.isEmpty()) {
-            MicrosoftAuthenticationUtils.getAndSetNewRefreshToken(result);
+            MicrosoftUtils.getAndSetNewRefreshToken(result);
 
             String newAccessToken = result.getString("access_token");
-            refreshResult[0] = MicrosoftAuthenticationUtils.acquireXblToken(newAccessToken);
+            refreshResult[0] = MicrosoftUtils.acquireXblToken(newAccessToken);
           }
         } catch (ExecutionException ee) {
           LoggerUtils.logMessage("Failed to refresh Minecraft token", ee, ELevel.ERROR);
@@ -206,7 +203,7 @@ public final class AuthenticationUtils {
           LoggerUtils.logMessage("Interrupted while refreshing Minecraft token", ie, ELevel.ERROR);
         } finally {
           if (refreshResult[0].has("access_token")) {
-            MicrosoftAuthenticationUtils.getAndSetNewMinecraftToken(refreshResult);
+            MicrosoftUtils.getAndSetNewMinecraftToken(refreshResult);
 
             ConfigUtils.writeToConfig();
           }
