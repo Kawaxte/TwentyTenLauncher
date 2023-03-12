@@ -1,9 +1,9 @@
 package ee.twentyten.ui.options;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.launcher.options.LanguageUtils;
-import ee.twentyten.util.launcher.options.VersionUtils;
+import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.VersionUtils;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
