@@ -5,7 +5,7 @@ import ee.twentyten.discord.DiscordEventHandlers;
 import ee.twentyten.discord.DiscordRichPresence;
 import ee.twentyten.discord.DiscordUser;
 import ee.twentyten.discord.IDiscordDynamicLib;
-import ee.twentyten.discord.IReadyCallback;
+import ee.twentyten.discord.callback.IReadyCallback;
 import ee.twentyten.log.ELevel;
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +34,8 @@ public final class DiscordUtils {
     throw new UnsupportedOperationException("Can't instantiate utility class");
   }
 
-  public static void discordInitialise(final String applicationId, DiscordEventHandlers handlers,
-      boolean autoRegister, final String optionalSteamId) {
+  public static void discordInitialise(String applicationId, DiscordEventHandlers handlers,
+      boolean autoRegister, String optionalSteamId) {
     IDiscordDynamicLib.DISCORD_EXPORT.Discord_Initialize(applicationId, handlers,
         autoRegister ? 1 : 0, optionalSteamId);
   }
@@ -44,7 +44,7 @@ public final class DiscordUtils {
     IDiscordDynamicLib.DISCORD_EXPORT.Discord_Shutdown();
   }
 
-  public static void discordUpdatePresence(final DiscordRichPresence presence) {
+  public static void discordUpdatePresence(DiscordRichPresence presence) {
     IDiscordDynamicLib.DISCORD_EXPORT.Discord_UpdatePresence(presence);
   }
 
@@ -56,7 +56,7 @@ public final class DiscordUtils {
     IDiscordDynamicLib.DISCORD_EXPORT.Discord_RunCallbacks();
   }
 
-  public static void updateRichPresence(final String state) {
+  public static void updateRichPresence(String state) {
     if (DiscordUtils.getInstance() != null) {
       DiscordUtils.setInstance(new DiscordRichPresence.Builder(DiscordUtils.getInstance())
           .setState(state)
@@ -69,10 +69,10 @@ public final class DiscordUtils {
     DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(
         new IReadyCallback() {
           @Override
-          public void onReady(DiscordUser request) {
+          public void ready(DiscordUser request) {
             LoggerUtils.logMessage(
-                MessageFormat.format("{0}:{1}'#'{2}", request.getUserId(), request.getUsername(),
-                    request.getDiscriminator()), ELevel.INFO);
+                MessageFormat.format("{0}:{1}'#'{2}", request.userId, request.username,
+                    request.discriminator), ELevel.INFO);
 
             DiscordUtils.setInstance(new DiscordRichPresence.Builder()
                 .setState(state)
@@ -88,7 +88,7 @@ public final class DiscordUtils {
     DiscordUtils.discordInitialise("1058488125313253457", handlers, true, null);
   }
 
-  public static void updateRichPresence(final String state, final String details) {
+  public static void updateRichPresence(String state, String details) {
     if (DiscordUtils.getInstance() != null) {
       DiscordUtils.setInstance(new DiscordRichPresence.Builder(DiscordUtils.getInstance())
           .setState(state)
