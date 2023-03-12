@@ -3,8 +3,6 @@ package ee.twentyten.util;
 import ee.twentyten.log.ELevel;
 import ee.twentyten.request.ConnectionRequest;
 import ee.twentyten.request.EMethod;
-import ee.twentyten.util.log.LoggerUtils;
-import ee.twentyten.util.request.ConnectionRequestUtils;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -73,7 +71,7 @@ public final class FileUtils {
       HttpsURLConnection connection = new ConnectionRequest.Builder()
           .setUrl(url)
           .setMethod(EMethod.GET)
-          .setSSLSocketFactory(ConnectionRequestUtils.getSSLSocketFactory())
+          .setSSLSocketFactory(RequestUtils.getSSLSocketFactory())
           .build().performHttpsRequest();
       try (InputStream is = connection.getInputStream()) {
         Files.copy(is, f.toPath());

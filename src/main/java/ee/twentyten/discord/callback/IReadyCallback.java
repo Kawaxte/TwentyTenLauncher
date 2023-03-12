@@ -5,5 +5,5 @@ import ee.twentyten.discord.DiscordUser;
 
 public interface IReadyCallback extends Callback {
 
-  void apply(DiscordUser request);
+  void ready(DiscordUser request);
 }

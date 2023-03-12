@@ -2,12 +2,12 @@ package ee.twentyten.ui.launcher;
 
 import ee.twentyten.EPlatform;
 import ee.twentyten.custom.UTF8ResourceBundle;
-import ee.twentyten.custom.ui.component.TransparentJButton;
+import ee.twentyten.custom.ui.TransparentJButton;
 import ee.twentyten.util.FileUtils;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.launcher.options.LanguageUtils;
-import ee.twentyten.util.launcher.ui.LookAndFeelUtils;
-import ee.twentyten.util.minecraft.auth.MicrosoftAuthenticationUtils;
+import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.LookAndFeelUtils;
+import ee.twentyten.util.MicrosoftUtils;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -145,7 +145,7 @@ public class LauncherPanel extends JPanel implements ActionListener {
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
       } else {
-        MicrosoftAuthenticationUtils.loginWithMicrosoft();
+        MicrosoftUtils.loginWithMicrosoft();
       }
     }
   }
