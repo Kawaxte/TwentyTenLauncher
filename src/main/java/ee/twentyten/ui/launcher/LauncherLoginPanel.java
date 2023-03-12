@@ -2,17 +2,17 @@ package ee.twentyten.ui.launcher;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.custom.ui.CustomJPanel;
+import ee.twentyten.custom.ui.JHyperlink;
+import ee.twentyten.custom.ui.TransparentJButton;
+import ee.twentyten.custom.ui.TransparentJCheckBox;
 import ee.twentyten.custom.ui.TransparentPanelUI;
-import ee.twentyten.custom.ui.component.JHyperlink;
-import ee.twentyten.custom.ui.component.TransparentJButton;
-import ee.twentyten.custom.ui.component.TransparentJCheckBox;
 import ee.twentyten.ui.LauncherFrame;
 import ee.twentyten.ui.OptionsDialog;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.discord.DiscordRichPresenceUtils;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.launcher.options.LanguageUtils;
-import ee.twentyten.util.minecraft.auth.YggdrasilAuthenticationUtils;
+import ee.twentyten.util.ConfigUtils;
+import ee.twentyten.util.DiscordUtils;
+import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.YggdrasilUtils;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -130,7 +130,7 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source.equals(this.optionsButton)) {
-      DiscordRichPresenceUtils.updateRichPresence("Setting Launcher Options");
+      DiscordUtils.updateRichPresence("Setting Options");
 
       SwingUtilities.invokeLater(new Runnable() {
         @Override
@@ -148,7 +148,7 @@ public class LauncherLoginPanel extends CustomJPanel implements ActionListener {
             new LauncherNoNetworkPanel(), LanguageUtils.getString(LanguageUtils.getBundle(),
                 "lp.label.errorLabel.outdatedLauncher"));
       } else {
-        YggdrasilAuthenticationUtils.loginWithYggdrasil();
+        YggdrasilUtils.loginWithYggdrasil();
       }
     }
   }

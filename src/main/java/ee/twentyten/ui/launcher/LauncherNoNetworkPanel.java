@@ -2,12 +2,12 @@ package ee.twentyten.ui.launcher;
 
 import ee.twentyten.custom.UTF8ResourceBundle;
 import ee.twentyten.custom.ui.CustomJPanel;
+import ee.twentyten.custom.ui.TransparentJButton;
 import ee.twentyten.custom.ui.TransparentPanelUI;
-import ee.twentyten.custom.ui.component.TransparentJButton;
-import ee.twentyten.util.discord.DiscordRichPresenceUtils;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.launcher.options.LanguageUtils;
-import ee.twentyten.util.minecraft.MinecraftUtils;
+import ee.twentyten.util.DiscordUtils;
+import ee.twentyten.util.LanguageUtils;
+import ee.twentyten.util.LauncherUtils;
+import ee.twentyten.util.MinecraftUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -97,7 +97,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     if (source.equals(this.tryAgainButton)) {
       LauncherUtils.addPanel(LauncherPanel.getInstance(), new LauncherPanel());
 
-      DiscordRichPresenceUtils.updateRichPresence("Idle");
+      DiscordUtils.updateRichPresence("Idle");
     }
   }
 }
