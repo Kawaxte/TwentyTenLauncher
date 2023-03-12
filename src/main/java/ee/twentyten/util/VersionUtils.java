@@ -1,11 +1,7 @@
-package ee.twentyten.util.launcher.options;
+package ee.twentyten.util;
 
 import ee.twentyten.log.ELevel;
 import ee.twentyten.ui.options.VersionOptionsGroupBox;
-import ee.twentyten.util.FileUtils;
-import ee.twentyten.util.config.ConfigUtils;
-import ee.twentyten.util.launcher.LauncherUtils;
-import ee.twentyten.util.log.LoggerUtils;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
