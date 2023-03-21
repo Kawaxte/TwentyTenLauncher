@@ -17,7 +17,7 @@ public class CustomJPanel extends JPanel {
 
   @Override
   public Insets getInsets() {
-    return new Insets(0, 0, 0, 0);
+    return new Insets(11, 17, 5, 17);
   }
 
   @Override
@@ -35,7 +35,5 @@ public class CustomJPanel extends JPanel {
 
     g2d.setColor(Color.GRAY);
     g2d.fillRect(3, 3, this.getWidth() - 6, this.getHeight() - 6);
-
-    System.out.println(this.getPreferredSize().width + ", " + this.getPreferredSize().height);
   }
 }
