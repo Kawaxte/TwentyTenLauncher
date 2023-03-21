@@ -17,7 +17,7 @@ public class CustomJLabel extends JLabel {
 
   public CustomJLabel(String text, int horizontalAlignment) {
     super(text, horizontalAlignment);
-    }
+  }
 
   public CustomJLabel(String text, int horizontalAlignment, int type) {
     super(text, horizontalAlignment);
