@@ -54,6 +54,9 @@
             <minVersion>1.8.0</minVersion>
           </jre>
           <messages>
+            <instanceAlreadyExistsMsg>Another instance of this application is already running.
+            </instanceAlreadyExistsMsg>
+            <jreNotFoundErr>Java Runtime Environment could not be found.</jreNotFoundErr>
             <jreVersionErr>This application requires Java Runtime Environment</jreVersionErr>
             <launcherErr>An error occurred while launching the application.</launcherErr>
             <startupErr>An error occurred while starting the application.</startupErr>
