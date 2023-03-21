@@ -12,11 +12,10 @@
         <configuration>
           <artifactSet>
             <includes>
-              <include>org.json:json</include>
-              <include>org.projectlombok:lombok</include>
               <include>net.java.dev.jna:jna</include>
               <include>net.java.dev.jna:jna-platform</include>
-              <include>commons-codec:commons-codec</include>
+              <include>org.json:json</include>
+              <include>org.projectlombok:lombok</include>
             </includes>
           </artifactSet>
           <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -24,7 +23,7 @@
           <transformers>
             <transformer
               implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              <mainClass>ee.twentyten.Launcher</mainClass>
+              <mainClass>com.github.kawaxte.ttl.launcher.Launcher</mainClass>
             </transformer>
           </transformers>
         </configuration>
@@ -37,25 +36,25 @@
           </execution>
         </executions>
         <groupId>org.apache.maven.plugins</groupId>
-        <version>3.1.1</version>
+        <version>3.4.1</version>
       </plugin>
       <plugin>
         <!-- https://mvnrepository.com/artifact/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin -->
         <artifactId>launch4j-maven-plugin</artifactId>
         <configuration>
           <classPath>
-            <mainClass>ee.twentyten.Launcher</mainClass>
+            <mainClass>com.github.kawaxte.ttl.launcher.Launcher</mainClass>
           </classPath>
           <errTitle>launch4j</errTitle>
           <headerType>gui</headerType>
-          <icon>${project.basedir}/src/main/resources/icon/favicon.ico</icon>
+          <icon>res/icon/favicon.ico</icon>
           <jar>${project.build.directory}/${project.build.finalName}-shaded.jar</jar>
           <jre>
             <jdkPreference>preferJre</jdkPreference>
-            <minVersion>1.7.0</minVersion>
+            <minVersion>1.8.0</minVersion>
           </jre>
           <messages>
-            <jreVersionErr>This application requires Java Runtime Environment 1.7.0</jreVersionErr>
+            <jreVersionErr>This application requires Java Runtime Environment</jreVersionErr>
             <launcherErr>An error occurred while launching the application.</launcherErr>
             <startupErr>An error occurred while starting the application.</startupErr>
           </messages>
@@ -71,7 +70,7 @@
           </execution>
         </executions>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
-        <version>1.7.25</version>
+        <version>2.3.3</version>
       </plugin>
     </plugins>
   </build>
@@ -83,6 +82,12 @@
       <groupId>net.java.dev.jna</groupId>
       <version>5.13.0</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.json/json -->
+    <dependency>
+      <artifactId>json</artifactId>
+      <groupId>org.json</groupId>
+      <version>20230227</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
     <dependency>
       <artifactId>lombok</artifactId>
@@ -90,25 +95,13 @@
       <scope>provided</scope>
       <version>1.18.26</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.json/json -->
-    <dependency>
-      <artifactId>json</artifactId>
-      <groupId>org.json</groupId>
-      <version>20220924</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
-    <dependency>
-      <artifactId>commons-codec</artifactId>
-      <groupId>commons-codec</groupId>
-      <version>1.15</version>
-    </dependency>
   </dependencies>
   <groupId>ee.twentyten</groupId>
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-    <maven.compiler.source>7</maven.compiler.source>
-    <maven.compiler.target>7</maven.compiler.target>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <repositories>
@@ -117,6 +110,6 @@
       <url>https://maven.scijava.org/content/repositories/public/</url>
     </repository>
   </repositories>
-  <version>20230313</version>
+  <version>20230320_5</version>
 
 </project>
