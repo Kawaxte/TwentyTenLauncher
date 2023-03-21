@@ -8,14 +8,14 @@
   <a href="https://www.azul.com/downloads/?version=java-8-lts&package=jre">
     <img src="https://img.shields.io/badge/Java-8%2B-blue.svg">
   </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
-    <img src="https://img.shields.io/github/v/release/sojlabjoi/TwentyTenLauncher?label=latest">
+  <a href="https://github.com/Kawaxte/TwentyTenLauncher/releases/latest">
+    <img src="https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?label=latest">
   </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
-    <img src="https://img.shields.io/github/downloads/sojlabjoi/TwentyTenLauncher/latest/total.svg">
+  <a href="https://github.com/Kawaxte/TwentyTenLauncher/releases">
+    <img src="https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total.svg">
   </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/blob/stable/LICENSE">
-    <img src="https://img.shields.io/github/license/sojlabjoi/TwentyTenLauncher">
+  <a href="https://github.com/Kawaxte/TwentyTenLauncher/blob/stable/LICENSE">
+    <img src="https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher">
   </a>
 </p>
 
