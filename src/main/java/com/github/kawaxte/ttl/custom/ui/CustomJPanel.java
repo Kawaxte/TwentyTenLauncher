@@ -1,29 +1,23 @@
-package ee.twentyten.custom.ui;
+package com.github.kawaxte.ttl.custom.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
 public class CustomJPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  public CustomJPanel(LayoutManager layout, boolean isDoubleBuffered) {
-    super(layout, isDoubleBuffered);
+  public CustomJPanel(boolean isDoubleBuffered) {
+    super(isDoubleBuffered);
   }
 
   @Override
   public Insets getInsets() {
-    return new Insets(15, 30, 15, 30);
-  }
-
-  @Override
-  public Color getBackground() {
-    return Color.GRAY;
+    return new Insets(0, 0, 0, 0);
   }
 
   @Override
@@ -38,5 +32,10 @@ public class CustomJPanel extends JPanel {
     g2d.setColor(Color.WHITE);
     g2d.setStroke(new BasicStroke(1));
     g2d.drawRect(2, 2, this.getWidth() - 5, this.getHeight() - 5);
+
+    g2d.setColor(Color.GRAY);
+    g2d.fillRect(3, 3, this.getWidth() - 6, this.getHeight() - 6);
+
+    System.out.println(this.getPreferredSize().width + ", " + this.getPreferredSize().height);
   }
 }
