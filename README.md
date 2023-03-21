@@ -1,12 +1,12 @@
 <div align="center">
-  <a href="https://i.imgur.com/VxyZRcZ.png">
-    <img src="https://i.imgur.com/VxyZRcZ.png">
+  <a href="https://github.com/Kawaxte/TwentyTenLauncher/blob/nightly/twentyten.png">
+    <img src="https://raw.githubusercontent.com/Kawaxte/TwentyTenLauncher/nightly/twentyten.png">
   </a>
 </div>
 
 <p align="center">
-  <a href="https://www.azul.com/downloads/?version=java-7-lts&package=jre">
-    <img src="https://img.shields.io/badge/Java-7%2B-blue.svg">
+  <a href="https://www.azul.com/downloads/?version=java-8-lts&package=jre">
+    <img src="https://img.shields.io/badge/Java-8%2B-blue.svg">
   </a>
   <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
     <img src="https://img.shields.io/github/v/release/sojlabjoi/TwentyTenLauncher?label=latest">
@@ -19,8 +19,6 @@
   </a>
 </p>
 
----
-
 __TwentyTen Launcher__ is a third-party Minecraft launcher that offers a selection of legacy
 Minecraft
 versions from June 2010 up to January 2011. It is named after the year the original launcher was
@@ -30,7 +28,7 @@ With this launcher, you can sign in with your Mojang or Microsoft account and ch
 languages and legacy versions of Minecraft to play. The launcher is designed to give you an
 authentic experience of playing the game as it was in the past.
 
-> _Please note that this application requires at least Java 7 or greater to run._
+---
 
 <h2 align="center">Managing Issues and Contributions</h2>
 <p align="center">
@@ -41,8 +39,6 @@ authentic experience of playing the game as it was in the past.
     <img src="https://img.shields.io/github/issues-pr/sojlabjoi/TwentyTenLauncher">
   </a>
 </p>
-
----
 
 We encourage the community to help us improve our launcher by reporting issues and suggesting new
 features. To do this, we use GitHub's issue tracker and pull request feature.
