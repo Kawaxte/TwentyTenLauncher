@@ -50,8 +50,9 @@
           <icon>res/icon/favicon.ico</icon>
           <jar>${project.build.directory}/${project.build.finalName}-shaded.jar</jar>
           <jre>
-            <jdkPreference>preferJre</jdkPreference>
             <minVersion>1.8.0</minVersion>
+            <requires64Bit>false</requires64Bit>
+            <requiresJdk>false</requiresJdk>
           </jre>
           <messages>
             <instanceAlreadyExistsMsg>Another instance of this application is already running.
