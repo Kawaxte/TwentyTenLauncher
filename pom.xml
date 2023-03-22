@@ -12,13 +12,23 @@
         <configuration>
           <artifactSet>
             <includes>
-              <include>net.java.dev.jna:jna</include>
-              <include>net.java.dev.jna:jna-platform</include>
               <include>org.json:json</include>
               <include>org.projectlombok:lombok</include>
             </includes>
           </artifactSet>
           <createDependencyReducedPom>false</createDependencyReducedPom>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/maven/**</exclude>
+                <exclude>META-INF/AL2.0</exclude>
+                <exclude>META-INF/LGPL2.1</exclude>
+                <exclude>META-INF/LICENSE</exclude>
+                <exclude>META-INF/MANIFEST.MF</exclude>
+              </excludes>
+            </filter>
+          </filters>
           <shadedArtifactAttached>true</shadedArtifactAttached>
           <transformers>
             <transformer
@@ -50,6 +60,7 @@
           <icon>res/icon/favicon.ico</icon>
           <jar>${project.build.directory}/${project.build.finalName}-shaded.jar</jar>
           <jre>
+            <path>${java.home}</path>
             <minVersion>1.8.0</minVersion>
             <requires64Bit>false</requires64Bit>
             <requiresJdk>false</requiresJdk>
@@ -62,7 +73,8 @@
             <launcherErr>An error occurred while launching the application.</launcherErr>
             <startupErr>An error occurred while starting the application.</startupErr>
           </messages>
-          <outfile>${project.build.directory}/TwentyTen_${project.version}.exe</outfile>
+          <outfile>${project.build.directory}/${project.artifactId}.exe</outfile>
+          <priority>high</priority>
         </configuration>
         <executions>
           <execution>
@@ -80,12 +92,6 @@
   </build>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
-    <dependency>
-      <artifactId>jna-platform</artifactId>
-      <groupId>net.java.dev.jna</groupId>
-      <version>5.13.0</version>
-    </dependency>
     <!-- https://mvnrepository.com/artifact/org.json/json -->
     <dependency>
       <artifactId>json</artifactId>
@@ -114,6 +120,6 @@
       <url>https://maven.scijava.org/content/repositories/public/</url>
     </repository>
   </repositories>
-  <version>20230320_5</version>
+  <version>20230322-5</version>
 
 </project>
