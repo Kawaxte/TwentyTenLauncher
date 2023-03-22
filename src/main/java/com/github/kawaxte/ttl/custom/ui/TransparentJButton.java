@@ -1,6 +1,8 @@
 package com.github.kawaxte.ttl.custom.ui;
 
+import java.awt.Toolkit;
 import javax.swing.JButton;
+import javax.swing.UIManager;
 
 public class TransparentJButton extends JButton {
 
@@ -12,6 +14,7 @@ public class TransparentJButton extends JButton {
 
   @Override
   public boolean isOpaque() {
-    return false;
+    return UIManager.getLookAndFeel().getID().equals("Windows")
+        && !(Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("win.xpstyle.themeActive");
   }
 }
