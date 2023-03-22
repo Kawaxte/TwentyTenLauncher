@@ -2,12 +2,12 @@ package com.github.kawaxte.ttl.launcher.ui;
 
 import com.github.kawaxte.ttl.custom.ui.CustomJLabel;
 import com.github.kawaxte.ttl.custom.ui.CustomJPanel;
+import com.github.kawaxte.ttl.custom.ui.CustomJPasswordField;
+import com.github.kawaxte.ttl.custom.ui.CustomJTextField;
 import com.github.kawaxte.ttl.custom.ui.TransparentJButton;
 import com.github.kawaxte.ttl.custom.ui.TransparentJCheckBox;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import lombok.Getter;
@@ -22,8 +22,8 @@ public class YggdrasilLoginPanel extends CustomJPanel {
   private final CustomJLabel errorLabel;
   private final CustomJLabel usernameLabel;
   private final CustomJLabel passwordLabel;
-  private final JTextField usernameField;
-  private final JPasswordField passwordField;
+  private final CustomJTextField usernameField;
+  private final CustomJPasswordField passwordField;
   private final TransparentJButton optionsButton;
   private final TransparentJCheckBox rememberPasswordCheckBox;
   private final CustomJLabel linkLabel;
@@ -33,8 +33,9 @@ public class YggdrasilLoginPanel extends CustomJPanel {
     this.errorLabel = new CustomJLabel("\u00A0", SwingConstants.HORIZONTAL, CustomJLabel.ERROR);
     this.usernameLabel = new CustomJLabel("Username:", SwingConstants.RIGHT);
     this.passwordLabel = new CustomJLabel("Password:", SwingConstants.RIGHT);
-    this.usernameField = new JTextField(20);
-    this.passwordField = new JPasswordField(20);
+
+    this.usernameField = new CustomJTextField(20);
+    this.passwordField = new CustomJPasswordField(20);
     this.optionsButton = new TransparentJButton("Options");
     this.rememberPasswordCheckBox = new TransparentJCheckBox("Remember password");
     this.linkLabel = new CustomJLabel("Need account?", SwingConstants.LEFT, CustomJLabel.HYPERLINK);
