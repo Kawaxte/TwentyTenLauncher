@@ -14,7 +14,9 @@ public class TransparentJButton extends JButton {
 
   @Override
   public boolean isOpaque() {
-    return UIManager.getLookAndFeel().getID().equals("Windows")
-        && !(Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("win.xpstyle.themeActive");
+    Toolkit toolkit = Toolkit.getDefaultToolkit();
+    return UIManager.getLookAndFeel().getID().equals("Windows") && (
+        !(Boolean) toolkit.getDesktopProperty("win.xpstyle.themeActive") ||
+            UIManager.getLookAndFeel().getName().equals("Windows Classic"));
   }
 }
