@@ -106,7 +106,7 @@
       <version>1.18.26</version>
     </dependency>
   </dependencies>
-  <groupId>ee.twentyten</groupId>
+  <groupId>com.github.kawaxte.ttl</groupId>
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
@@ -120,6 +120,12 @@
       <url>https://maven.scijava.org/content/repositories/public/</url>
     </repository>
   </repositories>
-  <version>20230322-5</version>
+  <version>1.3.2323.5</version>
+  <description>${project.artifactId}</description>
+  <organization>
+    <name>XTE</name>
+    <url>https://github.com/Kawaxte</url>
+  </organization>
+  <inceptionYear>2022</inceptionYear>
 
 </project>
