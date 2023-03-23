@@ -11,14 +11,15 @@ public class CustomJPasswordField extends JPasswordField {
     super(columns);
 
     switch (UIManager.getLookAndFeel().getClass().getCanonicalName()) {
-      case "com.sun.java.swing.plaf.metal.MetalLookAndFeel":
+      case "com.apple.laf.AquaLookAndFeel":
+      case "javax.swing.plaf.metal.MetalLookAndFeel":
         this.setColumns(columns - 8);
-        break;
-      case "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel":
-        this.setColumns(columns - 5);
         break;
       case "com.sun.java.swing.plaf.motif.MotifLookAndFeel":
         this.setColumns(columns - 4);
+        break;
+      case "javax.swing.plaf.nimbus.NimbusLookAndFeel":
+        this.setColumns(columns - 5);
         break;
       default:
         break;
