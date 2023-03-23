@@ -19,7 +19,7 @@ public class YggdrasilLoginPanel extends CustomJPanel {
   @Getter
   @Setter
   public static YggdrasilLoginPanel ylpInstance;
-  private final CustomJLabel errorLabel;
+  private final TransparentJButton microsoftLoginButton;
   private final CustomJLabel usernameLabel;
   private final CustomJLabel passwordLabel;
   private final CustomJTextField usernameField;
@@ -30,7 +30,7 @@ public class YggdrasilLoginPanel extends CustomJPanel {
   private final TransparentJButton loginButton;
 
   {
-    this.errorLabel = new CustomJLabel("\u00A0", SwingConstants.HORIZONTAL, CustomJLabel.ERROR);
+    this.microsoftLoginButton = new TransparentJButton("Sign in with Microsoft");
     this.usernameLabel = new CustomJLabel("Username:", SwingConstants.RIGHT);
     this.passwordLabel = new CustomJLabel("Password:", SwingConstants.RIGHT);
 
@@ -39,7 +39,7 @@ public class YggdrasilLoginPanel extends CustomJPanel {
     this.optionsButton = new TransparentJButton("Options");
     this.rememberPasswordCheckBox = new TransparentJCheckBox("Remember password");
     this.linkLabel = new CustomJLabel("Need account?", SwingConstants.LEFT, CustomJLabel.HYPERLINK);
-    this.loginButton = new TransparentJButton("Login");
+    this.loginButton = new TransparentJButton("Log in");
   }
 
   public YggdrasilLoginPanel() {
@@ -51,8 +51,8 @@ public class YggdrasilLoginPanel extends CustomJPanel {
     gl.setAutoCreateContainerGaps(true);
     gl.setAutoCreateGaps(true);
     gl.setHorizontalGroup(
-        gl.createParallelGroup(Alignment.LEADING)
-            .addComponent(this.errorLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
+        gl.createParallelGroup(Alignment.CENTER)
+            .addComponent(this.microsoftLoginButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
                 Short.MAX_VALUE)
             .addGroup(gl.createSequentialGroup()
                 .addGroup(gl.createParallelGroup(Alignment.LEADING)
@@ -72,7 +72,8 @@ public class YggdrasilLoginPanel extends CustomJPanel {
     );
     gl.setVerticalGroup(
         gl.createSequentialGroup()
-            .addComponent(this.errorLabel)
+            .addComponent(this.microsoftLoginButton)
+            .addPreferredGap(ComponentPlacement.RELATED, this.getInsets().top + 5, Short.MAX_VALUE)
             .addGroup(gl.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.usernameLabel)
                 .addComponent(this.usernameField))
