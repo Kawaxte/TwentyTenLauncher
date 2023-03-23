@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Transparency;
@@ -13,6 +14,7 @@ import java.awt.image.VolatileImage;
 import java.util.stream.IntStream;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public class LauncherFrame extends JFrame {
 
@@ -30,8 +32,9 @@ public class LauncherFrame extends JFrame {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        Image bgImage = this.getToolkit()
-            .getImage(this.getClass().getClassLoader().getResource("image/dirt.png"));
+        Image bgImage = this.getToolkit().getImage(this.getClass()
+            .getClassLoader().getResource("dirt.png"));
+
         int bgWidth = bgImage.getWidth(this) << 1;
         int bgHeight = bgImage.getHeight(this) << 1;
         int frameWidth = this.getWidth();
@@ -70,7 +73,27 @@ public class LauncherFrame extends JFrame {
     this.setMinimumSize(new Dimension(640, 480));
     this.setPreferredSize(new Dimension(854, 480));
 
-    this.add(new YggdrasilLoginPanel());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.fill = GridBagConstraints.NONE;
+
+    switch (UIManager.getLookAndFeel().getClass().getCanonicalName()) {
+      case "com.apple.laf.AquaLookAndFeel":
+        gbc.insets.top = 29;
+        break;
+      case "com.sun.java.swing.plaf.motif.MotifLookAndFeel":
+        gbc.insets.top = 31;
+        break;
+      case "javax.swing.plaf.metal.MetalLookAndFeel":
+        gbc.insets.top = 11;
+        break;
+      case "javax.swing.plaf.nimbus.NimbusLookAndFeel":
+        gbc.insets.top = 21;
+        break;
+      default:
+        break;
+    }
+    this.getContentPane().add(new YggdrasilLoginPanel(), gbc);
     this.pack();
 
     this.setLocationRelativeTo(null);
