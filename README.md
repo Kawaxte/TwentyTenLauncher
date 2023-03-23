@@ -67,11 +67,3 @@ the launcher, please follow these steps:
 4. Submit a pull request from your forked repository to the original repository.
    Provide a detailed explanation of your changes and any relevant information.
 5. Wait for the pull request to be reviewed and merged.
-
----
-
-<div align="center">
-  <a href="https://i.imgur.com/XI2qib8.png">
-    <img src="https://i.imgur.com/XI2qib8.png">
-  </a>
-</div>
