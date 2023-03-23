@@ -17,7 +17,7 @@ public class CustomJPanel extends JPanel {
 
   @Override
   public Insets getInsets() {
-    return new Insets(11, 17, 5, 17);
+    return new Insets(7, 17, 0, 17);
   }
 
   @Override
