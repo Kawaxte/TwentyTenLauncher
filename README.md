@@ -19,51 +19,52 @@
   </a>
 </p>
 
-__TwentyTen Launcher__ is a third-party Minecraft launcher that offers a selection of legacy
-Minecraft
-versions from June 2010 up to January 2011. It is named after the year the original launcher was
-released and is based on the November 2010 build of the original launcher.
+This repository is a project intended for playing legacy versions of Minecraft that
+were released between June 2010 and January 2011. It's called "TwentyTen" because that's the year
+the original _Minecraft_ Launcher first released to the public, and is based on a November 2010
+build of that launcher.
 
-With this launcher, you can sign in with your Mojang or Microsoft account and choose different
-languages and legacy versions of Minecraft to play. The launcher is designed to give you an
-authentic experience of playing the game as it was in the past.
+With _TwentyTen Launcher_, you can log in with your Mojang or Microsoft account and choose from
+different languages and versions of Minecraft to play. However, it's important to note that the game
+itself is only available in English, regardless of the language setting. The goal of this project is
+to provide an authentic experience of what it was like to
+play Minecraft in the far past.
 
 ---
 
 <h2 align="center">Managing Issues and Contributions</h2>
 <p align="center">
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/issues">
-    <img src="https://img.shields.io/github/issues/sojlabjoi/TwentyTenLauncher">
+  <a href="https://github.com/Kawaxte/TwentyTenLauncher/issues">
+    <img src="https://img.shields.io/github/issues/Kawaxte/TwentyTenLauncher">
   </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/pulls">
-    <img src="https://img.shields.io/github/issues-pr/sojlabjoi/TwentyTenLauncher">
+  <a href="https://github.com/Kawaxte/TwentyTenLauncher/pulls">
+    <img src="https://img.shields.io/github/issues-pr/Kawaxte/TwentyTenLauncher">
   </a>
 </p>
 
-We encourage the community to help us improve our launcher by reporting issues and suggesting new
-features. To do this, we use GitHub's issue tracker and pull request feature.
+We want to make our launcher better, and we welcome your help! If you find any issues or have
+suggestions for new features, you can let us know by using GitHub's issue tracker and pull request
+feature.
 
 <h3 align="center">Reporting Issues and Suggestions</h3>
 
-If you encounter a problem or have an idea for a new feature, please follow these steps:
+To report an issue or suggest a new feature:
 
-1. Go to the [issue tracker](https://github.com/sojlabjoi/TwentyTenLauncher/issues) for this
-   repository.
-2. Click on the ``New issue`` button.
-3. Describe the issue or suggestion in the provided form, making sure to be clear and concise.
-4. Include any relevant details, like error messages or steps to reproduce the issue.
-5. Click on the ``Submit new issue`` button to open the issue.
-6. Wait for the issue to be reviewed and resolved.
+1. Go to the [issue tracker](https://github.com/Kawaxte/TwentyTenLauncher/issues) for our launcher
+   on
+   GitHub.
+2. Click the `New issue` button.
+3. Describe the issue or suggestion clearly and provide any relevant details.
+4. Click the `Submit new issue` button to create the issue.
 
 <h3 align="center">Submitting Pull Requests</h3>
 
 If you would like to submit a change or addition to
 the launcher, please follow these steps:
 
-1. First, create a copy of the repository by forking it, which will create a personal copy of the
-   repository that you can modify.
-2. Make the changes you want to make in a new branch of your forked repository.
-3. Thoroughly test your changes.
-4. Submit a pull request from your forked repository to the original repository.
-   Provide a detailed explanation of your changes and any relevant information.
-5. Wait for the pull request to be reviewed and merged.
+1. Make a copy of our launcher repository
+   by [forking it](https://docs.github.com/en/get-started/quickstart/fork-a-repo) on GitHub.
+2. Make the changes you want in a new branch of your forked repository.
+3. Test your changes thoroughly.
+4. Submit a pull request from your forked repository to our original repository with a detailed
+   explanation of your changes.
