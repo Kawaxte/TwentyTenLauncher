@@ -61,14 +61,6 @@ public class LauncherFrame extends JFrame {
           int titleX = (frameWidth >> 2) - (titleWidth >> 1);
           int titleY = (frameHeight >> 2) - (titleHeight << 1);
           vImageG2d.drawString(title, titleX, titleY);
-
-          // the RED line represents the exact bottom Y coordinate of the text
-          vImageG2d.setColor(Color.RED);
-          vImageG2d.drawLine(titleX, titleY - 1, titleX + titleWidth, titleY - 1);
-
-          //the GREEN line represents the required Y coordinate of the JPanel's top edge
-          vImageG2d.setColor(Color.GREEN);
-          vImageG2d.drawLine(titleX, titleY + 10, titleX + titleWidth, titleY + 10);
         } finally {
           vImageG2d.dispose();
         }
