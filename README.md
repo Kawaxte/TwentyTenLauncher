@@ -19,7 +19,7 @@
   </a>
 </p>
 
-This repository contains an application playing legacy versions of Minecraft that
+This repository contains an application that allows users to play legacy versions of Minecraft that
 were released between June 2010 and January 2011. It's called "TwentyTen" because that's the year
 the original _Minecraft_ Launcher first released to the public, and is based on a November 2010
 build of that launcher.
