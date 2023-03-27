@@ -5,8 +5,6 @@ import javax.swing.UIManager;
 
 public class CustomJTextField extends JTextField {
 
-  private static final long serialVersionUID = 1L;
-
   public CustomJTextField(int columns) {
     super(columns);
 
@@ -14,6 +12,9 @@ public class CustomJTextField extends JTextField {
       case "com.apple.laf.AquaLookAndFeel":
       case "javax.swing.plaf.metal.MetalLookAndFeel":
         this.setColumns(columns - 8);
+        break;
+      case "com.sun.java.swing.plaf.gtk.GTKLookAndFeel":
+        this.setColumns(columns - 7);
         break;
       case "com.sun.java.swing.plaf.motif.MotifLookAndFeel":
         this.setColumns(columns - 4);
