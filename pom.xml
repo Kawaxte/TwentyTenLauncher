@@ -33,7 +33,7 @@
           <transformers>
             <transformer
               implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              <mainClass>com.github.kawaxte.ttl.launcher.Launcher</mainClass>
+              <mainClass>com.github.kawaxte.twentyten.Launcher</mainClass>
             </transformer>
           </transformers>
         </configuration>
@@ -53,7 +53,7 @@
         <artifactId>launch4j-maven-plugin</artifactId>
         <configuration>
           <classPath>
-            <mainClass>com.github.kawaxte.ttl.launcher.Launcher</mainClass>
+            <mainClass>com.github.kawaxte.twentyten.Launcher</mainClass>
           </classPath>
           <errTitle>launch4j</errTitle>
           <headerType>gui</headerType>
@@ -62,12 +62,10 @@
           <jre>
             <path>${java.home}</path>
             <minVersion>1.8.0</minVersion>
-            <requires64Bit>false</requires64Bit>
-            <requiresJdk>false</requiresJdk>
           </jre>
+          <downloadUrl>https://www.java.com/download/ie_manual.jsp</downloadUrl>
+          <supportUrl>https://www.java.com/download/support.jsp</supportUrl>
           <messages>
-            <instanceAlreadyExistsMsg>Another instance of this application is already running.
-            </instanceAlreadyExistsMsg>
             <jreNotFoundErr>Java Runtime Environment could not be found.</jreNotFoundErr>
             <jreVersionErr>This application requires Java Runtime Environment</jreVersionErr>
             <launcherErr>An error occurred while launching the application.</launcherErr>
@@ -75,6 +73,9 @@
           </messages>
           <outfile>${project.build.directory}/${project.artifactId}.exe</outfile>
           <priority>high</priority>
+          <versionInfo>
+            <language>ENGLISH_UK</language>
+          </versionInfo>
         </configuration>
         <executions>
           <execution>
@@ -120,7 +121,7 @@
       <url>https://maven.scijava.org/content/repositories/public/</url>
     </repository>
   </repositories>
-  <version>1.3.2723.5</version>
+  <version>1.3.2823</version>
   <description>${project.artifactId}</description>
   <organization>
     <name>XTE</name>
