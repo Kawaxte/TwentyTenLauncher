@@ -1,4 +1,4 @@
-package com.github.kawaxte.ttl.launcher.ui;
+package com.github.kawaxte.twentyten.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
