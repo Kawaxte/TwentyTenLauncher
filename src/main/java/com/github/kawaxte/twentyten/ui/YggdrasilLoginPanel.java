@@ -1,11 +1,11 @@
-package com.github.kawaxte.ttl.launcher.ui;
+package com.github.kawaxte.twentyten.ui;
 
-import com.github.kawaxte.ttl.custom.ui.CustomJLabel;
-import com.github.kawaxte.ttl.custom.ui.CustomJPanel;
-import com.github.kawaxte.ttl.custom.ui.CustomJPasswordField;
-import com.github.kawaxte.ttl.custom.ui.CustomJTextField;
-import com.github.kawaxte.ttl.custom.ui.TransparentJButton;
-import com.github.kawaxte.ttl.custom.ui.TransparentJCheckBox;
+import com.github.kawaxte.twentyten.custom.ui.CustomJLabel;
+import com.github.kawaxte.twentyten.custom.ui.CustomJPanel;
+import com.github.kawaxte.twentyten.custom.ui.CustomJPasswordField;
+import com.github.kawaxte.twentyten.custom.ui.CustomJTextField;
+import com.github.kawaxte.twentyten.custom.ui.TransparentJButton;
+import com.github.kawaxte.twentyten.custom.ui.TransparentJCheckBox;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -31,13 +31,15 @@ public class YggdrasilLoginPanel extends CustomJPanel {
 
   {
     this.microsoftLoginButton = new TransparentJButton("Sign in with Microsoft");
+
     this.usernameLabel = new CustomJLabel("Username:", SwingConstants.RIGHT);
     this.passwordLabel = new CustomJLabel("Password:", SwingConstants.RIGHT);
-
     this.usernameField = new CustomJTextField(20);
     this.passwordField = new CustomJPasswordField(20);
+
     this.optionsButton = new TransparentJButton("Options");
     this.rememberPasswordCheckBox = new TransparentJCheckBox("Remember password");
+
     this.linkLabel = new CustomJLabel("Need account?", SwingConstants.LEFT, CustomJLabel.HYPERLINK);
     this.loginButton = new TransparentJButton("Log in");
   }
@@ -52,7 +54,8 @@ public class YggdrasilLoginPanel extends CustomJPanel {
     gl.setAutoCreateGaps(true);
     gl.setHorizontalGroup(
         gl.createParallelGroup(Alignment.CENTER)
-            .addComponent(this.microsoftLoginButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
+            .addComponent(this.microsoftLoginButton, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.DEFAULT_SIZE,
                 Short.MAX_VALUE)
             .addGroup(gl.createSequentialGroup()
                 .addGroup(gl.createParallelGroup(Alignment.LEADING)
