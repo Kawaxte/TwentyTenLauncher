@@ -10,15 +10,10 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import lombok.Getter;
-import lombok.Setter;
 
 public class YggdrasilLoginPanel extends CustomJPanel {
 
   private static final long serialVersionUID = 1L;
-  @Getter
-  @Setter
-  public static YggdrasilLoginPanel ylpInstance;
   private final TransparentJButton microsoftLoginButton;
   private final CustomJLabel usernameLabel;
   private final CustomJLabel passwordLabel;
@@ -47,8 +42,6 @@ public class YggdrasilLoginPanel extends CustomJPanel {
   public YggdrasilLoginPanel() {
     super(true);
 
-    YggdrasilLoginPanel.setYlpInstance(this);
-
     GroupLayout gl = new GroupLayout(this);
     gl.setAutoCreateContainerGaps(true);
     gl.setAutoCreateGaps(true);
@@ -76,7 +69,7 @@ public class YggdrasilLoginPanel extends CustomJPanel {
     gl.setVerticalGroup(
         gl.createSequentialGroup()
             .addComponent(this.microsoftLoginButton)
-            .addPreferredGap(ComponentPlacement.RELATED, this.getInsets().top + 5, Short.MAX_VALUE)
+            .addPreferredGap(ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(gl.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.usernameLabel)
                 .addComponent(this.usernameField))
