@@ -1,11 +1,12 @@
 package com.github.kawaxte.twentyten.ui;
 
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Transparency;
 import java.awt.image.VolatileImage;
@@ -16,16 +17,14 @@ import javax.swing.JPanel;
 public class LauncherPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  private final YggdrasilLoginPanel ylp;
-
-  {
-    this.ylp = new YggdrasilLoginPanel();
-  }
 
   public LauncherPanel() {
-    super(new FlowLayout(FlowLayout.CENTER, 0, 0), true);
+    super(new GridBagLayout(), true);
 
-    this.add(this.ylp);
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.fill = GridBagConstraints.NONE;
+    this.add(new YggdrasilLoginPanel(), gbc);
   }
 
   @Override
@@ -64,18 +63,17 @@ public class LauncherPanel extends JPanel {
       int titleX = (panelWidth >> 2) - (titleWidth >> 1);
       int titleY = (panelHeight >> 2) - (titleHeight << 1);
       vImageG2d.drawString(title, titleX, titleY);
+
+      /* DEBUG
+      vImageG2d.setColor(Color.RED);
+      vImageG2d.drawLine(0, titleY - 1, titleX + panelWidth, titleY - 1);
+
+      vImageG2d.setColor(Color.GREEN);
+      vImageG2d.drawLine(0, titleY + 10, titleX + panelWidth, titleY + 10);
+       */
     } finally {
       vImageG2d.dispose();
     }
     g2d.drawImage(vImage, 0, 0, panelWidth, panelHeight, this);
-
-    int ylpWidth = this.ylp.getWidth();
-    int ylpHeight = this.ylp.getHeight();
-    int ylpX = (panelWidth >> 1) - (ylpWidth >> 1);
-    int ylpY = (panelHeight >> 1) - (ylpHeight >> 1);
-    this.ylp.setBounds(ylpX, ylpY, ylpWidth, ylpHeight);
-    this.ylp.setLocation(ylpX, ylpY);
-
-    System.out.println(ylpWidth + "x" + ylpHeight + " " + ylpX + "x" + ylpY);
   }
 }
