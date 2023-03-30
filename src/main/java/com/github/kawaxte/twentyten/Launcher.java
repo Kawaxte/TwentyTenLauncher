@@ -1,5 +1,6 @@
 package com.github.kawaxte.twentyten;
 
+import com.github.kawaxte.twentyten.lang.LauncherLanguage;
 import com.github.kawaxte.twentyten.log.LauncherLogger;
 import com.github.kawaxte.twentyten.ui.LauncherFrame;
 import com.github.kawaxte.twentyten.util.LauncherLoggerUtils.ELevel;
@@ -24,6 +25,8 @@ public class Launcher {
       LauncherLogger.log(ELevel.INFO, "Using Look and Feel: {0}",
           UIManager.getLookAndFeel().getClass().getCanonicalName());
     }
+
+    LauncherLanguage.load("messages", "en");
 
     SwingUtilities.invokeLater(LauncherFrame::new);
   }
