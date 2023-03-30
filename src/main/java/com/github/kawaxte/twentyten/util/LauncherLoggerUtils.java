@@ -5,12 +5,14 @@ import com.github.kawaxte.twentyten.util.LauncherUtils.EPlatform;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public final class LauncherLoggerUtils {
 
   private LauncherLoggerUtils() {
+    throw new Error(MessageFormat.format("{0} is not instantiable", this.getClass().getName()));
   }
 
   public static Path getLogFile(Path p, String name) {

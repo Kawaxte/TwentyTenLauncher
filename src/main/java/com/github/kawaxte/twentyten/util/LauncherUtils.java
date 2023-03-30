@@ -6,6 +6,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public final class LauncherUtils {
   }
 
   private LauncherUtils() {
+    throw new Error(MessageFormat.format("{0} is not instantiable", this.getClass().getName()));
   }
 
   private static Path getWorkingDirectory() {
