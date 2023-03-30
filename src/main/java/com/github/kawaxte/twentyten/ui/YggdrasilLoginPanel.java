@@ -25,18 +25,15 @@ public class YggdrasilLoginPanel extends CustomJPanel {
   private final TransparentJButton loginButton;
 
   {
-    this.microsoftLoginButton = new TransparentJButton("Sign in with Microsoft");
-
-    this.usernameLabel = new CustomJLabel("Username:", SwingConstants.RIGHT);
-    this.passwordLabel = new CustomJLabel("Password:", SwingConstants.RIGHT);
+    this.microsoftLoginButton = new TransparentJButton("ylp.microsoftButton");
+    this.usernameLabel = new CustomJLabel("ylp.usernameLabel", SwingConstants.RIGHT);
+    this.passwordLabel = new CustomJLabel("ylp.passwordLabel", SwingConstants.RIGHT);
     this.usernameField = new CustomJTextField(20);
     this.passwordField = new CustomJPasswordField(20);
-
-    this.optionsButton = new TransparentJButton("Options");
-    this.rememberPasswordCheckBox = new TransparentJCheckBox("Remember password");
-
-    this.linkLabel = new CustomJLabel("Need account?", SwingConstants.LEFT, CustomJLabel.HYPERLINK);
-    this.loginButton = new TransparentJButton("Log in");
+    this.optionsButton = new TransparentJButton("ylp.optionsButton");
+    this.rememberPasswordCheckBox = new TransparentJCheckBox("ylp.rememberPasswordCheckBox");
+    this.linkLabel = new CustomJLabel("ylp.linkLabel", SwingConstants.LEFT, CustomJLabel.HYPERLINK);
+    this.loginButton = new TransparentJButton("ylp.loginButton");
   }
 
   public YggdrasilLoginPanel() {
