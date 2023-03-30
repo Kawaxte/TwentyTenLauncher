@@ -1,6 +1,6 @@
 <div align="center">
-  <a href="https://github.com/Kawaxte/TwentyTenLauncher/blob/nightly/res/image/twentyten.png">
-    <img src="https://raw.githubusercontent.com/Kawaxte/TwentyTenLauncher/nightly/res/image/twentyten.png">
+  <a href="https://github.com/Kawaxte/TwentyTenLauncher/blob/nightly/twentyten.png">
+    <img src="https://raw.githubusercontent.com/Kawaxte/TwentyTenLauncher/nightly/twentyten.png">
   </a>
 </div>
 
