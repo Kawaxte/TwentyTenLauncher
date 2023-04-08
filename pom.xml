@@ -14,10 +14,14 @@
             <includes>
               <include>org.json:json</include>
               <include>org.projectlombok:lombok</include>
+              <include>org.apache.httpcomponents.client5:httpclient5</include>
+              <include>org.apache.httpcomponents.core5:httpcore5</include>
+              <include>org.apache.logging.log4j:log4j-api</include>
+              <include>org.apache.logging.log4j:log4j-core</include>
+              <include>org.apache.logging.log4j:log4j-slf4j-impl</include>
             </includes>
           </artifactSet>
           <createDependencyReducedPom>false</createDependencyReducedPom>
-          <minimizeJar>true</minimizeJar>
           <filters>
             <filter>
               <artifact>*:*</artifact>
@@ -30,6 +34,7 @@
               </excludes>
             </filter>
           </filters>
+          <minimizeJar>true</minimizeJar>
           <shadedArtifactAttached>true</shadedArtifactAttached>
           <transformers>
             <transformer
@@ -56,16 +61,15 @@
           <classPath>
             <mainClass>com.github.kawaxte.twentyten.Launcher</mainClass>
           </classPath>
+          <downloadUrl>https://www.java.com/download/ie_manual.jsp</downloadUrl>
           <errTitle>launch4j</errTitle>
           <headerType>gui</headerType>
           <icon>favicon.ico</icon>
           <jar>${project.build.directory}/${project.build.finalName}-shaded.jar</jar>
           <jre>
-            <path>${java.home}</path>
             <minVersion>1.8.0</minVersion>
+            <path>${java.home}</path>
           </jre>
-          <downloadUrl>https://www.java.com/download/ie_manual.jsp</downloadUrl>
-          <supportUrl>https://www.java.com/download/support.jsp</supportUrl>
           <messages>
             <jreNotFoundErr>Java Runtime Environment could not be found.</jreNotFoundErr>
             <jreVersionErr>This application requires Java Runtime Environment</jreVersionErr>
@@ -74,6 +78,7 @@
           </messages>
           <outfile>${project.build.directory}/${project.artifactId}.exe</outfile>
           <priority>high</priority>
+          <supportUrl>https://www.java.com/download/support.jsp</supportUrl>
           <versionInfo>
             <language>ENGLISH_UK</language>
           </versionInfo>
@@ -100,6 +105,18 @@
       <groupId>org.json</groupId>
       <version>20230227</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
+    <dependency>
+      <artifactId>httpclient5</artifactId>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <version>5.2.1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5 -->
+    <dependency>
+      <artifactId>httpcore5</artifactId>
+      <groupId>org.apache.httpcomponents.core5</groupId>
+      <version>5.2.1</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
     <dependency>
       <artifactId>lombok</artifactId>
@@ -107,10 +124,33 @@
       <scope>provided</scope>
       <version>1.18.26</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+    <dependency>
+      <artifactId>log4j-api</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <version>2.20.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+    <dependency>
+      <artifactId>log4j-core</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <version>2.20.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <version>2.20.0</version>
+    </dependency>
   </dependencies>
-  <groupId>com.github.kawaxte.ttl</groupId>
-  <modelVersion>4.0.0</modelVersion>
+  <description>${project.artifactId}</description>
+  <groupId>com.github.kawaxte.twentyten</groupId>
 
+  <inceptionYear>2022</inceptionYear>
+  <modelVersion>4.0.0</modelVersion>
+  <organization>
+    <name>XTE</name>
+    <url>https://github.com/Kawaxte</url>
+  </organization>
   <properties>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
@@ -122,12 +162,6 @@
       <url>https://maven.scijava.org/content/repositories/public/</url>
     </repository>
   </repositories>
-  <version>20230330</version>
-  <description>${project.artifactId}</description>
-  <organization>
-    <name>XTE</name>
-    <url>https://github.com/Kawaxte</url>
-  </organization>
-  <inceptionYear>2022</inceptionYear>
+  <version>20230804</version>
 
 </project>
