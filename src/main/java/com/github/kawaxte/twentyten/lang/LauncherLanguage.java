@@ -1,6 +1,6 @@
 package com.github.kawaxte.twentyten.lang;
 
-import com.github.kawaxte.twentyten.custom.UTF8ResourceBundle;
+import com.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 
 public final class LauncherLanguage {
 
@@ -8,7 +8,7 @@ public final class LauncherLanguage {
     return AbstractLauncherLanguageImpl.INSTANCE.getUtf8Bundle();
   }
 
-  public static void load(String baseName, String isoCode) {
-    AbstractLauncherLanguageImpl.INSTANCE.load(baseName, isoCode);
+  public static void loadLanguage(String baseName, String isoCode) {
+    AbstractLauncherLanguageImpl.INSTANCE.loadLanguage(baseName, isoCode);
   }
 }
