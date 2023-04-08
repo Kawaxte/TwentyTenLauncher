@@ -1,232 +1,283 @@
 {
-  "beta": [
+  "legacy_beta": [
     {
+      "version_name": "Beta 1.0",
       "version_id": "b1.0",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Beta 1.0_01",
       "version_id": "b1.0_01",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
-      "version_id": "b1.0.2",
-      "proxy_port": "11705"
+      "version_name": "Beta 1.0_02",
+      "version_id": "b1.0_02",
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Beta 1.1",
       "version_id": "b1.1",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Beta 1.1_01",
       "version_id": "b1.1_01",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Beta 1.1_02",
       "version_id": "b1.1_02",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Beta 1.2",
       "version_id": "b1.2",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Beta 1.2_01",
       "version_id": "b1.2_01",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Beta 1.2_02",
       "version_id": "b1.2_02",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     }
   ],
-  "alpha": [
+  "legacy_alpha": [
     {
+      "version_name": "Alpha v1.0.0",
+      "version_id": "a1.0.0",
+      "bc_proxy_port": "11702"
+    },
+    {
+      "version_name": "Alpha v1.0.1_01",
       "version_id": "a1.0.1_01",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.2_01",
       "version_id": "a1.0.2_01",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.2_02",
       "version_id": "a1.0.2_02",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.3",
       "version_id": "a1.0.3",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.4",
       "version_id": "a1.0.4",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.5",
       "version_id": "a1.0.5",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.5_01",
       "version_id": "a1.0.5_01",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.6",
       "version_id": "a1.0.6",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.6_01",
       "version_id": "a1.0.6_01",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.6_03",
       "version_id": "a1.0.6_03",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.7",
       "version_id": "a1.0.7",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.8_01",
       "version_id": "a1.0.8_01",
-      "proxy_port": "11703"
+      "bc_proxy_port": "11703"
     },
     {
+      "version_name": "Alpha v1.0.9",
       "version_id": "a1.0.9",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.10",
       "version_id": "a1.0.10",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.11",
       "version_id": "a1.0.11",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.12",
       "version_id": "a1.0.12",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.13",
       "version_id": "a1.0.13",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
-      "version_id": "a1.0.13_01-1",
-      "proxy_port": "11702"
+      "version_name": "Alpha v1.0.13_01",
+      "version_id": "a1.0.13_01",
+      "bc_proxy_port": "11702"
     },
     {
-      "version_id": "a1.0.13_01-2",
-      "proxy_port": "11702"
-    },
-    {
+      "version_name": "Alpha v1.0.14",
       "version_id": "a1.0.14",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.15",
       "version_id": "a1.0.15",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.16",
       "version_id": "a1.0.16",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.16_01",
       "version_id": "a1.0.16_01",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.16_02",
       "version_id": "a1.0.16_02",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.17_02",
       "version_id": "a1.0.17_02",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.17_03",
       "version_id": "a1.0.17_03",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.0.17_04",
       "version_id": "a1.0.17_04",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.1.0",
       "version_id": "a1.1.0",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.1.1",
       "version_id": "a1.1.1",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.1.2",
       "version_id": "a1.1.2",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.1.2_01",
       "version_id": "a1.1.2_01",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
+      "version_name": "Alpha v1.2.0",
       "version_id": "a1.2.0",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.0_01",
       "version_id": "a1.2.0_01",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.0_02",
       "version_id": "a1.2.0_02",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.1_01",
       "version_id": "a1.2.1_01",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.2",
       "version_id": "a1.2.2",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.3",
       "version_id": "a1.2.3",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.3_01",
       "version_id": "a1.2.3_01",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.3_02",
       "version_id": "a1.2.3_02",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.3_04",
       "version_id": "a1.2.3_04",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.3_05",
       "version_id": "a1.2.3_05",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.4_01",
       "version_id": "a1.2.4_01",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.5",
       "version_id": "a1.2.5",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     },
     {
+      "version_name": "Alpha v1.2.6",
       "version_id": "a1.2.6",
-      "proxy_port": "11705"
+      "bc_proxy_port": "11705"
     }
   ],
-  "infdev": [
+  "legacy_infdev": [
     {
+      "version_name": "Infdev (20100629)",
       "version_id": "inf20100629",
-      "proxy_port": "11702"
+      "bc_proxy_port": "11702"
     },
     {
-      "version_id": "inf20100630-1",
-      "proxy_port": "11702"
-    },
-    {
-      "version_id": "inf20100630-2",
-      "proxy_port": "11702"
+      "version_name": "Infdev (20100630)",
+      "version_id": "Infdev 20100630",
+      "bc_proxy_port": "11702"
     }
   ]
 }
