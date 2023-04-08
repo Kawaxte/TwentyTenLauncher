@@ -1,4 +1,4 @@
-package com.github.kawaxte.twentyten.custom.ui;
+package com.github.kawaxte.twentyten.misc.ui;
 
 import javax.swing.JPasswordField;
 import javax.swing.UIManager;
@@ -15,12 +15,6 @@ public class CustomJPasswordField extends JPasswordField {
         break;
       case "com.sun.java.swing.plaf.gtk.GTKLookAndFeel":
         this.setColumns(columns - 7);
-        break;
-      case "com.sun.java.swing.plaf.motif.MotifLookAndFeel":
-        this.setColumns(columns - 4);
-        break;
-      case "javax.swing.plaf.nimbus.NimbusLookAndFeel":
-        this.setColumns(columns - 5);
         break;
       default:
         break;
