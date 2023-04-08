@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Properties>
+    <Property name="LOG_ROOT">${sys:twentyten.dir}</Property>
+    <Property name="LOG_PATTERN">[%d{HH:mm:ss}] [%t/%level]: [%c{1}] %msg%n</Property>
+  </Properties>
+
+  <Appenders>
+    <Console follow="true" name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+    </Console>
+  </Appenders>
+
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>
