@@ -1,15 +1,16 @@
 package com.github.kawaxte.twentyten.ui;
 
-import com.github.kawaxte.twentyten.custom.ui.CustomJLabel;
-import com.github.kawaxte.twentyten.custom.ui.CustomJPanel;
-import com.github.kawaxte.twentyten.custom.ui.CustomJPasswordField;
-import com.github.kawaxte.twentyten.custom.ui.CustomJTextField;
-import com.github.kawaxte.twentyten.custom.ui.TransparentJButton;
-import com.github.kawaxte.twentyten.custom.ui.TransparentJCheckBox;
+import com.github.kawaxte.twentyten.misc.ui.CustomJLabel;
+import com.github.kawaxte.twentyten.misc.ui.CustomJPanel;
+import com.github.kawaxte.twentyten.misc.ui.CustomJPasswordField;
+import com.github.kawaxte.twentyten.misc.ui.CustomJTextField;
+import com.github.kawaxte.twentyten.misc.ui.TransparentJButton;
+import com.github.kawaxte.twentyten.misc.ui.TransparentJCheckBox;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import lombok.var;
 
 public class YggdrasilLoginPanel extends CustomJPanel {
 
@@ -39,47 +40,48 @@ public class YggdrasilLoginPanel extends CustomJPanel {
   public YggdrasilLoginPanel() {
     super(true);
 
-    GroupLayout gl = new GroupLayout(this);
-    gl.setAutoCreateContainerGaps(true);
-    gl.setAutoCreateGaps(true);
-    gl.setHorizontalGroup(
-        gl.createParallelGroup(Alignment.CENTER)
+    var groupLayout = new GroupLayout(this);
+    groupLayout.setAutoCreateContainerGaps(true);
+    groupLayout.setAutoCreateGaps(true);
+    groupLayout.setHorizontalGroup(
+        groupLayout.createParallelGroup(Alignment.CENTER)
             .addComponent(this.microsoftLoginButton, GroupLayout.DEFAULT_SIZE,
                 GroupLayout.DEFAULT_SIZE,
                 Short.MAX_VALUE)
-            .addGroup(gl.createSequentialGroup()
-                .addGroup(gl.createParallelGroup(Alignment.LEADING)
+            .addGroup(groupLayout.createSequentialGroup()
+                .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
                     .addComponent(this.usernameLabel, Alignment.TRAILING)
                     .addComponent(this.passwordLabel, Alignment.TRAILING)
                     .addComponent(this.optionsButton, Alignment.TRAILING))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(gl.createParallelGroup(Alignment.LEADING)
+                .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
                     .addComponent(this.usernameField)
                     .addComponent(this.passwordField)
                     .addComponent(this.rememberPasswordCheckBox)))
-            .addGroup(gl.createSequentialGroup()
+            .addGroup(groupLayout.createSequentialGroup()
                 .addComponent(this.linkLabel)
                 .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
                     Short.MAX_VALUE)
                 .addComponent(this.loginButton))
     );
-    gl.setVerticalGroup(
-        gl.createSequentialGroup()
+    groupLayout.setVerticalGroup(
+        groupLayout.createSequentialGroup()
             .addComponent(this.microsoftLoginButton)
-            .addPreferredGap(ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(gl.createParallelGroup(Alignment.BASELINE)
+            .addPreferredGap(ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE,
+                Short.MAX_VALUE)
+            .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.usernameLabel)
                 .addComponent(this.usernameField))
-            .addGroup(gl.createParallelGroup(Alignment.BASELINE)
+            .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.passwordLabel)
                 .addComponent(this.passwordField))
-            .addGroup(gl.createParallelGroup(Alignment.BASELINE)
+            .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.optionsButton)
                 .addComponent(this.rememberPasswordCheckBox))
-            .addGroup(gl.createParallelGroup(Alignment.BASELINE)
+            .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.linkLabel)
                 .addComponent(this.loginButton))
     );
-    this.setLayout(gl);
+    this.setLayout(groupLayout);
   }
 }
