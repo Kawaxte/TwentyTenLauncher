@@ -28,9 +28,11 @@
               <excludes>
                 <exclude>META-INF/maven/**</exclude>
                 <exclude>META-INF/AL2.0</exclude>
+                <exclude>META-INF/DEPENDENCIES</exclude>
                 <exclude>META-INF/LGPL2.1</exclude>
                 <exclude>META-INF/LICENSE</exclude>
                 <exclude>META-INF/MANIFEST.MF</exclude>
+                <exclude>META-INF/NOTICE</exclude>
               </excludes>
             </filter>
           </filters>
@@ -53,47 +55,6 @@
         </executions>
         <groupId>org.apache.maven.plugins</groupId>
         <version>3.4.1</version>
-      </plugin>
-      <plugin>
-        <!-- https://mvnrepository.com/artifact/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin -->
-        <artifactId>launch4j-maven-plugin</artifactId>
-        <configuration>
-          <classPath>
-            <mainClass>com.github.kawaxte.twentyten.Launcher</mainClass>
-          </classPath>
-          <downloadUrl>https://www.java.com/download/ie_manual.jsp</downloadUrl>
-          <errTitle>launch4j</errTitle>
-          <headerType>gui</headerType>
-          <icon>favicon.ico</icon>
-          <jar>${project.build.directory}/${project.build.finalName}-shaded.jar</jar>
-          <jre>
-            <minVersion>1.8.0</minVersion>
-            <path>${java.home}</path>
-          </jre>
-          <messages>
-            <jreNotFoundErr>Java Runtime Environment could not be found.</jreNotFoundErr>
-            <jreVersionErr>This application requires Java Runtime Environment</jreVersionErr>
-            <launcherErr>An error occurred while launching the application.</launcherErr>
-            <startupErr>An error occurred while starting the application.</startupErr>
-          </messages>
-          <outfile>${project.build.directory}/${project.artifactId}.exe</outfile>
-          <priority>high</priority>
-          <supportUrl>https://www.java.com/download/support.jsp</supportUrl>
-          <versionInfo>
-            <language>ENGLISH_UK</language>
-          </versionInfo>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>launch4j</goal>
-            </goals>
-            <id>l4j-clui</id>
-            <phase>package</phase>
-          </execution>
-        </executions>
-        <groupId>com.akathist.maven.plugins.launch4j</groupId>
-        <version>2.3.3</version>
       </plugin>
     </plugins>
   </build>
@@ -136,6 +97,7 @@
       <groupId>org.apache.logging.log4j</groupId>
       <version>2.20.0</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->
     <dependency>
       <artifactId>log4j-slf4j-impl</artifactId>
       <groupId>org.apache.logging.log4j</groupId>
@@ -152,9 +114,11 @@
     <url>https://github.com/Kawaxte</url>
   </organization>
   <properties>
+    <maven.build.timestamp.format>HHmm.ddMMyy</maven.build.timestamp.format>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <timestamp>${maven.build.timestamp}</timestamp>
   </properties>
   <repositories>
     <repository>
@@ -162,6 +126,6 @@
       <url>https://maven.scijava.org/content/repositories/public/</url>
     </repository>
   </repositories>
-  <version>20230804</version>
+  <version>20230408</version>
 
 </project>
