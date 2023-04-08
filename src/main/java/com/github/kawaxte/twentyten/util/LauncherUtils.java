@@ -1,57 +1,57 @@
 package com.github.kawaxte.twentyten.util;
 
-import com.github.kawaxte.twentyten.log.LauncherLogger;
-import com.github.kawaxte.twentyten.util.LauncherLoggerUtils.ELevel;
-import java.io.File;
-import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
+import lombok.var;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class LauncherUtils {
 
-  public static boolean DEBUG = ManagementFactory.getRuntimeMXBean().getInputArguments().toString()
-      .indexOf("-agentlib:jdwp") > 0;
-  public static final Path WORKING_DIRECTORY;
+  public static final Path WORKING_DIR_PATH;
+  public static Logger logger;
 
   static {
-    WORKING_DIRECTORY = getWorkingDirectory();
+    WORKING_DIR_PATH = getWorkingDir();
+
+    logger = LogManager.getLogger(LauncherUtils.class);
   }
 
   private LauncherUtils() {
-    throw new Error(MessageFormat.format("{0} is not instantiable", this.getClass().getName()));
   }
 
-  private static Path getWorkingDirectory() {
+  public static Path getWorkingDir() {
     String userHome = System.getProperty("user.home", ".");
     String appData = System.getenv("APPDATA");
 
-    Map<EPlatform, Path> workingDirectories = Collections.unmodifiableMap(
+    var workingDirLookup = Collections.unmodifiableMap(
         new HashMap<EPlatform, Path>() {
           {
-            put(EPlatform.LINUX, Paths.get(userHome, ".twentyten"));
-            put(EPlatform.OSX, Paths.get(userHome, "Library", "Application Support", "twentyten"));
-            put(EPlatform.WINDOWS, Paths.get(appData, ".twentyten"));
+            put(EPlatform.LINUX, Paths.get(
+                userHome, ".twentyten"));
+            put(EPlatform.MACOS, Paths.get(
+                userHome, "Library", "Application Support", "twentyten"));
+            put(EPlatform.WINDOWS, Paths.get(
+                appData, ".twentyten"));
           }
         });
 
-    File workingDirectory = workingDirectories.get(EPlatform.getPlatform()).toFile();
-    if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
-      LauncherLogger.log(ELevel.WARNING, "{0} could not be created", workingDirectory);
+    var workingDirFile = workingDirLookup.get(EPlatform.getPlatform()).toFile();
+    if (!workingDirFile.exists() && !workingDirFile.mkdirs()) {
+      logger.warn("Directory \"{}\" could not be created", workingDirFile.getName());
       return null;
     }
-    return workingDirectory.toPath();
+    return workingDirFile.toPath();
   }
 
   public enum EPlatform {
     LINUX("nux"),
-    OSX("mac"),
+    MACOS("mac"),
     WINDOWS("win");
 
     private static final String OS_NAME = System.getProperty("os.name");
@@ -72,8 +72,8 @@ public final class LauncherUtils {
       return Objects.equals(WINDOWS, getPlatform());
     }
 
-    public static boolean isOSX() {
-      return Objects.equals(OSX, getPlatform());
+    public static boolean isMacOs() {
+      return Objects.equals(MACOS, getPlatform());
     }
 
     public static boolean isLinux() {
