@@ -1,17 +1,14 @@
 package com.github.kawaxte.twentyten.lang;
 
-import com.github.kawaxte.twentyten.custom.UTF8ResourceBundle;
-import com.github.kawaxte.twentyten.log.LauncherLogger;
-import com.github.kawaxte.twentyten.util.LauncherLoggerUtils.ELevel;
+import com.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
+import com.github.kawaxte.twentyten.util.LauncherUtils;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Optional;
+import lombok.var;
 
 public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
 
@@ -22,22 +19,29 @@ public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
   }
 
   @Override
-  public void load(String baseName, String isoCode) {
-    Path languageFile = Paths.get(MessageFormat.format("{0}_{1}.properties", baseName, isoCode));
+  public void loadLanguage(String baseName, String isoCode) {
+    var languageFilePath = Paths.get(MessageFormat.format("{0}_{1}.properties",
+        baseName,
+        isoCode));
+    var languageFileUrl = Optional.ofNullable(this.getClass()
+        .getClassLoader()
+        .getResource(languageFilePath.toString()));
 
-    Optional<URL> input = Optional.ofNullable(this.getClass().getClassLoader().getResource(
-        languageFile.toString()));
-    input.ifPresent(url -> {
-      try (InputStream is = url.openConnection().getInputStream();
-          InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+    languageFileUrl.ifPresent(url -> {
+      try (var is = url.openConnection().getInputStream();
+          var isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
         this.utf8Bundle = new UTF8ResourceBundle(isr);
 
-        LauncherLogger.log(ELevel.INFO, "Loaded language: {0}", input.get().toString());
+        LauncherUtils.logger.info("File \"{}\" loaded",
+            languageFilePath.getFileName());
       } catch (IOException ioe) {
-        LauncherLogger.log(ioe, "{0} could not be loaded", languageFile);
+        LauncherUtils.logger.error("File \"{}\" could not be loaded",
+            languageFilePath.getFileName(),
+            ioe);
       }
     });
-    input.orElseThrow(() -> new IllegalArgumentException(MessageFormat.format(
-        "{0} could not be found", languageFile)));
+    languageFileUrl.orElseThrow(() -> new RuntimeException(
+        MessageFormat.format("File \"{0}\" could not be found",
+            languageFilePath.getFileName())));
   }
 }
