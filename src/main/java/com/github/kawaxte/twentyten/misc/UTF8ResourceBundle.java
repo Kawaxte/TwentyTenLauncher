@@ -1,4 +1,4 @@
-package com.github.kawaxte.twentyten.custom;
+package com.github.kawaxte.twentyten.misc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import lombok.var;
 
 public class UTF8ResourceBundle extends ResourceBundle {
 
@@ -24,19 +25,25 @@ public class UTF8ResourceBundle extends ResourceBundle {
 
   public UTF8ResourceBundle(InputStream is) throws IOException {
     this.lookup = new HashMap<>();
-    try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-      Properties props = new Properties();
-      props.load(br);
-      props.stringPropertyNames().forEach(key -> this.lookup.put(key, props.getProperty(key)));
+
+    try (var br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+      var properties = new Properties();
+      properties.load(br);
+
+      properties.stringPropertyNames()
+          .forEach(key -> this.lookup.put(key, properties.getProperty(key)));
     }
   }
 
   public UTF8ResourceBundle(Reader reader) throws IOException {
     this.lookup = new HashMap<>();
-    try (BufferedReader br = new BufferedReader(reader)) {
-      Properties props = new Properties();
-      props.load(br);
-      props.stringPropertyNames().forEach(key -> this.lookup.put(key, props.getProperty(key)));
+
+    try (var br = new BufferedReader(reader)) {
+      var properties = new Properties();
+      properties.load(br);
+
+      properties.stringPropertyNames()
+          .forEach(key -> this.lookup.put(key, properties.getProperty(key)));
     }
   }
 
@@ -51,12 +58,14 @@ public class UTF8ResourceBundle extends ResourceBundle {
   }
 
   public static class UTF8Control extends Control {
+
     @Override
-    public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
-        boolean reload) throws IOException {
+    public ResourceBundle newBundle(String baseName, Locale locale, String format,
+        ClassLoader loader, boolean reload) throws IOException {
       String bundleName = this.toBundleName(baseName, locale);
       String resourceName = this.toResourceName(bundleName, "properties");
-      try (InputStream is = loader.getResourceAsStream(resourceName)) {
+
+      try (var is = loader.getResourceAsStream(resourceName)) {
         return new UTF8ResourceBundle(is);
       }
     }
