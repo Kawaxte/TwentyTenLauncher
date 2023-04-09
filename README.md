@@ -4,19 +4,19 @@
    </a>
 </div>
 
-<p style="text-align:center;">
-   <a href="https://www.azul.com/downloads/?version=java-8-lts&package=jre#zulu">
-      <img src="https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge" alt="">
-   </a>
-   <img src="https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?style=for-the-badge" alt="">
-</p>
+<div style="text-align: center;">
+  <a href="https://www.azul.com/downloads/?version=java-8-lts&package=jre#zulu">
+    <img src="https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge" alt="">
+  </a>
+  <img src="https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?style=for-the-badge" alt="">
+</div>
 
-<p style="text-align:center;">
+<div style="text-align:center;">
    <a href="https://https://github.com/Kawaxte/TwentyTenLauncher/releases/latest">
       <img src="https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&style=for-the-badge" alt="">
    </a>
    <img src="https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?style=for-the-badge" alt="">
-</p>
+</div>
 
 This repository contains an application that allows users to play legacy versions of Minecraft
 that  
@@ -32,13 +32,18 @@ is
 to provide an authentic experience of what it was like to  
 play Minecraft in the far past.
 
----  
+---
 
 <h2 align="center">Managing Issues and Contributions</h2>
-<p align="center">
-<img src="https://img.shields.io/github/issues/Kawaxte/TwentyTenLauncher?style=for-the-badge" alt="">
-<img src="https://img.shields.io/github/issues-pr/Kawaxte/TwentyTenLauncher?style=for-the-badge" alt="">
-</p>
+
+<div style="text-align:center;">
+   <a href="https://github.com/Kawaxte/TwentyTenLauncher/issues">
+      <img src="https://img.shields.io/github/issues/Kawaxte/TwentyTenLauncher?style=for-the-badge" alt="">
+   </a>
+   <a href="https://github.com/Kawaxte/TwentyTenLauncher/pulls">
+      <img src="https://img.shields.io/github/issues-pr/Kawaxte/TwentyTenLauncher?style=for-the-badge" alt="">
+   </a>
+</div>
 
 We want to make our launcher better, and we welcome your help! If you find any issues or have  
 suggestions for new features, you can let us know by using GitHub's issue tracker and pull request  
