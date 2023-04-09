@@ -1,6 +1,6 @@
-package com.github.kawaxte.twentyten.lang;
+package io.github.kawaxte.twentyten.lang;
 
-import com.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 
 public final class LauncherLanguage {
 
