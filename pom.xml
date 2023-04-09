@@ -41,7 +41,7 @@
           <transformers>
             <transformer
               implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              <mainClass>com.github.kawaxte.twentyten.Launcher</mainClass>
+              <mainClass>io.github.kawaxte.twentyten.Launcher</mainClass>
             </transformer>
           </transformers>
         </configuration>
@@ -104,28 +104,25 @@
       <version>2.20.0</version>
     </dependency>
   </dependencies>
-  <description>${project.artifactId}</description>
-  <groupId>com.github.kawaxte.twentyten</groupId>
 
+  <description>Remastered version of the classic Minecraft Launcher from 2010</description>
+  <groupId>io.github.kawaxte</groupId>
   <inceptionYear>2022</inceptionYear>
   <modelVersion>4.0.0</modelVersion>
-  <organization>
-    <name>XTE</name>
-    <url>https://github.com/Kawaxte</url>
-  </organization>
+  <name>${project.groupId}:${project.artifactId}</name>
+
   <properties>
-    <maven.build.timestamp.format>HHmm.ddMMyy</maven.build.timestamp.format>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <timestamp>${maven.build.timestamp}</timestamp>
   </properties>
+
   <repositories>
     <repository>
       <id>scijava.public</id>
       <url>https://maven.scijava.org/content/repositories/public/</url>
     </repository>
   </repositories>
-  <version>20230408</version>
 
+  <version>20230409</version>
 </project>
