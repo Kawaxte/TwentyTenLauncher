@@ -1,17 +1,21 @@
 <div style="text-align:center;">
-  <a href="https://github.com/Kawaxte/TwentyTenLauncher/blob/nightly/twentyten.png"> 
-    <img src="https://raw.githubusercontent.com/Kawaxte/TwentyTenLauncher/nightly/twentyten.png" alt="">  
-  </a>
+   <a href="https://github.com/Kawaxte/TwentyTenLauncher/blob/nightly/twentyten.png">
+      <img src="https://raw.githubusercontent.com/Kawaxte/TwentyTenLauncher/nightly/twentyten.png" alt="">
+   </a>
 </div>
 
-<p align="center">
-<img src="https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge" alt="">
-<img src="https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?style=for-the-badge" alt="">
+<p style="text-align:center;">
+   <a href="https://www.azul.com/downloads/?version=java-8-lts&package=jre#zulu">
+      <img src="https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge" alt="">
+   </a>
+   <img src="https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?style=for-the-badge" alt="">
 </p>
 
-<p align="center">
-<img src="https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&style=for-the-badge" alt="">
-<img src="https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?style=for-the-badge" alt="">
+<p style="text-align:center;">
+   <a href="https://https://github.com/Kawaxte/TwentyTenLauncher/releases/latest">
+      <img src="https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&style=for-the-badge" alt="">
+   </a>
+   <img src="https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?style=for-the-badge" alt="">
 </p>
 
 This repository contains an application that allows users to play legacy versions of Minecraft
