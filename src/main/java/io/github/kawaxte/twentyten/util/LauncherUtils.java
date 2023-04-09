@@ -1,13 +1,14 @@
-package com.github.kawaxte.twentyten.util;
+package io.github.kawaxte.twentyten.util;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import lombok.var;
+import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +30,7 @@ public final class LauncherUtils {
     String userHome = System.getProperty("user.home", ".");
     String appData = System.getenv("APPDATA");
 
-    var workingDirLookup = Collections.unmodifiableMap(
+    val workingDirLookup = Collections.unmodifiableMap(
         new HashMap<EPlatform, Path>() {
           {
             put(EPlatform.LINUX, Paths.get(
@@ -41,29 +42,29 @@ public final class LauncherUtils {
           }
         });
 
-    var workingDirFile = workingDirLookup.get(EPlatform.getPlatform()).toFile();
+    val workingDirFile = workingDirLookup.get(EPlatform.getPlatform()).toFile();
     if (!workingDirFile.exists() && !workingDirFile.mkdirs()) {
-      logger.warn("Directory \"{}\" could not be created", workingDirFile.getName());
+      logger.warn("{} could not be created");
       return null;
     }
     return workingDirFile.toPath();
   }
 
   public enum EPlatform {
-    LINUX("nux"),
-    MACOS("mac"),
+    LINUX("aix,", "nix", "nux"),
+    MACOS("darwin", "mac"),
     WINDOWS("win");
 
     private static final String OS_NAME = System.getProperty("os.name");
-    private final String[] osNames;
+    private final List<String> osNames;
 
     EPlatform(String... osNames) {
-      this.osNames = osNames;
+      this.osNames = Collections.unmodifiableList(Arrays.asList(osNames));
     }
 
     public static EPlatform getPlatform() {
-      return Arrays.stream(values()).filter(platform -> Arrays.stream(platform.osNames)
-              .anyMatch(OS_NAME.toLowerCase(Locale.ROOT)::contains))
+      return Arrays.stream(values()).filter(platform -> platform.osNames.stream()
+              .anyMatch(osName -> OS_NAME.toLowerCase(Locale.ROOT).contains(osName)))
           .findFirst()
           .orElse(null);
     }
