@@ -1,11 +1,11 @@
-package com.github.kawaxte.twentyten.misc.ui;
+package io.github.kawaxte.twentyten.misc.ui;
 
-import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 
-public class CustomJPasswordField extends JPasswordField {
+public class CustomJTextField extends JTextField {
 
-  public CustomJPasswordField(int columns) {
+  public CustomJTextField(int columns) {
     super(columns);
 
     switch (UIManager.getLookAndFeel().getClass().getCanonicalName()) {

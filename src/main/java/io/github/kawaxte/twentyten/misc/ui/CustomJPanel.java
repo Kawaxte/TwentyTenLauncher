@@ -1,4 +1,4 @@
-package com.github.kawaxte.twentyten.misc.ui;
+package io.github.kawaxte.twentyten.misc.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import javax.swing.JPanel;
-import lombok.var;
+import lombok.val;
 
 public class CustomJPanel extends JPanel {
 
@@ -25,7 +25,7 @@ public class CustomJPanel extends JPanel {
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    var g2d = (Graphics2D) g;
+    val g2d = (Graphics2D) g;
     g2d.setColor(Color.BLACK);
     g2d.setStroke(new BasicStroke(2));
     g2d.drawRect(1, 1, this.getWidth() - 2, this.getHeight() - 2);
