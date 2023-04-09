@@ -1,9 +1,9 @@
-package com.github.kawaxte.twentyten.misc.ui;
+package io.github.kawaxte.twentyten.misc.ui;
 
 import java.awt.Toolkit;
 import javax.swing.JButton;
 import javax.swing.UIManager;
-import lombok.var;
+import lombok.val;
 
 public class TransparentJButton extends JButton {
 
@@ -13,7 +13,7 @@ public class TransparentJButton extends JButton {
 
   @Override
   public boolean isOpaque() {
-    var defaultToolkit = Toolkit.getDefaultToolkit();
+    val defaultToolkit = Toolkit.getDefaultToolkit();
     return UIManager.getLookAndFeel().getID().equals("Windows")
         && (!(Boolean) defaultToolkit.getDesktopProperty("win.xpstyle.themeActive")
         || UIManager.getLookAndFeel().getName().equals("Windows Classic"));
