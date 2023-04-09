@@ -1,9 +1,9 @@
-package com.github.kawaxte.twentyten;
+package io.github.kawaxte.twentyten;
 
-import com.github.kawaxte.twentyten.lang.LauncherLanguage;
-import com.github.kawaxte.twentyten.ui.LauncherFrame;
-import com.github.kawaxte.twentyten.util.LauncherUtils;
-import com.github.kawaxte.twentyten.util.LauncherUtils.EPlatform;
+import io.github.kawaxte.twentyten.lang.LauncherLanguage;
+import io.github.kawaxte.twentyten.ui.LauncherFrame;
+import io.github.kawaxte.twentyten.util.LauncherUtils;
+import io.github.kawaxte.twentyten.util.LauncherUtils.EPlatform;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -20,28 +20,29 @@ public class Launcher {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (ClassNotFoundException cnfe) {
-      LauncherUtils.logger.error("Class \"{}\" could not be found",
+      LauncherUtils.logger.error("{} not found",
           cnfe.getMessage(),
           cnfe);
     } catch (InstantiationException ie) {
-      LauncherUtils.logger.error("Class \"{}\" cannot be instantiated",
+      LauncherUtils.logger.error("{} is not instantiable",
           ie.getMessage(),
           ie);
     } catch (IllegalAccessException iae) {
-      LauncherUtils.logger.error("Class \"{}\" is not accessible",
+      LauncherUtils.logger.error("{} is not accessible",
           iae.getMessage(),
           iae);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      LauncherUtils.logger.error("Class \"{}\" is not supported on {}",
+      LauncherUtils.logger.error("{} is not supported on {}",
           ulafe.getMessage(),
           EPlatform.getPlatform(),
           ulafe);
     } finally {
-      LauncherUtils.logger.info("Look and Feel \"{}\" set",
+      LauncherUtils.logger.info("Using {} look and feel",
           UIManager.getLookAndFeel().getName());
     }
 
-    LauncherLanguage.loadLanguage("messages", "en");
+    LauncherLanguage.loadLanguage("messages",
+        System.getProperty("user.language"));
 
     SwingUtilities.invokeLater(LauncherFrame::new);
   }
