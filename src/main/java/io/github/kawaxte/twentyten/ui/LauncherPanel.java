@@ -1,4 +1,4 @@
-package com.github.kawaxte.twentyten.ui;
+package io.github.kawaxte.twentyten.ui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -9,7 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Transparency;
 import java.util.stream.IntStream;
 import javax.swing.JPanel;
-import lombok.var;
+import lombok.val;
 
 public class LauncherPanel extends JPanel {
 
@@ -28,18 +28,18 @@ public class LauncherPanel extends JPanel {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    var g2d = (Graphics2D) g;
-    var bgImageUrl = this.getClass().getClassLoader().getResource("dirt.png");
-    var bgImage = this.getToolkit().getImage(bgImageUrl);
+    val g2d = (Graphics2D) g;
+    val bgImageUrl = this.getClass().getClassLoader().getResource("dirt.png");
+    val bgImage = this.getToolkit().getImage(bgImageUrl);
 
     int bgWidth = bgImage.getWidth(this) << 1;
     int bgHeight = bgImage.getHeight(this) << 1;
     int panelWidth = this.getWidth();
     int panelHeight = this.getHeight();
 
-    var vImage = g2d.getDeviceConfiguration()
+    val vImage = g2d.getDeviceConfiguration()
         .createCompatibleVolatileImage(panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
-    var vImageG2d = vImage.createGraphics();
+    val vImageG2d = vImage.createGraphics();
 
     try {
       int gridWidth = (panelWidth + bgWidth) >> 5;
@@ -54,7 +54,7 @@ public class LauncherPanel extends JPanel {
       vImageG2d.setFont(this.getFont().deriveFont(Font.BOLD, 20F));
       vImageG2d.setColor(Color.LIGHT_GRAY);
 
-      var vImageG2dFontMetrics = vImageG2d.getFontMetrics();
+      val vImageG2dFontMetrics = vImageG2d.getFontMetrics();
       int titleWidth = vImageG2dFontMetrics.stringWidth(title);
       int titleHeight = vImageG2dFontMetrics.getHeight();
       int titleX = (panelWidth >> 2) - (titleWidth >> 1);
