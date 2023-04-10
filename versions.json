@@ -1,283 +1,338 @@
 {
   "legacy_beta": [
     {
-      "version_name": "Beta 1.0",
-      "version_id": "b1.0",
-      "bc_proxy_port": "11705"
+      "versionId": "b1.0",
+      "versionName": "Beta 1.0",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Beta 1.0_01",
-      "version_id": "b1.0_01",
-      "bc_proxy_port": "11705"
+      "versionId": "b1.0_01",
+      "versionName": "Beta 1.0_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Beta 1.0_02",
-      "version_id": "b1.0_02",
-      "bc_proxy_port": "11705"
+      "versionId": "b1.0_02",
+      "versionName": "Beta 1.0_02",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Beta 1.1",
-      "version_id": "b1.1",
-      "bc_proxy_port": "11705"
+      "versionId": "b1.1",
+      "versionName": "Beta 1.1",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Beta 1.1_01",
-      "version_id": "b1.1_01",
-      "bc_proxy_port": "11705"
+      "versionId": "b1.1_01",
+      "versionName": "Beta 1.1_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Beta 1.1_02",
-      "version_id": "b1.1_02",
-      "bc_proxy_port": "11705"
+      "versionId": "b1.1_02",
+      "versionName": "Beta 1.1_02",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Beta 1.2",
-      "version_id": "b1.2",
-      "bc_proxy_port": "11705"
+      "versionId": "b1.2",
+      "versionName": "Beta 1.2",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Beta 1.2_01",
-      "version_id": "b1.2_01",
-      "bc_proxy_port": "11705"
+      "versionId": "b1.2_01",
+      "versionName": "Beta 1.2_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Beta 1.2_02",
-      "version_id": "b1.2_02",
-      "bc_proxy_port": "11705"
+      "versionId": "b1.2_02",
+      "versionName": "Beta 1.2_02",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     }
   ],
   "legacy_alpha": [
     {
-      "version_name": "Alpha v1.0.0",
-      "version_id": "a1.0.0",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.0",
+      "versionName": "Alpha v1.0.0",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.1_01",
-      "version_id": "a1.0.1_01",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.1_01",
+      "versionName": "Alpha v1.0.1_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.2_01",
-      "version_id": "a1.0.2_01",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.2_01",
+      "versionName": "Alpha v1.0.2_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.2_02",
-      "version_id": "a1.0.2_02",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.2_02",
+      "versionName": "Alpha v1.0.2_02",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.3",
-      "version_id": "a1.0.3",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.3",
+      "versionName": "Alpha v1.0.3",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.4",
-      "version_id": "a1.0.4",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.4",
+      "versionName": "Alpha v1.0.4",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.5",
-      "version_id": "a1.0.5",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.5",
+      "versionName": "Alpha v1.0.5",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.5_01",
-      "version_id": "a1.0.5_01",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.5_01",
+      "versionName": "Alpha v1.0.5_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.6",
-      "version_id": "a1.0.6",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.6",
+      "versionName": "Alpha v1.0.6",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.6_01",
-      "version_id": "a1.0.6_01",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.6_01",
+      "versionName": "Alpha v1.0.6_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.6_03",
-      "version_id": "a1.0.6_03",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.6_03",
+      "versionName": "Alpha v1.0.6_03",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.7",
-      "version_id": "a1.0.7",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.7",
+      "versionName": "Alpha v1.0.7",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.8_01",
-      "version_id": "a1.0.8_01",
-      "bc_proxy_port": "11703"
+      "versionId": "a1.0.8_01",
+      "versionName": "Alpha v1.0.8_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11703"
     },
     {
-      "version_name": "Alpha v1.0.9",
-      "version_id": "a1.0.9",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.9",
+      "versionName": "Alpha v1.0.9",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.10",
-      "version_id": "a1.0.10",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.10",
+      "versionName": "Alpha v1.0.10",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.11",
-      "version_id": "a1.0.11",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.11",
+      "versionName": "Alpha v1.0.11",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.12",
-      "version_id": "a1.0.12",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.12",
+      "versionName": "Alpha v1.0.12",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.13",
-      "version_id": "a1.0.13",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.13",
+      "versionName": "Alpha v1.0.13",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.13_01",
-      "version_id": "a1.0.13_01",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.13_01",
+      "versionName": "Alpha v1.0.13_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.14",
-      "version_id": "a1.0.14",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.14",
+      "versionName": "Alpha v1.0.14",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.15",
-      "version_id": "a1.0.15",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.15",
+      "versionName": "Alpha v1.0.15",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.16",
-      "version_id": "a1.0.16",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.16",
+      "versionName": "Alpha v1.0.16",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.16_01",
-      "version_id": "a1.0.16_01",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.16_01",
+      "versionName": "Alpha v1.0.16_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.16_02",
-      "version_id": "a1.0.16_02",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.16_02",
+      "versionName": "Alpha v1.0.16_02",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.17_02",
-      "version_id": "a1.0.17_02",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.17_02",
+      "versionName": "Alpha v1.0.17_02",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.17_03",
-      "version_id": "a1.0.17_03",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.17_03",
+      "versionName": "Alpha v1.0.17_03",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.0.17_04",
-      "version_id": "a1.0.17_04",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.0.17_04",
+      "versionName": "Alpha v1.0.17_04",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.1.0",
-      "version_id": "a1.1.0",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.1.0",
+      "versionName": "Alpha v1.1.0",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.1.1",
-      "version_id": "a1.1.1",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.1.1",
+      "versionName": "Alpha v1.1.1",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.1.2",
-      "version_id": "a1.1.2",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.1.2",
+      "versionName": "Alpha v1.1.2",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.1.2_01",
-      "version_id": "a1.1.2_01",
-      "bc_proxy_port": "11702"
+      "versionId": "a1.1.2_01",
+      "versionName": "Alpha v1.1.2_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Alpha v1.2.0",
-      "version_id": "a1.2.0",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.0",
+      "versionName": "Alpha v1.2.0",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.0_01",
-      "version_id": "a1.2.0_01",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.0_01",
+      "versionName": "Alpha v1.2.0_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.0_02",
-      "version_id": "a1.2.0_02",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.0_02",
+      "versionName": "Alpha v1.2.0_02",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.1_01",
-      "version_id": "a1.2.1_01",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.1_01",
+      "versionName": "Alpha v1.2.1_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.2",
-      "version_id": "a1.2.2",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.2",
+      "versionName": "Alpha v1.2.2",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.3",
-      "version_id": "a1.2.3",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.3",
+      "versionName": "Alpha v1.2.3",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.3_01",
-      "version_id": "a1.2.3_01",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.3_01",
+      "versionName": "Alpha v1.2.3_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.3_02",
-      "version_id": "a1.2.3_02",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.3_02",
+      "versionName": "Alpha v1.2.3_02",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.3_04",
-      "version_id": "a1.2.3_04",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.3_04",
+      "versionName": "Alpha v1.2.3_04",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.3_05",
-      "version_id": "a1.2.3_05",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.3_05",
+      "versionName": "Alpha v1.2.3_05",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.4_01",
-      "version_id": "a1.2.4_01",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.4_01",
+      "versionName": "Alpha v1.2.4_01",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.5",
-      "version_id": "a1.2.5",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.5",
+      "versionName": "Alpha v1.2.5",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     },
     {
-      "version_name": "Alpha v1.2.6",
-      "version_id": "a1.2.6",
-      "bc_proxy_port": "11705"
+      "versionId": "a1.2.6",
+      "versionName": "Alpha v1.2.6",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11705"
     }
   ],
   "legacy_infdev": [
     {
-      "version_name": "Infdev (20100629)",
-      "version_id": "inf20100629",
-      "bc_proxy_port": "11702"
+      "versionId": "inf20100629",
+      "versionName": "Infdev (20100629)",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     },
     {
-      "version_name": "Infdev (20100630)",
-      "version_id": "inf20100630",
-      "bc_proxy_port": "11702"
+      "versionId": "inf20100630",
+      "versionName": "Infdev (20100630)",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11702"
     }
   ]
 }
