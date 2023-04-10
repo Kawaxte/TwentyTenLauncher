@@ -7,6 +7,7 @@ import io.github.kawaxte.twentyten.misc.ui.CustomJTextField;
 import io.github.kawaxte.twentyten.misc.ui.TransparentJButton;
 import io.github.kawaxte.twentyten.misc.ui.TransparentJCheckBox;
 import io.github.kawaxte.twentyten.ui.options.OptionsDialog;
+import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
@@ -32,7 +33,7 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
 
   {
     this.microsoftLoginButton = new TransparentJButton("ylp.microsoftButton");
-    this.emailLabel = new CustomJLabel("ylp.emailLabel",
+    this.emailLabel = new CustomJLabel("ylp.usernameLabel",
         SwingConstants.RIGHT);
     this.passwordLabel = new CustomJLabel("ylp.passwordLabel",
         SwingConstants.RIGHT);
@@ -40,7 +41,7 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
     this.passwordField = new CustomJPasswordField(20);
     this.optionsButton = new TransparentJButton("ylp.optionsButton");
     this.rememberPasswordCheckBox = new TransparentJCheckBox("ylp.rememberPasswordCheckBox");
-    this.linkLabel = new CustomJLabel("ylp.linkLabel",
+    this.linkLabel = new CustomJLabel("ylp.linkLabel.signup",
         SwingConstants.LEFT,
         CustomJLabel.HYPERLINK);
     this.loginButton = new TransparentJButton("ylp.loginButton");
@@ -54,6 +55,32 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
     this.microsoftLoginButton.addActionListener(this);
     this.optionsButton.addActionListener(this);
     this.loginButton.addActionListener(this);
+
+    this.updateComponentKeyValues();
+  }
+
+  private void updateComponentKeyValues() {
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.microsoftLoginButton,
+        this.microsoftLoginButton.getText());
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.emailLabel,
+        this.emailLabel.getText());
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.passwordLabel,
+        this.passwordLabel.getText());
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.optionsButton,
+        this.optionsButton.getText());
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.rememberPasswordCheckBox,
+        this.rememberPasswordCheckBox.getText());
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.linkLabel,
+        this.linkLabel.getText());
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.loginButton,
+        this.loginButton.getText());
   }
 
   private GroupLayout getGroupLayout() {
@@ -106,9 +133,10 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (Objects.equals(source, this.optionsButton)) {
-      SwingUtilities.invokeLater(() -> new OptionsDialog(
-          SwingUtilities.getWindowAncestor(this))
-      );
+      SwingUtilities.invokeLater(() -> {
+        val optionsDialog = new OptionsDialog(SwingUtilities.getWindowAncestor(this));
+        optionsDialog.setVisible(true);
+      });
     }
   }
 }
