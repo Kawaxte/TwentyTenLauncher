@@ -3,6 +3,7 @@ package io.github.kawaxte.twentyten.ui.options;
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
 import io.github.kawaxte.twentyten.util.LauncherOptionsUtils;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
+import java.awt.LayoutManager;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JComboBox;
@@ -40,22 +41,19 @@ public class LanguageGroupBox extends JGroupBox {
         this.setLanguageLabel.getText());
   }
 
-  private GroupLayout getGroupLayout() {
+  private LayoutManager getGroupLayout() {
     val groupLayout = new GroupLayout(this);
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
     groupLayout.setHorizontalGroup(
         groupLayout.createSequentialGroup()
             .addComponent(this.setLanguageLabel)
-            .addComponent(this.languageComboBox)
-    );
+            .addComponent(this.languageComboBox));
     groupLayout.setVerticalGroup(
         groupLayout.createSequentialGroup()
             .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.setLanguageLabel)
-                .addComponent(this.languageComboBox)
-            )
-    );
+                .addComponent(this.languageComboBox)));
     return groupLayout;
   }
 }
