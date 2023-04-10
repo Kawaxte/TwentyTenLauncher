@@ -1,7 +1,7 @@
 # TwentyTen Launcher
 
-![GitHub Latest](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&style=for-the-badge)
-![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)
+![GitHub Latest](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&color=3FB950&style=for-the-badge)
+![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&color=D29922&style=for-the-badge)
 ![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?logo=github&style=for-the-badge)
 
 This project lets you play older versions of Minecraft that were released between June 2010 and
@@ -25,10 +25,10 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 
 ## Contributing
 
-![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge&color=181717)
-![GitHub Watchers](https://img.shields.io/github/watchers/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge&color=181717)
-![GitHub Forks](https://img.shields.io/github/forks/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge&color=181717)
-![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge&color=181717)
+![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&color=181717&style=for-the-badge)
+![GitHub Watchers](https://img.shields.io/github/watchers/Kawaxte/TwentyTenLauncher?logo=github&color=181717&style=for-the-badge)
+![GitHub Forks](https://img.shields.io/github/forks/Kawaxte/TwentyTenLauncher?logo=github&color=181717&style=for-the-badge)
+![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&color=181717&style=for-the-badge)
 
 If you find this project useful or interesting, please consider giving it a ⭐. It's a
 quick and easy way to show your support.
@@ -63,8 +63,8 @@ fixing a bug, you can do so by following these steps:
 ## Building from Source
 
 ![Java](https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge)
-![Maven](https://img.shields.io/badge/Maven-3.8.1-blue?logo=apachemaven&style=for-the-badge&color=C71A36)
-![Git](https://img.shields.io/badge/Git-2.40.0-blue?logo=git&style=for-the-badge&color=F05032)
+![Maven](https://img.shields.io/badge/Maven-3.8.1-blue?logo=apachemaven&color=C71A36&style=for-the-badge)
+![Git](https://img.shields.io/badge/Git-2.40.0-blue?logo=git&color=F05032&style=for-the-badge)
 
 This project uses [Apache Maven](https://maven.apache.org/) to manage dependencies and build the
 application. To build the application from source, follow these steps:
@@ -83,4 +83,4 @@ The finished build will be saved as a `-shaded.jar` file in the `target` directo
 
 ![GitHub License](https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
 
-This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/). 
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).
