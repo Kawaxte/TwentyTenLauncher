@@ -1,6 +1,5 @@
 package io.github.kawaxte.twentyten.ui;
 
-import io.github.kawaxte.twentyten.util.LauncherOptionsUtils;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -23,9 +22,7 @@ public class LauncherFrame extends JFrame {
     this.pack();
 
     this.setLocationRelativeTo(null);
-    this.setVisible(true);
-
-    LauncherOptionsUtils.updateStrings(this);
+    this.setResizable(true);
   }
 
   @Override
