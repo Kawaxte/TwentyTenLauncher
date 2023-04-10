@@ -1,7 +1,9 @@
 package io.github.kawaxte.twentyten.ui.options;
 
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
-import java.text.MessageFormat;
+import io.github.kawaxte.twentyten.util.LauncherUtils;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
@@ -10,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import lombok.val;
 
-public class VersionGroupBox extends JGroupBox {
+public class VersionGroupBox extends JGroupBox implements ActionListener {
 
   public static final long serialVersionUID = 1L;
   private final JCheckBox showBetaVersionsCheckBox;
@@ -20,19 +22,11 @@ public class VersionGroupBox extends JGroupBox {
   private final JComboBox<String> versionComboBox;
 
   {
-    this.showBetaVersionsCheckBox = new JCheckBox(
-        MessageFormat.format("vgb.showVersionsCheckBox",
-            "Beta",
-            "2010-12-20 -> 2011-01-21"));
-    this.showAlphaVersionsCheckBox = new JCheckBox(
-        MessageFormat.format("vgb.showVersionsCheckBox",
-            "Alpha",
-            "2010-07-02 -> 2010-12-03"));
-    this.showInfdevVersionsCheckBox = new JCheckBox(
-        MessageFormat.format("vgb.showVersionsCheckBox",
-            "Infdev",
-            "2010-06-29 -> 2010-06-30"));
-    this.useVersionLabel = new JLabel("vgb.useVersionLabel", SwingConstants.RIGHT);
+    this.showBetaVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
+    this.showAlphaVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
+    this.showInfdevVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
+    this.useVersionLabel = new JLabel("vgb.useVersionLabel",
+        SwingConstants.RIGHT);
     this.versionComboBox = new JComboBox<>();
   }
 
@@ -40,6 +34,33 @@ public class VersionGroupBox extends JGroupBox {
     super("vgb.title", true);
 
     this.setLayout(this.getGroupLayout());
+
+    this.showBetaVersionsCheckBox.addActionListener(this);
+    this.showAlphaVersionsCheckBox.addActionListener(this);
+    this.showInfdevVersionsCheckBox.addActionListener(this);
+
+    this.updateComponentKeyValues();
+  }
+
+  private void updateComponentKeyValues() {
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.showBetaVersionsCheckBox,
+        this.showBetaVersionsCheckBox.getText(),
+        "Beta",
+        "2010-12-20 -> 2011-01-21");
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.showAlphaVersionsCheckBox,
+        this.showAlphaVersionsCheckBox.getText(),
+        "Alpha",
+        "2010-07-02 -> 2010-12-03");
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.showInfdevVersionsCheckBox,
+        this.showInfdevVersionsCheckBox.getText(),
+        "Infdev",
+        "2010-06-29 -> 2010-06-30");
+    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        this.useVersionLabel,
+        this.useVersionLabel.getText());
   }
 
   private GroupLayout getGroupLayout() {
@@ -69,5 +90,10 @@ public class VersionGroupBox extends JGroupBox {
             )
     );
     return groupLayout;
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent event) {
+    Object source = event.getSource();
   }
 }
