@@ -54,8 +54,7 @@ fixing a bug, you can do so by following these steps:
 ## Building from Source
 
 This project uses [Maven](https://maven.apache.org/) to manage dependencies and build the
-application. To build the project, you will need to have [Maven](https://maven.apache.org/)
-installed on your computer. To build the project from source, follow these steps:
+application. To build the project from source, follow these steps:
 
 1. Clone the repository to your computer by using [Git](https://git-scm.com/) or by downloading the
    source code as a `.zip` file.
