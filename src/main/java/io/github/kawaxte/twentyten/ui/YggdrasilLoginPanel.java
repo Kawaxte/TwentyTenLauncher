@@ -8,6 +8,7 @@ import io.github.kawaxte.twentyten.misc.ui.TransparentJButton;
 import io.github.kawaxte.twentyten.misc.ui.TransparentJCheckBox;
 import io.github.kawaxte.twentyten.ui.options.OptionsDialog;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
@@ -83,20 +84,24 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
         this.loginButton.getText());
   }
 
-  private GroupLayout getGroupLayout() {
+  private LayoutManager getGroupLayout() {
     val groupLayout = new GroupLayout(this);
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
     groupLayout.setHorizontalGroup(
         groupLayout.createParallelGroup(Alignment.CENTER)
-            .addComponent(this.microsoftLoginButton, GroupLayout.DEFAULT_SIZE,
-                GroupLayout.DEFAULT_SIZE,
+            .addComponent(this.microsoftLoginButton,
+                0,
+                0,
                 Short.MAX_VALUE)
             .addGroup(groupLayout.createSequentialGroup()
                 .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(this.emailLabel, Alignment.TRAILING)
-                    .addComponent(this.passwordLabel, Alignment.TRAILING)
-                    .addComponent(this.optionsButton, Alignment.TRAILING))
+                    .addComponent(this.emailLabel,
+                        Alignment.TRAILING)
+                    .addComponent(this.passwordLabel,
+                        Alignment.TRAILING)
+                    .addComponent(this.optionsButton,
+                        Alignment.TRAILING))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
                     .addComponent(this.usernameField)
@@ -104,14 +109,15 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
                     .addComponent(this.rememberPasswordCheckBox)))
             .addGroup(groupLayout.createSequentialGroup()
                 .addComponent(this.linkLabel)
-                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
+                .addPreferredGap(ComponentPlacement.RELATED,
+                    GroupLayout.DEFAULT_SIZE,
                     Short.MAX_VALUE)
-                .addComponent(this.loginButton))
-    );
+                .addComponent(this.loginButton)));
     groupLayout.setVerticalGroup(
         groupLayout.createSequentialGroup()
             .addComponent(this.microsoftLoginButton)
-            .addPreferredGap(ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE,
+            .addPreferredGap(ComponentPlacement.UNRELATED,
+                GroupLayout.DEFAULT_SIZE,
                 Short.MAX_VALUE)
             .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.emailLabel)
@@ -124,19 +130,24 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
                 .addComponent(this.rememberPasswordCheckBox))
             .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.linkLabel)
-                .addComponent(this.loginButton))
-    );
+                .addComponent(this.loginButton)));
     return groupLayout;
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    Object source = event.getSource();
+    val source = event.getSource();
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(() -> {
         val optionsDialog = new OptionsDialog(SwingUtilities.getWindowAncestor(this));
         optionsDialog.setVisible(true);
       });
     }
+    /*
+    if (Objects.equals(source, this.loginButton)) {
+      LauncherUtils.addPanel(this.getParent(),
+          new LauncherOfflinePanel());
+    }
+     */
   }
 }
