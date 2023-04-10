@@ -1,5 +1,6 @@
 package io.github.kawaxte.twentyten.util;
 
+import io.github.kawaxte.twentyten.Launcher.EPlatform;
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle.UTF8Control;
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
@@ -7,12 +8,9 @@ import java.awt.Container;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -61,7 +59,7 @@ public final class LauncherUtils {
 
     val workingDirFile = workingDirLookup.get(EPlatform.getPlatform()).toFile();
     if (!workingDirFile.exists() && !workingDirFile.mkdirs()) {
-      logger.warn("{} could not be created");
+      logger.error("'{}' could not be created", workingDirFile);
       return null;
     }
     return workingDirFile.toPath();
@@ -111,38 +109,6 @@ public final class LauncherUtils {
           ? MessageFormat.format("<html><u>{0}</u></html>",
           bundle.getString(key.replaceAll("<[^>]*>", "")))
           : bundle.getString(key), args));
-    }
-  }
-
-  public enum EPlatform {
-    LINUX("aix,", "nix", "nux"),
-    MACOS("darwin", "mac"),
-    WINDOWS("win");
-
-    private static final String OS_NAME = System.getProperty("os.name");
-    private final List<String> osNames;
-
-    EPlatform(String... osNames) {
-      this.osNames = Collections.unmodifiableList(Arrays.asList(osNames));
-    }
-
-    public static EPlatform getPlatform() {
-      return Arrays.stream(values()).filter(platform -> platform.osNames.stream()
-              .anyMatch(osName -> OS_NAME.toLowerCase(Locale.ROOT).contains(osName)))
-          .findFirst()
-          .orElse(null);
-    }
-
-    public static boolean isWindows() {
-      return Objects.equals(WINDOWS, getPlatform());
-    }
-
-    public static boolean isMacOs() {
-      return Objects.equals(MACOS, getPlatform());
-    }
-
-    public static boolean isLinux() {
-      return Objects.equals(LINUX, getPlatform());
     }
   }
 }
