@@ -10,8 +10,6 @@ This project lets you play older versions of Minecraft that were released betwee
 January 2011. It's named after the year the original Minecraft launcher was released, and it's
 designed to give you an authentic experience of playing Minecraft as it was in the past.
 
----
-
 ## Features
 
 - Play different versions of Minecraft from the past, including versions from June 2010 up to
