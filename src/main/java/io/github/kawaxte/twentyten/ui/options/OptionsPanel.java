@@ -1,13 +1,15 @@
 package io.github.kawaxte.twentyten.ui.options;
 
 import io.github.kawaxte.twentyten.util.LauncherUtils;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.LayoutStyle;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 import lombok.val;
 
@@ -40,38 +42,6 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.updateComponentKeyValues();
   }
 
-  private GroupLayout getGroupLayout() {
-    val groupLayout = new GroupLayout(this);
-    groupLayout.setAutoCreateContainerGaps(true);
-    groupLayout.setAutoCreateGaps(true);
-    groupLayout.setHorizontalGroup(
-        groupLayout.createSequentialGroup()
-            .addGroup(groupLayout.createParallelGroup()
-                .addComponent(this.languageGroupBox)
-                .addComponent(this.versionGroupBox)
-                .addGroup(groupLayout.createSequentialGroup()
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                        GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGap(0, 0, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(this.okButton, 75, 75, 75)
-                    .addComponent(this.cancelButton, 75, 75, 75)
-                    .addComponent(this.applyButton, 75, 75, 75)
-                )
-            )
-    );
-    groupLayout.setVerticalGroup(
-        groupLayout.createSequentialGroup()
-            .addComponent(this.languageGroupBox)
-            .addComponent(this.versionGroupBox)
-            .addGroup(groupLayout.createParallelGroup()
-                .addComponent(this.okButton)
-                .addComponent(this.cancelButton)
-                .addComponent(this.applyButton)
-            )
-    );
-    return groupLayout;
-  }
-
   private void updateComponentKeyValues() {
     LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
         this.languageGroupBox,
@@ -88,6 +58,41 @@ public class OptionsPanel extends JPanel implements ActionListener {
     LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
         this.applyButton,
         this.applyButton.getText());
+  }
+
+  private LayoutManager getGroupLayout() {
+    val groupLayout = new GroupLayout(this);
+    groupLayout.setAutoCreateContainerGaps(true);
+    groupLayout.setAutoCreateGaps(true);
+    groupLayout.setHorizontalGroup(
+        groupLayout.createSequentialGroup()
+            .addGroup(groupLayout.createParallelGroup()
+                .addComponent(this.languageGroupBox)
+                .addComponent(this.versionGroupBox)
+                .addGroup(groupLayout.createSequentialGroup()
+                    .addPreferredGap(ComponentPlacement.RELATED,
+                        GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.okButton,
+                        0,
+                        0,
+                        Short.MAX_VALUE)
+                    .addComponent(this.cancelButton,
+                        0,
+                        0,
+                        Short.MAX_VALUE)
+                    .addComponent(this.applyButton,
+                        0,
+                        0,
+                        Short.MAX_VALUE))));
+    groupLayout.setVerticalGroup(
+        groupLayout.createSequentialGroup()
+            .addComponent(this.languageGroupBox)
+            .addComponent(this.versionGroupBox)
+            .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+                .addComponent(this.okButton)
+                .addComponent(this.cancelButton)
+                .addComponent(this.applyButton)));
+    return groupLayout;
   }
 
   @Override
