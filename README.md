@@ -75,11 +75,11 @@ fixing a bug, you can do so by following these steps:
 This project uses [Apache Maven](https://maven.apache.org/) to manage dependencies and build the
 application. To build the application from source, follow these steps:
 
-2. Clone the repository to your computer by using [Git](https://git-scm.com/) or by downloading the
+1. Clone the repository to your computer by using [Git](https://git-scm.com/) or by downloading the
    source code as a `.zip` file.
-3. Load the project into your IDE of choice or open a terminal in the project directory.
-4. Make any changes you want to the source code.
-5. Run the command `mvn clean package shade:shade` to build the application or use the Run
+2. Load the project into your IDE of choice or open a terminal in the project directory.
+3. Make any changes you want to the source code.
+4. Run the command `mvn clean package shade:shade` to build the application or use the Run
    Configuration
    in your IDE.
 
