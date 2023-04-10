@@ -18,6 +18,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,6 +65,22 @@ public final class LauncherUtils {
       return null;
     }
     return workingDirFile.toPath();
+  }
+
+  public static void addPanel(Container c1, JComponent c2) {
+    if (SwingUtilities.isEventDispatchThread()) {
+      c1.removeAll();
+      c1.add(c2);
+      c1.revalidate();
+      c1.repaint();
+    } else {
+      SwingUtilities.invokeLater(() -> {
+        c1.removeAll();
+        c1.add(c2);
+        c1.revalidate();
+        c1.repaint();
+      });
+    }
   }
 
   public static void updateContainerKeyValue(UTF8ResourceBundle bundle, Container c, String key,
