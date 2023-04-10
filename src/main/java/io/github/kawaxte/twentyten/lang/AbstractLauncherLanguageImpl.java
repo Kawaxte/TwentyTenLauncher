@@ -1,7 +1,7 @@
 package io.github.kawaxte.twentyten.lang;
 
+import io.github.kawaxte.twentyten.lang.LauncherLanguage.ELanguage;
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.util.LauncherLanguageUtils.ELanguage;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.io.IOException;
 import java.io.InputStreamReader;
