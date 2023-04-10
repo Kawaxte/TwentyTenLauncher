@@ -41,8 +41,7 @@ quick and easy way to show your support.
 ### Forking and Making Pull Requests
 
 If you are a developer and would like to contribute by adding a new feature or
-fixing a bug, we encourage you to fork our repository on GitHub and make a pull request with your
-changes. Here's how to get started:
+fixing a bug, you can do so by following these steps:
 
 1. Make a copy of this repository by forking it on GitHub.
 2. Make the changes you want in a new branch of your forked repository.
@@ -55,7 +54,8 @@ changes. Here's how to get started:
 ## Building from Source
 
 This project uses [Maven](https://maven.apache.org/) to manage dependencies and build the
-application. To build the project, you will need to have Maven installed on your computer.
+application. To build the project, you will need to have [Maven](https://maven.apache.org/)
+installed on your computer. To build the project from source, follow these steps:
 
 1. Clone the repository to your computer by using [Git](https://git-scm.com/) or by downloading the
    source code as a `.zip` file.
