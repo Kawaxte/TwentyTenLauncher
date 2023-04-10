@@ -17,44 +17,45 @@ import lombok.val;
 
 public class UTF8ResourceBundle extends ResourceBundle {
 
-  private final Map<String, String> lookup;
+  private final Map<String, String> utf8Lookup;
 
   public UTF8ResourceBundle() {
-    this.lookup = new HashMap<>();
+    this.utf8Lookup = new HashMap<>();
   }
 
   public UTF8ResourceBundle(InputStream is) throws IOException {
-    this.lookup = new HashMap<>();
+    this.utf8Lookup = new HashMap<>();
 
-    try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+    try (val br = new BufferedReader(new InputStreamReader(is,
+        StandardCharsets.UTF_8))) {
       val properties = new Properties();
       properties.load(br);
-
-      properties.stringPropertyNames()
-          .forEach(key -> this.lookup.put(key, properties.getProperty(key)));
+      properties.stringPropertyNames().forEach(key ->
+          this.utf8Lookup.put(key,
+              properties.getProperty(key)));
     }
   }
 
   public UTF8ResourceBundle(Reader reader) throws IOException {
-    this.lookup = new HashMap<>();
+    this.utf8Lookup = new HashMap<>();
 
     try (val br = new BufferedReader(reader)) {
       val properties = new Properties();
       properties.load(br);
-
-      properties.stringPropertyNames()
-          .forEach(key -> this.lookup.put(key, properties.getProperty(key)));
+      properties.stringPropertyNames().forEach(key ->
+          this.utf8Lookup.put(key,
+              properties.getProperty(key)));
     }
   }
 
   @Override
   protected Object handleGetObject(String key) {
-    return this.lookup.get(key);
+    return this.utf8Lookup.get(key);
   }
 
   @Override
   public Enumeration<String> getKeys() {
-    return Collections.enumeration(this.lookup.keySet());
+    return Collections.enumeration(this.utf8Lookup.keySet());
   }
 
   public static class UTF8Control extends Control {
@@ -62,9 +63,8 @@ public class UTF8ResourceBundle extends ResourceBundle {
     @Override
     public ResourceBundle newBundle(String baseName, Locale locale, String format,
         ClassLoader loader, boolean reload) throws IOException {
-      String bundleName = this.toBundleName(baseName, locale);
-      String resourceName = this.toResourceName(bundleName, "properties");
-
+      val bundleName = this.toBundleName(baseName, locale);
+      val resourceName = this.toResourceName(bundleName, "properties");
       try (val is = loader.getResourceAsStream(resourceName)) {
         return new UTF8ResourceBundle(is);
       }
