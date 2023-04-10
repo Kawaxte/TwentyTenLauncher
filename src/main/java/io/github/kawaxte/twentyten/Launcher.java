@@ -1,5 +1,6 @@
 package io.github.kawaxte.twentyten;
 
+import io.github.kawaxte.twentyten.conf.LauncherConfig;
 import io.github.kawaxte.twentyten.lang.LauncherLanguage;
 import io.github.kawaxte.twentyten.ui.LauncherFrame;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
@@ -28,23 +29,20 @@ public final class Launcher {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (ReflectiveOperationException roe) {
-      LauncherUtils.logger.error("Failed to set '{}' as look and feel on '{}'",
-          roe.getMessage(),
-          System.getProperty("os.name"),
+      LauncherUtils.logger.error("Failed to set look and feel",
           roe);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      LauncherUtils.logger.error("'{}' is not supported on '{}'",
+      LauncherUtils.logger.error("Look and feel '{}' is not supported",
           UIManager.getLookAndFeel().getName(),
-          System.getProperty("os.name"),
           ulafe);
     } finally {
-      LauncherUtils.logger.info("Using '{}' as look and feel on '{}'",
-          UIManager.getLookAndFeel().getName(),
-          System.getProperty("os.name"));
+      LauncherUtils.logger.info("Using '{}' as look and feel",
+          UIManager.getLookAndFeel().getName());
     }
 
     LauncherLanguage.loadLanguage("messages",
         System.getProperty("user.language"));
+    LauncherConfig.loadConfig();
 
     SwingUtilities.invokeLater(() -> {
       val launcherFrame = new LauncherFrame();
