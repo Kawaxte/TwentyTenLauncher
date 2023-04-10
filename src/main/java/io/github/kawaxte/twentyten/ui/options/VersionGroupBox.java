@@ -2,6 +2,7 @@ package io.github.kawaxte.twentyten.ui.options;
 
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.GroupLayout;
@@ -63,7 +64,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
         this.useVersionLabel.getText());
   }
 
-  private GroupLayout getGroupLayout() {
+  private LayoutManager getGroupLayout() {
     val groupLayout = new GroupLayout(this);
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
@@ -75,10 +76,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
                 .addComponent(this.showInfdevVersionsCheckBox)
                 .addGroup(groupLayout.createSequentialGroup()
                     .addComponent(this.useVersionLabel)
-                    .addComponent(this.versionComboBox)
-                )
-            )
-    );
+                    .addComponent(this.versionComboBox))));
     groupLayout.setVerticalGroup(
         groupLayout.createSequentialGroup()
             .addComponent(this.showBetaVersionsCheckBox)
@@ -86,14 +84,12 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
             .addComponent(this.showInfdevVersionsCheckBox)
             .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.useVersionLabel)
-                .addComponent(this.versionComboBox)
-            )
-    );
+                .addComponent(this.versionComboBox)));
     return groupLayout;
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    Object source = event.getSource();
+    val source = event.getSource();
   }
 }
