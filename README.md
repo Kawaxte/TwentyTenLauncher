@@ -1,10 +1,8 @@
 # TwentyTen Launcher
 
-![Java](https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge)
-![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?style=for-the-badge)
-
-![GitHub Latest](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&label=latest&color=green&style=for-the-badge)
-![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&label=pre-release&color=orange&style=for-the-badge)
+![GitHub Latest](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&style=for-the-badge)
+![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)
+![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?logo=github&style=for-the-badge)
 
 This project lets you play older versions of Minecraft that were released between June 2010 and
 January 2011. It's named after the year the original Minecraft launcher was released, and it's
@@ -27,10 +25,18 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 
 ## Contributing
 
+![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge&color=181717)
+![GitHub Watchers](https://img.shields.io/github/watchers/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge&color=181717)
+![GitHub Forks](https://img.shields.io/github/forks/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge&color=181717)
+![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge&color=181717)
+
 If you find this project useful or interesting, please consider giving it a ⭐. It's a
 quick and easy way to show your support.
 
 ### Reporting Issues or Suggesting Features
+
+![GitHub Issues (Open)](https://img.shields.io/github/issues/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+![GitHub Issues (Closed)](https://img.shields.io/github/issues-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
 
 1. Go to the [issue tracker](https://github.com/Kawaxte/TwentyTenLauncher/issues) on this
    repository.
@@ -39,6 +45,9 @@ quick and easy way to show your support.
 4. Click the `Submit new issue` button to create the issue.
 
 ### Forking and Making Pull Requests
+
+![GitHub Pull Requests (Open)](https://img.shields.io/github/issues-pr/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+![GitHub Pull Requests (Closed)](https://img.shields.io/github/issues-pr-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
 
 If you are a developer and would like to contribute by adding a new feature or
 fixing a bug, you can do so by following these steps:
@@ -53,14 +62,25 @@ fixing a bug, you can do so by following these steps:
 
 ## Building from Source
 
-This project uses [Maven](https://maven.apache.org/) to manage dependencies and build the
-application. To build the project from source, follow these steps:
+![Java](https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge)
+![Maven](https://img.shields.io/badge/Maven-3.8.1-blue?logo=apachemaven&style=for-the-badge&color=C71A36)
+![Git](https://img.shields.io/badge/Git-2.40.0-blue?logo=git&style=for-the-badge&color=F05032)
 
-1. Clone the repository to your computer by using [Git](https://git-scm.com/) or by downloading the
+This project uses [Apache Maven](https://maven.apache.org/) to manage dependencies and build the
+application. To build the application from source, follow these steps:
+
+2. Clone the repository to your computer by using [Git](https://git-scm.com/) or by downloading the
    source code as a `.zip` file.
-2. Load the project into your IDE of choice or open a terminal in the project directory.
-3. Make any changes you want to the source code.
-4. Run the command `mvn clean package shade:shade` to build the project or use the Run Configuration
+3. Load the project into your IDE of choice or open a terminal in the project directory.
+4. Make any changes you want to the source code.
+5. Run the command `mvn clean package shade:shade` to build the application or use the Run
+   Configuration
    in your IDE.
 
 The finished build will be saved as a `-shaded.jar` file in the `target` directory.
+
+## License
+
+![GitHub License](https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/). 
