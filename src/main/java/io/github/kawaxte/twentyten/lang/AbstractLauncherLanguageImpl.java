@@ -1,6 +1,7 @@
 package io.github.kawaxte.twentyten.lang;
 
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.util.LauncherLanguageUtils.ELanguage;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,13 +31,15 @@ public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
       try (val is = url.openConnection().getInputStream();
           val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
         this.utf8Bundle = new UTF8ResourceBundle(isr);
-
-        LauncherUtils.logger.info("Using locale {}",
-            isoCode);
       } catch (IOException ioe) {
-        LauncherUtils.logger.error("Failed to load locale {}",
-            isoCode,
+        LauncherUtils.logger.error("Failed to load '{}' language file for '{}'",
+            languageFilePath.getFileName(),
+            ELanguage.getLanguage(isoCode).getName(),
             ioe);
+      } finally {
+        LauncherUtils.logger.info("Using '{}' as language file for '{}'",
+            languageFilePath.getFileName(),
+            ELanguage.getLanguage(isoCode).getName());
       }
     });
   }
