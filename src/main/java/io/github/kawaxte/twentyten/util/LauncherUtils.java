@@ -1,13 +1,23 @@
 package io.github.kawaxte.twentyten.util;
 
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle.UTF8Control;
+import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
+import java.awt.Container;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import javax.swing.AbstractButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +34,12 @@ public final class LauncherUtils {
   }
 
   private LauncherUtils() {
+  }
+
+  public static UTF8ResourceBundle getUtf8Bundle() {
+    return (UTF8ResourceBundle) UTF8ResourceBundle.getBundle("messages",
+        Locale.forLanguageTag(System.getProperty("user.language")),
+        new UTF8Control());
   }
 
   public static Path getWorkingDir() {
@@ -48,6 +64,37 @@ public final class LauncherUtils {
       return null;
     }
     return workingDirFile.toPath();
+  }
+
+  public static void updateContainerKeyValue(UTF8ResourceBundle bundle, Container c, String key,
+      Object... args) {
+    if (c instanceof JFrame) {
+      val frame = (JFrame) c;
+      frame.setTitle(MessageFormat.format(bundle.getString(key), args));
+    }
+    if (c instanceof JDialog) {
+      val dialog = (JDialog) c;
+      dialog.setTitle(MessageFormat.format(bundle.getString(key), args));
+    }
+  }
+
+  public static void updateComponentKeyValue(UTF8ResourceBundle bundle, JComponent c, String key,
+      Object... args) {
+    if (c instanceof AbstractButton) {
+      val button = (AbstractButton) c;
+      button.setText(MessageFormat.format(bundle.getString(key), args));
+    }
+    if (c instanceof JGroupBox) {
+      val groupBox = (JGroupBox) c;
+      groupBox.setTitledBorder(MessageFormat.format(bundle.getString(key), args));
+    }
+    if (c instanceof JLabel) {
+      val label = (JLabel) c;
+      label.setText(MessageFormat.format(key.matches("<html>.*</html>")
+          ? MessageFormat.format("<html><u>{0}</u></html>",
+          bundle.getString(key.replaceAll("<[^>]*>", "")))
+          : bundle.getString(key), args));
+    }
   }
 
   public enum EPlatform {
