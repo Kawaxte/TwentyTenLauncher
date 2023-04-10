@@ -62,4 +62,6 @@ application. To build the project, you will need to have Maven installed on your
 2. Load the project into your IDE of choice or open a terminal in the project directory.
 3. Make any changes you want to the source code.
 4. Run the command `mvn clean package shade:shade` to build the project or use the Run Configuration
-   in your IDE. The finished build will be saved as a `-shaded.jar` file in the `target` directory.
+   in your IDE.
+
+The finished build will be saved as a `-shaded.jar` file in the `target` directory.
