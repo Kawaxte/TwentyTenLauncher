@@ -22,7 +22,7 @@ public abstract class AbstractLauncherConfig {
   String selectedVersion;
   String microsoftProfileId;
   String microsoftProfileName;
-  String microsoftProfileDemo;
+  boolean microsoftProfileDemo;
   String microsoftAccessToken;
   long microsoftAccessTokenExpiresIn;
   String microsoftRefreshToken;
@@ -57,13 +57,13 @@ public abstract class AbstractLauncherConfig {
         "en");
     this.showBetaVersionsSelected = Boolean.parseBoolean(
         properties.getProperty("showBetaVersionsSelected",
-            "true"));
+            String.valueOf(true)));
     this.showAlphaVersionsSelected = Boolean.parseBoolean(
         properties.getProperty("showAlphaVersionsSelected",
-            "false"));
+            String.valueOf(false)));
     this.showInfdevVersionsSelected = Boolean.parseBoolean(
         properties.getProperty("showInfdevVersionsSelected",
-            "false"));
+            String.valueOf(false)));
     this.selectedVersion = properties.getProperty("selectedVersion",
         "b1.1_02");
   }
@@ -73,13 +73,14 @@ public abstract class AbstractLauncherConfig {
         "");
     this.microsoftProfileName = properties.getProperty("microsoftProfileName",
         "");
-    this.microsoftProfileDemo = properties.getProperty("microsoftProfileDemo",
-        "");
+    this.microsoftProfileDemo = Boolean.parseBoolean(
+        properties.getProperty("microsoftProfileDemo",
+            String.valueOf(false)));
     this.microsoftAccessToken = properties.getProperty("microsoftAccessToken",
         "");
     this.microsoftAccessTokenExpiresIn = Long.parseLong(
         properties.getProperty("microsoftAccessTokenExpiresIn",
-            String.valueOf(0)));
+            String.valueOf(0L)));
     this.microsoftRefreshToken = properties.getProperty("microsoftRefreshToken",
         "");
     this.microsoftClientToken = properties.getProperty("microsoftClientToken",
@@ -110,47 +111,71 @@ public abstract class AbstractLauncherConfig {
         "");
   }
 
-  void setMicrosoftLoginProperties(LinkedProperties properties) {
-    properties.setProperty("microsoftProfileId",
-        this.microsoftProfileId);
-    properties.setProperty("microsoftProfileName",
-        this.microsoftProfileName);
-    properties.setProperty("microsoftProfileDemo",
-        this.microsoftProfileDemo);
-    properties.setProperty("microsoftAccessToken",
-        this.microsoftAccessToken);
-    properties.setProperty("microsoftAccessTokenExpiresIn",
-        String.valueOf(this.microsoftAccessTokenExpiresIn));
-    properties.setProperty("microsoftRefreshToken",
-        this.microsoftRefreshToken);
-    properties.setProperty("microsoftClientToken",
-        this.microsoftClientToken);
-  }
-
   void setYggdrasilLoginProperties(LinkedProperties properties) {
     properties.setProperty("yggdrasilUsername",
-        this.yggdrasilUsername);
+        this.yggdrasilUsername != null
+            ? this.yggdrasilUsername
+            : "");
     properties.setProperty("yggdrasilPassword",
-        this.yggdrasilPassword);
+        this.yggdrasilPassword != null
+            ? this.yggdrasilPassword
+            : "");
     properties.setProperty("yggdrasilRememberPasswordChecked",
         String.valueOf(this.yggdrasilRememberPasswordChecked));
     properties.setProperty("yggdrasilProfileId",
-        this.yggdrasilProfileId);
+        this.yggdrasilProfileId != null
+            ? this.yggdrasilProfileId
+            : "");
     properties.setProperty("yggdrasilProfileName",
-        this.yggdrasilProfileName);
+        this.yggdrasilProfileName != null
+            ? this.yggdrasilProfileName
+            : "");
     properties.setProperty("yggdrasilProfileLegacy",
         String.valueOf(this.yggdrasilProfileLegacy));
     properties.setProperty("yggdrasilProfileDemo",
         String.valueOf(this.yggdrasilProfileDemo));
     properties.setProperty("yggdrasilAccessToken",
-        this.yggdrasilAccessToken);
+        this.yggdrasilAccessToken != null
+            ? this.yggdrasilAccessToken
+            : "");
     properties.setProperty("yggdrasilClientToken",
-        this.yggdrasilClientToken);
+        this.yggdrasilClientToken != null
+            ? this.yggdrasilClientToken
+            : "");
+  }
+
+  void setMicrosoftLoginProperties(LinkedProperties properties) {
+    properties.setProperty("microsoftProfileId",
+        this.microsoftProfileId != null
+            ? this.microsoftProfileId
+            : "");
+    properties.setProperty("microsoftProfileName",
+        this.microsoftProfileName != null
+            ? this.microsoftProfileName
+            : "");
+    properties.setProperty("microsoftProfileDemo",
+        String.valueOf(this.microsoftProfileDemo));
+    properties.setProperty("microsoftAccessToken",
+        this.microsoftAccessToken != null
+            ? this.microsoftAccessToken
+            : "");
+    properties.setProperty("microsoftAccessTokenExpiresIn",
+        String.valueOf(this.microsoftAccessTokenExpiresIn));
+    properties.setProperty("microsoftRefreshToken",
+        this.microsoftRefreshToken != null
+            ? this.microsoftRefreshToken
+            : "");
+    properties.setProperty("microsoftClientToken",
+        this.microsoftClientToken != null
+            ? this.microsoftClientToken
+            : "");
   }
 
   void setOptionsProperties(LinkedProperties properties) {
     properties.setProperty("selectedLanguage",
-        this.selectedLanguage);
+        this.selectedLanguage != null
+            ? this.selectedLanguage
+            : "en");
     properties.setProperty("showBetaVersionsSelected",
         String.valueOf(this.showBetaVersionsSelected));
     properties.setProperty("showAlphaVersionsSelected",
@@ -158,7 +183,9 @@ public abstract class AbstractLauncherConfig {
     properties.setProperty("showInfdevVersionsSelected",
         String.valueOf(this.showInfdevVersionsSelected));
     properties.setProperty("selectedVersion",
-        this.selectedVersion);
+        this.selectedVersion != null
+            ? this.selectedVersion
+            : "b1.1_02");
   }
 
   public abstract void loadConfig() throws IOException;
