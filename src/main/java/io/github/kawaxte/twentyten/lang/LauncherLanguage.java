@@ -2,14 +2,12 @@ package io.github.kawaxte.twentyten.lang;
 
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.ui.options.LanguageGroupBox;
-import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import lombok.Getter;
 import lombok.val;
-import org.apache.logging.log4j.LogManager;
 
 public final class LauncherLanguage {
 
@@ -17,10 +15,6 @@ public final class LauncherLanguage {
   }
 
   public static Map<String, String> languageLookup;
-
-  static {
-    LauncherUtils.logger = LogManager.getLogger(LauncherLanguage.class);
-  }
 
   public static UTF8ResourceBundle getUtf8Bundle() {
     return AbstractLauncherLanguageImpl.INSTANCE.getUtf8Bundle();
