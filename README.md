@@ -40,6 +40,10 @@ quick and easy way to show your support.
 ![GitHub Issues (Open)](https://img.shields.io/github/issues/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
 ![GitHub Issues (Closed)](https://img.shields.io/github/issues-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
 
+If you find a bug or have a suggestion for a new feature, you can report (or suggest) it by
+following
+these steps:
+
 1. Go to the [issue tracker](https://github.com/Kawaxte/TwentyTenLauncher/issues) on this
    repository.
 2. Click the `New issue` button.
