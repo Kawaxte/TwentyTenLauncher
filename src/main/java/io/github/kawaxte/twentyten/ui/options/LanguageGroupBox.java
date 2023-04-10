@@ -1,7 +1,7 @@
 package io.github.kawaxte.twentyten.ui.options;
 
+import io.github.kawaxte.twentyten.lang.LauncherLanguage;
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
-import io.github.kawaxte.twentyten.util.LauncherOptionsUtils;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.awt.LayoutManager;
 import javax.swing.GroupLayout;
@@ -32,7 +32,7 @@ public class LanguageGroupBox extends JGroupBox {
 
     this.updateComponentKeyValues();
 
-    LauncherOptionsUtils.updateLanguageComboBox(this);
+    LauncherLanguage.updateLanguageComboBox(this);
   }
 
   private void updateComponentKeyValues() {
