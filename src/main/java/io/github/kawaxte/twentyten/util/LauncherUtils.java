@@ -59,7 +59,7 @@ public final class LauncherUtils {
 
     val workingDirFile = workingDirLookup.get(EPlatform.getPlatform()).toFile();
     if (!workingDirFile.exists() && !workingDirFile.mkdirs()) {
-      logger.error("'{}' could not be created", workingDirFile);
+      logger.warn("Directory '{}' could not be created", workingDirFile);
       return null;
     }
     return workingDirFile.toPath();
