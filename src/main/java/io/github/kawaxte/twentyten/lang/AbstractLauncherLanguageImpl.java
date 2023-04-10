@@ -32,13 +32,11 @@ public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
           val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
         this.utf8Bundle = new UTF8ResourceBundle(isr);
       } catch (IOException ioe) {
-        LauncherUtils.logger.error("Failed to load '{}' language file for '{}'",
-            languageFilePath.getFileName(),
+        LauncherUtils.logger.error("Failed to load language file '{}'",
             ELanguage.getLanguage(isoCode).getName(),
             ioe);
       } finally {
-        LauncherUtils.logger.info("Using '{}' as language file for '{}'",
-            languageFilePath.getFileName(),
+        LauncherUtils.logger.info("Using '{}' as language",
             ELanguage.getLanguage(isoCode).getName());
       }
     });
