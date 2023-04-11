@@ -5,6 +5,10 @@ import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle.UTF8Control;
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
 import java.awt.Container;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -109,6 +113,34 @@ public final class LauncherUtils {
           ? MessageFormat.format("<html><u>{0}</u></html>",
           bundle.getString(key.replaceAll("<[^>]*>", "")))
           : bundle.getString(key), args));
+    }
+  }
+
+  public static void openBrowser(URL url) {
+    try {
+      if (Desktop.isDesktopSupported()) {
+        Desktop.getDesktop().browse(url.toURI());
+      }
+    } catch (IOException ioe) {
+      LauncherUtils.logger.error("Failed to open '{}' in browser",
+          url,
+          ioe);
+    } catch (URISyntaxException urise) {
+      LauncherUtils.logger.error("Failed to parse '{}' as URI",
+          url,
+          urise);
+    }
+  }
+
+  public static void openDesktop(Path p) {
+    try {
+      if (Desktop.isDesktopSupported()) {
+        Desktop.getDesktop().open(p.toFile());
+      }
+    } catch (IOException ioe) {
+      LauncherUtils.logger.error("Failed to open '{}' in desktop",
+          p,
+          ioe);
     }
   }
 }
