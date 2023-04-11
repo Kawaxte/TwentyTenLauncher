@@ -137,6 +137,13 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
   @Override
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
+    /*
+    if (Objects.equals(source, this.microsoftLoginButton)) {
+      LauncherUtils.addPanel(this.getParent(),
+          new MicrosoftLoginPanel());
+    }
+
+     */
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(() -> {
         val optionsDialog = new OptionsDialog(SwingUtilities.getWindowAncestor(this));
