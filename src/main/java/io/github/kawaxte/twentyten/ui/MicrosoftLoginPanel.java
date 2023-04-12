@@ -1,5 +1,8 @@
 package io.github.kawaxte.twentyten.ui;
 
+import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
+import io.github.kawaxte.twentyten.lang.LauncherLanguage;
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.misc.ui.CustomJPanel;
 import io.github.kawaxte.twentyten.misc.ui.TransparentJButton;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
@@ -13,21 +16,17 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import lombok.val;
-import org.apache.logging.log4j.LogManager;
 
 public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
+  public static MicrosoftLoginPanel instance;
   private final JLabel statusLabel;
   private final JLabel userCodeLabel;
   private final JProgressBar expiresInProgressBar;
   private final TransparentJButton openBrowserButton;
   private final TransparentJButton cancelButton;
   private URL verificationUri;
-
-  static {
-    LauncherUtils.logger = LogManager.getLogger(MicrosoftLoginPanel.class);
-  }
 
   {
     this.statusLabel = new JLabel("mlp.statusLabel",
@@ -42,6 +41,7 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
   public MicrosoftLoginPanel() {
     super(true);
 
+    MicrosoftLoginPanel.instance = this;
     this.userCodeLabel.setFont(this.userCodeLabel.getFont().deriveFont(24f));
 
     this.openBrowserButton.addActionListener(this);
@@ -49,7 +49,10 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
 
     this.setLayout(this.getGroupLayout());
 
-    this.updateComponentKeyValues();
+    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
+        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+        : LauncherLanguage.getUtf8Bundle());
   }
 
   public MicrosoftLoginPanel(String userCode, int expiresIn, URL verificationUri) {
@@ -61,16 +64,16 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
     this.verificationUri = verificationUri;
   }
 
-  private void updateComponentKeyValues() {
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.statusLabel,
-        this.statusLabel.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        "mlp.statusLabel");
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.openBrowserButton,
-        this.openBrowserButton.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        "mlp.openBrowserButton");
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.cancelButton,
-        this.cancelButton.getText());
+        "mlp.cancelButton");
   }
 
   private LayoutManager getGroupLayout() {
