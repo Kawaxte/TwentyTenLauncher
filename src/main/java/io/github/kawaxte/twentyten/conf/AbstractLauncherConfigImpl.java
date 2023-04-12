@@ -1,7 +1,6 @@
 package io.github.kawaxte.twentyten.conf;
 
 import io.github.kawaxte.twentyten.misc.LinkedProperties;
-import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,13 +9,18 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import lombok.val;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
 
   public static final AbstractLauncherConfigImpl INSTANCE;
+  static Logger logger;
 
   static {
     INSTANCE = new AbstractLauncherConfigImpl();
+
+    logger = LogManager.getLogger(AbstractLauncherConfigImpl.class);
   }
 
   @Override
@@ -32,10 +36,10 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
         this.getOptionsProperties(linkedProperties);
         return;
       } catch (FileNotFoundException fnfe) {
-        LauncherUtils.logger.warn("Config file '{}' not found",
+        logger.warn("Config file '{}' not found",
             this.getConfigFilePath().getFileName());
       } finally {
-        LauncherUtils.logger.info("Loading config file '{}'",
+        logger.info("Loading config file '{}'",
             this.getConfigFilePath().getFileName());
       }
     }
@@ -63,11 +67,11 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
 
       fos.flush();
     } catch (FileNotFoundException fnfe) {
-      LauncherUtils.logger.error("Config file '{}' not found",
+      logger.error("Config file '{}' not found",
           this.getConfigFilePath().getFileName(),
           fnfe);
     } finally {
-      LauncherUtils.logger.info("Saving config file '{}'",
+      logger.info("Saving config file '{}'",
           this.getConfigFilePath().getFileName());
     }
   }
