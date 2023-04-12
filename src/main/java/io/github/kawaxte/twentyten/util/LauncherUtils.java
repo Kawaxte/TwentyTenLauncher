@@ -2,7 +2,6 @@ package io.github.kawaxte.twentyten.util;
 
 import io.github.kawaxte.twentyten.Launcher.EPlatform;
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle.UTF8Control;
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -14,7 +13,6 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -22,13 +20,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import lombok.val;
+import lombok.var;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public final class LauncherUtils {
 
   public static final Path WORKING_DIR_PATH;
-  public static Logger logger;
+  static Logger logger;
 
   static {
     WORKING_DIR_PATH = getWorkingDir();
@@ -37,12 +36,6 @@ public final class LauncherUtils {
   }
 
   private LauncherUtils() {
-  }
-
-  public static UTF8ResourceBundle getUtf8Bundle() {
-    return (UTF8ResourceBundle) UTF8ResourceBundle.getBundle("messages",
-        Locale.forLanguageTag(System.getProperty("user.language")),
-        new UTF8Control());
   }
 
   public static Path getWorkingDir() {
@@ -100,19 +93,16 @@ public final class LauncherUtils {
   public static void updateComponentKeyValue(UTF8ResourceBundle bundle, JComponent c, String key,
       Object... args) {
     if (c instanceof AbstractButton) {
-      val button = (AbstractButton) c;
+      var button = (AbstractButton) c;
       button.setText(MessageFormat.format(bundle.getString(key), args));
     }
     if (c instanceof JGroupBox) {
-      val groupBox = (JGroupBox) c;
+      var groupBox = (JGroupBox) c;
       groupBox.setTitledBorder(MessageFormat.format(bundle.getString(key), args));
     }
     if (c instanceof JLabel) {
-      val label = (JLabel) c;
-      label.setText(MessageFormat.format(key.matches("<html>.*</html>")
-          ? MessageFormat.format("<html><u>{0}</u></html>",
-          bundle.getString(key.replaceAll("<[^>]*>", "")))
-          : bundle.getString(key), args));
+      var label = (JLabel) c;
+      label.setText(MessageFormat.format(bundle.getString(key), args));
     }
   }
 
