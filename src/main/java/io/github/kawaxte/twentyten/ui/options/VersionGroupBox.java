@@ -1,10 +1,14 @@
 package io.github.kawaxte.twentyten.ui.options;
 
+import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
+import io.github.kawaxte.twentyten.lang.LauncherLanguage;
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
@@ -16,6 +20,7 @@ import lombok.val;
 public class VersionGroupBox extends JGroupBox implements ActionListener {
 
   public static final long serialVersionUID = 1L;
+  public static VersionGroupBox instance;
   private final JCheckBox showBetaVersionsCheckBox;
   private final JCheckBox showAlphaVersionsCheckBox;
   private final JCheckBox showInfdevVersionsCheckBox;
@@ -34,34 +39,38 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
   public VersionGroupBox() {
     super("vgb.title", true);
 
+    VersionGroupBox.instance = this;
     this.setLayout(this.getGroupLayout());
 
     this.showBetaVersionsCheckBox.addActionListener(this);
     this.showAlphaVersionsCheckBox.addActionListener(this);
     this.showInfdevVersionsCheckBox.addActionListener(this);
 
-    this.updateComponentKeyValues();
+    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
+        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+        : LauncherLanguage.getUtf8Bundle());
   }
 
-  private void updateComponentKeyValues() {
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.showBetaVersionsCheckBox,
-        this.showBetaVersionsCheckBox.getText(),
+        "vgb.showVersionsCheckBox",
         "Beta",
         "2010-12-20 -> 2011-01-21");
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.showAlphaVersionsCheckBox,
-        this.showAlphaVersionsCheckBox.getText(),
+        "vgb.showVersionsCheckBox",
         "Alpha",
         "2010-07-02 -> 2010-12-03");
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.showInfdevVersionsCheckBox,
-        this.showInfdevVersionsCheckBox.getText(),
+        "vgb.showVersionsCheckBox",
         "Infdev",
         "2010-06-29 -> 2010-06-30");
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.useVersionLabel,
-        this.useVersionLabel.getText());
+        "vgb.useVersionLabel");
   }
 
   private LayoutManager getGroupLayout() {
