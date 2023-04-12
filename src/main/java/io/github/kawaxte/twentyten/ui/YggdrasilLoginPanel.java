@@ -1,9 +1,12 @@
 package io.github.kawaxte.twentyten.ui;
 
-import io.github.kawaxte.twentyten.misc.ui.CustomJLabel;
+import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
+import io.github.kawaxte.twentyten.lang.LauncherLanguage;
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.misc.ui.CustomJPanel;
 import io.github.kawaxte.twentyten.misc.ui.CustomJPasswordField;
 import io.github.kawaxte.twentyten.misc.ui.CustomJTextField;
+import io.github.kawaxte.twentyten.misc.ui.JHyperlink;
 import io.github.kawaxte.twentyten.misc.ui.TransparentJButton;
 import io.github.kawaxte.twentyten.misc.ui.TransparentJCheckBox;
 import io.github.kawaxte.twentyten.ui.options.OptionsDialog;
@@ -14,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -21,67 +25,71 @@ import lombok.val;
 
 public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener {
 
+  public static YggdrasilLoginPanel instance;
   private static final long serialVersionUID = 1L;
   private final TransparentJButton microsoftLoginButton;
-  private final CustomJLabel emailLabel;
-  private final CustomJLabel passwordLabel;
+  private final JLabel usernameLabel;
+  private final JLabel passwordLabel;
   private final CustomJTextField usernameField;
   private final CustomJPasswordField passwordField;
   private final TransparentJButton optionsButton;
   private final TransparentJCheckBox rememberPasswordCheckBox;
-  private final CustomJLabel linkLabel;
+  private final JHyperlink linkLabel;
   private final TransparentJButton loginButton;
 
   {
-    this.microsoftLoginButton = new TransparentJButton("ylp.microsoftButton");
-    this.emailLabel = new CustomJLabel("ylp.usernameLabel",
+    this.microsoftLoginButton = new TransparentJButton("ylp.microsoftLoginButton");
+    this.usernameLabel = new JLabel("ylp.usernameLabel",
         SwingConstants.RIGHT);
-    this.passwordLabel = new CustomJLabel("ylp.passwordLabel",
+    this.passwordLabel = new JLabel("ylp.passwordLabel",
         SwingConstants.RIGHT);
     this.usernameField = new CustomJTextField(20);
     this.passwordField = new CustomJPasswordField(20);
     this.optionsButton = new TransparentJButton("ylp.optionsButton");
     this.rememberPasswordCheckBox = new TransparentJCheckBox("ylp.rememberPasswordCheckBox");
-    this.linkLabel = new CustomJLabel("ylp.linkLabel.signup",
-        SwingConstants.LEFT,
-        CustomJLabel.HYPERLINK);
+    this.linkLabel = new JHyperlink("ylp.linkLabel.signup",
+        SwingConstants.LEFT);
     this.loginButton = new TransparentJButton("ylp.loginButton");
   }
 
   public YggdrasilLoginPanel() {
     super(true);
 
+    YggdrasilLoginPanel.instance = this;
     this.setLayout(this.getGroupLayout());
 
     this.microsoftLoginButton.addActionListener(this);
     this.optionsButton.addActionListener(this);
     this.loginButton.addActionListener(this);
 
-    this.updateComponentKeyValues();
+    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
+        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+        : LauncherLanguage.getUtf8Bundle());
   }
 
-  private void updateComponentKeyValues() {
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.microsoftLoginButton,
-        this.microsoftLoginButton.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
-        this.emailLabel,
-        this.emailLabel.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        "ylp.microsoftLoginButton");
+    LauncherUtils.updateComponentKeyValue(bundle,
+        this.usernameLabel,
+        "ylp.usernameLabel");
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.passwordLabel,
-        this.passwordLabel.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        "ylp.passwordLabel");
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.optionsButton,
-        this.optionsButton.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        "ylp.optionsButton");
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.rememberPasswordCheckBox,
-        this.rememberPasswordCheckBox.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        "ylp.rememberPasswordCheckBox");
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.linkLabel,
-        this.linkLabel.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        "ylp.linkLabel.signup");
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.loginButton,
-        this.loginButton.getText());
+        "ylp.loginButton");
   }
 
   private LayoutManager getGroupLayout() {
@@ -96,7 +104,7 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
                 Short.MAX_VALUE)
             .addGroup(groupLayout.createSequentialGroup()
                 .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(this.emailLabel,
+                    .addComponent(this.usernameLabel,
                         Alignment.TRAILING)
                     .addComponent(this.passwordLabel,
                         Alignment.TRAILING)
@@ -120,7 +128,7 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
                 GroupLayout.DEFAULT_SIZE,
                 Short.MAX_VALUE)
             .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(this.emailLabel)
+                .addComponent(this.usernameLabel)
                 .addComponent(this.usernameField))
             .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                 .addComponent(this.passwordLabel)
