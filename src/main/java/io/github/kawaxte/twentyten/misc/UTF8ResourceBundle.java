@@ -30,9 +30,8 @@ public class UTF8ResourceBundle extends ResourceBundle {
         StandardCharsets.UTF_8))) {
       val properties = new Properties();
       properties.load(br);
-      properties.stringPropertyNames().forEach(key ->
-          this.utf8Lookup.put(key,
-              properties.getProperty(key)));
+      properties.stringPropertyNames().forEach(key -> this.utf8Lookup.put(key,
+          properties.getProperty(key)));
     }
   }
 
@@ -42,9 +41,8 @@ public class UTF8ResourceBundle extends ResourceBundle {
     try (val br = new BufferedReader(reader)) {
       val properties = new Properties();
       properties.load(br);
-      properties.stringPropertyNames().forEach(key ->
-          this.utf8Lookup.put(key,
-              properties.getProperty(key)));
+      properties.stringPropertyNames().forEach(key -> this.utf8Lookup.put(key,
+          properties.getProperty(key)));
     }
   }
 
