@@ -1,9 +1,12 @@
 package io.github.kawaxte.twentyten.ui.options;
 
+import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
 import io.github.kawaxte.twentyten.lang.LauncherLanguage;
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.awt.LayoutManager;
+import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JComboBox;
@@ -15,6 +18,7 @@ import lombok.val;
 public class LanguageGroupBox extends JGroupBox {
 
   public static final long serialVersionUID = 1L;
+  public static LanguageGroupBox instance;
   private final JLabel setLanguageLabel;
   @Getter
   private final JComboBox<String> languageComboBox;
@@ -28,17 +32,21 @@ public class LanguageGroupBox extends JGroupBox {
   public LanguageGroupBox() {
     super("lgb.title", true);
 
+    LanguageGroupBox.instance = this;
     this.setLayout(this.getGroupLayout());
 
-    this.updateComponentKeyValues();
+    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
+        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+        : LauncherLanguage.getUtf8Bundle());
 
     LauncherLanguage.updateLanguageComboBox(this);
   }
 
-  private void updateComponentKeyValues() {
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.setLanguageLabel,
-        this.setLanguageLabel.getText());
+        "lgb.setLanguageLabel");
   }
 
   private LayoutManager getGroupLayout() {
