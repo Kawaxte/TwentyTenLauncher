@@ -1,10 +1,14 @@
 package io.github.kawaxte.twentyten.lang;
 
+import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle.UTF8Control;
 import io.github.kawaxte.twentyten.ui.options.LanguageGroupBox;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import javax.swing.DefaultComboBoxModel;
 import lombok.Getter;
 import lombok.val;
@@ -20,6 +24,15 @@ public final class LauncherLanguage {
     return AbstractLauncherLanguageImpl.INSTANCE.getUtf8Bundle();
   }
 
+  public static UTF8ResourceBundle getUtf8Bundle(String isoCode) {
+    return isoCode != null
+        ? (UTF8ResourceBundle) UTF8ResourceBundle.getBundle("messages",
+        Locale.forLanguageTag(isoCode),
+        new UTF8Control())
+        : (UTF8ResourceBundle) UTF8ResourceBundle.getBundle("messages",
+            new UTF8Control());
+  }
+
   public static void updateLanguageComboBox(LanguageGroupBox lgb) {
     languageLookup = new HashMap<>();
 
@@ -29,13 +42,12 @@ public final class LauncherLanguage {
       defaultComboBoxModel.addElement(language.getName());
       languageLookup.put(language.getName(), language.toString().toLowerCase());
     });
-    // TODO: Rewrite this when config is re-implemented
-    //    for (Map.Entry<String, String> entry : LanguageUtils.languageMap.entrySet()) {
-    //      if (entry.getValue().equals(ConfigUtils.getInstance().getSelectedLanguage())) {
-    //        languageModel.setSelectedItem(entry.getKey());
-    //        break;
-    //      }
-    //    }
+    
+    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    languageLookup.entrySet().stream()
+        .filter(entry -> Objects.equals(entry.getValue(), selectedLanguage))
+        .findFirst()
+        .ifPresent(entry -> defaultComboBoxModel.setSelectedItem(entry.getKey()));
 
     lgb.getLanguageComboBox().setModel(defaultComboBoxModel);
   }
@@ -45,6 +57,7 @@ public final class LauncherLanguage {
   }
 
   public enum ELanguage {
+    ET("Eesti"),
     EN("English");
 
     @Getter
