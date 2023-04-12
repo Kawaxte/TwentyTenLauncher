@@ -1,9 +1,13 @@
 package io.github.kawaxte.twentyten.ui;
 
-import io.github.kawaxte.twentyten.misc.ui.CustomJLabel;
+import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
+import io.github.kawaxte.twentyten.lang.LauncherLanguage;
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.misc.ui.CustomJPanel;
 import io.github.kawaxte.twentyten.misc.ui.TransparentJButton;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,31 +21,35 @@ import lombok.val;
 
 public class LauncherOfflinePanel extends CustomJPanel implements ActionListener {
 
+  public static LauncherOfflinePanel instance;
   @Getter
-  private final CustomJLabel errorLabel;
+  private final JLabel errorLabel;
   private final JLabel playOnlineLabel;
   private final JButton playOfflineButton;
   private final JButton tryAgainButton;
 
   {
-    this.errorLabel = new CustomJLabel("",
-        SwingConstants.CENTER,
-        CustomJLabel.ERROR);
-    this.playOnlineLabel = new JLabel("llp.playOnlineLabel",
+    this.errorLabel = new JLabel("",
+        SwingConstants.CENTER);
+    this.playOnlineLabel = new JLabel("lop.playOnlineLabel",
         SwingConstants.LEFT);
-    this.playOfflineButton = new TransparentJButton("llp.playOfflineButton");
-    this.tryAgainButton = new TransparentJButton("llp.tryAgainButton");
+    this.playOfflineButton = new TransparentJButton("lop.playOfflineButton");
+    this.tryAgainButton = new TransparentJButton("lop.tryAgainButton");
   }
 
   public LauncherOfflinePanel() {
     super(true);
 
+    LauncherOfflinePanel.instance = this;
     this.setLayout(this.getGroupLayout());
 
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    this.updateComponentKeyValues();
+    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
+        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+        : LauncherLanguage.getUtf8Bundle());
   }
 
   public LauncherOfflinePanel(String message) {
@@ -50,28 +58,25 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.setLayout(this.getGroupLayout());
 
     this.errorLabel.setText(message);
+    this.errorLabel.setFont(this.getFont().deriveFont(Font.ITALIC, 16F));
+    this.errorLabel.setForeground(Color.RED.darker());
 
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    this.updateComponentKeyValues();
+    this.updateComponentKeyValues(LauncherLanguage.getUtf8Bundle());
   }
 
-  private void updateComponentKeyValues() {
-    if (!this.errorLabel.getText().isEmpty()) {
-      LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
-          this.errorLabel,
-          this.errorLabel.getText());
-    }
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.playOnlineLabel,
-        this.playOnlineLabel.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        "lop.playOnlineLabel");
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.playOfflineButton,
-        this.playOfflineButton.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+        "lop.playOfflineButton");
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.tryAgainButton,
-        this.tryAgainButton.getText());
+        "lop.tryAgainButton");
   }
 
   private LayoutManager getGroupLayout() {
