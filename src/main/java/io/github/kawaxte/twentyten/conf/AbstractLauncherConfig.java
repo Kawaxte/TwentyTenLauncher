@@ -10,10 +10,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.var;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Getter
 @Setter
-public abstract class AbstractLauncherConfig {
+abstract class AbstractLauncherConfig {
 
   String selectedLanguage;
   boolean showBetaVersionsSelected;
@@ -37,8 +38,10 @@ public abstract class AbstractLauncherConfig {
   String yggdrasilAccessToken;
   String yggdrasilClientToken;
 
+  static Logger logger;
+
   static {
-    LauncherUtils.logger = LogManager.getLogger(AbstractLauncherConfig.class);
+    logger = LogManager.getLogger(AbstractLauncherConfig.class);
   }
 
   Path getConfigFilePath() throws IOException {
