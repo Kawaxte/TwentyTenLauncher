@@ -1,6 +1,5 @@
 package io.github.kawaxte.twentyten.conf;
 
-import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -9,15 +8,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class LauncherConfig {
 
   private static final List<String> VERSION_TYPES;
   public static Map<String, String> versionLookup;
   public static URL versionsFileUrl;
+  static Logger logger;
 
   static {
-    LauncherUtils.logger = LogManager.getLogger(LauncherConfig.class);
+    logger = LogManager.getLogger(LauncherConfig.class);
 
     try {
       versionsFileUrl = new URL("https://raw.githubusercontent.com/"
@@ -26,13 +27,10 @@ public final class LauncherConfig {
           + "nightly/"
           + "versions.json");
     } catch (MalformedURLException murle) {
-      LauncherUtils.logger.error("Failed to create URL for versions file", murle);
+      logger.error("Failed to create URL for versions file", murle);
     }
 
-    VERSION_TYPES = Collections.unmodifiableList(Arrays.asList(
-        "beta",
-        "alpha",
-        "infdev"));
+    VERSION_TYPES = Collections.unmodifiableList(Arrays.asList("beta", "alpha", "infdev"));
   }
 
   private LauncherConfig() {
@@ -42,7 +40,7 @@ public final class LauncherConfig {
     try {
       AbstractLauncherConfigImpl.INSTANCE.loadConfig();
     } catch (IOException ioe) {
-      LauncherUtils.logger.error("Failed to load config file",
+      logger.error("Failed to load config file",
           ioe);
     }
   }
@@ -51,7 +49,7 @@ public final class LauncherConfig {
     try {
       AbstractLauncherConfigImpl.INSTANCE.saveConfig();
     } catch (IOException ioe) {
-      LauncherUtils.logger.error("Failed to save config file",
+      logger.error("Failed to save config file",
           ioe);
     }
   }
