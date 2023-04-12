@@ -1,5 +1,9 @@
 package io.github.kawaxte.twentyten.ui.options;
 
+import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
+import io.github.kawaxte.twentyten.lang.LauncherLanguage;
+import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.util.LauncherConfigUtils;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
@@ -16,48 +20,47 @@ import lombok.val;
 public class OptionsPanel extends JPanel implements ActionListener {
 
   public static final long serialVersionUID = 1L;
+  public static OptionsPanel instance;
   private final LanguageGroupBox languageGroupBox;
   private final VersionGroupBox versionGroupBox;
-  private final JButton okButton;
-  private final JButton cancelButton;
-  private final JButton applyButton;
+  private final JButton openDirectoryButton;
+  private final JButton saveOptionsButton;
 
   {
     this.languageGroupBox = new LanguageGroupBox();
     this.versionGroupBox = new VersionGroupBox();
-    this.okButton = new JButton("op.okButton");
-    this.cancelButton = new JButton("op.cancelButton");
-    this.applyButton = new JButton("op.applyButton");
+    this.openDirectoryButton = new JButton("op.openDirectoryButton");
+    this.saveOptionsButton = new JButton("op.saveOptionsButton");
   }
 
   public OptionsPanel() {
     super(true);
 
+    OptionsPanel.instance = this;
     this.setLayout(this.getGroupLayout());
 
-    this.cancelButton.addActionListener(this);
-    this.okButton.addActionListener(this);
-    this.applyButton.addActionListener(this);
+    this.openDirectoryButton.addActionListener(this);
+    this.saveOptionsButton.addActionListener(this);
 
-    this.updateComponentKeyValues();
+    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
+        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+        : LauncherLanguage.getUtf8Bundle());
   }
 
-  private void updateComponentKeyValues() {
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.languageGroupBox,
         this.languageGroupBox.setTitledBorder("op.languageGroupBox"));
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
+    LauncherUtils.updateComponentKeyValue(bundle,
         this.versionGroupBox,
         this.versionGroupBox.setTitledBorder("op.versionGroupBox"));
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
-        this.okButton,
-        this.okButton.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
-        this.cancelButton,
-        this.cancelButton.getText());
-    LauncherUtils.updateComponentKeyValue(LauncherUtils.getUtf8Bundle(),
-        this.applyButton,
-        this.applyButton.getText());
+    LauncherUtils.updateComponentKeyValue(bundle,
+        this.openDirectoryButton,
+        "op.openDirectoryButton");
+    LauncherUtils.updateComponentKeyValue(bundle,
+        this.saveOptionsButton,
+        "op.saveOptionsButton");
   }
 
   private LayoutManager getGroupLayout() {
@@ -72,15 +75,11 @@ public class OptionsPanel extends JPanel implements ActionListener {
                 .addGroup(groupLayout.createSequentialGroup()
                     .addPreferredGap(ComponentPlacement.RELATED,
                         GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(this.okButton,
+                    .addComponent(this.openDirectoryButton,
                         0,
                         0,
                         Short.MAX_VALUE)
-                    .addComponent(this.cancelButton,
-                        0,
-                        0,
-                        Short.MAX_VALUE)
-                    .addComponent(this.applyButton,
+                    .addComponent(this.saveOptionsButton,
                         0,
                         0,
                         Short.MAX_VALUE))));
@@ -89,16 +88,21 @@ public class OptionsPanel extends JPanel implements ActionListener {
             .addComponent(this.languageGroupBox)
             .addComponent(this.versionGroupBox)
             .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(this.okButton)
-                .addComponent(this.cancelButton)
-                .addComponent(this.applyButton)));
+                .addComponent(this.openDirectoryButton)
+                .addComponent(this.saveOptionsButton)));
     return groupLayout;
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
-    if (Objects.equals(source, this.cancelButton)) {
+    if (Objects.equals(source, this.openDirectoryButton)) {
+      LauncherUtils.openDesktop(LauncherUtils.WORKING_DIR_PATH);
+    }
+    if (Objects.equals(source, this.saveOptionsButton)) {
+      LauncherConfigUtils.updateSelectedLanguage(this.languageGroupBox);
+      //LauncherConfigUtils.updateSelectedVersion(this.versionGroupBox);
+
       SwingUtilities.getWindowAncestor(this).dispose();
     }
   }
