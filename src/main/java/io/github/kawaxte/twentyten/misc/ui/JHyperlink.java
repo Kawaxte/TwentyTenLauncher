@@ -7,15 +7,12 @@ import javax.swing.JLabel;
 
 public class JHyperlink extends JLabel {
 
-  public JHyperlink(String text) {
-    super(MessageFormat.format("<html><u>{0}</u></html>",
-        text));
-  }
-
   public JHyperlink(String text, int horizontalAlignment) {
     super(MessageFormat.format("<html><u>{0}</u></html>",
         text,
         horizontalAlignment));
+
+    this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
   }
 
   @Override
@@ -27,10 +24,5 @@ public class JHyperlink extends JLabel {
   @Override
   public void setForeground(Color fg) {
     super.setForeground(Color.BLUE);
-  }
-
-  @Override
-  public void setCursor(Cursor cursor) {
-    super.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
   }
 }
