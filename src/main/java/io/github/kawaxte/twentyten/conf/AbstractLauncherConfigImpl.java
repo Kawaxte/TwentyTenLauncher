@@ -25,25 +25,24 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
 
   @Override
   public void loadConfig() throws IOException {
-    val configFile = this.getConfigFilePath().toFile();
-    if (configFile.exists() && configFile.length() > 0) {
-      try (val fis = new FileInputStream(this.getConfigFilePath().toFile())) {
-        val linkedProperties = new LinkedProperties();
-        linkedProperties.load(fis);
+    val linkedProperties = new LinkedProperties();
+    try (val fis = new FileInputStream(this.getConfigFilePath().toFile())) {
+      linkedProperties.load(fis);
 
-        this.getYggdrasilLoginProperties(linkedProperties);
-        this.getMicrosoftLoginProperties(linkedProperties);
-        this.getOptionsProperties(linkedProperties);
-        return;
-      } catch (FileNotFoundException fnfe) {
-        logger.warn("Config file '{}' not found",
-            this.getConfigFilePath().getFileName());
-      } finally {
+      this.getYggdrasilLoginProperties(linkedProperties);
+      this.getMicrosoftLoginProperties(linkedProperties);
+      this.getOptionsProperties(linkedProperties);
+    } catch (FileNotFoundException fnfe) {
+      logger.warn("Config file '{}' not found",
+          this.getConfigFilePath().getFileName());
+    } finally {
+      if (!linkedProperties.isEmpty()) {
         logger.info("Loading config file '{}'",
             this.getConfigFilePath().getFileName());
+      } else {
+        this.saveConfig();
       }
     }
-    this.saveConfig();
   }
 
   @Override
