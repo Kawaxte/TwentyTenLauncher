@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.var;
@@ -56,139 +57,91 @@ abstract class AbstractLauncherConfig {
   }
 
   void getOptionsProperties(LinkedProperties properties) {
-    this.selectedLanguage = properties.getProperty("selectedLanguage",
-        "en");
+    this.selectedLanguage =
+        properties.getProperty("selectedLanguage", "en");
     this.showBetaVersionsSelected = Boolean.parseBoolean(
-        properties.getProperty("showBetaVersionsSelected",
-            String.valueOf(true)));
+        properties.getProperty("showBetaVersionsSelected", "true"));
     this.showAlphaVersionsSelected = Boolean.parseBoolean(
-        properties.getProperty("showAlphaVersionsSelected",
-            String.valueOf(false)));
+        properties.getProperty("showAlphaVersionsSelected", "false"));
     this.showInfdevVersionsSelected = Boolean.parseBoolean(
-        properties.getProperty("showInfdevVersionsSelected",
-            String.valueOf(false)));
-    this.selectedVersion = properties.getProperty("selectedVersion",
-        "b1.1_02");
+        properties.getProperty("showInfdevVersionsSelected", "false"));
+    this.selectedVersion =
+        properties.getProperty("selectedVersion", "b1.1_02");
   }
 
   void getMicrosoftLoginProperties(LinkedProperties properties) {
-    this.microsoftProfileId = properties.getProperty("microsoftProfileId",
-        "");
-    this.microsoftProfileName = properties.getProperty("microsoftProfileName",
-        "");
+    this.microsoftProfileId =
+        properties.getProperty("microsoftProfileId", "");
+    this.microsoftProfileName =
+        properties.getProperty("microsoftProfileName", "");
     this.microsoftProfileDemo = Boolean.parseBoolean(
-        properties.getProperty("microsoftProfileDemo",
-            String.valueOf(false)));
-    this.microsoftAccessToken = properties.getProperty("microsoftAccessToken",
-        "");
+        properties.getProperty("microsoftProfileDemo", "false"));
+    this.microsoftAccessToken =
+        properties.getProperty("microsoftAccessToken", "");
     this.microsoftAccessTokenExpiresIn = Long.parseLong(
-        properties.getProperty("microsoftAccessTokenExpiresIn",
-            String.valueOf(0L)));
-    this.microsoftRefreshToken = properties.getProperty("microsoftRefreshToken",
-        "");
-    this.microsoftClientToken = properties.getProperty("microsoftClientToken",
-        "");
+        properties.getProperty("microsoftAccessTokenExpiresIn", "0"));
+    this.microsoftRefreshToken =
+        properties.getProperty("microsoftRefreshToken", "");
+    this.microsoftClientToken =
+        properties.getProperty("microsoftClientToken",
+            UUID.randomUUID().toString().replaceAll("-", ""));
   }
 
   void getYggdrasilLoginProperties(LinkedProperties properties) {
-    this.yggdrasilUsername = properties.getProperty("yggdrasilUsername",
-        "");
-    this.yggdrasilPassword = properties.getProperty("yggdrasilPassword",
-        "");
+    this.yggdrasilUsername =
+        properties.getProperty("yggdrasilUsername", "");
+    this.yggdrasilPassword =
+        properties.getProperty("yggdrasilPassword", "");
     this.yggdrasilRememberPasswordChecked = Boolean.parseBoolean(
-        properties.getProperty("yggdrasilRememberPasswordChecked",
-            String.valueOf(false)));
-    this.yggdrasilProfileId = properties.getProperty("yggdrasilProfileId",
-        "");
-    this.yggdrasilProfileName = properties.getProperty("yggdrasilProfileName",
-        "");
+        properties.getProperty("yggdrasilRememberPasswordChecked", "false"));
+    this.yggdrasilProfileId =
+        properties.getProperty("yggdrasilProfileId", "");
+    this.yggdrasilProfileName =
+        properties.getProperty("yggdrasilProfileName", "");
     this.yggdrasilProfileLegacy = Boolean.parseBoolean(
-        properties.getProperty("yggdrasilProfileLegacy",
-            String.valueOf(false)));
+        properties.getProperty("yggdrasilProfileLegacy", "false"));
     this.yggdrasilProfileDemo = Boolean.parseBoolean(
-        properties.getProperty("yggdrasilProfileDemo",
-            String.valueOf(false)));
-    this.yggdrasilAccessToken = properties.getProperty("yggdrasilAccessToken",
-        "");
-    this.yggdrasilClientToken = properties.getProperty("yggdrasilClientToken",
-        "");
+        properties.getProperty("yggdrasilProfileDemo", "false"));
+    this.yggdrasilAccessToken =
+        properties.getProperty("yggdrasilAccessToken", "");
+    this.yggdrasilClientToken =
+        properties.getProperty("yggdrasilClientToken",
+            UUID.randomUUID().toString().replaceAll("-", ""));
   }
 
   void setYggdrasilLoginProperties(LinkedProperties properties) {
-    properties.setProperty("yggdrasilUsername",
-        this.yggdrasilUsername != null
-            ? this.yggdrasilUsername
-            : "");
-    properties.setProperty("yggdrasilPassword",
-        this.yggdrasilPassword != null
-            ? this.yggdrasilPassword
-            : "");
+    properties.setProperty("yggdrasilUsername", this.yggdrasilUsername);
+    properties.setProperty("yggdrasilPassword", this.yggdrasilPassword);
     properties.setProperty("yggdrasilRememberPasswordChecked",
-        String.valueOf(this.yggdrasilRememberPasswordChecked));
-    properties.setProperty("yggdrasilProfileId",
-        this.yggdrasilProfileId != null
-            ? this.yggdrasilProfileId
-            : "");
-    properties.setProperty("yggdrasilProfileName",
-        this.yggdrasilProfileName != null
-            ? this.yggdrasilProfileName
-            : "");
-    properties.setProperty("yggdrasilProfileLegacy",
-        String.valueOf(this.yggdrasilProfileLegacy));
-    properties.setProperty("yggdrasilProfileDemo",
-        String.valueOf(this.yggdrasilProfileDemo));
-    properties.setProperty("yggdrasilAccessToken",
-        this.yggdrasilAccessToken != null
-            ? this.yggdrasilAccessToken
-            : "");
-    properties.setProperty("yggdrasilClientToken",
-        this.yggdrasilClientToken != null
-            ? this.yggdrasilClientToken
-            : "");
+        Boolean.toString(this.yggdrasilRememberPasswordChecked));
+    properties.setProperty("yggdrasilProfileId", this.yggdrasilProfileId);
+    properties.setProperty("yggdrasilProfileName", this.yggdrasilProfileName);
+    properties.setProperty("yggdrasilProfileLegacy", Boolean.toString(this.yggdrasilProfileLegacy));
+    properties.setProperty("yggdrasilProfileDemo", Boolean.toString(this.yggdrasilProfileDemo));
+    properties.setProperty("yggdrasilAccessToken", this.yggdrasilAccessToken);
+    properties.setProperty("yggdrasilClientToken", this.yggdrasilClientToken);
   }
 
   void setMicrosoftLoginProperties(LinkedProperties properties) {
-    properties.setProperty("microsoftProfileId",
-        this.microsoftProfileId != null
-            ? this.microsoftProfileId
-            : "");
-    properties.setProperty("microsoftProfileName",
-        this.microsoftProfileName != null
-            ? this.microsoftProfileName
-            : "");
-    properties.setProperty("microsoftProfileDemo",
-        String.valueOf(this.microsoftProfileDemo));
-    properties.setProperty("microsoftAccessToken",
-        this.microsoftAccessToken != null
-            ? this.microsoftAccessToken
-            : "");
+    properties.setProperty("microsoftProfileId", this.microsoftProfileId);
+    properties.setProperty("microsoftProfileName", this.microsoftProfileName);
+    properties.setProperty("microsoftProfileDemo", Boolean.toString(this.microsoftProfileDemo));
+    properties.setProperty("microsoftAccessToken", this.microsoftAccessToken);
     properties.setProperty("microsoftAccessTokenExpiresIn",
-        String.valueOf(this.microsoftAccessTokenExpiresIn));
-    properties.setProperty("microsoftRefreshToken",
-        this.microsoftRefreshToken != null
-            ? this.microsoftRefreshToken
-            : "");
-    properties.setProperty("microsoftClientToken",
-        this.microsoftClientToken != null
-            ? this.microsoftClientToken
-            : "");
+        Long.toString(this.microsoftAccessTokenExpiresIn));
+    properties.setProperty("microsoftRefreshToken", this.microsoftRefreshToken);
+    properties.setProperty("microsoftClientToken", this.microsoftClientToken);
   }
 
   void setOptionsProperties(LinkedProperties properties) {
-    properties.setProperty("selectedLanguage",
-        this.selectedLanguage != null
-            ? this.selectedLanguage
-            : "en");
+    properties.setProperty("selectedLanguage", this.selectedLanguage);
     properties.setProperty("showBetaVersionsSelected",
-        String.valueOf(this.showBetaVersionsSelected));
+        Boolean.toString(this.showBetaVersionsSelected));
     properties.setProperty("showAlphaVersionsSelected",
-        String.valueOf(this.showAlphaVersionsSelected));
+        Boolean.toString(this.showAlphaVersionsSelected));
     properties.setProperty("showInfdevVersionsSelected",
-        String.valueOf(this.showInfdevVersionsSelected));
-    properties.setProperty("selectedVersion",
-        this.selectedVersion != null
-            ? this.selectedVersion
-            : "b1.1_02");
+        Boolean.toString(this.showInfdevVersionsSelected));
+    properties.setProperty("selectedVersion", this.selectedVersion);
   }
 
   public abstract void loadConfig() throws IOException;
