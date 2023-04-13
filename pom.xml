@@ -7,15 +7,30 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <Build-Time>${maven.build.timestamp}</Build-Time>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <version>3.3.0</version>
+      </plugin>
+      <plugin>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
         <artifactId>maven-shade-plugin</artifactId>
         <configuration>
           <artifactSet>
             <includes>
+              <include>org.apache.httpcomponents:httpclient</include>
+              <include>org.apache.httpcomponents:httpcore</include>
               <include>org.json:json</include>
               <include>org.projectlombok:lombok</include>
-              <include>org.apache.httpcomponents.client5:httpclient5</include>
-              <include>org.apache.httpcomponents.core5:httpcore5</include>
               <include>org.apache.logging.log4j:log4j-api</include>
               <include>org.apache.logging.log4j:log4j-core</include>
               <include>org.apache.logging.log4j:log4j-slf4j-impl</include>
@@ -27,16 +42,13 @@
               <artifact>*:*</artifact>
               <excludes>
                 <exclude>META-INF/maven/**</exclude>
-                <exclude>META-INF/AL2.0</exclude>
-                <exclude>META-INF/DEPENDENCIES</exclude>
-                <exclude>META-INF/LGPL2.1</exclude>
-                <exclude>META-INF/LICENSE</exclude>
                 <exclude>META-INF/MANIFEST.MF</exclude>
+                <exclude>META-INF/DEPENDENCIES</exclude>
+                <exclude>META-INF/LICENSE</exclude>
                 <exclude>META-INF/NOTICE</exclude>
               </excludes>
             </filter>
           </filters>
-          <minimizeJar>true</minimizeJar>
           <shadedArtifactAttached>true</shadedArtifactAttached>
           <transformers>
             <transformer
@@ -60,23 +72,23 @@
   </build>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.14</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.4.16</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/org.json/json -->
     <dependency>
       <artifactId>json</artifactId>
       <groupId>org.json</groupId>
       <version>20230227</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
-    <dependency>
-      <artifactId>httpclient5</artifactId>
-      <groupId>org.apache.httpcomponents.client5</groupId>
-      <version>5.2.1</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5 -->
-    <dependency>
-      <artifactId>httpcore5</artifactId>
-      <groupId>org.apache.httpcomponents.core5</groupId>
-      <version>5.2.1</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
     <dependency>
@@ -112,6 +124,7 @@
   <name>${project.groupId}:${project.artifactId}</name>
 
   <properties>
+    <maven.build.timestamp.format>YY.ww.mmss</maven.build.timestamp.format>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -124,5 +137,5 @@
     </repository>
   </repositories>
 
-  <version>20230412</version>
+  <version>20230414</version>
 </project>
