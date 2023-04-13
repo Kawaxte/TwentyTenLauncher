@@ -27,10 +27,10 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 
 ## Contributing
 
-![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&color=181717&style=for-the-badge)
-![GitHub Watchers](https://img.shields.io/github/watchers/Kawaxte/TwentyTenLauncher?logo=github&color=181717&style=for-the-badge)
-![GitHub Forks](https://img.shields.io/github/forks/Kawaxte/TwentyTenLauncher?logo=github&color=181717&style=for-the-badge)
-![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&color=181717&style=for-the-badge)
+![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+![GitHub Watchers](https://img.shields.io/github/watchers/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+![GitHub Forks](https://img.shields.io/github/forks/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
 
 If you find this project useful or interesting, please consider giving it a ⭐. It's a
 quick and easy way to show your support.
