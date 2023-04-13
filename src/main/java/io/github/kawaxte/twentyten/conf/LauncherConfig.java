@@ -21,11 +21,12 @@ public final class LauncherConfig {
     logger = LogManager.getLogger(LauncherConfig.class);
 
     try {
-      versionsFileUrl = new URL("https://raw.githubusercontent.com/"
-          + "Kawaxte/"
-          + "TwentyTenLauncher/"
-          + "nightly/"
-          + "versions.json");
+      versionsFileUrl = new URL(new StringBuilder()
+          .append("https://raw.githubusercontent.com/")
+          .append("Kawaxte/")
+          .append("TwentyTenLauncher/")
+          .append("nightly/")
+          .append("versions.json").toString());
     } catch (MalformedURLException murle) {
       logger.error("Failed to create URL for versions file", murle);
     }
