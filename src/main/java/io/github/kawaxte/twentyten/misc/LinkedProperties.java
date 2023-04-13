@@ -22,7 +22,21 @@ public class LinkedProperties extends Properties {
   }
 
   @Override
+  public String getProperty(String key, String defaultValue) {
+    val value = (String) this.linkedMap.get(key);
+    return value == null
+        ? defaultValue
+        : value;
+  }
+
+  @Override
   public synchronized Object setProperty(String key, String value) {
+    super.setProperty(key, value);
+    return this.linkedMap.put(key, value);
+  }
+
+  @Override
+  public synchronized Object put(Object key, Object value) {
     super.put(key, value);
     return this.linkedMap.put(key, value);
   }
@@ -59,5 +73,10 @@ public class LinkedProperties extends Properties {
   @Override
   public Set<Object> keySet() {
     return this.linkedMap.keySet();
+  }
+
+  @Override
+  public Set<Map.Entry<Object, Object>> entrySet() {
+    return this.linkedMap.entrySet();
   }
 }
