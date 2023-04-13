@@ -1,11 +1,9 @@
 package io.github.kawaxte.twentyten.lang;
 
-import io.github.kawaxte.twentyten.lang.LauncherLanguage.ELanguage;
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Optional;
 import lombok.val;
@@ -25,23 +23,33 @@ public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
 
   @Override
   public void loadLanguage(String baseName, String isoCode) {
-    val languageFilePath = Paths.get(MessageFormat.format("{0}_{1}.properties",
+    val languageFileName = MessageFormat.format("{0}_{1}.properties",
         baseName,
-        isoCode));
+        isoCode);
     val languageFileUrl = Optional.ofNullable(this.getClass()
         .getClassLoader()
-        .getResource(languageFilePath.toString()));
+        .getResource(languageFileName));
     languageFileUrl.ifPresent(url -> {
       try (val is = url.openConnection().getInputStream();
           val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
         this.utf8Bundle = new UTF8ResourceBundle(isr);
       } catch (IOException ioe) {
-        logger.error("Failed to load language file '{}'",
-            ELanguage.getLanguage(isoCode).getName(),
+        logger.error("Failed to load {} from {}",
+            languageFileName,
+            languageFileUrl.get()
+                .getPath()
+                .substring(0, languageFileUrl.get()
+                    .getPath()
+                    .lastIndexOf("/")),
             ioe);
       } finally {
-        logger.info("Using '{}' as language",
-            ELanguage.getLanguage(isoCode).getName());
+        logger.info("Loading {} from {}",
+            languageFileName,
+            languageFileUrl.get()
+                .getPath()
+                .substring(0, languageFileUrl.get()
+                    .getPath()
+                    .lastIndexOf("/")));
       }
     });
   }
