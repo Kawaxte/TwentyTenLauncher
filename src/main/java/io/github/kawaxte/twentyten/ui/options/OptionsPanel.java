@@ -12,8 +12,8 @@ import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 import lombok.val;
 
@@ -23,12 +23,15 @@ public class OptionsPanel extends JPanel implements ActionListener {
   public static OptionsPanel instance;
   private final LanguageGroupBox languageGroupBox;
   private final VersionGroupBox versionGroupBox;
+  private final JLabel buildTimeLabel;
   private final JButton openDirectoryButton;
   private final JButton saveOptionsButton;
 
   {
     this.languageGroupBox = new LanguageGroupBox();
     this.versionGroupBox = new VersionGroupBox();
+    this.buildTimeLabel = new JLabel(LauncherUtils.getManifestAttribute("Build-Time"),
+        SwingUtilities.CENTER);
     this.openDirectoryButton = new JButton("op.openDirectoryButton");
     this.saveOptionsButton = new JButton("op.saveOptionsButton");
   }
@@ -38,6 +41,8 @@ public class OptionsPanel extends JPanel implements ActionListener {
 
     OptionsPanel.instance = this;
     this.setLayout(this.getGroupLayout());
+
+    this.buildTimeLabel.setEnabled(false);
 
     this.openDirectoryButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
@@ -73,8 +78,10 @@ public class OptionsPanel extends JPanel implements ActionListener {
                 .addComponent(this.languageGroupBox)
                 .addComponent(this.versionGroupBox)
                 .addGroup(groupLayout.createSequentialGroup()
-                    .addPreferredGap(ComponentPlacement.RELATED,
-                        GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.buildTimeLabel,
+                        0,
+                        0,
+                        Short.MAX_VALUE)
                     .addComponent(this.openDirectoryButton,
                         0,
                         0,
@@ -87,7 +94,8 @@ public class OptionsPanel extends JPanel implements ActionListener {
         groupLayout.createSequentialGroup()
             .addComponent(this.languageGroupBox)
             .addComponent(this.versionGroupBox)
-            .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+            .addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+                .addComponent(this.buildTimeLabel)
                 .addComponent(this.openDirectoryButton)
                 .addComponent(this.saveOptionsButton)));
     return groupLayout;
