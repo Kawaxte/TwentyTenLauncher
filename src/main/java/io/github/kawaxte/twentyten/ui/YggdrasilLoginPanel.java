@@ -47,7 +47,10 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
     this.passwordField = new CustomJPasswordField(20);
     this.optionsButton = new TransparentJButton("ylp.optionsButton");
     this.rememberPasswordCheckBox = new TransparentJCheckBox("ylp.rememberPasswordCheckBox");
-    this.linkLabel = new JHyperlink("ylp.linkLabel.signup",
+    this.linkLabel = new JHyperlink(LauncherUtils.outdated != null
+        && LauncherUtils.outdated
+        ? "ylp.linkLabel.update"
+        : "ylp.linkLabel.signup",
         SwingConstants.LEFT);
     this.loginButton = new TransparentJButton("ylp.loginButton");
   }
@@ -86,7 +89,10 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
         "ylp.rememberPasswordCheckBox");
     LauncherUtils.updateComponentKeyValue(bundle,
         this.linkLabel,
-        "ylp.linkLabel.signup");
+        LauncherUtils.outdated != null
+            && LauncherUtils.outdated
+            ? "ylp.linkLabel.update"
+            : "ylp.linkLabel.signup");
     LauncherUtils.updateComponentKeyValue(bundle,
         this.loginButton,
         "ylp.loginButton");
@@ -145,24 +151,28 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
   @Override
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
-    /*
     if (Objects.equals(source, this.microsoftLoginButton)) {
-      LauncherUtils.addPanel(this.getParent(),
-          new MicrosoftLoginPanel());
+      if (LauncherUtils.isOutdated()) {
+        LauncherUtils.addPanel(this.getParent(),
+            new LauncherOfflinePanel("lop.errorLabel.login.outdated"));
+      } else {
+        LauncherUtils.addPanel(this.getParent(),
+            new MicrosoftLoginPanel());
+      }
     }
-
-     */
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(() -> {
         val optionsDialog = new OptionsDialog(SwingUtilities.getWindowAncestor(this));
         optionsDialog.setVisible(true);
       });
     }
-    /*
     if (Objects.equals(source, this.loginButton)) {
-      LauncherUtils.addPanel(this.getParent(),
-          new LauncherOfflinePanel());
+      if (LauncherUtils.isOutdated()) {
+        LauncherUtils.addPanel(this.getParent(),
+            new LauncherOfflinePanel("lop.errorLabel.login.outdated"));
+      } else {
+        System.out.println("Login");
+      }
     }
-     */
   }
 }
