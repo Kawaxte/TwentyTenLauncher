@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -57,14 +58,19 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
 
     this.setLayout(this.getGroupLayout());
 
-    this.errorLabel.setText(message);
+    LauncherUtils.updateComponentKeyValue(LauncherLanguage.getUtf8Bundle(),
+        this.errorLabel,
+        message);
     this.errorLabel.setFont(this.getFont().deriveFont(Font.ITALIC, 16F));
     this.errorLabel.setForeground(Color.RED.darker());
 
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    this.updateComponentKeyValues(LauncherLanguage.getUtf8Bundle());
+    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
+        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+        : LauncherLanguage.getUtf8Bundle());
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -86,11 +92,13 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
         .addComponent(this.errorLabel,
             0,
-            GroupLayout.DEFAULT_SIZE,
+            GroupLayout.PREFERRED_SIZE,
             Short.MAX_VALUE)
         .addGroup(groupLayout.createSequentialGroup()
-            .addComponent(this.playOnlineLabel)
-            .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(this.playOnlineLabel,
+                0,
+                GroupLayout.PREFERRED_SIZE,
+                Short.MAX_VALUE))
         .addGroup(groupLayout.createSequentialGroup()
             .addComponent(this.playOfflineButton,
                 0,
@@ -103,11 +111,11 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
         .addComponent(this.errorLabel,
             0,
-            GroupLayout.DEFAULT_SIZE,
+            GroupLayout.PREFERRED_SIZE,
             Short.MAX_VALUE)
-        .addGroup(groupLayout.createParallelGroup()
+        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
             .addComponent(this.playOnlineLabel))
-        .addGroup(groupLayout.createParallelGroup()
+        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
             .addComponent(this.playOfflineButton)
             .addComponent(this.tryAgainButton)));
     return groupLayout;
