@@ -44,11 +44,12 @@ public final class Launcher {
       logger.error("Failed to set look and feel",
           roe);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      logger.error("Look and feel '{}' unsupported",
+      logger.error("'{}' is not supported on '{}'",
           UIManager.getLookAndFeel().getName(),
+          System.getProperty("os.name"),
           ulafe);
     } finally {
-      logger.info("Using '{}' as look and feel",
+      logger.info("Setting look and feel to '{}'",
           UIManager.getLookAndFeel().getName());
     }
 
