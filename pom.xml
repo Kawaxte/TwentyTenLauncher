@@ -5,9 +5,9 @@
   <artifactId>TwentyTenLauncher</artifactId>
 
   <build>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
@@ -19,6 +19,7 @@
             </manifestEntries>
           </archive>
         </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
         <version>3.3.0</version>
       </plugin>
       <plugin>
@@ -43,7 +44,7 @@
               </excludes>
             </filter>
           </filters>
-          <shadedArtifactAttached>true</shadedArtifactAttached>
+          <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
           <transformers>
             <transformer
               implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -51,15 +52,8 @@
             </transformer>
           </transformers>
         </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
         <groupId>org.apache.maven.plugins</groupId>
+        <inherited>true</inherited>
         <version>3.4.1</version>
       </plugin>
     </plugins>
@@ -68,14 +62,14 @@
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5-fluent -->
     <dependency>
-      <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5-fluent</artifactId>
+      <groupId>org.apache.httpcomponents.client5</groupId>
       <version>5.2.1</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5 -->
     <dependency>
-      <groupId>org.apache.httpcomponents.core5</groupId>
       <artifactId>httpcore5</artifactId>
+      <groupId>org.apache.httpcomponents.core5</groupId>
       <version>5.2.1</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.json/json -->
@@ -111,14 +105,14 @@
     </dependency>
   </dependencies>
 
-  <description>Remastered version of the classic Minecraft Launcher from 2010</description>
+  <description>Resurrection of Minecraft Launcher from 2010</description>
   <groupId>io.github.kawaxte</groupId>
   <inceptionYear>2022</inceptionYear>
   <modelVersion>4.0.0</modelVersion>
   <name>${project.groupId}:${project.artifactId}</name>
 
   <properties>
-    <maven.build.timestamp.format>YY.ww.mmss</maven.build.timestamp.format>
+    <maven.build.timestamp.format>yy.D.HHmmss.u</maven.build.timestamp.format>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -131,5 +125,5 @@
     </repository>
   </repositories>
 
-  <version>20230414</version>
+  <version>20230415</version>
 </project>
