@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="TwentyTen [shade:shade]" type="MavenRunConfiguration" factoryName="Maven">
+  <configuration default="false" name="TwentyTenLauncher" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings" />
