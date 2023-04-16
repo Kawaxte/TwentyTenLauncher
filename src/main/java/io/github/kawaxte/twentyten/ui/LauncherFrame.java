@@ -3,7 +3,9 @@ package io.github.kawaxte.twentyten.ui;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.Optional;
 import javax.swing.JFrame;
+import lombok.val;
 
 public class LauncherFrame extends JFrame {
 
@@ -11,6 +13,12 @@ public class LauncherFrame extends JFrame {
 
   public LauncherFrame() {
     super();
+
+    val iconUrl = Optional.ofNullable(LauncherFrame.class
+            .getClassLoader()
+            .getResource("favicon.png"))
+        .orElseThrow(() -> new RuntimeException("Failed to load icon image"));
+    this.setIconImage(this.getToolkit().getImage(iconUrl));
 
     this.setLayout(new CardLayout(0, 0));
     this.setContentPane(new LauncherPanel());
