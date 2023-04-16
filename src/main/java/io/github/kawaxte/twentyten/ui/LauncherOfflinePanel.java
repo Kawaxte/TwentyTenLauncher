@@ -17,21 +17,19 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import lombok.Getter;
 import lombok.val;
 
 public class LauncherOfflinePanel extends CustomJPanel implements ActionListener {
 
   public static LauncherOfflinePanel instance;
-  @Getter
   private final JLabel errorLabel;
   private final JLabel playOnlineLabel;
   private final JButton playOfflineButton;
   private final JButton tryAgainButton;
+  private String errorMessage;
 
   {
-    this.errorLabel = new JLabel("",
-        SwingConstants.CENTER);
+    this.errorLabel = new JLabel((String) null, SwingConstants.CENTER);
     this.playOnlineLabel = new JLabel("lop.playOnlineLabel",
         SwingConstants.LEFT);
     this.playOfflineButton = new TransparentJButton("lop.playOfflineButton");
@@ -58,9 +56,8 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
 
     this.setLayout(this.getGroupLayout());
 
-    LauncherUtils.updateComponentKeyValue(LauncherLanguage.getUtf8Bundle(),
-        this.errorLabel,
-        message);
+    this.errorMessage = message;
+    this.errorLabel.setText(this.errorMessage);
     this.errorLabel.setFont(this.getFont().deriveFont(Font.ITALIC, 16F));
     this.errorLabel.setForeground(Color.RED.darker());
 
@@ -74,6 +71,9 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
+    LauncherUtils.updateComponentKeyValue(bundle,
+        this.errorLabel,
+        this.errorMessage);
     LauncherUtils.updateComponentKeyValue(bundle,
         this.playOnlineLabel,
         "lop.playOnlineLabel");
