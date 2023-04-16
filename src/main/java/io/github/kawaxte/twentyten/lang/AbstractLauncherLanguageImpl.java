@@ -26,7 +26,7 @@ public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
     val languageFileName = MessageFormat.format("{0}_{1}.properties",
         baseName,
         isoCode);
-    val languageFileUrl = Optional.ofNullable(this.getClass()
+    val languageFileUrl = Optional.ofNullable(AbstractLauncherLanguageImpl.class
         .getClassLoader()
         .getResource(languageFileName));
     languageFileUrl.ifPresent(url -> {
@@ -35,20 +35,20 @@ public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
         this.utf8Bundle = new UTF8ResourceBundle(isr);
       } catch (IOException ioe) {
         logger.error("Failed to load {} from {}",
-            languageFileName,
-            languageFileUrl.get()
-                .getPath()
-                .substring(0, languageFileUrl.get()
-                    .getPath()
+            languageFileUrl.get().getFile()
+                .substring(languageFileUrl.get().getFile()
+                    .lastIndexOf("/") + 1),
+            languageFileUrl.get().getFile()
+                .substring(0, languageFileUrl.get().getFile()
                     .lastIndexOf("/")),
             ioe);
       } finally {
         logger.info("Loading {} from {}",
-            languageFileName,
-            languageFileUrl.get()
-                .getPath()
-                .substring(0, languageFileUrl.get()
-                    .getPath()
+            languageFileUrl.get().getFile()
+                .substring(languageFileUrl.get().getFile()
+                    .lastIndexOf("/") + 1),
+            languageFileUrl.get().getFile()
+                .substring(0, languageFileUrl.get().getFile()
                     .lastIndexOf("/")));
       }
     });
