@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
 import javax.swing.AbstractButton;
@@ -80,10 +81,11 @@ public final class LauncherUtils {
   }
 
   public static String getManifestAttribute(String name) {
-    val jarFileUrl = LauncherUtils.class
-        .getProtectionDomain()
-        .getCodeSource()
-        .getLocation();
+    val jarFileUrl = Optional.ofNullable(LauncherUtils.class
+            .getProtectionDomain()
+            .getCodeSource()
+            .getLocation())
+        .orElseThrow(() -> new RuntimeException("Failed to get code source location"));
     try (val jarFile = new JarFile(new File(jarFileUrl.toURI()))) {
       val manifest = jarFile.getManifest();
       val attributes = manifest.getMainAttributes();
@@ -96,6 +98,12 @@ public final class LauncherUtils {
       logger.error("Failed to parse {} as URI",
           jarFileUrl,
           urise);
+    } finally {
+      if (jarFileUrl.getFile().endsWith(".jar")) {
+        logger.info("Retrieving '{}' from {}",
+            name,
+            jarFileUrl);
+      }
     }
     return null;
   }
