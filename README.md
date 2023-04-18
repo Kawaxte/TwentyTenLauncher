@@ -83,7 +83,7 @@ application. To build the application from source, follow these steps:
    Configuration
    in your IDE.
 
-The finished build will be saved as a `-shaded.jar` file in the `target` directory.
+The finished build will be saved as a `.jar` file in the `target` directory.
 
 ## License
 
