@@ -31,8 +31,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     this.showBetaVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
     this.showAlphaVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
     this.showInfdevVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
-    this.useVersionLabel = new JLabel("vgb.useVersionLabel",
-        SwingConstants.RIGHT);
+    this.useVersionLabel = new JLabel("vgb.useVersionLabel", SwingConstants.RIGHT);
     this.versionComboBox = new JComboBox<>();
   }
 
@@ -47,30 +46,32 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     this.showInfdevVersionsCheckBox.addActionListener(this);
 
     val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
-    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
-        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-        : LauncherLanguage.getUtf8Bundle());
+    this.updateComponentKeyValues(
+        Objects.nonNull(selectedLanguage)
+            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+            : LauncherLanguage.getUtf8Bundle());
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(bundle,
+    LauncherUtils.updateComponentKeyValue(
+        bundle,
         this.showBetaVersionsCheckBox,
         "vgb.showVersionsCheckBox",
         "Beta",
         "2010-12-20 -> 2011-01-21");
-    LauncherUtils.updateComponentKeyValue(bundle,
+    LauncherUtils.updateComponentKeyValue(
+        bundle,
         this.showAlphaVersionsCheckBox,
         "vgb.showVersionsCheckBox",
         "Alpha",
         "2010-07-02 -> 2010-12-03");
-    LauncherUtils.updateComponentKeyValue(bundle,
+    LauncherUtils.updateComponentKeyValue(
+        bundle,
         this.showInfdevVersionsCheckBox,
         "vgb.showVersionsCheckBox",
         "Infdev",
         "2010-06-29 -> 2010-06-30");
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.useVersionLabel,
-        "vgb.useVersionLabel");
+    LauncherUtils.updateComponentKeyValue(bundle, this.useVersionLabel, "vgb.useVersionLabel");
   }
 
   private LayoutManager getGroupLayout() {
@@ -78,22 +79,30 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
     groupLayout.setHorizontalGroup(
-        groupLayout.createSequentialGroup()
-            .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                .addComponent(this.showBetaVersionsCheckBox)
-                .addComponent(this.showAlphaVersionsCheckBox)
-                .addComponent(this.showInfdevVersionsCheckBox)
-                .addGroup(groupLayout.createSequentialGroup()
-                    .addComponent(this.useVersionLabel)
-                    .addComponent(this.versionComboBox))));
+        groupLayout
+            .createSequentialGroup()
+            .addGroup(
+                groupLayout
+                    .createParallelGroup(Alignment.LEADING)
+                    .addComponent(this.showBetaVersionsCheckBox)
+                    .addComponent(this.showAlphaVersionsCheckBox)
+                    .addComponent(this.showInfdevVersionsCheckBox)
+                    .addGroup(
+                        groupLayout
+                            .createSequentialGroup()
+                            .addComponent(this.useVersionLabel)
+                            .addComponent(this.versionComboBox))));
     groupLayout.setVerticalGroup(
-        groupLayout.createSequentialGroup()
+        groupLayout
+            .createSequentialGroup()
             .addComponent(this.showBetaVersionsCheckBox)
             .addComponent(this.showAlphaVersionsCheckBox)
             .addComponent(this.showInfdevVersionsCheckBox)
-            .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(this.useVersionLabel)
-                .addComponent(this.versionComboBox)));
+            .addGroup(
+                groupLayout
+                    .createParallelGroup(Alignment.BASELINE)
+                    .addComponent(this.useVersionLabel)
+                    .addComponent(this.versionComboBox)));
     return groupLayout;
   }
 
