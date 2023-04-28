@@ -9,13 +9,19 @@ import java.text.MessageFormat;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.var;
+import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Getter
 @Setter
 abstract class AbstractLauncherConfig {
+
+  static Logger logger;
+
+  static {
+    logger = LogManager.getLogger(AbstractLauncherConfig.class);
+  }
 
   String selectedLanguage;
   boolean showBetaVersionsSelected;
@@ -39,17 +45,11 @@ abstract class AbstractLauncherConfig {
   String yggdrasilAccessToken;
   String yggdrasilClientToken;
 
-  static Logger logger;
-
-  static {
-    logger = LogManager.getLogger(AbstractLauncherConfig.class);
-  }
-
   Path getConfigFilePath() throws IOException {
-    var configFilePath = Paths.get(String.valueOf(LauncherUtils.WORKING_DIR_PATH),
+    val configFilePath = Paths.get(String.valueOf(LauncherUtils.WORKING_DIR_PATH),
         MessageFormat.format("{0}_{1}.properties",
             "twentyten", System.getProperty("user.name")));
-    var configFile = configFilePath.toFile();
+    val configFile = configFilePath.toFile();
     if (!configFile.exists() && !configFile.createNewFile()) {
       throw new IOException();
     }
