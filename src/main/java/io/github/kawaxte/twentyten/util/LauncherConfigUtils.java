@@ -13,15 +13,13 @@ import io.github.kawaxte.twentyten.ui.options.VersionGroupBox;
 import java.util.Objects;
 import javax.swing.SwingUtilities;
 import lombok.val;
-import lombok.var;
 
 public final class LauncherConfigUtils {
 
-  private LauncherConfigUtils() {
-  }
+  private LauncherConfigUtils() {}
 
   public static void updateSelectedLanguage(LanguageGroupBox lgb) {
-    var selectedItem = (String) lgb.getLanguageComboBox().getSelectedItem();
+    String selectedItem = (String) lgb.getLanguageComboBox().getSelectedItem();
     selectedItem = LauncherLanguage.languageLookup.get(selectedItem);
 
     val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
@@ -30,32 +28,33 @@ public final class LauncherConfigUtils {
       AbstractLauncherConfigImpl.INSTANCE.setSelectedLanguage(selectedItem);
 
       val finalSelectedItem = selectedItem;
-      SwingUtilities.invokeLater(() -> {
-        val newUtf8Bundle = LauncherLanguage.getUtf8Bundle(finalSelectedItem);
-        if (newUtf8Bundle != null) {
-          if (LanguageGroupBox.instance != null) {
-            LanguageGroupBox.instance.updateComponentKeyValues(newUtf8Bundle);
-          }
-          if (OptionsDialog.instance != null) {
-            OptionsDialog.instance.updateContainerKeyValues(newUtf8Bundle);
-          }
-          if (OptionsPanel.instance != null) {
-            OptionsPanel.instance.updateComponentKeyValues(newUtf8Bundle);
-          }
-          if (VersionGroupBox.instance != null) {
-            VersionGroupBox.instance.updateComponentKeyValues(newUtf8Bundle);
-          }
-          if (LauncherOfflinePanel.instance != null) {
-            LauncherOfflinePanel.instance.updateComponentKeyValues(newUtf8Bundle);
-          }
-          if (MicrosoftLoginPanel.instance != null) {
-            MicrosoftLoginPanel.instance.updateComponentKeyValues(newUtf8Bundle);
-          }
-          if (YggdrasilLoginPanel.instance != null) {
-            YggdrasilLoginPanel.instance.updateComponentKeyValues(newUtf8Bundle);
-          }
-        }
-      });
+      SwingUtilities.invokeLater(
+          () -> {
+            val newUtf8Bundle = LauncherLanguage.getUtf8Bundle(finalSelectedItem);
+            if (newUtf8Bundle != null) {
+              if (LanguageGroupBox.instance != null) {
+                LanguageGroupBox.instance.updateComponentKeyValues(newUtf8Bundle);
+              }
+              if (OptionsDialog.instance != null) {
+                OptionsDialog.instance.updateContainerKeyValues(newUtf8Bundle);
+              }
+              if (OptionsPanel.instance != null) {
+                OptionsPanel.instance.updateComponentKeyValues(newUtf8Bundle);
+              }
+              if (VersionGroupBox.instance != null) {
+                VersionGroupBox.instance.updateComponentKeyValues(newUtf8Bundle);
+              }
+              if (LauncherOfflinePanel.instance != null) {
+                LauncherOfflinePanel.instance.updateComponentKeyValues(newUtf8Bundle);
+              }
+              if (MicrosoftLoginPanel.instance != null) {
+                MicrosoftLoginPanel.instance.updateComponentKeyValues(newUtf8Bundle);
+              }
+              if (YggdrasilLoginPanel.instance != null) {
+                YggdrasilLoginPanel.instance.updateComponentKeyValues(newUtf8Bundle);
+              }
+            }
+          });
 
       LauncherConfig.saveConfig();
     }
