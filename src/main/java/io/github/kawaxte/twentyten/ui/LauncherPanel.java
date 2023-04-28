@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Transparency;
-import java.util.Optional;
 import java.util.stream.IntStream;
 import javax.swing.JPanel;
 import lombok.val;
@@ -22,7 +21,7 @@ public class LauncherPanel extends JPanel {
 
     this.setBackground(Color.BLACK);
 
-    GridBagConstraints gbc = new GridBagConstraints();
+    val gbc = new GridBagConstraints();
     gbc.anchor = GridBagConstraints.CENTER;
     gbc.fill = GridBagConstraints.NONE;
     this.add(new YggdrasilLoginPanel(), gbc);
@@ -32,49 +31,48 @@ public class LauncherPanel extends JPanel {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    val g2d = (Graphics2D) g;
-    val bgImageUrl =
-        Optional.ofNullable(LauncherPanel.class.getClassLoader().getResource("dirt.png"))
-            .orElseThrow(() -> new RuntimeException("Failed to load background image"));
-    val bgImage = this.getToolkit().getImage(bgImageUrl);
+    val image = this.getToolkit().getImage(getClass().getResource("/dirt.png"));
+    int imageWidth = image.getWidth(this) << 1;
+    int imageHeight = image.getHeight(this) << 1;
 
-    int bgWidth = bgImage.getWidth(this) << 1;
-    int bgHeight = bgImage.getHeight(this) << 1;
     int panelWidth = this.getWidth();
     int panelHeight = this.getHeight();
 
-    val image =
-        g2d.getDeviceConfiguration()
-            .createCompatibleImage(panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
-    val imageG2d = image.createGraphics();
-    imageG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25F));
+    val g2d = (Graphics2D) g;
+    val g2dConfiguration = g2d.getDeviceConfiguration();
 
+    val bufferedImage =
+        g2dConfiguration.createCompatibleImage(
+            panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
+    val bufferedImageG2d = bufferedImage.createGraphics();
+    bufferedImageG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25F));
     try {
-      int gridWidth = (panelWidth + bgWidth) >> 5;
-      int gridHeight = (panelHeight + bgHeight) >> 5;
+      int gridWidth = (panelWidth + imageWidth) >> 5;
+      int gridHeight = (panelHeight + imageHeight) >> 5;
       IntStream.range(0, (gridWidth * gridHeight))
           .parallel()
           .forEach(
               i -> {
                 int gridX = (i % gridWidth) << 5;
                 int gridY = (i / gridWidth) << 5;
-                imageG2d.drawImage(bgImage, gridX, gridY, bgWidth, bgHeight, this);
+                bufferedImageG2d.drawImage(image, gridX, gridY, imageWidth, imageHeight, this);
               });
-      imageG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
+      bufferedImageG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
 
       String title = "TwentyTen Launcher";
-      imageG2d.setFont(this.getFont().deriveFont(Font.BOLD, 20F));
-      imageG2d.setColor(Color.LIGHT_GRAY);
+      bufferedImageG2d.setFont(this.getFont().deriveFont(Font.BOLD, 20F));
+      bufferedImageG2d.setColor(Color.LIGHT_GRAY);
 
-      val imageG2dFontMetrics = imageG2d.getFontMetrics();
-      int titleWidth = imageG2dFontMetrics.stringWidth(title);
-      int titleHeight = imageG2dFontMetrics.getHeight();
+      val fm = bufferedImageG2d.getFontMetrics();
+      int titleWidth = fm.stringWidth(title);
+      int titleHeight = fm.getHeight();
       int titleX = (panelWidth >> 2) - (titleWidth >> 1);
       int titleY = (panelHeight >> 2) - (titleHeight << 1);
-      imageG2d.drawString(title, titleX, titleY);
+      bufferedImageG2d.drawString(title, titleX, titleY);
     } finally {
-      imageG2d.dispose();
+      bufferedImageG2d.dispose();
     }
-    g2d.drawImage(image, 0, 0, panelWidth, panelHeight, this);
+
+    g2d.drawImage(bufferedImage, 0, 0, panelWidth, panelHeight, this);
   }
 }
