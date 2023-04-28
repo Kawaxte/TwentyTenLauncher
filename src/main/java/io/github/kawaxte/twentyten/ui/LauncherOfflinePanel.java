@@ -30,8 +30,7 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
 
   {
     this.errorLabel = new JLabel((String) null, SwingConstants.CENTER);
-    this.playOnlineLabel = new JLabel("lop.playOnlineLabel",
-        SwingConstants.LEFT);
+    this.playOnlineLabel = new JLabel("lop.playOnlineLabel", SwingConstants.LEFT);
     this.playOfflineButton = new TransparentJButton("lop.playOfflineButton");
     this.tryAgainButton = new TransparentJButton("lop.tryAgainButton");
   }
@@ -46,9 +45,10 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.tryAgainButton.addActionListener(this);
 
     val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
-    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
-        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-        : LauncherLanguage.getUtf8Bundle());
+    this.updateComponentKeyValues(
+        Objects.nonNull(selectedLanguage)
+            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+            : LauncherLanguage.getUtf8Bundle());
   }
 
   public LauncherOfflinePanel(String message) {
@@ -65,59 +65,50 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.tryAgainButton.addActionListener(this);
 
     val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
-    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
-        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-        : LauncherLanguage.getUtf8Bundle());
+    this.updateComponentKeyValues(
+        Objects.nonNull(selectedLanguage)
+            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+            : LauncherLanguage.getUtf8Bundle());
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.errorLabel,
-        this.errorMessage);
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.playOnlineLabel,
-        "lop.playOnlineLabel");
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.playOfflineButton,
-        "lop.playOfflineButton");
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.tryAgainButton,
-        "lop.tryAgainButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.errorLabel, this.errorMessage);
+    LauncherUtils.updateComponentKeyValue(bundle, this.playOnlineLabel, "lop.playOnlineLabel");
+    LauncherUtils.updateComponentKeyValue(bundle, this.playOfflineButton, "lop.playOfflineButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.tryAgainButton, "lop.tryAgainButton");
   }
 
   private LayoutManager getGroupLayout() {
     val groupLayout = new GroupLayout(this);
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
-    groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-        .addComponent(this.errorLabel,
-            0,
-            GroupLayout.PREFERRED_SIZE,
-            Short.MAX_VALUE)
-        .addGroup(groupLayout.createSequentialGroup()
-            .addComponent(this.playOnlineLabel,
-                0,
-                GroupLayout.PREFERRED_SIZE,
-                Short.MAX_VALUE))
-        .addGroup(groupLayout.createSequentialGroup()
-            .addComponent(this.playOfflineButton,
-                0,
-                0,
-                Short.MAX_VALUE)
-            .addComponent(this.tryAgainButton,
-                0,
-                0,
-                Short.MAX_VALUE)));
-    groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-        .addComponent(this.errorLabel,
-            0,
-            GroupLayout.PREFERRED_SIZE,
-            Short.MAX_VALUE)
-        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-            .addComponent(this.playOnlineLabel))
-        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-            .addComponent(this.playOfflineButton)
-            .addComponent(this.tryAgainButton)));
+    groupLayout.setHorizontalGroup(
+        groupLayout
+            .createParallelGroup()
+            .addComponent(this.errorLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+            .addGroup(
+                groupLayout
+                    .createSequentialGroup()
+                    .addComponent(
+                        this.playOnlineLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
+            .addGroup(
+                groupLayout
+                    .createSequentialGroup()
+                    .addComponent(this.playOfflineButton, 0, 0, Short.MAX_VALUE)
+                    .addComponent(this.tryAgainButton, 0, 0, Short.MAX_VALUE)));
+    groupLayout.setVerticalGroup(
+        groupLayout
+            .createSequentialGroup()
+            .addComponent(this.errorLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+            .addGroup(
+                groupLayout
+                    .createParallelGroup(Alignment.BASELINE)
+                    .addComponent(this.playOnlineLabel))
+            .addGroup(
+                groupLayout
+                    .createParallelGroup(Alignment.BASELINE)
+                    .addComponent(this.playOfflineButton)
+                    .addComponent(this.tryAgainButton)));
     return groupLayout;
   }
 
@@ -125,8 +116,7 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.tryAgainButton)) {
-      LauncherUtils.addPanel(this.getParent(),
-          new YggdrasilLoginPanel());
+      LauncherUtils.addPanel(this.getParent(), new YggdrasilLoginPanel());
     }
   }
 }
