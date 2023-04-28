@@ -100,17 +100,13 @@ public class LinkedProperties extends Properties {
   @Override
   public String getProperty(String key) {
     val value = (String) this.linkedMap.get(key);
-    return value == null
-        ? super.getProperty(key)
-        : value;
+    return value == null ? super.getProperty(key) : value;
   }
 
   @Override
   public String getProperty(String key, String defaultValue) {
     val value = (String) this.linkedMap.get(key);
-    return value == null
-        ? defaultValue
-        : value;
+    return value == null ? defaultValue : value;
   }
 
   @Override
@@ -237,26 +233,26 @@ public class LinkedProperties extends Properties {
   }
 
   @Override
-  public synchronized Object computeIfAbsent(Object key,
-      Function<? super Object, ?> mappingFunction) {
+  public synchronized Object computeIfAbsent(
+      Object key, Function<? super Object, ?> mappingFunction) {
     return this.linkedMap.computeIfAbsent(key, mappingFunction);
   }
 
   @Override
-  public synchronized Object computeIfPresent(Object key,
-      BiFunction<? super Object, ? super Object, ?> remappingFunction) {
+  public synchronized Object computeIfPresent(
+      Object key, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
     return this.linkedMap.computeIfPresent(key, remappingFunction);
   }
 
   @Override
-  public synchronized Object compute(Object key,
-      BiFunction<? super Object, ? super Object, ?> remappingFunction) {
+  public synchronized Object compute(
+      Object key, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
     return this.linkedMap.compute(key, remappingFunction);
   }
 
   @Override
-  public synchronized Object merge(Object key, Object value,
-      BiFunction<? super Object, ? super Object, ?> remappingFunction) {
+  public synchronized Object merge(
+      Object key, Object value, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
     return this.linkedMap.merge(key, value, remappingFunction);
   }
 }
