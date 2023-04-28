@@ -14,10 +14,9 @@ public class LauncherFrame extends JFrame {
   public LauncherFrame() {
     super();
 
-    val iconUrl = Optional.ofNullable(LauncherFrame.class
-            .getClassLoader()
-            .getResource("favicon.png"))
-        .orElseThrow(() -> new RuntimeException("Failed to load icon image"));
+    val iconUrl =
+        Optional.ofNullable(LauncherFrame.class.getClassLoader().getResource("favicon.png"))
+            .orElseThrow(() -> new RuntimeException("Failed to load icon image"));
     this.setIconImage(this.getToolkit().getImage(iconUrl));
 
     this.setLayout(new CardLayout(0, 0));
@@ -44,4 +43,3 @@ public class LauncherFrame extends JFrame {
     this.getContentPane().setFont(font);
   }
 }
-
