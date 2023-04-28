@@ -33,10 +33,9 @@ public class LauncherPanel extends JPanel {
     super.paintComponent(g);
 
     val g2d = (Graphics2D) g;
-    val bgImageUrl = Optional.ofNullable(LauncherPanel.class
-            .getClassLoader()
-            .getResource("dirt.png"))
-        .orElseThrow(() -> new RuntimeException("Failed to load background image"));
+    val bgImageUrl =
+        Optional.ofNullable(LauncherPanel.class.getClassLoader().getResource("dirt.png"))
+            .orElseThrow(() -> new RuntimeException("Failed to load background image"));
     val bgImage = this.getToolkit().getImage(bgImageUrl);
 
     int bgWidth = bgImage.getWidth(this) << 1;
@@ -44,19 +43,23 @@ public class LauncherPanel extends JPanel {
     int panelWidth = this.getWidth();
     int panelHeight = this.getHeight();
 
-    val image = g2d.getDeviceConfiguration()
-        .createCompatibleImage(panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
+    val image =
+        g2d.getDeviceConfiguration()
+            .createCompatibleImage(panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
     val imageG2d = image.createGraphics();
     imageG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25F));
 
     try {
       int gridWidth = (panelWidth + bgWidth) >> 5;
       int gridHeight = (panelHeight + bgHeight) >> 5;
-      IntStream.range(0, (gridWidth * gridHeight)).parallel().forEach(i -> {
-        int gridX = (i % gridWidth) << 5;
-        int gridY = (i / gridWidth) << 5;
-        imageG2d.drawImage(bgImage, gridX, gridY, bgWidth, bgHeight, this);
-      });
+      IntStream.range(0, (gridWidth * gridHeight))
+          .parallel()
+          .forEach(
+              i -> {
+                int gridX = (i % gridWidth) << 5;
+                int gridY = (i / gridWidth) << 5;
+                imageG2d.drawImage(bgImage, gridX, gridY, bgWidth, bgHeight, this);
+              });
       imageG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
 
       String title = "TwentyTen Launcher";
