@@ -30,8 +30,8 @@ public class OptionsPanel extends JPanel implements ActionListener {
   {
     this.languageGroupBox = new LanguageGroupBox();
     this.versionGroupBox = new VersionGroupBox();
-    this.buildTimeLabel = new JLabel(LauncherUtils.getManifestAttribute("Build-Time"),
-        SwingUtilities.CENTER);
+    this.buildTimeLabel =
+        new JLabel(LauncherUtils.getManifestAttribute("Build-Time"), SwingUtilities.CENTER);
     this.openDirectoryButton = new JButton("op.openDirectoryButton");
     this.saveOptionsButton = new JButton("op.saveOptionsButton");
   }
@@ -48,24 +48,22 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.saveOptionsButton.addActionListener(this);
 
     val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
-    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
-        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-        : LauncherLanguage.getUtf8Bundle());
+    this.updateComponentKeyValues(
+        Objects.nonNull(selectedLanguage)
+            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+            : LauncherLanguage.getUtf8Bundle());
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(bundle,
+    LauncherUtils.updateComponentKeyValue(
+        bundle,
         this.languageGroupBox,
         this.languageGroupBox.setTitledBorder("op.languageGroupBox"));
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.versionGroupBox,
-        this.versionGroupBox.setTitledBorder("op.versionGroupBox"));
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.openDirectoryButton,
-        "op.openDirectoryButton");
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.saveOptionsButton,
-        "op.saveOptionsButton");
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.versionGroupBox, this.versionGroupBox.setTitledBorder("op.versionGroupBox"));
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.openDirectoryButton, "op.openDirectoryButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.saveOptionsButton, "op.saveOptionsButton");
   }
 
   private LayoutManager getGroupLayout() {
@@ -73,31 +71,30 @@ public class OptionsPanel extends JPanel implements ActionListener {
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
     groupLayout.setHorizontalGroup(
-        groupLayout.createSequentialGroup()
-            .addGroup(groupLayout.createParallelGroup()
-                .addComponent(this.languageGroupBox)
-                .addComponent(this.versionGroupBox)
-                .addGroup(groupLayout.createSequentialGroup()
-                    .addComponent(this.buildTimeLabel,
-                        0,
-                        0,
-                        Short.MAX_VALUE)
-                    .addComponent(this.openDirectoryButton,
-                        0,
-                        0,
-                        Short.MAX_VALUE)
-                    .addComponent(this.saveOptionsButton,
-                        0,
-                        0,
-                        Short.MAX_VALUE))));
+        groupLayout
+            .createSequentialGroup()
+            .addGroup(
+                groupLayout
+                    .createParallelGroup()
+                    .addComponent(this.languageGroupBox)
+                    .addComponent(this.versionGroupBox)
+                    .addGroup(
+                        groupLayout
+                            .createSequentialGroup()
+                            .addComponent(this.buildTimeLabel, 0, 0, Short.MAX_VALUE)
+                            .addComponent(this.openDirectoryButton, 0, 0, Short.MAX_VALUE)
+                            .addComponent(this.saveOptionsButton, 0, 0, Short.MAX_VALUE))));
     groupLayout.setVerticalGroup(
-        groupLayout.createSequentialGroup()
+        groupLayout
+            .createSequentialGroup()
             .addComponent(this.languageGroupBox)
             .addComponent(this.versionGroupBox)
-            .addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-                .addComponent(this.buildTimeLabel)
-                .addComponent(this.openDirectoryButton)
-                .addComponent(this.saveOptionsButton)));
+            .addGroup(
+                groupLayout
+                    .createParallelGroup(Alignment.CENTER)
+                    .addComponent(this.buildTimeLabel)
+                    .addComponent(this.openDirectoryButton)
+                    .addComponent(this.saveOptionsButton)));
     return groupLayout;
   }
 
@@ -109,7 +106,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     }
     if (Objects.equals(source, this.saveOptionsButton)) {
       LauncherConfigUtils.updateSelectedLanguage(this.languageGroupBox);
-      //LauncherConfigUtils.updateSelectedVersion(this.versionGroupBox);
+      // LauncherConfigUtils.updateSelectedVersion(this.versionGroupBox);
 
       SwingUtilities.getWindowAncestor(this).dispose();
     }
