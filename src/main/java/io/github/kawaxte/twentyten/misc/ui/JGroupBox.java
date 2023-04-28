@@ -14,9 +14,9 @@ public class JGroupBox extends JPanel {
   }
 
   public String setTitledBorder(String title) {
-    super.setBorder(BorderFactory.createCompoundBorder(
-        BorderFactory.createEmptyBorder(),
-        BorderFactory.createTitledBorder(title)));
+    super.setBorder(
+        BorderFactory.createCompoundBorder(
+            BorderFactory.createEmptyBorder(), BorderFactory.createTitledBorder(title)));
     return title;
   }
 }
