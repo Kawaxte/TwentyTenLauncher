@@ -5,8 +5,7 @@ import lombok.Getter;
 
 abstract class AbstractLauncherLanguage {
 
-  @Getter
-  UTF8ResourceBundle utf8Bundle;
+  @Getter UTF8ResourceBundle utf8Bundle;
 
   {
     this.utf8Bundle = new UTF8ResourceBundle();
