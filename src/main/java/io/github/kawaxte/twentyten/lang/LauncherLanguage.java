@@ -10,15 +10,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import javax.swing.DefaultComboBoxModel;
-import lombok.Getter;
 import lombok.val;
 
 public final class LauncherLanguage {
 
-  private LauncherLanguage() {
-  }
-
   public static Map<String, String> languageLookup;
+
+  private LauncherLanguage() {}
 
   public static UTF8ResourceBundle getUtf8Bundle() {
     return AbstractLauncherLanguageImpl.INSTANCE.getUtf8Bundle();
@@ -26,11 +24,10 @@ public final class LauncherLanguage {
 
   public static UTF8ResourceBundle getUtf8Bundle(String isoCode) {
     return isoCode != null
-        ? (UTF8ResourceBundle) UTF8ResourceBundle.getBundle("messages",
-        Locale.forLanguageTag(isoCode),
-        new UTF8Control())
-        : (UTF8ResourceBundle) UTF8ResourceBundle.getBundle("messages",
-            new UTF8Control());
+        ? (UTF8ResourceBundle)
+            UTF8ResourceBundle.getBundle(
+                "messages", Locale.forLanguageTag(isoCode), new UTF8Control())
+        : (UTF8ResourceBundle) UTF8ResourceBundle.getBundle("messages", new UTF8Control());
   }
 
   public static void updateLanguageComboBox(LanguageGroupBox lgb) {
@@ -38,11 +35,13 @@ public final class LauncherLanguage {
 
     val defaultComboBoxModel = new DefaultComboBoxModel<String>();
 
-    Arrays.stream(ELanguage.values()).forEachOrdered(language -> {
-      defaultComboBoxModel.addElement(language.getName());
-      languageLookup.put(language.getName(), language.toString().toLowerCase());
-    });
-    
+    Arrays.stream(ELanguage.values())
+        .forEachOrdered(
+            language -> {
+              defaultComboBoxModel.addElement(language.getName());
+              languageLookup.put(language.getName(), language.toString().toLowerCase());
+            });
+
     val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
     languageLookup.entrySet().stream()
         .filter(entry -> Objects.equals(entry.getValue(), selectedLanguage))
@@ -54,24 +53,5 @@ public final class LauncherLanguage {
 
   public static void loadLanguage(String baseName, String isoCode) {
     AbstractLauncherLanguageImpl.INSTANCE.loadLanguage(baseName, isoCode);
-  }
-
-  public enum ELanguage {
-    ET("Eesti"),
-    EN("English");
-
-    @Getter
-    private final String name;
-
-    ELanguage(String name) {
-      this.name = name;
-    }
-
-    public static ELanguage getLanguage(String isoCode) {
-      return Arrays.stream(ELanguage.values())
-          .filter(language -> language.name().equalsIgnoreCase(isoCode))
-          .findFirst()
-          .orElse(null);
-    }
   }
 }
