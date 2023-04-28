@@ -70,7 +70,7 @@ fixing a bug, you can do so by following these steps:
 
 ![Java](https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge)
 ![Maven](https://img.shields.io/badge/Maven-3.8.1-blue?logo=apachemaven&color=C71A36&style=for-the-badge)
-![Git](https://img.shields.io/badge/Git-2.40.0-blue?logo=git&color=F05032&style=for-the-badge)
+![Git](https://img.shields.io/badge/Git-2.40.1-blue?logo=git&color=F05032&style=for-the-badge)
 
 This project uses [Apache Maven](https://maven.apache.org/) to manage dependencies and build the
 application. To build the application from source, follow these steps:
