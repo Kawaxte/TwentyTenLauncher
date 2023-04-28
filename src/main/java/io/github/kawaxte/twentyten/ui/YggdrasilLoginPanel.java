@@ -25,8 +25,8 @@ import lombok.val;
 
 public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener {
 
-  public static YggdrasilLoginPanel instance;
   private static final long serialVersionUID = 1L;
+  public static YggdrasilLoginPanel instance;
   private final TransparentJButton microsoftLoginButton;
   private final JLabel usernameLabel;
   private final JLabel passwordLabel;
@@ -152,13 +152,10 @@ public class YggdrasilLoginPanel extends CustomJPanel implements ActionListener 
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.microsoftLoginButton)) {
-      if (LauncherUtils.isOutdated()) {
-        LauncherUtils.addPanel(this.getParent(),
-            new LauncherOfflinePanel("lop.errorLabel.login.outdated"));
-      } else {
-        LauncherUtils.addPanel(this.getParent(),
-            new MicrosoftLoginPanel());
-      }
+      LauncherUtils.addPanel(this.getParent(),
+          LauncherUtils.isOutdated()
+              ? new LauncherOfflinePanel("lop.errorLabel.login.outdated")
+              : new MicrosoftLoginPanel());
     }
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(() -> {
