@@ -29,10 +29,8 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
   private URL verificationUri;
 
   {
-    this.statusLabel = new JLabel("mlp.statusLabel",
-        SwingConstants.CENTER);
-    this.userCodeLabel = new JLabel("",
-        SwingConstants.CENTER);
+    this.statusLabel = new JLabel("mlp.statusLabel", SwingConstants.CENTER);
+    this.userCodeLabel = new JLabel("", SwingConstants.CENTER);
     this.expiresInProgressBar = new JProgressBar();
     this.openBrowserButton = new TransparentJButton("mlp.openBrowserButton");
     this.cancelButton = new TransparentJButton("mlp.cancelButton");
@@ -50,9 +48,10 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
     this.setLayout(this.getGroupLayout());
 
     val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
-    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
-        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-        : LauncherLanguage.getUtf8Bundle());
+    this.updateComponentKeyValues(
+        Objects.nonNull(selectedLanguage)
+            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+            : LauncherLanguage.getUtf8Bundle());
   }
 
   public MicrosoftLoginPanel(String userCode, int expiresIn, URL verificationUri) {
@@ -65,15 +64,9 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.statusLabel,
-        "mlp.statusLabel");
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.openBrowserButton,
-        "mlp.openBrowserButton");
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.cancelButton,
-        "mlp.cancelButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.statusLabel, "mlp.statusLabel");
+    LauncherUtils.updateComponentKeyValue(bundle, this.openBrowserButton, "mlp.openBrowserButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.cancelButton, "mlp.cancelButton");
   }
 
   private LayoutManager getGroupLayout() {
@@ -81,40 +74,30 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
     groupLayout.setHorizontalGroup(
-        groupLayout.createSequentialGroup()
-            .addGroup(groupLayout.createParallelGroup()
-                .addComponent(this.statusLabel,
-                    0,
-                    GroupLayout.DEFAULT_SIZE,
-                    Short.MAX_VALUE)
-                .addComponent(this.userCodeLabel,
-                    0,
-                    GroupLayout.DEFAULT_SIZE,
-                    Short.MAX_VALUE)
-                .addComponent(this.expiresInProgressBar)
-                .addGroup(groupLayout.createSequentialGroup()
-                    .addComponent(this.openBrowserButton,
-                        0,
-                        0,
-                        Short.MAX_VALUE)
-                    .addComponent(this.cancelButton,
-                        0,
-                        0,
-                        Short.MAX_VALUE))));
+        groupLayout
+            .createSequentialGroup()
+            .addGroup(
+                groupLayout
+                    .createParallelGroup()
+                    .addComponent(this.statusLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.expiresInProgressBar)
+                    .addGroup(
+                        groupLayout
+                            .createSequentialGroup()
+                            .addComponent(this.openBrowserButton, 0, 0, Short.MAX_VALUE)
+                            .addComponent(this.cancelButton, 0, 0, Short.MAX_VALUE))));
     groupLayout.setVerticalGroup(
-        groupLayout.createSequentialGroup()
-            .addComponent(this.statusLabel,
-                0,
-                GroupLayout.DEFAULT_SIZE,
-                Short.MAX_VALUE)
-            .addComponent(this.userCodeLabel,
-                0,
-                GroupLayout.DEFAULT_SIZE,
-                Short.MAX_VALUE)
+        groupLayout
+            .createSequentialGroup()
+            .addComponent(this.statusLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(this.expiresInProgressBar)
-            .addGroup(groupLayout.createParallelGroup()
-                .addComponent(this.openBrowserButton)
-                .addComponent(this.cancelButton)));
+            .addGroup(
+                groupLayout
+                    .createParallelGroup()
+                    .addComponent(this.openBrowserButton)
+                    .addComponent(this.cancelButton)));
     return groupLayout;
   }
 
@@ -125,8 +108,7 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
       LauncherUtils.openBrowser(this.verificationUri);
     }
     if (Objects.equals(source, this.cancelButton)) {
-      LauncherUtils.addPanel(this.getParent(),
-          new LauncherPanel());
+      LauncherUtils.addPanel(this.getParent(), new LauncherPanel());
     }
   }
 }
