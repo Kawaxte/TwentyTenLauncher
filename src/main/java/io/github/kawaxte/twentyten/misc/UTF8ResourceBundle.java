@@ -26,12 +26,12 @@ public class UTF8ResourceBundle extends ResourceBundle {
   public UTF8ResourceBundle(InputStream is) throws IOException {
     this.utf8Lookup = new HashMap<>();
 
-    try (val br = new BufferedReader(new InputStreamReader(is,
-        StandardCharsets.UTF_8))) {
+    try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       val properties = new Properties();
       properties.load(br);
-      properties.stringPropertyNames().forEach(key -> this.utf8Lookup.put(key,
-          properties.getProperty(key)));
+      properties
+          .stringPropertyNames()
+          .forEach(key -> this.utf8Lookup.put(key, properties.getProperty(key)));
     }
   }
 
@@ -41,8 +41,9 @@ public class UTF8ResourceBundle extends ResourceBundle {
     try (val br = new BufferedReader(reader)) {
       val properties = new Properties();
       properties.load(br);
-      properties.stringPropertyNames().forEach(key -> this.utf8Lookup.put(key,
-          properties.getProperty(key)));
+      properties
+          .stringPropertyNames()
+          .forEach(key -> this.utf8Lookup.put(key, properties.getProperty(key)));
     }
   }
 
@@ -59,8 +60,9 @@ public class UTF8ResourceBundle extends ResourceBundle {
   public static class UTF8Control extends Control {
 
     @Override
-    public ResourceBundle newBundle(String baseName, Locale locale, String format,
-        ClassLoader loader, boolean reload) throws IOException {
+    public ResourceBundle newBundle(
+        String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
+        throws IOException {
       val bundleName = this.toBundleName(baseName, locale);
       val resourceName = this.toResourceName(bundleName, "properties");
       try (val is = loader.getResourceAsStream(resourceName)) {
