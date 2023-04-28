@@ -30,12 +30,11 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
       this.getMicrosoftLoginProperties(linkedProperties);
       this.getOptionsProperties(linkedProperties);
     } catch (FileNotFoundException fnfe) {
-      logger.error("Failed to locate {}",
-          this.getConfigFilePath().toAbsolutePath(),
-          fnfe);
+      logger.error("Failed to locate {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
     } finally {
       if (!linkedProperties.isEmpty()) {
-        logger.info("Loading {} from {}",
+        logger.info(
+            "Loading {} from {}",
             this.getConfigFilePath().getFileName(),
             this.getConfigFilePath().toAbsolutePath().getParent());
       } else {
@@ -55,11 +54,10 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
 
       fos.flush();
     } catch (FileNotFoundException fnfe) {
-      logger.error("Failed to locate {}",
-          this.getConfigFilePath().toAbsolutePath(),
-          fnfe);
+      logger.error("Failed to locate {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
     } finally {
-      logger.info("Saving {} to {}",
+      logger.info(
+          "Saving {} to {}",
           this.getConfigFilePath().getFileName(),
           this.getConfigFilePath().toAbsolutePath().getParent());
     }
