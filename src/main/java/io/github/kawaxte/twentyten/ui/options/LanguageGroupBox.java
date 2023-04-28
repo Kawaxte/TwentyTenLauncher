@@ -20,12 +20,10 @@ public class LanguageGroupBox extends JGroupBox {
   public static final long serialVersionUID = 1L;
   public static LanguageGroupBox instance;
   private final JLabel setLanguageLabel;
-  @Getter
-  private final JComboBox<String> languageComboBox;
+  @Getter private final JComboBox<String> languageComboBox;
 
   {
-    this.setLanguageLabel = new JLabel("lgb.setLanguageLabel",
-        SwingConstants.RIGHT);
+    this.setLanguageLabel = new JLabel("lgb.setLanguageLabel", SwingConstants.RIGHT);
     this.languageComboBox = new JComboBox<>();
   }
 
@@ -36,17 +34,16 @@ public class LanguageGroupBox extends JGroupBox {
     this.setLayout(this.getGroupLayout());
 
     val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
-    this.updateComponentKeyValues(Objects.nonNull(selectedLanguage)
-        ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-        : LauncherLanguage.getUtf8Bundle());
+    this.updateComponentKeyValues(
+        Objects.nonNull(selectedLanguage)
+            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
+            : LauncherLanguage.getUtf8Bundle());
 
     LauncherLanguage.updateLanguageComboBox(this);
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(bundle,
-        this.setLanguageLabel,
-        "lgb.setLanguageLabel");
+    LauncherUtils.updateComponentKeyValue(bundle, this.setLanguageLabel, "lgb.setLanguageLabel");
   }
 
   private LayoutManager getGroupLayout() {
@@ -54,14 +51,18 @@ public class LanguageGroupBox extends JGroupBox {
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
     groupLayout.setHorizontalGroup(
-        groupLayout.createSequentialGroup()
+        groupLayout
+            .createSequentialGroup()
             .addComponent(this.setLanguageLabel)
             .addComponent(this.languageComboBox));
     groupLayout.setVerticalGroup(
-        groupLayout.createSequentialGroup()
-            .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(this.setLanguageLabel)
-                .addComponent(this.languageComboBox)));
+        groupLayout
+            .createSequentialGroup()
+            .addGroup(
+                groupLayout
+                    .createParallelGroup(Alignment.BASELINE)
+                    .addComponent(this.setLanguageLabel)
+                    .addComponent(this.languageComboBox)));
     return groupLayout;
   }
 }
