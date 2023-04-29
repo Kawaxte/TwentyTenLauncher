@@ -20,37 +20,36 @@ public final class Launcher {
     logger = LogManager.getLogger(Launcher.class);
   }
 
-  private Launcher() {
-  }
+  private Launcher() {}
 
   public static void main(String... args) {
     LauncherConfig.loadConfig();
 
     val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
-    LauncherLanguage.loadLanguage("messages",
-        Objects.nonNull(selectedLanguage)
-            && !selectedLanguage.isEmpty()
+    LauncherLanguage.loadLanguage(
+        "messages",
+        Objects.nonNull(selectedLanguage) && !selectedLanguage.isEmpty()
             ? selectedLanguage
             : System.getProperty("user.language"));
 
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (ReflectiveOperationException roe) {
-      logger.error("Failed to set look and feel",
-          roe);
+      logger.error("Failed to set look and feel", roe);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      logger.error("'{}' is not supported on '{}'",
+      logger.error(
+          "'{}' is not supported on '{}'",
           UIManager.getLookAndFeel().getName(),
           System.getProperty("os.name"),
           ulafe);
     } finally {
-      logger.info("Setting look and feel to '{}'",
-          UIManager.getLookAndFeel().getName());
+      logger.info("Setting look and feel to '{}'", UIManager.getLookAndFeel().getName());
     }
 
-    SwingUtilities.invokeLater(() -> {
-      val launcherFrame = new LauncherFrame();
-      launcherFrame.setVisible(true);
-    });
+    SwingUtilities.invokeLater(
+        () -> {
+          val launcherFrame = new LauncherFrame();
+          launcherFrame.setVisible(true);
+        });
   }
 }
