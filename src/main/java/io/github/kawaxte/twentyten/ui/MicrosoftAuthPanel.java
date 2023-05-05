@@ -17,10 +17,10 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import lombok.val;
 
-public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener {
+public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  public static MicrosoftLoginPanel instance;
+  public static MicrosoftAuthPanel instance;
   private final JLabel statusLabel;
   private final JLabel userCodeLabel;
   private final JProgressBar expiresInProgressBar;
@@ -36,10 +36,10 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
     this.cancelButton = new TransparentJButton("mlp.cancelButton");
   }
 
-  public MicrosoftLoginPanel() {
+  public MicrosoftAuthPanel() {
     super(true);
 
-    MicrosoftLoginPanel.instance = this;
+    MicrosoftAuthPanel.instance = this;
     this.userCodeLabel.setFont(this.userCodeLabel.getFont().deriveFont(24f));
 
     this.openBrowserButton.addActionListener(this);
@@ -54,9 +54,8 @@ public class MicrosoftLoginPanel extends CustomJPanel implements ActionListener 
             : LauncherLanguage.getUtf8Bundle());
   }
 
-  public MicrosoftLoginPanel(String userCode, int expiresIn, URL verificationUri) {
+  public MicrosoftAuthPanel(String userCode, int expiresIn, URL verificationUri) {
     this();
-
     this.userCodeLabel.setText(userCode);
     this.expiresInProgressBar.setMaximum(expiresIn);
     this.expiresInProgressBar.setValue(expiresIn);
