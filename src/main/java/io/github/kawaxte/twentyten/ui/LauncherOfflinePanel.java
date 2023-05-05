@@ -116,7 +116,7 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.tryAgainButton)) {
-      LauncherUtils.addPanel(this.getParent(), new YggdrasilLoginPanel());
+      LauncherUtils.addPanel(this.getParent(), new MojangAuthPanel());
     }
   }
 }
