@@ -14,10 +14,10 @@ public final class LauncherConfig {
   private static final List<String> VERSION_TYPES;
   public static Map<String, String> versionLookup;
   public static URL versionsFileUrl;
-  static Logger logger;
+  static Logger LOGGER;
 
   static {
-    logger = LogManager.getLogger(LauncherConfig.class);
+    LOGGER = LogManager.getLogger(LauncherConfig.class);
 
     try {
       versionsFileUrl =
@@ -30,7 +30,7 @@ public final class LauncherConfig {
                   .append("versions.json")
                   .toString());
     } catch (IOException ioe) {
-      logger.error("Failed to create URL for {}", versionsFileUrl.toString(), ioe);
+      LOGGER.error("Failed to create URL for {}", versionsFileUrl.toString(), ioe);
     }
 
     VERSION_TYPES = Collections.unmodifiableList(Arrays.asList("beta", "alpha", "infdev"));
@@ -40,17 +40,17 @@ public final class LauncherConfig {
 
   public static void loadConfig() {
     try {
-      AbstractLauncherConfigImpl.INSTANCE.loadConfig();
+      AbstractLauncherConfigImpl.INSTANCE.load();
     } catch (IOException ioe) {
-      logger.error("Failed to load config file", ioe);
+      LOGGER.error("Failed to load config file", ioe);
     }
   }
 
   public static void saveConfig() {
     try {
-      AbstractLauncherConfigImpl.INSTANCE.saveConfig();
+      AbstractLauncherConfigImpl.INSTANCE.save();
     } catch (IOException ioe) {
-      logger.error("Failed to save config file", ioe);
+      LOGGER.error("Failed to save config file", ioe);
     }
   }
 }
