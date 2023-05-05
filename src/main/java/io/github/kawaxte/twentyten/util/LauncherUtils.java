@@ -6,9 +6,11 @@ import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -34,14 +36,13 @@ import org.json.JSONArray;
 public final class LauncherUtils {
 
   public static final Path WORKING_DIR_PATH;
+  static final Logger LOGGER;
   public static Boolean outdated;
-  static Logger logger;
   private static URL githubReleasesUrl;
 
   static {
+    LOGGER = LogManager.getLogger(LauncherUtils.class);
     WORKING_DIR_PATH = getWorkingDir();
-
-    logger = LogManager.getLogger(LauncherUtils.class);
 
     try {
       githubReleasesUrl =
@@ -54,7 +55,7 @@ public final class LauncherUtils {
                   .append("releases")
                   .toString());
     } catch (IOException ioe) {
-      logger.error("Failed to create URL for GitHub API", ioe);
+      LOGGER.error("Failed to create URL for GitHub API", ioe);
     }
     outdated = null;
   }
@@ -79,7 +80,7 @@ public final class LauncherUtils {
 
     val workingDirFile = workingDirLookup.get(EPlatform.getPlatform()).toFile();
     if (!workingDirFile.exists() && !workingDirFile.mkdirs()) {
-      logger.warn("Directory '{}' could not be created", workingDirFile);
+      LOGGER.warn("Could not create {}", workingDirFile);
       return null;
     }
     return workingDirFile.toPath();
@@ -93,13 +94,15 @@ public final class LauncherUtils {
       val manifest = jarFile.getManifest();
       val attributes = manifest.getMainAttributes();
       return attributes.getValue(name);
+    } catch (FileNotFoundException fnfe) {
+      return "N/A";
     } catch (IOException ioe) {
-      logger.error("Failed to read manifest from {}", jarFileUrl, ioe);
+      LOGGER.error("Failed to read manifest from {}", jarFileUrl, ioe);
     } catch (URISyntaxException urise) {
-      logger.error("Failed to parse {} as URI", jarFileUrl, urise);
+      LOGGER.error("Failed to parse {} as URI", jarFileUrl, urise);
     } finally {
       if (jarFileUrl.getFile().endsWith(".jar")) {
-        logger.info("Retrieving '{}' from {}", name, jarFileUrl);
+        LOGGER.info("Retrieve '{}' from {}", name, jarFileUrl);
       }
     }
     return null;
@@ -116,17 +119,18 @@ public final class LauncherUtils {
                     Request.get(githubReleasesUrl.toURI())
                         .addHeader("accept", "application/vnd.github+json")
                         .addHeader("X-GitHub-Api-Version", "2022-11-28")
-                        .execute();
-                val response = request.returnContent();
-                val body = new JSONArray(response.asString());
+                        .execute()
+                        .returnContent()
+                        .asString(StandardCharsets.UTF_8);
+                val body = new JSONArray(request);
                 val tagName = body.getJSONObject(0).getString("tag_name");
 
                 val buildTime = getManifestAttribute("Build-Time");
                 return Objects.compare(buildTime, tagName, String::compareTo) < 0;
               } catch (IOException ioe) {
-                logger.error("Failed to check for updates", ioe);
+                LOGGER.error("Failed to check for updates", ioe);
               } catch (URISyntaxException urise) {
-                logger.error("Failed to parse {} as URI", githubReleasesUrl, urise);
+                LOGGER.error("Failed to parse {} as URI", githubReleasesUrl, urise);
               }
               return false;
             }
@@ -136,10 +140,10 @@ public final class LauncherUtils {
       try {
         outdated = worker.get();
       } catch (ExecutionException ee) {
-        logger.error("Exception while checking for updates", ee);
+        LOGGER.error("Error while checking for updates", ee);
         outdated = false;
       } catch (InterruptedException ie) {
-        logger.error("Interrupted while checking for updates", ie);
+        LOGGER.error("Interrupted while checking for updates", ie);
         outdated = false;
       } finally {
         worker.cancel(true);
@@ -199,9 +203,9 @@ public final class LauncherUtils {
         Desktop.getDesktop().browse(url.toURI());
       }
     } catch (IOException ioe) {
-      LauncherUtils.logger.error("Failed to browse {}", url, ioe);
+      LauncherUtils.LOGGER.error("Failed to browse {}", url, ioe);
     } catch (URISyntaxException urise) {
-      LauncherUtils.logger.error("Failed to parse {} as URI", url, urise);
+      LauncherUtils.LOGGER.error("Failed to parse {} as URI", url, urise);
     }
   }
 
@@ -211,7 +215,7 @@ public final class LauncherUtils {
         Desktop.getDesktop().open(p.toFile());
       }
     } catch (IOException ioe) {
-      LauncherUtils.logger.error("Failed to open {}", p, ioe);
+      LauncherUtils.LOGGER.error("Failed to open {}", p, ioe);
     }
   }
 }
