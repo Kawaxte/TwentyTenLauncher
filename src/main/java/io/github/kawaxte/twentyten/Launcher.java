@@ -14,10 +14,10 @@ import org.apache.logging.log4j.Logger;
 
 public final class Launcher {
 
-  static Logger logger;
+  static final Logger LOGGER;
 
   static {
-    logger = LogManager.getLogger(Launcher.class);
+    LOGGER = LogManager.getLogger(Launcher.class);
   }
 
   private Launcher() {}
@@ -35,15 +35,15 @@ public final class Launcher {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (ReflectiveOperationException roe) {
-      logger.error("Failed to set look and feel", roe);
+      LOGGER.error("Failed to set look and feel", roe);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      logger.error(
+      LOGGER.error(
           "'{}' is not supported on '{}'",
           UIManager.getLookAndFeel().getName(),
           System.getProperty("os.name"),
           ulafe);
     } finally {
-      logger.info("Setting look and feel to '{}'", UIManager.getLookAndFeel().getName());
+      LOGGER.info("Set look and feel to '{}'", UIManager.getLookAndFeel().getName());
     }
 
     SwingUtilities.invokeLater(
