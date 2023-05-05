@@ -15,16 +15,18 @@ import lombok.val;
 public class LauncherPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
+  public static LauncherPanel instance;
 
   public LauncherPanel() {
     super(new GridBagLayout(), true);
 
+    LauncherPanel.instance = this;
     this.setBackground(Color.BLACK);
 
     val gbc = new GridBagConstraints();
     gbc.anchor = GridBagConstraints.CENTER;
     gbc.fill = GridBagConstraints.NONE;
-    this.add(new YggdrasilLoginPanel(), gbc);
+    this.add(new MojangAuthPanel(), gbc);
   }
 
   @Override
