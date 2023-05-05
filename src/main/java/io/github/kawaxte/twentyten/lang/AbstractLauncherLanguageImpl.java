@@ -7,18 +7,13 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Optional;
 import lombok.val;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
 
   public static final AbstractLauncherLanguageImpl INSTANCE;
-  static Logger logger;
 
   static {
     INSTANCE = new AbstractLauncherLanguageImpl();
-
-    logger = LogManager.getLogger(AbstractLauncherLanguageImpl.class);
   }
 
   @Override
@@ -33,7 +28,7 @@ public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
               val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             this.utf8Bundle = new UTF8ResourceBundle(isr);
           } catch (IOException ioe) {
-            logger.error(
+            LOGGER.error(
                 "Failed to load {} from {}",
                 languageFileUrl
                     .get()
@@ -45,8 +40,8 @@ public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
                     .substring(0, languageFileUrl.get().getFile().lastIndexOf("/")),
                 ioe);
           } finally {
-            logger.info(
-                "Loading {} from {}",
+            LOGGER.info(
+                "Load {} from {}",
                 languageFileUrl
                     .get()
                     .getFile()
