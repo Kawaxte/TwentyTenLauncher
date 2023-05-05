@@ -17,10 +17,10 @@ import org.apache.logging.log4j.Logger;
 @Setter
 abstract class AbstractLauncherConfig {
 
-  static Logger logger;
+  static final Logger LOGGER;
 
   static {
-    logger = LogManager.getLogger(AbstractLauncherConfig.class);
+    LOGGER = LogManager.getLogger(AbstractLauncherConfig.class);
   }
 
   String selectedLanguage;
@@ -35,20 +35,21 @@ abstract class AbstractLauncherConfig {
   long microsoftAccessTokenExpiresIn;
   String microsoftRefreshToken;
   String microsoftClientToken;
-  String yggdrasilUsername;
-  String yggdrasilPassword;
-  boolean yggdrasilRememberPasswordChecked;
-  String yggdrasilProfileId;
-  String yggdrasilProfileName;
-  boolean yggdrasilProfileLegacy;
-  boolean yggdrasilProfileDemo;
-  String yggdrasilAccessToken;
-  String yggdrasilClientToken;
+  String mojangUsername;
+  String mojangPassword;
+  boolean mojangRememberPasswordChecked;
+  String mojangProfileId;
+  String mojangProfileName;
+  boolean mojangProfileDemo;
+  String mojangAccessToken;
+  String mojangClientToken;
 
   Path getConfigFilePath() throws IOException {
-    val configFilePath = Paths.get(String.valueOf(LauncherUtils.WORKING_DIR_PATH),
-        MessageFormat.format("{0}_{1}.properties",
-            "twentyten", System.getProperty("user.name")));
+    val configFilePath =
+        Paths.get(
+            String.valueOf(LauncherUtils.WORKING_DIR_PATH),
+            MessageFormat.format(
+                "{0}_{1}.properties", "twentyten", System.getProperty("user.name")));
     val configFile = configFilePath.toFile();
     if (!configFile.exists() && !configFile.createNewFile()) {
       throw new IOException();
@@ -57,94 +58,80 @@ abstract class AbstractLauncherConfig {
   }
 
   void getOptionsProperties(LinkedProperties properties) {
-    this.selectedLanguage =
-        properties.getProperty("selectedLanguage", "en");
-    this.showBetaVersionsSelected = Boolean.parseBoolean(
-        properties.getProperty("showBetaVersionsSelected", "true"));
-    this.showAlphaVersionsSelected = Boolean.parseBoolean(
-        properties.getProperty("showAlphaVersionsSelected", "false"));
-    this.showInfdevVersionsSelected = Boolean.parseBoolean(
-        properties.getProperty("showInfdevVersionsSelected", "false"));
-    this.selectedVersion =
-        properties.getProperty("selectedVersion", "b1.1_02");
+    this.selectedLanguage = properties.getProperty("selectedLanguage", "en");
+    this.showBetaVersionsSelected =
+        Boolean.parseBoolean(properties.getProperty("showBetaVersionsSelected", "true"));
+    this.showAlphaVersionsSelected =
+        Boolean.parseBoolean(properties.getProperty("showAlphaVersionsSelected", "false"));
+    this.showInfdevVersionsSelected =
+        Boolean.parseBoolean(properties.getProperty("showInfdevVersionsSelected", "false"));
+    this.selectedVersion = properties.getProperty("selectedVersion", "b1.1_02");
   }
 
-  void getMicrosoftLoginProperties(LinkedProperties properties) {
-    this.microsoftProfileId =
-        properties.getProperty("microsoftProfileId", "");
-    this.microsoftProfileName =
-        properties.getProperty("microsoftProfileName", "");
-    this.microsoftProfileDemo = Boolean.parseBoolean(
-        properties.getProperty("microsoftProfileDemo", "false"));
-    this.microsoftAccessToken =
-        properties.getProperty("microsoftAccessToken", "");
-    this.microsoftAccessTokenExpiresIn = Long.parseLong(
-        properties.getProperty("microsoftAccessTokenExpiresIn", "0"));
-    this.microsoftRefreshToken =
-        properties.getProperty("microsoftRefreshToken", "");
+  void getMicrosoftAuthProperties(LinkedProperties properties) {
+    this.microsoftProfileId = properties.getProperty("microsoftProfileId", "");
+    this.microsoftProfileName = properties.getProperty("microsoftProfileName", "");
+    this.microsoftProfileDemo =
+        Boolean.parseBoolean(properties.getProperty("microsoftProfileDemo", "false"));
+    this.microsoftAccessToken = properties.getProperty("microsoftAccessToken", "");
+    this.microsoftAccessTokenExpiresIn =
+        Long.parseLong(properties.getProperty("microsoftAccessTokenExpiresIn", "0"));
+    this.microsoftRefreshToken = properties.getProperty("microsoftRefreshToken", "");
     this.microsoftClientToken =
-        properties.getProperty("microsoftClientToken",
-            UUID.randomUUID().toString().replaceAll("-", ""));
+        properties.getProperty(
+            "microsoftClientToken", UUID.randomUUID().toString().replaceAll("-", ""));
   }
 
-  void getYggdrasilLoginProperties(LinkedProperties properties) {
-    this.yggdrasilUsername =
-        properties.getProperty("yggdrasilUsername", "");
-    this.yggdrasilPassword =
-        properties.getProperty("yggdrasilPassword", "");
-    this.yggdrasilRememberPasswordChecked = Boolean.parseBoolean(
-        properties.getProperty("yggdrasilRememberPasswordChecked", "false"));
-    this.yggdrasilProfileId =
-        properties.getProperty("yggdrasilProfileId", "");
-    this.yggdrasilProfileName =
-        properties.getProperty("yggdrasilProfileName", "");
-    this.yggdrasilProfileLegacy = Boolean.parseBoolean(
-        properties.getProperty("yggdrasilProfileLegacy", "false"));
-    this.yggdrasilProfileDemo = Boolean.parseBoolean(
-        properties.getProperty("yggdrasilProfileDemo", "false"));
-    this.yggdrasilAccessToken =
-        properties.getProperty("yggdrasilAccessToken", "");
-    this.yggdrasilClientToken =
-        properties.getProperty("yggdrasilClientToken",
-            UUID.randomUUID().toString().replaceAll("-", ""));
+  void getMojangAuthProperties(LinkedProperties properties) {
+    this.mojangUsername = properties.getProperty("mojangUsername", "");
+    this.mojangPassword = properties.getProperty("mojangPassword", "");
+    this.mojangRememberPasswordChecked =
+        Boolean.parseBoolean(properties.getProperty("mojangRememberPasswordChecked", "false"));
+    this.mojangProfileId = properties.getProperty("mojangProfileId", "");
+    this.mojangProfileName = properties.getProperty("mojangProfileName", "");
+    this.mojangProfileDemo =
+        Boolean.parseBoolean(properties.getProperty("mojangProfileDemo", "false"));
+    this.mojangAccessToken = properties.getProperty("mojangAccessToken", "");
+    this.mojangClientToken =
+        properties.getProperty(
+            "mojangClientToken", UUID.randomUUID().toString().replaceAll("-", ""));
   }
 
-  void setYggdrasilLoginProperties(LinkedProperties properties) {
-    properties.setProperty("yggdrasilUsername", this.yggdrasilUsername);
-    properties.setProperty("yggdrasilPassword", this.yggdrasilPassword);
-    properties.setProperty("yggdrasilRememberPasswordChecked",
-        Boolean.toString(this.yggdrasilRememberPasswordChecked));
-    properties.setProperty("yggdrasilProfileId", this.yggdrasilProfileId);
-    properties.setProperty("yggdrasilProfileName", this.yggdrasilProfileName);
-    properties.setProperty("yggdrasilProfileLegacy", Boolean.toString(this.yggdrasilProfileLegacy));
-    properties.setProperty("yggdrasilProfileDemo", Boolean.toString(this.yggdrasilProfileDemo));
-    properties.setProperty("yggdrasilAccessToken", this.yggdrasilAccessToken);
-    properties.setProperty("yggdrasilClientToken", this.yggdrasilClientToken);
+  void setMojangAuthProperties(LinkedProperties properties) {
+    properties.setProperty("mojangUsername", this.mojangUsername);
+    properties.setProperty("mojangPassword", this.mojangPassword);
+    properties.setProperty(
+        "mojangRememberPasswordChecked", Boolean.toString(this.mojangRememberPasswordChecked));
+    properties.setProperty("mojangProfileId", this.mojangProfileId);
+    properties.setProperty("mojangProfileName", this.mojangProfileName);
+    properties.setProperty("mojangProfileDemo", Boolean.toString(this.mojangProfileDemo));
+    properties.setProperty("mojangAccessToken", this.mojangAccessToken);
+    properties.setProperty("mojangClientToken", this.mojangClientToken);
   }
 
-  void setMicrosoftLoginProperties(LinkedProperties properties) {
+  void setMicrosoftAuthProperties(LinkedProperties properties) {
     properties.setProperty("microsoftProfileId", this.microsoftProfileId);
     properties.setProperty("microsoftProfileName", this.microsoftProfileName);
     properties.setProperty("microsoftProfileDemo", Boolean.toString(this.microsoftProfileDemo));
     properties.setProperty("microsoftAccessToken", this.microsoftAccessToken);
-    properties.setProperty("microsoftAccessTokenExpiresIn",
-        Long.toString(this.microsoftAccessTokenExpiresIn));
+    properties.setProperty(
+        "microsoftAccessTokenExpiresIn", Long.toString(this.microsoftAccessTokenExpiresIn));
     properties.setProperty("microsoftRefreshToken", this.microsoftRefreshToken);
     properties.setProperty("microsoftClientToken", this.microsoftClientToken);
   }
 
   void setOptionsProperties(LinkedProperties properties) {
     properties.setProperty("selectedLanguage", this.selectedLanguage);
-    properties.setProperty("showBetaVersionsSelected",
-        Boolean.toString(this.showBetaVersionsSelected));
-    properties.setProperty("showAlphaVersionsSelected",
-        Boolean.toString(this.showAlphaVersionsSelected));
-    properties.setProperty("showInfdevVersionsSelected",
-        Boolean.toString(this.showInfdevVersionsSelected));
+    properties.setProperty(
+        "showBetaVersionsSelected", Boolean.toString(this.showBetaVersionsSelected));
+    properties.setProperty(
+        "showAlphaVersionsSelected", Boolean.toString(this.showAlphaVersionsSelected));
+    properties.setProperty(
+        "showInfdevVersionsSelected", Boolean.toString(this.showInfdevVersionsSelected));
     properties.setProperty("selectedVersion", this.selectedVersion);
   }
 
-  public abstract void loadConfig() throws IOException;
+  public abstract void load() throws IOException;
 
-  public abstract void saveConfig() throws IOException;
+  public abstract void save() throws IOException;
 }
