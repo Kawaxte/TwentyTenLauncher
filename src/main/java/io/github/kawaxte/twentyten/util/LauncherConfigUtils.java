@@ -4,8 +4,8 @@ import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
 import io.github.kawaxte.twentyten.conf.LauncherConfig;
 import io.github.kawaxte.twentyten.lang.LauncherLanguage;
 import io.github.kawaxte.twentyten.ui.LauncherOfflinePanel;
-import io.github.kawaxte.twentyten.ui.MicrosoftLoginPanel;
-import io.github.kawaxte.twentyten.ui.YggdrasilLoginPanel;
+import io.github.kawaxte.twentyten.ui.MicrosoftAuthPanel;
+import io.github.kawaxte.twentyten.ui.MojangAuthPanel;
 import io.github.kawaxte.twentyten.ui.options.LanguageGroupBox;
 import io.github.kawaxte.twentyten.ui.options.OptionsDialog;
 import io.github.kawaxte.twentyten.ui.options.OptionsPanel;
@@ -47,11 +47,11 @@ public final class LauncherConfigUtils {
               if (LauncherOfflinePanel.instance != null) {
                 LauncherOfflinePanel.instance.updateComponentKeyValues(newUtf8Bundle);
               }
-              if (MicrosoftLoginPanel.instance != null) {
-                MicrosoftLoginPanel.instance.updateComponentKeyValues(newUtf8Bundle);
+              if (MicrosoftAuthPanel.instance != null) {
+                MicrosoftAuthPanel.instance.updateComponentKeyValues(newUtf8Bundle);
               }
-              if (YggdrasilLoginPanel.instance != null) {
-                YggdrasilLoginPanel.instance.updateComponentKeyValues(newUtf8Bundle);
+              if (MojangAuthPanel.instance != null) {
+                MojangAuthPanel.instance.updateComponentKeyValues(newUtf8Bundle);
               }
             }
           });
