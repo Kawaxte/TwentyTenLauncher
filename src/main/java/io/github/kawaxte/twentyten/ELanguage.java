@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.lang;
+package io.github.kawaxte.twentyten;
 
 import java.util.Arrays;
 import lombok.Getter;
@@ -7,10 +7,16 @@ public enum ELanguage {
   ET("Eesti"),
   EN("English");
 
-  @Getter private final String name;
+  public static final String USER_LANGUAGE;
 
-  ELanguage(String name) {
-    this.name = name;
+  static {
+    USER_LANGUAGE = System.getProperty("user.language");
+  }
+
+  @Getter private final String language;
+
+  ELanguage(String language) {
+    this.language = language;
   }
 
   public static ELanguage getLanguage(String isoCode) {
