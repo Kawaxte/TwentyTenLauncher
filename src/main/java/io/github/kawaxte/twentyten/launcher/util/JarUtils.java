@@ -1,6 +1,7 @@
-package io.github.kawaxte.twentyten.util;
+package io.github.kawaxte.twentyten.launcher.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Optional;
@@ -19,21 +20,23 @@ public final class JarUtils {
 
   private JarUtils() {}
 
-  public static String getManifestAttribute(String name) {
+  public static String getManifestAttribute(String key) {
     val jarFileUrl =
         Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
-            .orElseThrow(() -> new RuntimeException("Failed to get code source location"));
+            .orElseThrow(() -> new NullPointerException("jarFileUrl must not be null"));
     try (val jarFile = new JarFile(new File(jarFileUrl.toURI()))) {
       val manifest = jarFile.getManifest();
       val attributes = manifest.getMainAttributes();
-      return attributes.getValue(name);
+      return attributes.getValue(key);
+    } catch (FileNotFoundException fnfe) {
+      return "0000.000000.000.0";
     } catch (IOException ioe) {
-      LOGGER.error("Failed to read manifest from {}", jarFileUrl, ioe);
+      LOGGER.error("Failed to retrieve '{}' from {}", key, jarFileUrl, ioe);
     } catch (URISyntaxException urise) {
       LOGGER.error("Failed to parse {} as URI", jarFileUrl, urise);
     } finally {
       if (jarFileUrl.getFile().endsWith(".jar")) {
-        LOGGER.info("Retrieve '{}' from {}", name, jarFileUrl);
+        LOGGER.info("Retrieve '{}' from {}", key, jarFileUrl);
       }
     }
     return null;
