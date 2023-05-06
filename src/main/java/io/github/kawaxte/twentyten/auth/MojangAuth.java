@@ -11,7 +11,6 @@ import java.util.Objects;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
 
 public final class MojangAuth {
 
@@ -76,11 +75,10 @@ public final class MojangAuth {
     val clientToken = AbstractLauncherConfigImpl.INSTANCE.getMojangClientToken();
     if ((Objects.isNull(accessToken) || Objects.isNull(clientToken))
         || (accessToken.isEmpty() || clientToken.isEmpty())) {
-      LOGGER.warn("Access token or client token is null or empty");
       return;
     }
 
-    JSONObject validate = AbstractMojangAuthImpl.INSTANCE.validate(accessToken, clientToken);
+    val validate = AbstractMojangAuthImpl.INSTANCE.validate(accessToken, clientToken);
     if (validate.has("error")) {
       LOGGER.error(validate.getString("errorMessage"));
 
