@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.auth;
+package io.github.kawaxte.twentyten.launcher;
 
 import com.sun.istack.internal.NotNull;
 import java.nio.charset.StandardCharsets;
@@ -10,13 +10,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.json.JSONObject;
 
-public class AbstractMojangAuthImpl extends AbstractMojangAuth {
-
-  public static final AbstractMojangAuthImpl INSTANCE;
-
-  static {
-    INSTANCE = new AbstractMojangAuthImpl();
-  }
+public class AbstractYggdrasilAuthImpl extends AbstractYggdrasilAuth {
 
   @Override
   public JSONObject authenticate(
