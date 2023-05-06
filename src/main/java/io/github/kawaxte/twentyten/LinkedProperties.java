@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.misc;
+package io.github.kawaxte.twentyten;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,11 +27,6 @@ public class LinkedProperties extends Properties {
 
   public LinkedProperties() {
     super();
-    this.linkedMap = new LinkedHashMap<>();
-  }
-
-  public LinkedProperties(Properties defaults) {
-    super(defaults);
     this.linkedMap = new LinkedHashMap<>();
   }
 
