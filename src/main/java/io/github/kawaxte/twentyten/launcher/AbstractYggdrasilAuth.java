@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.auth;
+package io.github.kawaxte.twentyten.launcher;
 
 import com.sun.istack.internal.NotNull;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
-abstract class AbstractMojangAuth {
+abstract class AbstractYggdrasilAuth {
 
   static final Logger LOGGER;
   static URL authenticateUrl;
@@ -15,7 +15,7 @@ abstract class AbstractMojangAuth {
   static URL refreshUrl;
 
   static {
-    LOGGER = LogManager.getLogger(AbstractMojangAuth.class);
+    LOGGER = LogManager.getLogger(AbstractYggdrasilAuth.class);
 
     try {
       authenticateUrl =
