@@ -11,6 +11,7 @@ abstract class AbstractMojangAuth {
 
   static final Logger LOGGER;
   static URL authenticateUrl;
+  static URL validateUrl;
   static URL refreshUrl;
 
   static {
@@ -22,6 +23,12 @@ abstract class AbstractMojangAuth {
               new StringBuilder()
                   .append("https://authserver.mojang.com/")
                   .append("authenticate")
+                  .toString());
+      validateUrl =
+          new URL(
+              new StringBuilder()
+                  .append("https://authserver.mojang.com/")
+                  .append("validate")
                   .toString());
       refreshUrl =
           new URL(
