@@ -5,7 +5,6 @@ import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
 import java.awt.Container;
 import java.awt.Desktop;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -16,9 +15,7 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
@@ -98,26 +95,6 @@ public final class LauncherUtils {
     return workingDirFile.toPath();
   }
 
-  public static String getManifestAttribute(String name) {
-    val jarFileUrl =
-        Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
-            .orElseThrow(() -> new RuntimeException("Failed to get code source location"));
-    try (val jarFile = new JarFile(new File(jarFileUrl.toURI()))) {
-      val manifest = jarFile.getManifest();
-      val attributes = manifest.getMainAttributes();
-      return attributes.getValue(name);
-    } catch (IOException ioe) {
-      LOGGER.error("Failed to read manifest from {}", jarFileUrl, ioe);
-    } catch (URISyntaxException urise) {
-      LOGGER.error("Failed to parse {} as URI", jarFileUrl, urise);
-    } finally {
-      if (jarFileUrl.getFile().endsWith(".jar")) {
-        LOGGER.info("Retrieve '{}' from {}", name, jarFileUrl);
-      }
-    }
-    return null;
-  }
-
   public static boolean isOutdated() {
     if (outdated == null) {
       val worker =
@@ -135,7 +112,7 @@ public final class LauncherUtils {
                 val body = new JSONArray(request);
                 val tagName = body.getJSONObject(0).getString("tag_name");
 
-                val buildTime = getManifestAttribute("Build-Time");
+                val buildTime = JarUtils.getManifestAttribute("Build-Time");
                 return Objects.compare(buildTime, tagName, String::compareTo) < 0;
               } catch (IOException ioe) {
                 LOGGER.error("Failed to check for updates", ioe);
