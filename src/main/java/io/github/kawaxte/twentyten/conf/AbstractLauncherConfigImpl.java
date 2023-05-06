@@ -52,7 +52,7 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
       LOGGER.error("Failed to locate {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
     } finally {
       LOGGER.info(
-          "Saved {} to {}",
+          "Save {} to {}",
           this.getConfigFilePath().getFileName(),
           this.getConfigFilePath().toAbsolutePath().getParent());
     }
