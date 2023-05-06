@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.misc;
+package io.github.kawaxte.twentyten;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,44 +17,44 @@ import lombok.val;
 
 public class UTF8ResourceBundle extends ResourceBundle {
 
-  private final Map<String, String> utf8Lookup;
+  private final Map<String, String> lookupMap;
 
   public UTF8ResourceBundle() {
-    this.utf8Lookup = new HashMap<>();
+    this.lookupMap = new HashMap<>();
   }
 
   public UTF8ResourceBundle(InputStream is) throws IOException {
-    this.utf8Lookup = new HashMap<>();
+    this.lookupMap = new HashMap<>();
 
     try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       val properties = new Properties();
       properties.load(br);
       properties
           .stringPropertyNames()
-          .forEach(key -> this.utf8Lookup.put(key, properties.getProperty(key)));
+          .forEach(key -> this.lookupMap.put(key, properties.getProperty(key)));
     }
   }
 
   public UTF8ResourceBundle(Reader reader) throws IOException {
-    this.utf8Lookup = new HashMap<>();
+    this.lookupMap = new HashMap<>();
 
     try (val br = new BufferedReader(reader)) {
       val properties = new Properties();
       properties.load(br);
       properties
           .stringPropertyNames()
-          .forEach(key -> this.utf8Lookup.put(key, properties.getProperty(key)));
+          .forEach(key -> this.lookupMap.put(key, properties.getProperty(key)));
     }
   }
 
   @Override
   protected Object handleGetObject(String key) {
-    return this.utf8Lookup.get(key);
+    return this.lookupMap.get(key);
   }
 
   @Override
   public Enumeration<String> getKeys() {
-    return Collections.enumeration(this.utf8Lookup.keySet());
+    return Collections.enumeration(this.lookupMap.keySet());
   }
 
   public static class UTF8Control extends Control {
