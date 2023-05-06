@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -35,12 +36,24 @@ import org.json.JSONArray;
 
 public final class LauncherUtils {
 
+  public static final Pattern JWT_PATTERN;
+  public static final Pattern UUID_PATTERN;
   public static final Path WORKING_DIR_PATH;
   static final Logger LOGGER;
   public static Boolean outdated;
   private static URL githubReleasesUrl;
 
   static {
+    JWT_PATTERN =
+        Pattern.compile("^[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?$");
+    UUID_PATTERN =
+        Pattern.compile(
+            "^[A-Fa-f0-9]{8}?"
+                + "[A-Fa-f0-9]{4}?"
+                + "[A-Fa-f0-9]{4}?"
+                + "[A-Fa-f0-9]{4}?"
+                + "[A-Fa-f0-9]{12}?$");
+
     LOGGER = LogManager.getLogger(LauncherUtils.class);
     WORKING_DIR_PATH = getWorkingDir();
 
@@ -141,10 +154,8 @@ public final class LauncherUtils {
         outdated = worker.get();
       } catch (ExecutionException ee) {
         LOGGER.error("Error while checking for updates", ee);
-        outdated = false;
       } catch (InterruptedException ie) {
         LOGGER.error("Interrupted while checking for updates", ie);
-        outdated = false;
       } finally {
         worker.cancel(true);
       }
