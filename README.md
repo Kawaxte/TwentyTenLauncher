@@ -6,7 +6,8 @@
 ![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)
 ![GitHub Downloads (Pre-Release)](https://img.shields.io/github/downloads-pre/Kawaxte/TwentyTenLauncher/latest/total?sort=semver&logo=github&label=downloads@pre-release&style=for-the-badge)
 
-This project lets you play older versions of Minecraft that were released between June 2010 and
+This repository contains an application that lets you play older versions of Minecraft that were
+released between June 2010 and
 January 2011. It's named after the year the original Minecraft Launcher was released, and is
 designed to give you an authentic experience of playing Minecraft as it was in the past.
 
