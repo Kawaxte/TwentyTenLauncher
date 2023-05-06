@@ -188,8 +188,30 @@ public class MojangAuthPanel extends CustomJPanel implements ActionListener {
 
       val username = this.usernameField.getText();
       val password = new String(this.passwordField.getPassword());
-      val clientToken = AbstractLauncherConfigImpl.INSTANCE.getMojangClientToken();
-      MojangAuth.authenticate(username, password, clientToken);
+      val rememberPasswordChecked = this.rememberPasswordCheckBox.isSelected();
+
+      val mojangUsername = AbstractLauncherConfigImpl.INSTANCE.getMojangUsername();
+      val mojangPassword = AbstractLauncherConfigImpl.INSTANCE.getMojangPassword();
+      val mojangRememberPasswordChecked =
+          AbstractLauncherConfigImpl.INSTANCE.isMojangRememberPasswordChecked();
+      val mojangAccessToken = AbstractLauncherConfigImpl.INSTANCE.getMojangAccessToken();
+      val mojangClientToken = AbstractLauncherConfigImpl.INSTANCE.getMojangClientToken();
+
+      val usernameEquals = Objects.equals(mojangUsername, username);
+      val passwordEquals = Objects.equals(mojangPassword, password);
+      val rememberPasswordCheckedEquals =
+          Objects.equals(mojangRememberPasswordChecked, rememberPasswordChecked);
+      val accessTokenMatches = LauncherUtils.JWT_PATTERN.matcher(mojangAccessToken).matches();
+      val clientTokenMatches = LauncherUtils.UUID_PATTERN.matcher(mojangClientToken).matches();
+
+      if ((Objects.isNull(mojangUsername) || Objects.isNull(mojangPassword))
+          || (!usernameEquals || !passwordEquals || !rememberPasswordCheckedEquals)
+          || (!accessTokenMatches || !clientTokenMatches)) {
+        MojangAuth.authenticate(username, password, mojangClientToken);
+      } else {
+        // TODO: launch minecraft instance
+        System.out.println("we can sign in!");
+      }
     }
   }
 }
