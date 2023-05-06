@@ -1,5 +1,6 @@
 package io.github.kawaxte.twentyten;
 
+import io.github.kawaxte.twentyten.auth.MojangAuth;
 import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
 import io.github.kawaxte.twentyten.conf.LauncherConfig;
 import io.github.kawaxte.twentyten.lang.LauncherLanguage;
@@ -51,5 +52,7 @@ public final class Launcher {
           val launcherFrame = new LauncherFrame();
           launcherFrame.setVisible(true);
         });
+
+    MojangAuth.validateAndRefresh();
   }
 }
