@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -84,7 +85,8 @@ abstract class AbstractLauncherConfig {
 
   void getMojangAuthProperties(LinkedProperties properties) {
     this.mojangUsername = properties.getProperty("mojangUsername", "");
-    this.mojangPassword = properties.getProperty("mojangPassword", "");
+    this.mojangPassword =
+        new String(Base64.getDecoder().decode(properties.getProperty("mojangPassword", "")));
     this.mojangRememberPasswordChecked =
         Boolean.parseBoolean(properties.getProperty("mojangRememberPasswordChecked", "false"));
     this.mojangProfileId = properties.getProperty("mojangProfileId", "");
@@ -99,7 +101,8 @@ abstract class AbstractLauncherConfig {
 
   void setMojangAuthProperties(LinkedProperties properties) {
     properties.setProperty("mojangUsername", this.mojangUsername);
-    properties.setProperty("mojangPassword", this.mojangPassword);
+    properties.setProperty(
+        "mojangPassword", Base64.getEncoder().encodeToString(this.mojangPassword.getBytes()));
     properties.setProperty(
         "mojangRememberPasswordChecked", Boolean.toString(this.mojangRememberPasswordChecked));
     properties.setProperty("mojangProfileId", this.mojangProfileId);
