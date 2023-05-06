@@ -11,7 +11,12 @@ public enum EPlatform {
   MACOS("darwin", "mac"),
   WINDOWS("win");
 
-  private static final String OS_NAME = System.getProperty("os.name");
+  public static final String OS_NAME;
+
+  static {
+    OS_NAME = System.getProperty("os.name");
+  }
+
   private final List<String> osNames;
 
   EPlatform(String... osNames) {
@@ -32,7 +37,7 @@ public enum EPlatform {
     return Objects.equals(WINDOWS, getPlatform());
   }
 
-  public static boolean isMacOs() {
+  public static boolean isMacOS() {
     return Objects.equals(MACOS, getPlatform());
   }
 
