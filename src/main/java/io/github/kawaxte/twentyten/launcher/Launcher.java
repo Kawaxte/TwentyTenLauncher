@@ -1,10 +1,11 @@
-package io.github.kawaxte.twentyten;
+package io.github.kawaxte.twentyten.launcher;
 
-import io.github.kawaxte.twentyten.auth.MojangAuth;
-import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
-import io.github.kawaxte.twentyten.conf.LauncherConfig;
-import io.github.kawaxte.twentyten.lang.LauncherLanguage;
-import io.github.kawaxte.twentyten.ui.LauncherFrame;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+
+import io.github.kawaxte.twentyten.EPlatform;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherFrame;
+import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
 import java.util.Objects;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -24,10 +25,10 @@ public final class Launcher {
   private Launcher() {}
 
   public static void main(String... args) {
-    LauncherConfig.loadConfig();
+    CONFIG.load();
 
-    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
-    LauncherLanguage.loadLanguage(
+    val selectedLanguage = CONFIG.getSelectedLanguage();
+    LANGUAGE.load(
         "messages",
         Objects.nonNull(selectedLanguage) && !selectedLanguage.isEmpty()
             ? selectedLanguage
@@ -41,7 +42,7 @@ public final class Launcher {
       LOGGER.error(
           "'{}' is not supported on '{}'",
           UIManager.getLookAndFeel().getName(),
-          System.getProperty("os.name"),
+          EPlatform.OS_NAME,
           ulafe);
     } finally {
       LOGGER.info("Set look and feel to '{}'", UIManager.getLookAndFeel().getName());
@@ -53,6 +54,6 @@ public final class Launcher {
           launcherFrame.setVisible(true);
         });
 
-    MojangAuth.validateAndRefresh();
+    YggdrasilAuthUtils.refresh(CONFIG.getMojangAccessToken(), CONFIG.getMojangClientToken());
   }
 }
