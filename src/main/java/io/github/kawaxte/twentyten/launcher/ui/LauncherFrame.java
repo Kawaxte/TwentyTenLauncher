@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.ui;
+package io.github.kawaxte.twentyten.launcher.ui;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -16,7 +16,7 @@ public class LauncherFrame extends JFrame {
 
     val iconUrl =
         Optional.ofNullable(LauncherFrame.class.getClassLoader().getResource("favicon.png"))
-            .orElseThrow(() -> new RuntimeException("Failed to load icon image"));
+            .orElseThrow(() -> new NullPointerException("iconUrl must not be null"));
     this.setIconImage(this.getToolkit().getImage(iconUrl));
 
     this.setLayout(new CardLayout(0, 0));
