@@ -1,6 +1,6 @@
-package io.github.kawaxte.twentyten.conf;
+package io.github.kawaxte.twentyten.launcher;
 
-import io.github.kawaxte.twentyten.misc.LinkedProperties;
+import io.github.kawaxte.twentyten.LinkedProperties;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,14 +9,8 @@ import lombok.val;
 
 public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
 
-  public static final AbstractLauncherConfigImpl INSTANCE;
-
-  static {
-    INSTANCE = new AbstractLauncherConfigImpl();
-  }
-
   @Override
-  public void load() throws IOException {
+  public void load() {
     val linkedProperties = new LinkedProperties();
     try (val fis = new FileInputStream(this.getConfigFilePath().toFile())) {
       linkedProperties.load(fis);
@@ -25,7 +19,9 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
       this.getMicrosoftAuthProperties(linkedProperties);
       this.getOptionsProperties(linkedProperties);
     } catch (FileNotFoundException fnfe) {
-      LOGGER.error("Failed to locate {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
+      LOGGER.error("Failed to find {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
+    } catch (IOException ioe) {
+      LOGGER.error("Failed to load {}", this.getConfigFilePath().toAbsolutePath(), ioe);
     } finally {
       if (!linkedProperties.isEmpty()) {
         LOGGER.info(
@@ -39,7 +35,7 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
   }
 
   @Override
-  public void save() throws IOException {
+  public void save() {
     try (val fos = new FileOutputStream(this.getConfigFilePath().toFile())) {
       val linkedProperties = new LinkedProperties();
       this.setOptionsProperties(linkedProperties);
@@ -50,6 +46,8 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
       fos.flush();
     } catch (FileNotFoundException fnfe) {
       LOGGER.error("Failed to locate {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
+    } catch (IOException ioe) {
+      LOGGER.error("Failed to save {}", this.getConfigFilePath().toAbsolutePath(), ioe);
     } finally {
       LOGGER.info(
           "Save {} to {}",
