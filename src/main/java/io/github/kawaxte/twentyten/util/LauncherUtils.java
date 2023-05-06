@@ -6,7 +6,6 @@ import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -107,8 +106,6 @@ public final class LauncherUtils {
       val manifest = jarFile.getManifest();
       val attributes = manifest.getMainAttributes();
       return attributes.getValue(name);
-    } catch (FileNotFoundException fnfe) {
-      return "N/A";
     } catch (IOException ioe) {
       LOGGER.error("Failed to read manifest from {}", jarFileUrl, ioe);
     } catch (URISyntaxException urise) {
