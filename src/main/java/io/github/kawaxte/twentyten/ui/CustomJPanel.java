@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.misc.ui;
+package io.github.kawaxte.twentyten.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

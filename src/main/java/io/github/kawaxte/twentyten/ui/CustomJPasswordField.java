@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.misc.ui;
+package io.github.kawaxte.twentyten.ui;
 
 import javax.swing.JPasswordField;
 import javax.swing.UIManager;
