@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.ui;
+package io.github.kawaxte.twentyten.launcher.ui;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -26,7 +26,7 @@ public class LauncherPanel extends JPanel {
     val gbc = new GridBagConstraints();
     gbc.anchor = GridBagConstraints.CENTER;
     gbc.fill = GridBagConstraints.NONE;
-    this.add(new MojangAuthPanel(), gbc);
+    this.add(new YggdrasilAuthPanel(), gbc);
   }
 
   @Override
