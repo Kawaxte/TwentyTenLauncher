@@ -1,7 +1,7 @@
-package io.github.kawaxte.twentyten.conf;
+package io.github.kawaxte.twentyten.launcher;
 
-import io.github.kawaxte.twentyten.misc.LinkedProperties;
-import io.github.kawaxte.twentyten.util.LauncherUtils;
+import io.github.kawaxte.twentyten.LinkedProperties;
+import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,41 +24,47 @@ abstract class AbstractLauncherConfig {
     LOGGER = LogManager.getLogger(AbstractLauncherConfig.class);
   }
 
-  String selectedLanguage;
-  boolean showBetaVersionsSelected;
-  boolean showAlphaVersionsSelected;
-  boolean showInfdevVersionsSelected;
-  String selectedVersion;
-  String microsoftProfileId;
-  String microsoftProfileName;
-  boolean microsoftProfileDemo;
-  String microsoftAccessToken;
-  long microsoftAccessTokenExpiresIn;
-  String microsoftRefreshToken;
-  String microsoftClientToken;
-  String mojangUsername;
-  String mojangPassword;
-  boolean mojangRememberPasswordChecked;
-  String mojangProfileId;
-  String mojangProfileName;
-  boolean mojangProfileDemo;
-  String mojangAccessToken;
-  String mojangClientToken;
+  private String selectedLanguage;
+  private boolean showBetaVersionsSelected;
+  private boolean showAlphaVersionsSelected;
+  private boolean showInfdevVersionsSelected;
+  private String selectedVersion;
+  private String microsoftProfileId;
+  private String microsoftProfileName;
+  private boolean microsoftProfileDemo;
+  private String microsoftAccessToken;
+  private long microsoftAccessTokenExpiresIn;
+  private String microsoftRefreshToken;
+  private String microsoftClientToken;
+  private String mojangUsername;
+  private String mojangPassword;
+  private boolean mojangRememberPasswordChecked;
+  private String mojangProfileId;
+  private String mojangProfileName;
+  private boolean mojangProfileDemo;
+  private String mojangAccessToken;
+  private String mojangClientToken;
 
-  Path getConfigFilePath() throws IOException {
+  protected Path getConfigFilePath() {
     val configFilePath =
         Paths.get(
             String.valueOf(LauncherUtils.WORKING_DIR_PATH),
             MessageFormat.format(
                 "{0}_{1}.properties", "twentyten", System.getProperty("user.name")));
     val configFile = configFilePath.toFile();
-    if (!configFile.exists() && !configFile.createNewFile()) {
-      throw new IOException();
+    try {
+      if (!configFile.exists() && !configFile.createNewFile()) {
+        LOGGER.warn("Could not create {}", configFile.getAbsolutePath());
+        return null;
+      }
+    } catch (IOException ioe) {
+      LOGGER.error("Failed to create {}", configFile.getAbsolutePath(), ioe);
+      return null;
     }
     return configFilePath;
   }
 
-  void getOptionsProperties(LinkedProperties properties) {
+  protected void getOptionsProperties(LinkedProperties properties) {
     this.selectedLanguage = properties.getProperty("selectedLanguage", "en");
     this.showBetaVersionsSelected =
         Boolean.parseBoolean(properties.getProperty("showBetaVersionsSelected", "true"));
@@ -69,7 +75,7 @@ abstract class AbstractLauncherConfig {
     this.selectedVersion = properties.getProperty("selectedVersion", "b1.1_02");
   }
 
-  void getMicrosoftAuthProperties(LinkedProperties properties) {
+  protected void getMicrosoftAuthProperties(LinkedProperties properties) {
     this.microsoftProfileId = properties.getProperty("microsoftProfileId", "");
     this.microsoftProfileName = properties.getProperty("microsoftProfileName", "");
     this.microsoftProfileDemo =
@@ -83,7 +89,7 @@ abstract class AbstractLauncherConfig {
             "microsoftClientToken", UUID.randomUUID().toString().replaceAll("-", ""));
   }
 
-  void getMojangAuthProperties(LinkedProperties properties) {
+  protected void getMojangAuthProperties(LinkedProperties properties) {
     this.mojangUsername = properties.getProperty("mojangUsername", "");
     this.mojangPassword =
         new String(Base64.getDecoder().decode(properties.getProperty("mojangPassword", "")));
@@ -99,7 +105,7 @@ abstract class AbstractLauncherConfig {
             "mojangClientToken", UUID.randomUUID().toString().replaceAll("-", ""));
   }
 
-  void setMojangAuthProperties(LinkedProperties properties) {
+  protected void setMojangAuthProperties(LinkedProperties properties) {
     properties.setProperty("mojangUsername", this.mojangUsername);
     properties.setProperty(
         "mojangPassword", Base64.getEncoder().encodeToString(this.mojangPassword.getBytes()));
@@ -112,7 +118,7 @@ abstract class AbstractLauncherConfig {
     properties.setProperty("mojangClientToken", this.mojangClientToken);
   }
 
-  void setMicrosoftAuthProperties(LinkedProperties properties) {
+  protected void setMicrosoftAuthProperties(LinkedProperties properties) {
     properties.setProperty("microsoftProfileId", this.microsoftProfileId);
     properties.setProperty("microsoftProfileName", this.microsoftProfileName);
     properties.setProperty("microsoftProfileDemo", Boolean.toString(this.microsoftProfileDemo));
@@ -123,7 +129,7 @@ abstract class AbstractLauncherConfig {
     properties.setProperty("microsoftClientToken", this.microsoftClientToken);
   }
 
-  void setOptionsProperties(LinkedProperties properties) {
+  protected void setOptionsProperties(LinkedProperties properties) {
     properties.setProperty("selectedLanguage", this.selectedLanguage);
     properties.setProperty(
         "showBetaVersionsSelected", Boolean.toString(this.showBetaVersionsSelected));
@@ -134,7 +140,7 @@ abstract class AbstractLauncherConfig {
     properties.setProperty("selectedVersion", this.selectedVersion);
   }
 
-  public abstract void load() throws IOException;
+  public abstract void load();
 
-  public abstract void save() throws IOException;
+  public abstract void save();
 }
