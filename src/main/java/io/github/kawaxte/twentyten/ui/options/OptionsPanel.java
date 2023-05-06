@@ -3,6 +3,7 @@ package io.github.kawaxte.twentyten.ui.options;
 import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
 import io.github.kawaxte.twentyten.lang.LauncherLanguage;
 import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.util.JarUtils;
 import io.github.kawaxte.twentyten.util.LauncherConfigUtils;
 import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.awt.LayoutManager;
@@ -31,7 +32,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.languageGroupBox = new LanguageGroupBox();
     this.versionGroupBox = new VersionGroupBox();
     this.buildTimeLabel =
-        new JLabel(LauncherUtils.getManifestAttribute("Build-Time"), SwingUtilities.CENTER);
+        new JLabel(JarUtils.getManifestAttribute("Build-Time"), SwingUtilities.CENTER);
     this.openDirectoryButton = new JButton("op.openDirectoryButton");
     this.saveOptionsButton = new JButton("op.saveOptionsButton");
   }
