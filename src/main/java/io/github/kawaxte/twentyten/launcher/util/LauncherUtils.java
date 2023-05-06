@@ -1,8 +1,8 @@
-package io.github.kawaxte.twentyten.util;
+package io.github.kawaxte.twentyten.launcher.util;
 
 import io.github.kawaxte.twentyten.EPlatform;
-import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.misc.ui.JGroupBox;
+import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.ui.JGroupBox;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public final class LauncherUtils {
                 + "[A-Fa-f0-9]{12}?$");
 
     LOGGER = LogManager.getLogger(LauncherUtils.class);
-    WORKING_DIR_PATH = getWorkingDir();
+    WORKING_DIR_PATH = getWorkingDirectoryPath();
 
     try {
       githubReleasesUrl =
@@ -71,11 +71,11 @@ public final class LauncherUtils {
 
   private LauncherUtils() {}
 
-  public static Path getWorkingDir() {
-    String userHome = System.getProperty("user.home", ".");
-    String appData = System.getenv("APPDATA");
+  public static Path getWorkingDirectoryPath() {
+    val userHome = System.getProperty("user.home", ".");
+    val appData = System.getenv("APPDATA");
 
-    val workingDirLookup =
+    val workingDirectoryLookup =
         Collections.unmodifiableMap(
             new HashMap<EPlatform, Path>() {
               {
@@ -87,12 +87,12 @@ public final class LauncherUtils {
               }
             });
 
-    val workingDirFile = workingDirLookup.get(EPlatform.getPlatform()).toFile();
-    if (!workingDirFile.exists() && !workingDirFile.mkdirs()) {
-      LOGGER.warn("Could not create {}", workingDirFile);
+    val workingDirectory = workingDirectoryLookup.get(EPlatform.getPlatform()).toFile();
+    if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
+      LOGGER.warn("Could not create {}", workingDirectory.getAbsolutePath());
       return null;
     }
-    return workingDirFile.toPath();
+    return workingDirectory.toPath();
   }
 
   public static boolean isOutdated() {
