@@ -1,11 +1,13 @@
-package io.github.kawaxte.twentyten.ui.options;
+package io.github.kawaxte.twentyten.launcher.options;
 
-import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
-import io.github.kawaxte.twentyten.lang.LauncherLanguage;
-import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.util.JarUtils;
-import io.github.kawaxte.twentyten.util.LauncherConfigUtils;
-import io.github.kawaxte.twentyten.util.LauncherUtils;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+
+import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.launcher.util.JarUtils;
+import io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
+import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,11 +50,11 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.openDirectoryButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
 
-    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    val selectedLanguage = CONFIG.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-            : LauncherLanguage.getUtf8Bundle());
+            ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
+            : LANGUAGE.getBundle());
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -107,7 +109,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     }
     if (Objects.equals(source, this.saveOptionsButton)) {
       LauncherConfigUtils.updateSelectedLanguage(this.languageGroupBox);
-      // LauncherConfigUtils.updateSelectedVersion(this.versionGroupBox);
+      LauncherConfigUtils.updateSelectedVersion(this.versionGroupBox);
 
       SwingUtilities.getWindowAncestor(this).dispose();
     }
