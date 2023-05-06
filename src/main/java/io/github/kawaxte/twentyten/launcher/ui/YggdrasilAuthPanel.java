@@ -1,17 +1,19 @@
-package io.github.kawaxte.twentyten.ui;
+package io.github.kawaxte.twentyten.launcher.ui;
 
-import io.github.kawaxte.twentyten.auth.MojangAuth;
-import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
-import io.github.kawaxte.twentyten.lang.LauncherLanguage;
-import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.misc.ui.CustomJPanel;
-import io.github.kawaxte.twentyten.misc.ui.CustomJPasswordField;
-import io.github.kawaxte.twentyten.misc.ui.CustomJTextField;
-import io.github.kawaxte.twentyten.misc.ui.JHyperlink;
-import io.github.kawaxte.twentyten.misc.ui.TransparentJButton;
-import io.github.kawaxte.twentyten.misc.ui.TransparentJCheckBox;
-import io.github.kawaxte.twentyten.ui.options.OptionsDialog;
-import io.github.kawaxte.twentyten.util.LauncherUtils;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+
+import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.launcher.options.OptionsDialog;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
+import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
+import io.github.kawaxte.twentyten.ui.CustomJPanel;
+import io.github.kawaxte.twentyten.ui.CustomJPasswordField;
+import io.github.kawaxte.twentyten.ui.CustomJTextField;
+import io.github.kawaxte.twentyten.ui.JHyperlink;
+import io.github.kawaxte.twentyten.ui.TransparentJButton;
+import io.github.kawaxte.twentyten.ui.TransparentJCheckBox;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,10 +27,10 @@ import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.val;
 
-public class MojangAuthPanel extends CustomJPanel implements ActionListener {
+public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  public static MojangAuthPanel instance;
+  public static YggdrasilAuthPanel instance;
   private final TransparentJButton microsoftSigninButton;
   @Getter private final JLabel usernameLabel;
   @Getter private final JLabel passwordLabel;
@@ -56,16 +58,15 @@ public class MojangAuthPanel extends CustomJPanel implements ActionListener {
     this.signinButton = new TransparentJButton("ylp.signinButton");
   }
 
-  public MojangAuthPanel() {
+  public YggdrasilAuthPanel() {
     super(true);
 
-    MojangAuthPanel.instance = this;
+    YggdrasilAuthPanel.instance = this;
     this.setLayout(this.getGroupLayout());
 
-    val mojangUsername = AbstractLauncherConfigImpl.INSTANCE.getMojangUsername();
-    val mojangPassword = AbstractLauncherConfigImpl.INSTANCE.getMojangPassword();
-    val mojangRememberPasswordChecked =
-        AbstractLauncherConfigImpl.INSTANCE.isMojangRememberPasswordChecked();
+    val mojangUsername = CONFIG.getMojangUsername();
+    val mojangPassword = CONFIG.getMojangPassword();
+    val mojangRememberPasswordChecked = CONFIG.isMojangRememberPasswordChecked();
     if (Objects.nonNull(mojangUsername)) {
       this.usernameField.setText(mojangUsername);
     }
@@ -78,11 +79,11 @@ public class MojangAuthPanel extends CustomJPanel implements ActionListener {
     this.optionsButton.addActionListener(this);
     this.signinButton.addActionListener(this);
 
-    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    val selectedLanguage = CONFIG.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-            : LauncherLanguage.getUtf8Bundle());
+            ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
+            : LANGUAGE.getBundle());
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -190,12 +191,11 @@ public class MojangAuthPanel extends CustomJPanel implements ActionListener {
       val password = new String(this.passwordField.getPassword());
       val rememberPasswordChecked = this.rememberPasswordCheckBox.isSelected();
 
-      val mojangUsername = AbstractLauncherConfigImpl.INSTANCE.getMojangUsername();
-      val mojangPassword = AbstractLauncherConfigImpl.INSTANCE.getMojangPassword();
-      val mojangRememberPasswordChecked =
-          AbstractLauncherConfigImpl.INSTANCE.isMojangRememberPasswordChecked();
-      val mojangAccessToken = AbstractLauncherConfigImpl.INSTANCE.getMojangAccessToken();
-      val mojangClientToken = AbstractLauncherConfigImpl.INSTANCE.getMojangClientToken();
+      val mojangUsername = CONFIG.getMojangUsername();
+      val mojangPassword = CONFIG.getMojangPassword();
+      val mojangRememberPasswordChecked = CONFIG.isMojangRememberPasswordChecked();
+      val mojangAccessToken = CONFIG.getMojangAccessToken();
+      val mojangClientToken = CONFIG.getMojangClientToken();
 
       val usernameEquals = Objects.equals(mojangUsername, username);
       val passwordEquals = Objects.equals(mojangPassword, password);
@@ -207,7 +207,7 @@ public class MojangAuthPanel extends CustomJPanel implements ActionListener {
       if ((Objects.isNull(mojangUsername) || Objects.isNull(mojangPassword))
           || (!usernameEquals || !passwordEquals || !rememberPasswordCheckedEquals)
           || (!accessTokenMatches || !clientTokenMatches)) {
-        MojangAuth.authenticate(username, password, mojangClientToken);
+        YggdrasilAuthUtils.authenticate(username, password, mojangClientToken);
       } else {
         // TODO: launch minecraft instance
         System.out.println("we can sign in!");
