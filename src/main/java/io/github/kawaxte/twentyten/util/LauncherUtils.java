@@ -152,10 +152,10 @@ public final class LauncherUtils {
 
       try {
         outdated = worker.get();
-      } catch (ExecutionException ee) {
-        LOGGER.error("Error while checking for updates", ee);
       } catch (InterruptedException ie) {
         LOGGER.error("Interrupted while checking for updates", ie);
+      } catch (ExecutionException ee) {
+        LOGGER.error("Error while checking for updates", ee.getCause());
       } finally {
         worker.cancel(true);
       }
