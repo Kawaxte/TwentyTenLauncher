@@ -1,11 +1,13 @@
-package io.github.kawaxte.twentyten.ui;
+package io.github.kawaxte.twentyten.launcher.ui;
 
-import io.github.kawaxte.twentyten.conf.AbstractLauncherConfigImpl;
-import io.github.kawaxte.twentyten.lang.LauncherLanguage;
-import io.github.kawaxte.twentyten.misc.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.misc.ui.CustomJPanel;
-import io.github.kawaxte.twentyten.misc.ui.TransparentJButton;
-import io.github.kawaxte.twentyten.util.LauncherUtils;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+
+import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
+import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import io.github.kawaxte.twentyten.ui.CustomJPanel;
+import io.github.kawaxte.twentyten.ui.TransparentJButton;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.LayoutManager;
@@ -44,11 +46,11 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    val selectedLanguage = CONFIG.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-            : LauncherLanguage.getUtf8Bundle());
+            ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
+            : LANGUAGE.getBundle());
   }
 
   public LauncherOfflinePanel(String message) {
@@ -64,11 +66,11 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    val selectedLanguage = AbstractLauncherConfigImpl.INSTANCE.getSelectedLanguage();
+    val selectedLanguage = CONFIG.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUtf8Bundle(selectedLanguage)
-            : LauncherLanguage.getUtf8Bundle());
+            ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
+            : LANGUAGE.getBundle());
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -116,7 +118,7 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.tryAgainButton)) {
-      LauncherUtils.addPanel(this.getParent(), new MojangAuthPanel());
+      LauncherUtils.addPanel(this.getParent(), new YggdrasilAuthPanel());
     }
   }
 }
