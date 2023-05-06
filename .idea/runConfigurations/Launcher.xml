@@ -2,7 +2,7 @@
   <configuration default="false" name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../../Program Files/Java/jre-1.8" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-    <option name="MAIN_CLASS_NAME" value="io.github.kawaxte.twentyten.Launcher" />
+    <option name="MAIN_CLASS_NAME" value="io.github.kawaxte.twentyten.launcher.Launcher" />
     <module name="twentyten-launcher" />
     <method v="2">
       <option name="Make" enabled="true" />
