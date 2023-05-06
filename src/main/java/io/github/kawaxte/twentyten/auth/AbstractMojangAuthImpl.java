@@ -1,16 +1,13 @@
 package io.github.kawaxte.twentyten.auth;
 
 import com.sun.istack.internal.NotNull;
-import io.github.kawaxte.twentyten.ui.LauncherOfflinePanel;
-import io.github.kawaxte.twentyten.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.util.LauncherUtils;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import lombok.val;
-import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.json.JSONObject;
 
 public class AbstractMojangAuthImpl extends AbstractMojangAuth {
@@ -39,20 +36,19 @@ public class AbstractMojangAuthImpl extends AbstractMojangAuth {
                             .toString(),
                         ContentType.APPLICATION_JSON)
                     .execute()
-                    .returnContent()
-                    .asString(StandardCharsets.UTF_8));
+                    .handleResponse(
+                        response -> {
+                          val responseEntity = response.getEntity();
+                          return responseEntity != null
+                              ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
+                              : "{}";
+                        }));
     try {
       return new JSONObject(future.get());
     } catch (InterruptedException ie) {
       LOGGER.error("Interrupted while authenticating with Mojang", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
-      if (cause instanceof HttpResponseException) {
-        LauncherUtils.addPanel(
-            LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
-      } else {
-        LOGGER.error("Error while authenticating with Mojang", cause);
-      }
+      LOGGER.error("Error while authenticating with Mojang", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -61,11 +57,68 @@ public class AbstractMojangAuthImpl extends AbstractMojangAuth {
 
   @Override
   public JSONObject validate(@NotNull String accessToken, @NotNull String clientToken) {
-    return null;
+    val service = Executors.newSingleThreadExecutor();
+    val future =
+        service.submit(
+            () ->
+                Request.post(validateUrl.toURI())
+                    .bodyString(
+                        new JSONObject()
+                            .put("accessToken", accessToken)
+                            .put("clientToken", clientToken)
+                            .toString(),
+                        ContentType.APPLICATION_JSON)
+                    .execute()
+                    .handleResponse(
+                        response -> {
+                          val responseEntity = response.getEntity();
+                          return responseEntity != null
+                              ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
+                              : "{}";
+                        }));
+    try {
+      return new JSONObject(future.get());
+    } catch (InterruptedException ie) {
+      LOGGER.error("Interrupted while validating with Mojang", ie);
+    } catch (ExecutionException ee) {
+      LOGGER.error("Error while validating with Mojang", ee.getCause());
+    } finally {
+      service.shutdown();
+    }
+    return future.isDone() ? new JSONObject() : null;
   }
 
   @Override
   public JSONObject refresh(@NotNull String accessToken, @NotNull String clientToken) {
-    return null;
+    val service = Executors.newSingleThreadExecutor();
+    val future =
+        service.submit(
+            () ->
+                Request.post(refreshUrl.toURI())
+                    .bodyString(
+                        new JSONObject()
+                            .put("accessToken", accessToken)
+                            .put("clientToken", clientToken)
+                            .put("requestUser", true)
+                            .toString(),
+                        ContentType.APPLICATION_JSON)
+                    .execute()
+                    .handleResponse(
+                        response -> {
+                          val responseEntity = response.getEntity();
+                          return responseEntity != null
+                              ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
+                              : "{}";
+                        }));
+    try {
+      return new JSONObject(future.get());
+    } catch (InterruptedException ie) {
+      LOGGER.error("Interrupted while refreshing with Mojang", ie);
+    } catch (ExecutionException ee) {
+      LOGGER.error("Error while refreshing with Mojang", ee.getCause());
+    } finally {
+      service.shutdown();
+    }
+    return future.isDone() ? new JSONObject() : null;
   }
 }
