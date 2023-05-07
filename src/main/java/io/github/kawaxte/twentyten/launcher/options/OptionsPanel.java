@@ -2,6 +2,7 @@ package io.github.kawaxte.twentyten.launcher.options;
 
 import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
 import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.WORKING_DIRECTORY_PATH;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.util.JarUtils;
@@ -46,6 +47,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.setLayout(this.getGroupLayout());
 
     this.buildTimeLabel.setEnabled(false);
+    this.saveOptionsButton.setEnabled(false);
 
     this.openDirectoryButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
@@ -105,7 +107,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.openDirectoryButton)) {
-      LauncherUtils.openDesktop(LauncherUtils.WORKING_DIR_PATH);
+      LauncherUtils.openDesktop(WORKING_DIRECTORY_PATH);
     }
     if (Objects.equals(source, this.saveOptionsButton)) {
       LauncherConfigUtils.updateSelectedLanguage(this.languageGroupBox);
