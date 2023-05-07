@@ -24,7 +24,6 @@ public class OptionsDialog extends JDialog {
     this.setContentPane(new OptionsPanel());
 
     this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
     this.pack();
 
     this.setLocation(this.getOwner().getLocation());
