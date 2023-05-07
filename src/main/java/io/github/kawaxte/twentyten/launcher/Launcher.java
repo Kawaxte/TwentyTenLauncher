@@ -3,6 +3,8 @@ package io.github.kawaxte.twentyten.launcher;
 import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
 import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
 
+import io.github.kawaxte.twentyten.ELanguage;
+import io.github.kawaxte.twentyten.ELookAndFeel;
 import io.github.kawaxte.twentyten.EPlatform;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherFrame;
 import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
@@ -14,15 +16,13 @@ import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public final class Launcher {
+public class Launcher {
 
   static final Logger LOGGER;
 
   static {
     LOGGER = LogManager.getLogger(Launcher.class);
   }
-
-  private Launcher() {}
 
   public static void main(String... args) {
     CONFIG.load();
@@ -32,12 +32,28 @@ public final class Launcher {
         "messages",
         Objects.nonNull(selectedLanguage) && !selectedLanguage.isEmpty()
             ? selectedLanguage
-            : System.getProperty("user.language"));
+            : ELanguage.USER_LANGUAGE);
 
     try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (ReflectiveOperationException roe) {
-      LOGGER.error("Failed to set look and feel", roe);
+      ELookAndFeel.setLookAndFeel();
+    } catch (ClassNotFoundException cnfe) {
+      LOGGER.error(
+          "Cannot find '{}' on '{}'",
+          UIManager.getLookAndFeel().getName(),
+          EPlatform.OS_NAME,
+          cnfe);
+    } catch (InstantiationException ie) {
+      LOGGER.error(
+          "Cannot instantiate '{}' on '{}'",
+          UIManager.getLookAndFeel().getName(),
+          EPlatform.OS_NAME,
+          ie);
+    } catch (IllegalAccessException iae) {
+      LOGGER.error(
+          "Cannot access '{}' on '{}'",
+          UIManager.getLookAndFeel().getName(),
+          EPlatform.OS_NAME,
+          iae);
     } catch (UnsupportedLookAndFeelException ulafe) {
       LOGGER.error(
           "'{}' is not supported on '{}'",
