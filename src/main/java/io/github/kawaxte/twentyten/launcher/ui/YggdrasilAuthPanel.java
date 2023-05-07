@@ -199,16 +199,16 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
       val mojangAccessToken = CONFIG.getMojangAccessToken();
       val mojangClientToken = CONFIG.getMojangClientToken();
 
-      val usernameEquals = Objects.equals(mojangUsername, username);
-      val passwordEquals = Objects.equals(mojangPassword, password);
-      val rememberPasswordCheckedEquals =
+      val usernameEqual = Objects.equals(mojangUsername, username);
+      val passwordEqual = Objects.equals(mojangPassword, password);
+      val rememberPasswordCheckedEqual =
           Objects.equals(mojangRememberPasswordChecked, rememberPasswordChecked);
-      val accessTokenMatches = JWT_PATTERN.matcher(mojangAccessToken).matches();
-      val clientTokenMatches = UUID_PATTERN.matcher(mojangClientToken).matches();
+      val accessTokenMatched = JWT_PATTERN.matcher(mojangAccessToken).matches();
+      val clientTokenMatched = UUID_PATTERN.matcher(mojangClientToken).matches();
 
       if ((Objects.isNull(mojangUsername) || Objects.isNull(mojangPassword))
-          || (!usernameEquals || !passwordEquals || !rememberPasswordCheckedEquals)
-          || (!accessTokenMatches || !clientTokenMatches)) {
+          || (!usernameEqual || !passwordEqual || !rememberPasswordCheckedEqual)
+          || (!accessTokenMatched || !clientTokenMatched)) {
         YggdrasilAuthUtils.authenticate(username, password, mojangClientToken);
       } else {
         // TODO: launch minecraft instance
