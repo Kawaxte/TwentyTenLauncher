@@ -2,6 +2,8 @@ package io.github.kawaxte.twentyten.launcher.ui;
 
 import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
 import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.JWT_PATTERN;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.UUID_PATTERN;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.options.OptionsDialog;
@@ -9,8 +11,6 @@ import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
 import io.github.kawaxte.twentyten.ui.CustomJPanel;
-import io.github.kawaxte.twentyten.ui.CustomJPasswordField;
-import io.github.kawaxte.twentyten.ui.CustomJTextField;
 import io.github.kawaxte.twentyten.ui.JHyperlink;
 import io.github.kawaxte.twentyten.ui.TransparentJButton;
 import io.github.kawaxte.twentyten.ui.TransparentJCheckBox;
@@ -21,6 +21,8 @@ import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -34,8 +36,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   private final TransparentJButton microsoftSigninButton;
   @Getter private final JLabel usernameLabel;
   @Getter private final JLabel passwordLabel;
-  private final CustomJTextField usernameField;
-  private final CustomJPasswordField passwordField;
+  private final JTextField usernameField;
+  private final JPasswordField passwordField;
   private final TransparentJButton optionsButton;
   @Getter private final TransparentJCheckBox rememberPasswordCheckBox;
   private final JHyperlink linkLabel;
@@ -45,8 +47,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     this.microsoftSigninButton = new TransparentJButton("ylp.microsoftSigninButton");
     this.usernameLabel = new JLabel("ylp.usernameLabel", SwingConstants.RIGHT);
     this.passwordLabel = new JLabel("ylp.passwordLabel", SwingConstants.RIGHT);
-    this.usernameField = new CustomJTextField(20);
-    this.passwordField = new CustomJPasswordField(20);
+    this.usernameField = new JTextField(20);
+    this.passwordField = new JPasswordField(20);
     this.optionsButton = new TransparentJButton("ylp.optionsButton");
     this.rememberPasswordCheckBox = new TransparentJCheckBox("ylp.rememberPasswordCheckBox");
     this.linkLabel =
@@ -201,8 +203,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
       val passwordEquals = Objects.equals(mojangPassword, password);
       val rememberPasswordCheckedEquals =
           Objects.equals(mojangRememberPasswordChecked, rememberPasswordChecked);
-      val accessTokenMatches = LauncherUtils.JWT_PATTERN.matcher(mojangAccessToken).matches();
-      val clientTokenMatches = LauncherUtils.UUID_PATTERN.matcher(mojangClientToken).matches();
+      val accessTokenMatches = JWT_PATTERN.matcher(mojangAccessToken).matches();
+      val clientTokenMatches = UUID_PATTERN.matcher(mojangClientToken).matches();
 
       if ((Objects.isNull(mojangUsername) || Objects.isNull(mojangPassword))
           || (!usernameEquals || !passwordEquals || !rememberPasswordCheckedEquals)
