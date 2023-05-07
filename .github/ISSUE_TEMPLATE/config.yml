@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
-  - name: TwentyTen Launcher Discord (TODO)
-    url: https://discord.com/
-    about: Please join our Discord server for support before opening an issue.
+  - name: GitHub Discussions
+    url: https://github.com/Kawaxte/TwentyTenLauncher/discussions
+    about: Please discuss with us on GitHub Discussions before opening an issue.
