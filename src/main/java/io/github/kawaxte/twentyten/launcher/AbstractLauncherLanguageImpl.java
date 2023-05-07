@@ -35,7 +35,7 @@ public class AbstractLauncherLanguageImpl extends AbstractLauncherLanguage {
                 ioe);
           } finally {
             LOGGER.info(
-                "Load {} from {}",
+                "Loaded {} from {}",
                 languageFileUrl
                     .get()
                     .getFile()
