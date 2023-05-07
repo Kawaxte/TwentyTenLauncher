@@ -1,7 +1,8 @@
 package io.github.kawaxte.twentyten.launcher;
 
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.WORKING_DIRECTORY_PATH;
+
 import io.github.kawaxte.twentyten.LinkedProperties;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,7 +49,7 @@ abstract class AbstractLauncherConfig {
   protected Path getConfigFilePath() {
     val configFilePath =
         Paths.get(
-            String.valueOf(LauncherUtils.WORKING_DIR_PATH),
+            String.valueOf(WORKING_DIRECTORY_PATH),
             MessageFormat.format(
                 "{0}_{1}.properties", "twentyten", System.getProperty("user.name")));
     val configFile = configFilePath.toFile();
