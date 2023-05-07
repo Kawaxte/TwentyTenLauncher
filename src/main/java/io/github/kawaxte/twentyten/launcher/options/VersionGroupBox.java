@@ -30,7 +30,6 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
   private final JCheckBox showBetaVersionsCheckBox;
   private final JCheckBox showAlphaVersionsCheckBox;
   private final JCheckBox showInfdevVersionsCheckBox;
-  private final JCheckBox[] showVersionCheckBoxes;
   private final JLabel useVersionLabel;
   @Getter private final JComboBox<String> versionComboBox;
 
@@ -38,12 +37,6 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     this.showBetaVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
     this.showAlphaVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
     this.showInfdevVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
-    this.showVersionCheckBoxes =
-        new JCheckBox[] {
-          this.showBetaVersionsCheckBox,
-          this.showAlphaVersionsCheckBox,
-          this.showInfdevVersionsCheckBox
-        };
     this.useVersionLabel = new JLabel("vgb.useVersionLabel", SwingConstants.RIGHT);
     this.versionComboBox = new JComboBox<>();
   }
@@ -61,6 +54,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     this.showBetaVersionsCheckBox.addActionListener(this);
     this.showAlphaVersionsCheckBox.addActionListener(this);
     this.showInfdevVersionsCheckBox.addActionListener(this);
+    this.versionComboBox.addActionListener(this);
 
     val selectedLanguage = CONFIG.getSelectedLanguage();
     this.updateComponentKeyValues(
@@ -72,8 +66,8 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    val versionType = Collections.unmodifiableList(Arrays.asList("Beta", "Alpha", "Infdev"));
-    val versionReleaseRange =
+    val versions = Collections.unmodifiableList(Arrays.asList("Beta", "Alpha", "Infdev"));
+    val releaseDateRange =
         Collections.unmodifiableList(
             Arrays.asList(
                 "2010-12-20 -> 2011-09-15",
@@ -84,20 +78,20 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
         bundle,
         this.showBetaVersionsCheckBox,
         "vgb.showVersionsCheckBox",
-        versionType.get(0),
-        versionReleaseRange.get(0));
+        versions.get(0),
+        releaseDateRange.get(0));
     LauncherUtils.updateComponentKeyValue(
         bundle,
         this.showAlphaVersionsCheckBox,
         "vgb.showVersionsCheckBox",
-        versionType.get(1),
-        versionReleaseRange.get(1));
+        versions.get(1),
+        releaseDateRange.get(1));
     LauncherUtils.updateComponentKeyValue(
         bundle,
         this.showInfdevVersionsCheckBox,
         "vgb.showVersionsCheckBox",
-        versionType.get(2),
-        versionReleaseRange.get(2));
+        versions.get(2),
+        releaseDateRange.get(2));
     LauncherUtils.updateComponentKeyValue(bundle, this.useVersionLabel, "vgb.useVersionLabel");
   }
 
@@ -137,14 +131,32 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
 
-    for (val versionCheckBox : this.showVersionCheckBoxes) {
-      if (source == versionCheckBox) {
+    val showVersionCheckBoxes =
+        new JCheckBox[] {
+          this.showBetaVersionsCheckBox,
+          this.showAlphaVersionsCheckBox,
+          this.showInfdevVersionsCheckBox
+        };
+    for (val versionCheckBox : showVersionCheckBoxes) {
+      if (Objects.equals(source, versionCheckBox)) {
         CONFIG.setShowBetaVersionsSelected(this.showBetaVersionsCheckBox.isSelected());
         CONFIG.setShowAlphaVersionsSelected(this.showAlphaVersionsCheckBox.isSelected());
         CONFIG.setShowInfdevVersionsSelected(this.showInfdevVersionsCheckBox.isSelected());
+
+        val showVersionsSelected =
+            CONFIG.isShowBetaVersionsSelected()
+                || CONFIG.isShowAlphaVersionsSelected()
+                || CONFIG.isShowInfdevVersionsSelected();
+        OptionsPanel.instance.getSaveOptionsButton().setEnabled(showVersionsSelected);
+
         LauncherVersionUtils.updateVersionComboBox(this);
         break;
       }
+    }
+    if (Objects.equals(source, this.versionComboBox)) {
+      val selectedVersionEqual =
+          Objects.equals(CONFIG.getSelectedVersion(), this.versionComboBox.getSelectedItem());
+      OptionsPanel.instance.getSaveOptionsButton().setEnabled(!selectedVersionEqual);
     }
   }
 }
