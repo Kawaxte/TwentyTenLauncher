@@ -19,6 +19,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import lombok.Getter;
 import lombok.val;
 
 public class OptionsPanel extends JPanel implements ActionListener {
@@ -29,7 +30,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
   private final VersionGroupBox versionGroupBox;
   private final JLabel buildTimeLabel;
   private final JButton openDirectoryButton;
-  private final JButton saveOptionsButton;
+  @Getter private final JButton saveOptionsButton;
 
   {
     this.languageGroupBox = new LanguageGroupBox();
@@ -113,7 +114,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
       LauncherConfigUtils.updateSelectedLanguage(this.languageGroupBox);
       LauncherConfigUtils.updateSelectedVersion(this.versionGroupBox);
 
-      SwingUtilities.getWindowAncestor(this).dispose();
+      this.saveOptionsButton.setEnabled(false);
     }
   }
 }
