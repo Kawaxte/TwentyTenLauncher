@@ -34,7 +34,7 @@ public final class LauncherUtils {
 
   public static final Pattern JWT_PATTERN;
   public static final Pattern UUID_PATTERN;
-  public static final Path WORKING_DIR_PATH;
+  public static final Path WORKING_DIRECTORY_PATH;
   static final Logger LOGGER;
   public static Boolean outdated;
   private static URL githubReleasesUrl;
@@ -51,7 +51,7 @@ public final class LauncherUtils {
                 + "[A-Fa-f0-9]{12}?$");
 
     LOGGER = LogManager.getLogger(LauncherUtils.class);
-    WORKING_DIR_PATH = getWorkingDirectoryPath();
+    WORKING_DIRECTORY_PATH = getWorkingDirectoryPath();
 
     try {
       githubReleasesUrl =
