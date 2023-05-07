@@ -25,7 +25,7 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
     } finally {
       if (!linkedProperties.isEmpty()) {
         LOGGER.info(
-            "Load {} from {}",
+            "Loaded {} from {}",
             this.getConfigFilePath().getFileName(),
             this.getConfigFilePath().toAbsolutePath().getParent());
       } else {
@@ -50,7 +50,7 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
       LOGGER.error("Failed to save {}", this.getConfigFilePath().toAbsolutePath(), ioe);
     } finally {
       LOGGER.info(
-          "Save {} to {}",
+          "Saved {} to {}",
           this.getConfigFilePath().getFileName(),
           this.getConfigFilePath().toAbsolutePath().getParent());
     }
