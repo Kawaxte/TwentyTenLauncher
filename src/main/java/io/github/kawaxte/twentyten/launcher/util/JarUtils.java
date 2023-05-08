@@ -29,14 +29,14 @@ public final class JarUtils {
       val attributes = manifest.getMainAttributes();
       return attributes.getValue(key);
     } catch (FileNotFoundException fnfe) {
-      return "0000.000000.000.0";
+      return "9999.999999.999.9";
     } catch (IOException ioe) {
       LOGGER.error("Failed to retrieve '{}' from {}", key, jarFileUrl, ioe);
     } catch (URISyntaxException urise) {
       LOGGER.error("Failed to parse {} as URI", jarFileUrl, urise);
     } finally {
       if (jarFileUrl.getFile().endsWith(".jar")) {
-        LOGGER.info("Retrieve '{}' from {}", key, jarFileUrl);
+        LOGGER.info("Retrieved '{}' from {}", key, jarFileUrl);
       }
     }
     return null;
