@@ -1,14 +1,19 @@
-package io.github.kawaxte.twentyten.launcher.ui;
+package io.github.kawaxte.twentyten.launcher.ui.auth;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.JWT_PATTERN;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.UUID_PATTERN;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.jwtPattern;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.releasesUrl;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.signupUrl;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.uuidPattern;
+import static io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils.authInstance;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.options.OptionsDialog;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
+import io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog;
 import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils;
 import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
 import io.github.kawaxte.twentyten.ui.CustomJPanel;
 import io.github.kawaxte.twentyten.ui.JHyperlink;
@@ -17,6 +22,8 @@ import io.github.kawaxte.twentyten.ui.TransparentJCheckBox;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -53,7 +60,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     this.rememberPasswordCheckBox = new TransparentJCheckBox("ylp.rememberPasswordCheckBox");
     this.linkLabel =
         new JHyperlink(
-            LauncherUtils.outdated != null && LauncherUtils.outdated
+            Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
                 ? "ylp.linkLabel.update"
                 : "ylp.linkLabel.signup",
             SwingConstants.LEFT);
@@ -66,9 +73,9 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     YggdrasilAuthPanel.instance = this;
     this.setLayout(this.getGroupLayout());
 
-    val mojangUsername = CONFIG.getMojangUsername();
-    val mojangPassword = CONFIG.getMojangPassword();
-    val mojangRememberPasswordChecked = CONFIG.isMojangRememberPasswordChecked();
+    val mojangUsername = configInstance.getMojangUsername();
+    val mojangPassword = configInstance.getMojangPassword();
+    val mojangRememberPasswordChecked = configInstance.isMojangRememberPasswordChecked();
     if (Objects.nonNull(mojangUsername)) {
       this.usernameField.setText(mojangUsername);
     }
@@ -79,13 +86,23 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
     this.microsoftSigninButton.addActionListener(this);
     this.optionsButton.addActionListener(this);
+    this.linkLabel.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent event) {
+            LauncherUtils.openBrowser(
+                Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
+                    ? String.valueOf(releasesUrl)
+                    : String.valueOf(signupUrl));
+          }
+        });
     this.signinButton.addActionListener(this);
 
-    val selectedLanguage = CONFIG.getSelectedLanguage();
+    val selectedLanguage = configInstance.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
             ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : LANGUAGE.getBundle());
+            : languageInstance.getBundle());
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -169,11 +186,13 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.microsoftSigninButton)) {
-      LauncherUtils.addPanel(
-          this.getParent(),
-          LauncherUtils.isOutdated()
-              ? new LauncherOfflinePanel("lop.errorLabel.signin_outdated")
-              : new MicrosoftAuthPanel());
+      if (LauncherUtils.isOutdated()) {
+        LauncherUtils.addComponentToContainer(
+            this.getParent(), new LauncherOfflinePanel("lop.errorLabel.signin_outdated"));
+        return;
+      }
+
+      MicrosoftAuthUtils.executeMicrosoftAuthWorker(authInstance.getClientId());
     }
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(
@@ -184,7 +203,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     }
     if (Objects.equals(source, this.signinButton)) {
       if (LauncherUtils.isOutdated()) {
-        LauncherUtils.addPanel(
+        LauncherUtils.addComponentToContainer(
             this.getParent(), new LauncherOfflinePanel("lop.errorLabel.signin_outdated"));
         return;
       }
@@ -193,26 +212,34 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
       val password = new String(this.passwordField.getPassword());
       val rememberPasswordChecked = this.rememberPasswordCheckBox.isSelected();
 
-      val mojangUsername = CONFIG.getMojangUsername();
-      val mojangPassword = CONFIG.getMojangPassword();
-      val mojangRememberPasswordChecked = CONFIG.isMojangRememberPasswordChecked();
-      val mojangAccessToken = CONFIG.getMojangAccessToken();
-      val mojangClientToken = CONFIG.getMojangClientToken();
+      val mojangUsername = configInstance.getMojangUsername();
+      val mojangPassword = configInstance.getMojangPassword();
+      val mojangRememberPasswordChecked = configInstance.isMojangRememberPasswordChecked();
+      val mojangAccessToken = configInstance.getMojangAccessToken();
+      val mojangClientToken = configInstance.getMojangClientToken();
 
       val usernameEqual = Objects.equals(mojangUsername, username);
       val passwordEqual = Objects.equals(mojangPassword, password);
       val rememberPasswordCheckedEqual =
           Objects.equals(mojangRememberPasswordChecked, rememberPasswordChecked);
-      val accessTokenMatched = JWT_PATTERN.matcher(mojangAccessToken).matches();
-      val clientTokenMatched = UUID_PATTERN.matcher(mojangClientToken).matches();
+      val accessTokenMatched = jwtPattern.matcher(mojangAccessToken).matches();
+      val clientTokenMatched = uuidPattern.matcher(mojangClientToken).matches();
 
-      if ((Objects.isNull(mojangUsername) || Objects.isNull(mojangPassword))
-          || (!usernameEqual || !passwordEqual || !rememberPasswordCheckedEqual)
+      if ((!usernameEqual || !passwordEqual || !rememberPasswordCheckedEqual)
           || (!accessTokenMatched || !clientTokenMatched)) {
-        YggdrasilAuthUtils.authenticate(username, password, mojangClientToken);
+        this.microsoftSigninButton.setEnabled(false);
+        this.usernameField.setEnabled(false);
+        this.passwordField.setEnabled(false);
+        this.optionsButton.setEnabled(false);
+        this.rememberPasswordCheckBox.setEnabled(false);
+        this.linkLabel.setEnabled(false);
+        this.signinButton.setEnabled(false);
+
+        YggdrasilAuthUtils.runYggdrasilAuthTask(
+            username, password, mojangClientToken, rememberPasswordChecked);
       } else {
         // TODO: launch minecraft instance
-        System.out.println("we can sign in!");
+        System.out.println("we have a valid session!");
       }
     }
   }
