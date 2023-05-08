@@ -1,7 +1,7 @@
-package io.github.kawaxte.twentyten.launcher.options;
+package io.github.kawaxte.twentyten.launcher.ui.options;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
@@ -47,20 +47,20 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     VersionGroupBox.instance = this;
     this.setLayout(this.getGroupLayout());
 
-    this.showBetaVersionsCheckBox.setSelected(CONFIG.isShowBetaVersionsSelected());
-    this.showAlphaVersionsCheckBox.setSelected(CONFIG.isShowAlphaVersionsSelected());
-    this.showInfdevVersionsCheckBox.setSelected(CONFIG.isShowInfdevVersionsSelected());
+    this.showBetaVersionsCheckBox.setSelected(configInstance.isShowBetaVersionsSelected());
+    this.showAlphaVersionsCheckBox.setSelected(configInstance.isShowAlphaVersionsSelected());
+    this.showInfdevVersionsCheckBox.setSelected(configInstance.isShowInfdevVersionsSelected());
 
     this.showBetaVersionsCheckBox.addActionListener(this);
     this.showAlphaVersionsCheckBox.addActionListener(this);
     this.showInfdevVersionsCheckBox.addActionListener(this);
     this.versionComboBox.addActionListener(this);
 
-    val selectedLanguage = CONFIG.getSelectedLanguage();
+    val selectedLanguage = configInstance.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
             ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : LANGUAGE.getBundle());
+            : languageInstance.getBundle());
 
     LauncherVersionUtils.updateVersionComboBox(this);
   }
@@ -139,14 +139,14 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
         };
     for (val versionCheckBox : showVersionCheckBoxes) {
       if (Objects.equals(source, versionCheckBox)) {
-        CONFIG.setShowBetaVersionsSelected(this.showBetaVersionsCheckBox.isSelected());
-        CONFIG.setShowAlphaVersionsSelected(this.showAlphaVersionsCheckBox.isSelected());
-        CONFIG.setShowInfdevVersionsSelected(this.showInfdevVersionsCheckBox.isSelected());
+        configInstance.setShowBetaVersionsSelected(this.showBetaVersionsCheckBox.isSelected());
+        configInstance.setShowAlphaVersionsSelected(this.showAlphaVersionsCheckBox.isSelected());
+        configInstance.setShowInfdevVersionsSelected(this.showInfdevVersionsCheckBox.isSelected());
 
         val showVersionsSelected =
-            CONFIG.isShowBetaVersionsSelected()
-                || CONFIG.isShowAlphaVersionsSelected()
-                || CONFIG.isShowInfdevVersionsSelected();
+            configInstance.isShowBetaVersionsSelected()
+                || configInstance.isShowAlphaVersionsSelected()
+                || configInstance.isShowInfdevVersionsSelected();
         OptionsPanel.instance.getSaveOptionsButton().setEnabled(showVersionsSelected);
 
         LauncherVersionUtils.updateVersionComboBox(this);
@@ -155,7 +155,8 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     }
     if (Objects.equals(source, this.versionComboBox)) {
       val selectedVersionEqual =
-          Objects.equals(CONFIG.getSelectedVersion(), this.versionComboBox.getSelectedItem());
+          Objects.equals(
+              configInstance.getSelectedVersion(), this.versionComboBox.getSelectedItem());
       OptionsPanel.instance.getSaveOptionsButton().setEnabled(!selectedVersionEqual);
     }
   }
