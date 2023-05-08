@@ -1,7 +1,7 @@
 package io.github.kawaxte.twentyten.launcher;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
 
 import io.github.kawaxte.twentyten.ELanguage;
 import io.github.kawaxte.twentyten.ELookAndFeel;
@@ -25,10 +25,10 @@ public class Launcher {
   }
 
   public static void main(String... args) {
-    CONFIG.load();
+    configInstance.load();
 
-    val selectedLanguage = CONFIG.getSelectedLanguage();
-    LANGUAGE.load(
+    val selectedLanguage = configInstance.getSelectedLanguage();
+    languageInstance.load(
         "messages",
         Objects.nonNull(selectedLanguage) && !selectedLanguage.isEmpty()
             ? selectedLanguage
@@ -70,6 +70,7 @@ public class Launcher {
           launcherFrame.setVisible(true);
         });
 
-    YggdrasilAuthUtils.refresh(CONFIG.getMojangAccessToken(), CONFIG.getMojangClientToken());
+    YggdrasilAuthUtils.validateAndRefreshAccessToken(
+        configInstance.getMojangAccessToken(), configInstance.getMojangClientToken());
   }
 }
