@@ -1,6 +1,5 @@
-package io.github.kawaxte.twentyten.launcher;
+package io.github.kawaxte.twentyten.launcher.auth;
 
-import com.sun.istack.internal.NotNull;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.logging.log4j.LogManager;
@@ -9,13 +8,13 @@ import org.json.JSONObject;
 
 abstract class AbstractYggdrasilAuth {
 
-  static final Logger LOGGER;
-  static URL authenticateUrl;
-  static URL validateUrl;
-  static URL refreshUrl;
+  protected final Logger logger;
+  protected URL authenticateUrl;
+  protected URL validateUrl;
+  protected URL refreshUrl;
 
-  static {
-    LOGGER = LogManager.getLogger(AbstractYggdrasilAuth.class);
+  {
+    this.logger = LogManager.getLogger(this);
 
     try {
       authenticateUrl =
@@ -37,18 +36,13 @@ abstract class AbstractYggdrasilAuth {
                   .append("refresh")
                   .toString());
     } catch (IOException ioe) {
-      LOGGER.error("Failed to create URL for Mojang API", ioe);
+      this.logger.error("Failed to create URL for Mojang API", ioe);
     }
   }
 
-  JSONObject getAgent() {
-    return new JSONObject().put("name", "Minecraft").put("version", 1);
-  }
+  public abstract JSONObject authenticate(String username, String password, String clientToken);
 
-  public abstract JSONObject authenticate(
-      @NotNull String username, @NotNull String password, @NotNull String clientToken);
+  public abstract JSONObject validateAccessToken(String accessToken, String clientToken);
 
-  public abstract JSONObject validate(@NotNull String accessToken, @NotNull String clientToken);
-
-  public abstract JSONObject refresh(@NotNull String accessToken, @NotNull String clientToken);
+  public abstract JSONObject refreshAccessToken(String accessToken, String clientToken);
 }
