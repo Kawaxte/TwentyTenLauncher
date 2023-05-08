@@ -3,6 +3,7 @@ package io.github.kawaxte.twentyten.launcher.auth;
 import com.sun.istack.internal.NotNull;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import lombok.val;
@@ -32,7 +33,7 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
@@ -41,9 +42,9 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LOGGER.error("Interrupted while acquiring device code", ie);
+      this.logger.error("Interrupted while acquiring device code", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring device code", ee.getCause());
+      this.logger.error("Error while acquiring device code", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -67,7 +68,7 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
@@ -76,9 +77,9 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LOGGER.error("Interrupted while acquiring token", ie);
+      this.logger.error("Interrupted while acquiring token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring token", ee.getCause());
+      this.logger.error("Error while acquiring token", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -102,7 +103,7 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
@@ -111,9 +112,9 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LOGGER.error("Interrupted while refreshing token", ie);
+      this.logger.error("Interrupted while refreshing token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while refreshing token", ee.getCause());
+      this.logger.error("Error while refreshing token", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -142,7 +143,7 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
@@ -151,9 +152,9 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LOGGER.error("Interrupted while acquiring XBL token", ie);
+      this.logger.error("Interrupted while acquiring XBL token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring XBL token", ee.getCause());
+      this.logger.error("Error while acquiring XBL token", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -181,7 +182,7 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
@@ -190,9 +191,9 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LOGGER.error("Interrupted while acquiring XSTS token", ie);
+      this.logger.error("Interrupted while acquiring XSTS token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring XSTS token", ee.getCause());
+      this.logger.error("Error while acquiring XSTS token", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -215,7 +216,7 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
@@ -224,9 +225,9 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LOGGER.error("Interrupted while acquiring access token", ie);
+      this.logger.error("Interrupted while acquiring access token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring access token", ee.getCause());
+      this.logger.error("Error while acquiring access token", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -245,7 +246,7 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
@@ -254,9 +255,9 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LOGGER.error("Interrupted while acquiring items", ie);
+      this.logger.error("Interrupted while acquiring items", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring items", ee.getCause());
+      this.logger.error("Error while acquiring items", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -275,7 +276,7 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
@@ -284,9 +285,9 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LOGGER.error("Interrupted while checking Minecraft profile", ie);
+      this.logger.error("Interrupted while checking Minecraft profile", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while checking Minecraft profile", ee.getCause());
+      this.logger.error("Error while checking Minecraft profile", ee.getCause());
     } finally {
       service.shutdown();
     }
