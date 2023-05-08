@@ -1,7 +1,7 @@
-package io.github.kawaxte.twentyten.launcher.options;
+package io.github.kawaxte.twentyten.launcher.ui.options;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
@@ -39,11 +39,11 @@ public class LanguageGroupBox extends JGroupBox implements ActionListener {
 
     this.languageComboBox.addActionListener(this);
 
-    val selectedLanguage = CONFIG.getSelectedLanguage();
+    val selectedLanguage = configInstance.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
             ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : LANGUAGE.getBundle());
+            : languageInstance.getBundle());
 
     LauncherLanguageUtils.updateLanguageComboBox(this);
   }
@@ -77,7 +77,8 @@ public class LanguageGroupBox extends JGroupBox implements ActionListener {
     val source = event.getSource();
     if (Objects.equals(source, this.languageComboBox)) {
       val selectedLanguageEqual =
-          Objects.equals(CONFIG.getSelectedLanguage(), this.languageComboBox.getSelectedItem());
+          Objects.equals(
+              configInstance.getSelectedLanguage(), this.languageComboBox.getSelectedItem());
       OptionsPanel.instance.getSaveOptionsButton().setEnabled(!selectedLanguageEqual);
     }
   }
