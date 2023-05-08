@@ -1,6 +1,5 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
-import com.sun.istack.internal.NotNull;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Objects;
@@ -265,7 +264,7 @@ public class AbstractMicrosoftAuthImpl extends AbstractMicrosoftAuth {
   }
 
   @Override
-  public JSONObject acquireMinecraftProfile(@NotNull String accessToken) {
+  public JSONObject acquireMinecraftProfile(String accessToken) {
     val service = Executors.newSingleThreadExecutor();
     val future =
         service.submit(
