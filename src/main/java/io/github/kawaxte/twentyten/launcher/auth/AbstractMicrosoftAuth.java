@@ -10,12 +10,7 @@ import org.json.JSONObject;
 
 abstract class AbstractMicrosoftAuth {
 
-  static final Logger LOGGER;
-
-  static {
-    LOGGER = LogManager.getLogger(AbstractMicrosoftAuth.class);
-  }
-
+  protected final Logger logger;
   @Getter private final String clientId;
   protected URL consumersDeviceCodeUrl;
   protected URL consumersTokenUrl;
@@ -28,6 +23,9 @@ abstract class AbstractMicrosoftAuth {
   @Getter @Setter private String refreshToken;
 
   {
+    this.logger = LogManager.getLogger(this);
+    this.clientId = "e1a4bd01-2c5f-4be0-8e6a-84d71929703b";
+
     try {
       consumersDeviceCodeUrl =
           new URL(
@@ -83,10 +81,8 @@ abstract class AbstractMicrosoftAuth {
                   .append("profile")
                   .toString());
     } catch (MalformedURLException murle) {
-      LOGGER.error("Failed to create URL", murle);
+      this.logger.error("Failed to create URL", murle);
     }
-
-    this.clientId = "e1a4bd01-2c5f-4be0-8e6a-84d71929703b";
   }
 
   public abstract JSONObject acquireDeviceCode(String clientId);
