@@ -15,7 +15,7 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
     try (val fis = new FileInputStream(this.getConfigFilePath().toFile())) {
       linkedProperties.load(fis);
 
-      this.getMojangAuthProperties(linkedProperties);
+      this.getYggdrasilAuthProperties(linkedProperties);
       this.getMicrosoftAuthProperties(linkedProperties);
       this.getOptionsProperties(linkedProperties);
     } catch (FileNotFoundException fnfe) {
@@ -40,7 +40,7 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
       val linkedProperties = new LinkedProperties();
       this.setOptionsProperties(linkedProperties);
       this.setMicrosoftAuthProperties(linkedProperties);
-      this.setMojangAuthProperties(linkedProperties);
+      this.setYggdrasilAuthProperties(linkedProperties);
       linkedProperties.store(fos, "TwentyTen Launcher");
 
       fos.flush();
