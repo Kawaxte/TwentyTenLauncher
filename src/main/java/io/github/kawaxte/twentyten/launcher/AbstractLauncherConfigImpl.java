@@ -19,12 +19,12 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
       this.getMicrosoftAuthProperties(linkedProperties);
       this.getOptionsProperties(linkedProperties);
     } catch (FileNotFoundException fnfe) {
-      LOGGER.error("Failed to find {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
+      this.logger.error("Failed to find {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
     } catch (IOException ioe) {
-      LOGGER.error("Failed to load {}", this.getConfigFilePath().toAbsolutePath(), ioe);
+      this.logger.error("Failed to load {}", this.getConfigFilePath().toAbsolutePath(), ioe);
     } finally {
       if (!linkedProperties.isEmpty()) {
-        LOGGER.info(
+        this.logger.info(
             "Loaded {} from {}",
             this.getConfigFilePath().getFileName(),
             this.getConfigFilePath().toAbsolutePath().getParent());
@@ -45,11 +45,11 @@ public class AbstractLauncherConfigImpl extends AbstractLauncherConfig {
 
       fos.flush();
     } catch (FileNotFoundException fnfe) {
-      LOGGER.error("Failed to locate {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
+      this.logger.error("Failed to locate {}", this.getConfigFilePath().toAbsolutePath(), fnfe);
     } catch (IOException ioe) {
-      LOGGER.error("Failed to save {}", this.getConfigFilePath().toAbsolutePath(), ioe);
+      this.logger.error("Failed to save {}", this.getConfigFilePath().toAbsolutePath(), ioe);
     } finally {
-      LOGGER.info(
+      this.logger.info(
           "Saved {} to {}",
           this.getConfigFilePath().getFileName(),
           this.getConfigFilePath().toAbsolutePath().getParent());
