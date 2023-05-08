@@ -6,6 +6,7 @@ import io.github.kawaxte.twentyten.ui.JGroupBox;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -32,29 +33,41 @@ import org.json.JSONArray;
 
 public final class LauncherUtils {
 
-  public static final Pattern JWT_PATTERN;
-  public static final Pattern UUID_PATTERN;
-  public static final Path WORKING_DIRECTORY_PATH;
-  static final Logger LOGGER;
+  private static final Logger LOGGER;
+  public static Pattern jwtPattern;
+  public static Pattern uuidPattern;
+  public static Path workingDirectoryPath;
   public static Boolean outdated;
-  private static URL githubReleasesUrl;
+  public static URL signupUrl;
+  public static URL releasesUrl;
 
   static {
-    JWT_PATTERN =
-        Pattern.compile("^[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?$");
-    UUID_PATTERN =
+    LOGGER = LogManager.getLogger(LauncherUtils.class);
+
+    jwtPattern = Pattern.compile("^[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?$");
+    uuidPattern =
         Pattern.compile(
             "^[A-Fa-f0-9]{8}?"
                 + "[A-Fa-f0-9]{4}?"
                 + "[A-Fa-f0-9]{4}?"
                 + "[A-Fa-f0-9]{4}?"
                 + "[A-Fa-f0-9]{12}?$");
-
-    LOGGER = LogManager.getLogger(LauncherUtils.class);
-    WORKING_DIRECTORY_PATH = getWorkingDirectoryPath();
+    workingDirectoryPath = getWorkingDirectoryPath();
+    outdated = null;
 
     try {
-      githubReleasesUrl =
+      signupUrl =
+          new URL(
+              new StringBuilder()
+                  .append("https://signup.live.com/")
+                  .append("signup")
+                  .append("?client_id=000000004420578E")
+                  .append("&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d")
+                  .append("&lic=1")
+                  .append("&uaid=e6e4ffd0ad4943ab9bf740fb4a0416f9")
+                  .append("&wa=wsignin1.0")
+                  .toString());
+      releasesUrl =
           new URL(
               new StringBuilder()
                   .append("https://api.github.com/")
@@ -64,9 +77,8 @@ public final class LauncherUtils {
                   .append("releases")
                   .toString());
     } catch (IOException ioe) {
-      LOGGER.error("Failed to create URL for GitHub API", ioe);
+      LOGGER.error("Failed to create URL", ioe);
     }
-    outdated = null;
   }
 
   private LauncherUtils() {}
@@ -103,7 +115,7 @@ public final class LauncherUtils {
             protected Boolean doInBackground() {
               try {
                 val request =
-                    Request.get(githubReleasesUrl.toURI())
+                    Request.get(releasesUrl.toURI())
                         .addHeader("accept", "application/vnd.github+json")
                         .addHeader("X-GitHub-Api-Version", "2022-11-28")
                         .execute()
@@ -117,7 +129,7 @@ public final class LauncherUtils {
               } catch (IOException ioe) {
                 LOGGER.error("Failed to check for updates", ioe);
               } catch (URISyntaxException urise) {
-                LOGGER.error("Failed to parse {} as URI", githubReleasesUrl, urise);
+                LOGGER.error("Failed to parse {} as URI", releasesUrl, urise);
               }
               return false;
             }
@@ -127,6 +139,8 @@ public final class LauncherUtils {
       try {
         outdated = worker.get();
       } catch (InterruptedException ie) {
+        Thread.currentThread().interrupt();
+
         LOGGER.error("Interrupted while checking for updates", ie);
       } catch (ExecutionException ee) {
         LOGGER.error("Error while checking for updates", ee.getCause());
@@ -137,7 +151,7 @@ public final class LauncherUtils {
     return outdated;
   }
 
-  public static void addPanel(Container c1, JComponent c2) {
+  public static void addComponentToContainer(Container c1, JComponent c2) {
     if (SwingUtilities.isEventDispatchThread()) {
       c1.removeAll();
       c1.add(c2);
@@ -182,15 +196,17 @@ public final class LauncherUtils {
     }
   }
 
-  public static void openBrowser(URL url) {
+  public static void openBrowser(String url) {
     try {
       if (Desktop.isDesktopSupported()) {
-        Desktop.getDesktop().browse(url.toURI());
+        Desktop.getDesktop().browse(new URI(url));
       }
     } catch (IOException ioe) {
       LauncherUtils.LOGGER.error("Failed to browse {}", url, ioe);
     } catch (URISyntaxException urise) {
       LauncherUtils.LOGGER.error("Failed to parse {} as URI", url, urise);
+    } finally {
+      LOGGER.info("Opened {} in browser", url);
     }
   }
 
