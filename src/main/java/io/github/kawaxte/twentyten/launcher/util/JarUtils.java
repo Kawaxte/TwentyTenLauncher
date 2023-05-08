@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 public final class JarUtils {
 
-  static final Logger LOGGER;
+  private static final Logger LOGGER;
 
   static {
     LOGGER = LogManager.getLogger(JarUtils.class);
