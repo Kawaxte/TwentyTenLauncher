@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 public class Launcher {
 
-  static final Logger LOGGER;
+  private static final Logger LOGGER;
 
   static {
     LOGGER = LogManager.getLogger(Launcher.class);
@@ -70,7 +70,6 @@ public class Launcher {
           launcherFrame.setVisible(true);
         });
 
-    YggdrasilAuthUtils.validateAndRefreshAccessToken(
-        configInstance.getMojangAccessToken(), configInstance.getMojangClientToken());
+    YggdrasilAuthUtils.validateAndRefreshAccessToken();
   }
 }
