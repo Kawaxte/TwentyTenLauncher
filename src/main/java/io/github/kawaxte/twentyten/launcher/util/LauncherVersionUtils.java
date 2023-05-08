@@ -1,6 +1,6 @@
 package io.github.kawaxte.twentyten.launcher.util;
 
-import io.github.kawaxte.twentyten.launcher.options.VersionGroupBox;
+import io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -21,7 +21,7 @@ import org.json.JSONObject;
 
 public final class LauncherVersionUtils {
 
-  static final Logger LOGGER;
+  private static final Logger LOGGER;
   public static Map<String, String> versionLookup;
 
   static {
@@ -54,13 +54,13 @@ public final class LauncherVersionUtils {
                 .forEach(
                     versionObject -> {
                       val showBetaVersionsSelected =
-                          LauncherConfigUtils.CONFIG.isShowBetaVersionsSelected()
+                          LauncherConfigUtils.configInstance.isShowBetaVersionsSelected()
                               && Objects.equals(version, versions.get(0));
                       val showAlphaVersionsSelected =
-                          LauncherConfigUtils.CONFIG.isShowAlphaVersionsSelected()
+                          LauncherConfigUtils.configInstance.isShowAlphaVersionsSelected()
                               && Objects.equals(version, versions.get(1));
                       val showInfdevVersionsSelected =
-                          LauncherConfigUtils.CONFIG.isShowInfdevVersionsSelected()
+                          LauncherConfigUtils.configInstance.isShowInfdevVersionsSelected()
                               && Objects.equals(version, versions.get(2));
                       if (showBetaVersionsSelected
                           || showAlphaVersionsSelected
@@ -79,7 +79,7 @@ public final class LauncherVersionUtils {
       LOGGER.error("Failed to parse {} as URI", versionsFileUrl.toString(), urise);
     }
 
-    val selectedVersion = LauncherConfigUtils.CONFIG.getSelectedVersion();
+    val selectedVersion = LauncherConfigUtils.configInstance.getSelectedVersion();
     versionLookup.entrySet().stream()
         .filter(entry -> entry.getValue().equals(selectedVersion))
         .findFirst()
