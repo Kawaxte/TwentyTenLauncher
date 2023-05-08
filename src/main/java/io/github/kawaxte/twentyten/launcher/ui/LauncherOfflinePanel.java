@@ -1,9 +1,10 @@
 package io.github.kawaxte.twentyten.launcher.ui;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.launcher.ui.auth.YggdrasilAuthPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import io.github.kawaxte.twentyten.ui.CustomJPanel;
@@ -46,11 +47,11 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    val selectedLanguage = CONFIG.getSelectedLanguage();
+    val selectedLanguage = configInstance.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
             ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : LANGUAGE.getBundle());
+            : languageInstance.getBundle());
   }
 
   public LauncherOfflinePanel(String message) {
@@ -66,11 +67,11 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    val selectedLanguage = CONFIG.getSelectedLanguage();
+    val selectedLanguage = configInstance.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
             ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : LANGUAGE.getBundle());
+            : languageInstance.getBundle());
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -118,7 +119,7 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.tryAgainButton)) {
-      LauncherUtils.addPanel(this.getParent(), new YggdrasilAuthPanel());
+      LauncherUtils.addComponentToContainer(this.getParent(), new YggdrasilAuthPanel());
     }
   }
 }
