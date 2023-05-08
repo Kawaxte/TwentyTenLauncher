@@ -1,93 +1,61 @@
 package io.github.kawaxte.twentyten.launcher.util;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
 
-import com.sun.istack.internal.NotNull;
-import io.github.kawaxte.twentyten.launcher.AbstractYggdrasilAuthImpl;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel;
-import java.util.Objects;
+import io.github.kawaxte.twentyten.launcher.auth.AbstractYggdrasilAuthImpl;
+import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthTask;
 import lombok.val;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
 public final class YggdrasilAuthUtils {
 
-  public static final AbstractYggdrasilAuthImpl YGGDRASIL_AUTH;
-  static final Logger LOGGER;
+  public static AbstractYggdrasilAuthImpl authInstance;
 
   static {
-    YGGDRASIL_AUTH = new AbstractYggdrasilAuthImpl();
-    LOGGER = LogManager.getLogger(YggdrasilAuthUtils.class);
+    authInstance = new AbstractYggdrasilAuthImpl();
   }
 
   private YggdrasilAuthUtils() {}
 
-  public static void authenticate(
-      @NotNull String username, @NotNull String password, @NotNull String clientToken) {
-    val rememberPasswordChecked =
-        YggdrasilAuthPanel.instance.getRememberPasswordCheckBox().isSelected();
+  public static void runYggdrasilAuthTask(
+      String username, String password, String clientToken, boolean rememberPasswordChecked) {
+    configInstance.setMojangUsername(username);
+    configInstance.setMojangPassword(rememberPasswordChecked ? password : "");
+    configInstance.setMojangRememberPasswordChecked(rememberPasswordChecked);
 
-    CONFIG.setMojangUsername(username);
-    CONFIG.setMojangPassword(rememberPasswordChecked ? password : "");
-    CONFIG.setMojangRememberPasswordChecked(rememberPasswordChecked);
-
-    val authenticate = YGGDRASIL_AUTH.authenticate(username, password, clientToken);
-    if (authenticate.has("error")) {
-      LauncherUtils.addPanel(
-          LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
-      return;
-    }
-
-    val accessToken = authenticate.getString("accessToken");
-    val availableProfiles = authenticate.getJSONArray("availableProfiles");
-    if (!availableProfiles.isEmpty()) {
-      val selectedProfile = authenticate.getJSONObject("selectedProfile");
-      val id = selectedProfile.getString("id");
-      val name = selectedProfile.getString("name");
-
-      CONFIG.setMojangProfileId(id);
-      CONFIG.setMojangProfileName(name);
-      CONFIG.setMojangProfileDemo(false);
-      CONFIG.setMojangAccessToken(accessToken);
-      CONFIG.save();
-
-      // TODO: we would be launching minecraft here
-      System.out.println("We did it!");
-      return;
-    }
-
-    val name = String.format("Player%s", System.currentTimeMillis() % 1000L);
-
-    CONFIG.setMojangProfileId(null);
-    CONFIG.setMojangProfileName(name);
-    CONFIG.setMojangProfileDemo(true);
-
-    CONFIG.save();
-    // TODO: offline instance
-    System.out.println("We did it but offline!");
+    new YggdrasilAuthTask(username, password, clientToken).run();
   }
 
-  public static void refresh(@NotNull String accessToken, @NotNull String clientToken) {
-    if ((Objects.isNull(accessToken) || Objects.isNull(clientToken))
-        || (accessToken.isEmpty() || clientToken.isEmpty())) {
+  public static void validateAndRefreshAccessToken() {
+    if (configInstance.getMojangAccessToken().isEmpty()
+        || configInstance.getMojangClientToken().isEmpty()) {
       return;
     }
 
-    val validate = YGGDRASIL_AUTH.validate(accessToken, clientToken);
-    if (!validate.has("error")) {
+    val validate =
+        authInstance.validateAccessToken(
+            configInstance.getMojangAccessToken(), configInstance.getMojangClientToken());
+    if (isValidateAccessTokenErrored(validate)) {
       return;
     }
 
-    val refresh = YGGDRASIL_AUTH.refresh(accessToken, clientToken);
-    if (refresh.has("error")) {
-      LOGGER.error(refresh.getString("errorMessage"));
-      return;
+    val refresh =
+        authInstance.refreshAccessToken(
+            configInstance.getMojangAccessToken(), configInstance.getMojangClientToken());
+    if (isRefreshAccessTokenErrored(refresh)) {
+      throw new RuntimeException("Failed to refresh access token");
     }
 
-    val newAccessToken = refresh.getString("accessToken");
-    CONFIG.setMojangAccessToken(newAccessToken);
-    CONFIG.save();
+    val accessToken = refresh.getString("accessToken");
+    configInstance.setMojangAccessToken(accessToken);
+    configInstance.save();
+  }
+
+  private static boolean isRefreshAccessTokenErrored(JSONObject object) {
+    return !object.has("error");
+  }
+
+  private static boolean isValidateAccessTokenErrored(JSONObject object) {
+    return !object.has("error");
   }
 }
