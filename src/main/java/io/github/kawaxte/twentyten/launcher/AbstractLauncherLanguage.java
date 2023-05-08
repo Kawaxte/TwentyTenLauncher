@@ -7,15 +7,11 @@ import org.apache.logging.log4j.Logger;
 
 abstract class AbstractLauncherLanguage {
 
-  static final Logger LOGGER;
-
-  static {
-    LOGGER = LogManager.getLogger(AbstractLauncherLanguage.class);
-  }
-
+  protected final Logger logger;
   @Getter UTF8ResourceBundle bundle;
 
   {
+    this.logger = LogManager.getLogger(this);
     this.bundle = new UTF8ResourceBundle();
   }
 
