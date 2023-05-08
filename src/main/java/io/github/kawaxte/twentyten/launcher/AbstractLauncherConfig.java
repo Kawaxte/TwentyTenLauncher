@@ -1,6 +1,6 @@
 package io.github.kawaxte.twentyten.launcher;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.WORKING_DIRECTORY_PATH;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.workingDirectoryPath;
 
 import io.github.kawaxte.twentyten.LinkedProperties;
 import java.io.IOException;
@@ -19,12 +19,7 @@ import org.apache.logging.log4j.Logger;
 @Setter
 abstract class AbstractLauncherConfig {
 
-  static final Logger LOGGER;
-
-  static {
-    LOGGER = LogManager.getLogger(AbstractLauncherConfig.class);
-  }
-
+  protected final Logger logger;
   private String selectedLanguage;
   private boolean showBetaVersionsSelected;
   private boolean showAlphaVersionsSelected;
@@ -47,20 +42,24 @@ abstract class AbstractLauncherConfig {
   private String mojangAccessToken;
   private String mojangClientToken;
 
+  {
+    this.logger = LogManager.getLogger(this);
+  }
+
   protected Path getConfigFilePath() {
     val configFilePath =
         Paths.get(
-            String.valueOf(WORKING_DIRECTORY_PATH),
+            String.valueOf(workingDirectoryPath),
             MessageFormat.format(
                 "{0}_{1}.properties", "twentyten", System.getProperty("user.name")));
     val configFile = configFilePath.toFile();
     try {
       if (!configFile.exists() && !configFile.createNewFile()) {
-        LOGGER.warn("Could not create {}", configFile.getAbsolutePath());
+        this.logger.warn("Could not create {}", configFile.getAbsolutePath());
         return null;
       }
     } catch (IOException ioe) {
-      LOGGER.error("Failed to create {}", configFile.getAbsolutePath(), ioe);
+      this.logger.error("Failed to create {}", configFile.getAbsolutePath(), ioe);
       return null;
     }
     return configFilePath;
