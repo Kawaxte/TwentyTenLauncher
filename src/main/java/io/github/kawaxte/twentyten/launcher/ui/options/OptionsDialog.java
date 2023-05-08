@@ -1,7 +1,7 @@
-package io.github.kawaxte.twentyten.launcher.options;
+package io.github.kawaxte.twentyten.launcher.ui.options;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
@@ -9,7 +9,6 @@ import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.Window;
 import java.util.Objects;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import lombok.val;
 
 public class OptionsDialog extends JDialog {
@@ -18,7 +17,7 @@ public class OptionsDialog extends JDialog {
   public static OptionsDialog instance;
 
   public OptionsDialog(Window owner) {
-    super((JFrame) owner, true);
+    super(owner, ModalityType.MODELESS);
 
     OptionsDialog.instance = this;
     this.setContentPane(new OptionsPanel());
@@ -29,11 +28,11 @@ public class OptionsDialog extends JDialog {
     this.setLocation(this.getOwner().getLocation());
     this.setResizable(false);
 
-    val selectedLanguage = CONFIG.getSelectedLanguage();
+    val selectedLanguage = configInstance.getSelectedLanguage();
     this.updateContainerKeyValues(
         Objects.nonNull(selectedLanguage)
             ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : LANGUAGE.getBundle());
+            : languageInstance.getBundle());
   }
 
   public void updateContainerKeyValues(UTF8ResourceBundle bundle) {
