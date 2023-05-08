@@ -3,10 +3,9 @@ package io.github.kawaxte.twentyten.launcher.auth;
 import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
 import static io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils.authInstance;
 
-import com.sun.istack.internal.NotNull;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.ui.signin.MicrosoftAuthPanel;
+import io.github.kawaxte.twentyten.launcher.ui.auth.MicrosoftAuthPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,13 +23,10 @@ public class MicrosoftAuthTask implements Runnable {
   private final Logger logger;
 
   {
-    logger = LogManager.getLogger(this);
+    this.logger = LogManager.getLogger(this);
   }
 
-  public MicrosoftAuthTask(
-      @NotNull ScheduledExecutorService service,
-      @NotNull String clientId,
-      @NotNull String deviceCode) {
+  public MicrosoftAuthTask(ScheduledExecutorService service, String clientId, String deviceCode) {
     this.service = service;
     this.clientId = clientId;
     this.deviceCode = deviceCode;
@@ -137,7 +133,7 @@ public class MicrosoftAuthTask implements Runnable {
           break;
       }
 
-      logger.error(object);
+      this.logger.error(object);
       return null;
     }
     return object.getString("Token");

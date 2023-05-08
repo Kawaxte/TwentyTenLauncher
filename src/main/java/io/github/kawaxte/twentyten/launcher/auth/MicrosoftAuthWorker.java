@@ -1,6 +1,5 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
-import com.sun.istack.internal.NotNull;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
@@ -16,22 +15,18 @@ import org.apache.logging.log4j.Logger;
 
 public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
 
-  static final Logger LOGGER;
-
-  static {
-    LOGGER = LogManager.getLogger(MicrosoftAuthWorker.class);
-  }
-
+  private final Logger logger;
   private final String clientId;
   private final String deviceCode;
   private final int expiresIn;
   private final int interval;
 
+  {
+    this.logger = LogManager.getLogger(this);
+  }
+
   public MicrosoftAuthWorker(
-      @NotNull String clientId,
-      @NotNull String deviceCode,
-      @NotNull String expiresIn,
-      @NotNull String interval) {
+      String clientId, String deviceCode, String expiresIn, String interval) {
     this.clientId = clientId;
     this.deviceCode = deviceCode;
     this.expiresIn = Integer.parseInt(expiresIn);
@@ -52,16 +47,16 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
     try {
       return future[0].get(expiresIn * 1000L, TimeUnit.MILLISECONDS);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while polling for access token", ee.getCause());
+      this.logger.error("Error while polling for access token", ee.getCause());
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      LOGGER.error("Interrupted while polling for access token", ie);
+      this.logger.error("Interrupted while polling for access token", ie);
     } catch (TimeoutException te) {
       LauncherUtils.addComponentToContainer(
           LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
 
-      LOGGER.error("Timed out while polling for access token", te);
+      this.logger.error("Timed out while polling for access token", te);
     } finally {
       service.shutdown();
     }
