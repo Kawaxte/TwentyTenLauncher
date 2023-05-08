@@ -1,73 +1,93 @@
-package io.github.kawaxte.twentyten.launcher.ui;
+package io.github.kawaxte.twentyten.launcher.ui.auth;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.CONFIG;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.LANGUAGE;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import io.github.kawaxte.twentyten.ui.CustomJPanel;
 import io.github.kawaxte.twentyten.ui.TransparentJButton;
+import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.LayoutManager;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
+import lombok.Getter;
 import lombok.val;
 
+@Getter
 public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
   public static MicrosoftAuthPanel instance;
-  private final JLabel statusLabel;
+  private final JLabel copyCodeLabel;
   private final JLabel userCodeLabel;
   private final JProgressBar expiresInProgressBar;
   private final TransparentJButton openBrowserButton;
   private final TransparentJButton cancelButton;
-  private URL verificationUri;
+  private String verificationUri;
 
   {
-    this.statusLabel = new JLabel("mlp.statusLabel", SwingConstants.CENTER);
+    this.copyCodeLabel = new JLabel("map.copyCodeLabel", SwingConstants.CENTER);
     this.userCodeLabel = new JLabel("", SwingConstants.CENTER);
     this.expiresInProgressBar = new JProgressBar();
-    this.openBrowserButton = new TransparentJButton("mlp.openBrowserButton");
-    this.cancelButton = new TransparentJButton("mlp.cancelButton");
+    this.openBrowserButton = new TransparentJButton("map.openBrowserButton");
+    this.cancelButton = new TransparentJButton("map.cancelButton");
   }
 
   public MicrosoftAuthPanel() {
     super(true);
 
     MicrosoftAuthPanel.instance = this;
-    this.userCodeLabel.setFont(this.userCodeLabel.getFont().deriveFont(24f));
+    this.userCodeLabel.setFont(this.userCodeLabel.getFont().deriveFont(Font.BOLD, 24f));
+    this.userCodeLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    this.openBrowserButton.setEnabled(false);
 
+    this.userCodeLabel.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent event) {
+            val clipboard = LauncherPanel.instance.getToolkit().getSystemClipboard();
+            val transferable = new StringSelection(userCodeLabel.getText());
+            clipboard.setContents(transferable, null);
+
+            openBrowserButton.setEnabled(true);
+          }
+        });
     this.openBrowserButton.addActionListener(this);
     this.cancelButton.addActionListener(this);
 
     this.setLayout(this.getGroupLayout());
 
-    val selectedLanguage = CONFIG.getSelectedLanguage();
+    val selectedLanguage = configInstance.getSelectedLanguage();
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
             ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : LANGUAGE.getBundle());
+            : languageInstance.getBundle());
   }
 
-  public MicrosoftAuthPanel(String userCode, int expiresIn, URL verificationUri) {
+  public MicrosoftAuthPanel(String userCode, String verificationUri, String expiresIn) {
     this();
     this.userCodeLabel.setText(userCode);
-    this.expiresInProgressBar.setMaximum(expiresIn);
-    this.expiresInProgressBar.setValue(expiresIn);
+    this.expiresInProgressBar.setMaximum(Integer.parseInt(expiresIn));
+    this.expiresInProgressBar.setValue(Integer.parseInt(expiresIn));
     this.verificationUri = verificationUri;
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(bundle, this.statusLabel, "mlp.statusLabel");
-    LauncherUtils.updateComponentKeyValue(bundle, this.openBrowserButton, "mlp.openBrowserButton");
-    LauncherUtils.updateComponentKeyValue(bundle, this.cancelButton, "mlp.cancelButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.copyCodeLabel, "map.copyCodeLabel");
+    LauncherUtils.updateComponentKeyValue(bundle, this.openBrowserButton, "map.openBrowserButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.cancelButton, "map.cancelButton");
   }
 
   private LayoutManager getGroupLayout() {
@@ -80,7 +100,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
             .addGroup(
                 groupLayout
                     .createParallelGroup()
-                    .addComponent(this.statusLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.copyCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(this.expiresInProgressBar)
                     .addGroup(
@@ -91,7 +111,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
     groupLayout.setVerticalGroup(
         groupLayout
             .createSequentialGroup()
-            .addComponent(this.statusLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(this.copyCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(this.expiresInProgressBar)
             .addGroup(
@@ -109,7 +129,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
       LauncherUtils.openBrowser(this.verificationUri);
     }
     if (Objects.equals(source, this.cancelButton)) {
-      LauncherUtils.addPanel(this.getParent(), new LauncherPanel());
+      LauncherUtils.addComponentToContainer(this.getParent(), new LauncherPanel());
     }
   }
 }
