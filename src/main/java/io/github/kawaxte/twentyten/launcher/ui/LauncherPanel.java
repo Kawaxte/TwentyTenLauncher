@@ -1,5 +1,6 @@
 package io.github.kawaxte.twentyten.launcher.ui;
 
+import io.github.kawaxte.twentyten.launcher.ui.auth.YggdrasilAuthPanel;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
