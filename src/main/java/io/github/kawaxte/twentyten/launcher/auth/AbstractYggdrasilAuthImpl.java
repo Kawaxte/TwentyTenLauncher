@@ -1,7 +1,7 @@
-package io.github.kawaxte.twentyten.launcher;
+package io.github.kawaxte.twentyten.launcher.auth;
 
-import com.sun.istack.internal.NotNull;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import lombok.val;
@@ -13,36 +13,40 @@ import org.json.JSONObject;
 public class AbstractYggdrasilAuthImpl extends AbstractYggdrasilAuth {
 
   @Override
-  public JSONObject authenticate(
-      @NotNull String username, @NotNull String password, @NotNull String clientToken) {
+  public JSONObject authenticate(String username, String password, String clientToken) {
+    val agent = new JSONObject();
+    agent.put("name", "Minecraft");
+    agent.put("version", 1);
+
+    val body = new JSONObject();
+    body.put("agent", agent);
+    body.put("username", username);
+    body.put("password", password);
+    body.put("clientToken", clientToken);
+    body.put("requestUser", true);
+
     val service = Executors.newSingleThreadExecutor();
     val future =
         service.submit(
             () ->
                 Request.post(authenticateUrl.toURI())
-                    .bodyString(
-                        new JSONObject()
-                            .put("agent", getAgent())
-                            .put("username", username)
-                            .put("password", password)
-                            .put("clientToken", clientToken)
-                            .put("requestUser", true)
-                            .toString(),
-                        ContentType.APPLICATION_JSON)
+                    .bodyString(body.toString(), ContentType.APPLICATION_JSON)
                     .execute()
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
     try {
       return new JSONObject(future.get());
     } catch (InterruptedException ie) {
-      LOGGER.error("Interrupted while authenticating with Mojang", ie);
+      Thread.currentThread().interrupt();
+
+      this.logger.error("Interrupted while authenticating with Mojang", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while authenticating with Mojang", ee.getCause());
+      this.logger.error("Error while authenticating with Mojang", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -50,32 +54,33 @@ public class AbstractYggdrasilAuthImpl extends AbstractYggdrasilAuth {
   }
 
   @Override
-  public JSONObject validate(@NotNull String accessToken, @NotNull String clientToken) {
+  public JSONObject validateAccessToken(String accessToken, String clientToken) {
+    val body = new JSONObject();
+    body.put("accessToken", accessToken);
+    body.put("clientToken", clientToken);
+
     val service = Executors.newSingleThreadExecutor();
     val future =
         service.submit(
             () ->
                 Request.post(validateUrl.toURI())
-                    .bodyString(
-                        new JSONObject()
-                            .put("accessToken", accessToken)
-                            .put("clientToken", clientToken)
-                            .toString(),
-                        ContentType.APPLICATION_JSON)
+                    .bodyString(body.toString(), ContentType.APPLICATION_JSON)
                     .execute()
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
     try {
       return new JSONObject(future.get());
     } catch (InterruptedException ie) {
-      LOGGER.error("Interrupted while validating with Mojang", ie);
+      Thread.currentThread().interrupt();
+
+      this.logger.error("Interrupted while validating access token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while validating with Mojang", ee.getCause());
+      this.logger.error("Error while validating access token", ee.getCause());
     } finally {
       service.shutdown();
     }
@@ -83,33 +88,34 @@ public class AbstractYggdrasilAuthImpl extends AbstractYggdrasilAuth {
   }
 
   @Override
-  public JSONObject refresh(@NotNull String accessToken, @NotNull String clientToken) {
+  public JSONObject refreshAccessToken(String accessToken, String clientToken) {
+    val body = new JSONObject();
+    body.put("accessToken", accessToken);
+    body.put("clientToken", clientToken);
+    body.put("requestUser", true);
+
     val service = Executors.newSingleThreadExecutor();
     val future =
         service.submit(
             () ->
                 Request.post(refreshUrl.toURI())
-                    .bodyString(
-                        new JSONObject()
-                            .put("accessToken", accessToken)
-                            .put("clientToken", clientToken)
-                            .put("requestUser", true)
-                            .toString(),
-                        ContentType.APPLICATION_JSON)
+                    .bodyString(body.toString(), ContentType.APPLICATION_JSON)
                     .execute()
                     .handleResponse(
                         response -> {
                           val responseEntity = response.getEntity();
-                          return responseEntity != null
+                          return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
                         }));
     try {
       return new JSONObject(future.get());
     } catch (InterruptedException ie) {
-      LOGGER.error("Interrupted while refreshing with Mojang", ie);
+      Thread.currentThread().interrupt();
+
+      this.logger.error("Interrupted while refreshing access token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while refreshing with Mojang", ee.getCause());
+      this.logger.error("Error while refreshing access token", ee.getCause());
     } finally {
       service.shutdown();
     }
