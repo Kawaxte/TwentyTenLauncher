@@ -42,6 +42,7 @@ abstract class AbstractLauncherConfig {
   private boolean mojangRememberPasswordChecked;
   private String mojangProfileId;
   private String mojangProfileName;
+  private boolean mojangProfileLegacy;
   private boolean mojangProfileDemo;
   private String mojangAccessToken;
   private String mojangClientToken;
@@ -90,7 +91,7 @@ abstract class AbstractLauncherConfig {
             "microsoftClientToken", UUID.randomUUID().toString().replaceAll("-", ""));
   }
 
-  protected void getMojangAuthProperties(LinkedProperties properties) {
+  protected void getYggdrasilAuthProperties(LinkedProperties properties) {
     this.mojangUsername = properties.getProperty("mojangUsername", "");
     this.mojangPassword =
         new String(Base64.getDecoder().decode(properties.getProperty("mojangPassword", "")));
@@ -98,6 +99,8 @@ abstract class AbstractLauncherConfig {
         Boolean.parseBoolean(properties.getProperty("mojangRememberPasswordChecked", "false"));
     this.mojangProfileId = properties.getProperty("mojangProfileId", "");
     this.mojangProfileName = properties.getProperty("mojangProfileName", "");
+    this.mojangProfileLegacy =
+        Boolean.parseBoolean(properties.getProperty("mojangProfileLegacy", "false"));
     this.mojangProfileDemo =
         Boolean.parseBoolean(properties.getProperty("mojangProfileDemo", "false"));
     this.mojangAccessToken = properties.getProperty("mojangAccessToken", "");
@@ -106,17 +109,15 @@ abstract class AbstractLauncherConfig {
             "mojangClientToken", UUID.randomUUID().toString().replaceAll("-", ""));
   }
 
-  protected void setMojangAuthProperties(LinkedProperties properties) {
-    properties.setProperty("mojangUsername", this.mojangUsername);
+  protected void setOptionsProperties(LinkedProperties properties) {
+    properties.setProperty("selectedLanguage", this.selectedLanguage);
     properties.setProperty(
-        "mojangPassword", Base64.getEncoder().encodeToString(this.mojangPassword.getBytes()));
+        "showBetaVersionsSelected", Boolean.toString(this.showBetaVersionsSelected));
     properties.setProperty(
-        "mojangRememberPasswordChecked", Boolean.toString(this.mojangRememberPasswordChecked));
-    properties.setProperty("mojangProfileId", this.mojangProfileId);
-    properties.setProperty("mojangProfileName", this.mojangProfileName);
-    properties.setProperty("mojangProfileDemo", Boolean.toString(this.mojangProfileDemo));
-    properties.setProperty("mojangAccessToken", this.mojangAccessToken);
-    properties.setProperty("mojangClientToken", this.mojangClientToken);
+        "showAlphaVersionsSelected", Boolean.toString(this.showAlphaVersionsSelected));
+    properties.setProperty(
+        "showInfdevVersionsSelected", Boolean.toString(this.showInfdevVersionsSelected));
+    properties.setProperty("selectedVersion", this.selectedVersion);
   }
 
   protected void setMicrosoftAuthProperties(LinkedProperties properties) {
@@ -130,15 +131,18 @@ abstract class AbstractLauncherConfig {
     properties.setProperty("microsoftClientToken", this.microsoftClientToken);
   }
 
-  protected void setOptionsProperties(LinkedProperties properties) {
-    properties.setProperty("selectedLanguage", this.selectedLanguage);
+  protected void setYggdrasilAuthProperties(LinkedProperties properties) {
+    properties.setProperty("mojangUsername", this.mojangUsername);
     properties.setProperty(
-        "showBetaVersionsSelected", Boolean.toString(this.showBetaVersionsSelected));
+        "mojangPassword", Base64.getEncoder().encodeToString(this.mojangPassword.getBytes()));
     properties.setProperty(
-        "showAlphaVersionsSelected", Boolean.toString(this.showAlphaVersionsSelected));
-    properties.setProperty(
-        "showInfdevVersionsSelected", Boolean.toString(this.showInfdevVersionsSelected));
-    properties.setProperty("selectedVersion", this.selectedVersion);
+        "mojangRememberPasswordChecked", Boolean.toString(this.mojangRememberPasswordChecked));
+    properties.setProperty("mojangProfileId", this.mojangProfileId);
+    properties.setProperty("mojangProfileName", this.mojangProfileName);
+    properties.setProperty("mojangProfileLegacy", Boolean.toString(this.mojangProfileLegacy));
+    properties.setProperty("mojangProfileDemo", Boolean.toString(this.mojangProfileDemo));
+    properties.setProperty("mojangAccessToken", this.mojangAccessToken);
+    properties.setProperty("mojangClientToken", this.mojangClientToken);
   }
 
   public abstract void load();
