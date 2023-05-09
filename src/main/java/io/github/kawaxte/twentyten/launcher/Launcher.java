@@ -1,6 +1,7 @@
 package io.github.kawaxte.twentyten.launcher;
 
 import io.github.kawaxte.twentyten.launcher.ui.LauncherFrame;
+import io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils;
 import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
 import javax.swing.SwingUtilities;
 
@@ -14,6 +15,7 @@ public class Launcher {
 
     SwingUtilities.invokeLater(() -> new LauncherFrame().setVisible(true));
 
+    MicrosoftAuthUtils.checkAndRefreshAccessToken();
     YggdrasilAuthUtils.validateAndRefreshAccessToken();
   }
 }
