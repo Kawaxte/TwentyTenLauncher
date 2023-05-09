@@ -3,6 +3,8 @@ package io.github.kawaxte.twentyten.launcher.util;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker;
+import io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel;
+import java.util.Arrays;
 import java.util.Objects;
 import lombok.val;
 
@@ -30,10 +32,10 @@ public final class YggdrasilAuthUtils {
     val accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
     val clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
     if (Objects.isNull(accessToken) || Objects.isNull(clientToken)) {
-      throw new NullPointerException("accessToken or clientToken cannot be null");
+      return false;
     }
     if (accessToken.isEmpty() || clientToken.isEmpty()) {
-      return true;
+      return false;
     }
 
     val validate = YggdrasilAuth.validateAccessToken(accessToken, clientToken);
@@ -54,5 +56,8 @@ public final class YggdrasilAuthUtils {
     val newAccessToken = refresh.getString("accessToken");
     LauncherConfig.lookup.put("mojangAccessToken", newAccessToken);
     LauncherConfig.saveConfig();
+
+    Arrays.stream(YggdrasilAuthPanel.instance.getComponents())
+        .forEachOrdered(component -> component.setEnabled(true));
   }
 }
