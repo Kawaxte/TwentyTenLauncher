@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten;
+package io.github.kawaxte.twentyten.launcher;
 
 import java.util.Arrays;
 import java.util.Collections;
