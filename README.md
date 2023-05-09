@@ -13,8 +13,8 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 
 ## Features
 
-- Play different versions of Minecraft from the past, including versions from June 2010 up to
-  January 2011.
+- Play different versions of Minecraft from the past; from February 2010 up to
+  September 2011.
 
 - Hear the classic sounds of Minecraft, like the scary cave sounds and the infamous hurt sound.
 - Join servers that still run older versions of Minecraft, and see your skin or cape (_if the
