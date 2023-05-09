@@ -9,9 +9,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +25,7 @@ public final class LauncherConfig {
   static {
     LOGGER = LogManager.getLogger(LauncherConfig.class);
 
-    lookup = new HashMap<>();
+    lookup = new LinkedHashMap<>();
     lookup.put("selectedLanguage", "en");
     lookup.put("showBetaVersionsSelected", true);
     lookup.put("showAlphaVersionsSelected", false);
@@ -36,7 +37,7 @@ public final class LauncherConfig {
     lookup.put("microsoftAccessToken", null);
     lookup.put("microsoftAccessTokenExpiresIn", 0L);
     lookup.put("microsoftRefreshToken", null);
-    lookup.put("microsoftClientToken", null);
+    lookup.put("microsoftClientToken", UUID.randomUUID().toString().replace("-", ""));
     lookup.put("mojangUsername", null);
     lookup.put("mojangPassword", null);
     lookup.put("mojangRememberPasswordChecked", false);
@@ -45,7 +46,7 @@ public final class LauncherConfig {
     lookup.put("mojangProfileName", null);
     lookup.put("mojangProfileLegacy", false);
     lookup.put("mojangAccessToken", null);
-    lookup.put("mojangClientToken", null);
+    lookup.put("mojangClientToken", UUID.randomUUID().toString().replace("-", ""));
   }
 
   private LauncherConfig() {}
@@ -98,8 +99,13 @@ public final class LauncherConfig {
     try (val stream = new FileOutputStream(configFilePath.toFile())) {
       val properties = new LinkedProperties();
 
-      lookup.forEach(
-          (key, value) -> properties.put(key, Objects.isNull(value) ? "" : value.toString()));
+      lookup
+          .keySet()
+          .forEach(
+              key -> {
+                Object value = lookup.get(key);
+                properties.put(key, Optional.ofNullable(value).map(Object::toString).orElse(""));
+              });
       properties.store(stream, "TwentyTen Launcher");
 
       stream.flush();
