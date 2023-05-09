@@ -1,7 +1,5 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
-import static io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils.authInstance;
-
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
@@ -38,26 +36,31 @@ public class MicrosoftAuthTask implements Runnable {
       service.shutdown();
     }
 
-    val consumerToken = authInstance.acquireToken(clientId, deviceCode);
+    val consumerToken = MicrosoftAuth.acquireToken(clientId, deviceCode);
+    Objects.requireNonNull(consumerToken, "consumerToken cannot be null");
     val tokenResponse = this.getTokenResponse(consumerToken);
     if (tokenResponse == null) {
       return;
     }
 
-    val userAuthenticate = authInstance.acquireXBLToken(tokenResponse[0]);
+    val userAuthenticate = MicrosoftAuth.acquireXBLToken(tokenResponse[0]);
+    Objects.requireNonNull(userAuthenticate, "userAuthenticate cannot be null");
     val xblTokenResponse = this.getXBLTokenResponse(userAuthenticate);
 
-    val xstsAuthorize = authInstance.acquireXSTSToken(xblTokenResponse[1]);
+    val xstsAuthorize = MicrosoftAuth.acquireXSTSToken(xblTokenResponse[1]);
+    Objects.requireNonNull(xstsAuthorize, "xstsAuthorize cannot be null");
     val xstsTokenResponse = this.getXSTSTokenResponse(xstsAuthorize);
 
     val authenticateLoginWithXbox =
-        authInstance.acquireAccessToken(xblTokenResponse[0], xstsTokenResponse);
+        MicrosoftAuth.acquireAccessToken(xblTokenResponse[0], xstsTokenResponse);
+    Objects.requireNonNull(authenticateLoginWithXbox, "authenticateLoginWithXbox cannot be null");
     val accessTokenResponse = this.getAccessTokenResponse(authenticateLoginWithXbox);
     LauncherConfig.lookup.put("microsoftAccessToken", accessTokenResponse[0]);
     LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
     LauncherConfig.lookup.put("microsoftRefreshToken", tokenResponse[1]);
 
-    val entitlementsMcStore = authInstance.acquireMinecraftStoreItems(accessTokenResponse[0]);
+    val entitlementsMcStore = MicrosoftAuth.acquireMcStoreItems(accessTokenResponse[0]);
+    Objects.requireNonNull(entitlementsMcStore, "entitlementsMcStore cannot be null");
     val itemNameEqualToGameMinecraft = this.isItemNameEqualToGameMinecraft(entitlementsMcStore);
     if (!itemNameEqualToGameMinecraft) {
       val name = String.format("Player%s", System.currentTimeMillis() % 1000L);
@@ -75,7 +78,8 @@ public class MicrosoftAuthTask implements Runnable {
       return;
     }
 
-    val minecraftProfile = authInstance.acquireMinecraftProfile(accessTokenResponse[0]);
+    val minecraftProfile = MicrosoftAuth.acquireMinecraftProfile(accessTokenResponse[0]);
+    Objects.requireNonNull(minecraftProfile, "minecraftProfile cannot be null");
     val minecraftProfileResponse = this.getMinecraftProfileResponse(minecraftProfile);
     LauncherConfig.lookup.put("microsoftProfileDemo", false);
     LauncherConfig.lookup.put("microsoftProfileId", minecraftProfileResponse[0]);
