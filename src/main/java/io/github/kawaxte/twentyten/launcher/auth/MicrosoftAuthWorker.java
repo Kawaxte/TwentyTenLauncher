@@ -47,16 +47,16 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
     try {
       return future[0].get(expiresIn * 1000L, TimeUnit.MILLISECONDS);
     } catch (ExecutionException ee) {
-      this.logger.error("Error while polling for access token", ee.getCause());
+      this.logger.error("Error while scheduling authentication task", ee.getCause());
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
 
-      this.logger.error("Interrupted while polling for access token", ie);
+      this.logger.error("Interrupted while scheduling authentication task", ie);
     } catch (TimeoutException te) {
       LauncherUtils.addComponentToContainer(
           LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
 
-      this.logger.error("Timed out while polling for access token", te);
+      this.logger.error("Timed out while scheduling authentication task", te);
     } finally {
       service.shutdown();
     }
