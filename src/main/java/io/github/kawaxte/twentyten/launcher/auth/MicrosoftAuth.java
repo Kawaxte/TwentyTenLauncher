@@ -3,7 +3,6 @@ package io.github.kawaxte.twentyten.launcher.auth;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -195,7 +194,7 @@ public final class MicrosoftAuth {
     val properties = new JSONObject();
     properties.put("AuthMethod", "RPS");
     properties.put("SiteName", "user.auth.xboxlive.com");
-    properties.put("RpsTicket", MessageFormat.format("d={0}", accessToken));
+    properties.put("RpsTicket", String.format("d=%s", accessToken));
 
     val body = new JSONObject();
     body.put("Properties", properties);
