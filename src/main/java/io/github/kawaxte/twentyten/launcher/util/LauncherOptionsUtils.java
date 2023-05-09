@@ -10,10 +10,10 @@ import io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox;
 import io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog;
 import io.github.kawaxte.twentyten.launcher.ui.options.OptionsPanel;
 import io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,15 +67,17 @@ public final class LauncherOptionsUtils {
 
     val defaultComboBoxModel = new DefaultComboBoxModel<String>();
 
-    val versions =
-        Collections.unmodifiableList(Arrays.asList("legacy_beta", "legacy_alpha", "legacy_infdev"));
-    val versionsFileUrl =
+    val fileUrl =
         Optional.ofNullable(
                 LauncherOptionsUtils.class.getClassLoader().getResource("versions.json"))
-            .orElseThrow(() -> new NullPointerException("versionsFileUrl must not be null"));
-    try (val br = Files.newBufferedReader(Paths.get(versionsFileUrl.toURI()))) {
+            .orElseThrow(() -> new NullPointerException("fileUrl must not be null"));
+    try (val br =
+        new BufferedReader(new InputStreamReader(fileUrl.openStream(), StandardCharsets.UTF_8))) {
       val json = new JSONObject(br.lines().collect(Collectors.joining()));
-      versions.forEach(
+      val versionArrays =
+          Collections.unmodifiableList(
+              Arrays.asList("legacy_beta", "legacy_alpha", "legacy_infdev"));
+      versionArrays.forEach(
           version -> {
             val versionArray = json.getJSONArray(version);
             IntStream.range(0, versionArray.length())
@@ -88,17 +90,17 @@ public final class LauncherOptionsUtils {
                       val showBetaVersionsSelected =
                           Boolean.parseBoolean(
                                   LauncherConfig.lookup.get("showBetaVersionsSelected").toString())
-                              && Objects.equals(version, versions.get(0));
+                              && Objects.equals(version, versionArrays.get(0));
                       val showAlphaVersionsSelected =
                           Boolean.parseBoolean(
                                   LauncherConfig.lookup.get("showAlphaVersionsSelected").toString())
-                              && Objects.equals(version, versions.get(1));
+                              && Objects.equals(version, versionArrays.get(1));
                       val showInfdevVersionsSelected =
                           Boolean.parseBoolean(
                                   LauncherConfig.lookup
                                       .get("showInfdevVersionsSelected")
                                       .toString())
-                              && Objects.equals(version, versions.get(2));
+                              && Objects.equals(version, versionArrays.get(2));
                       if (showBetaVersionsSelected
                           || showAlphaVersionsSelected
                           || showInfdevVersionsSelected) {
@@ -111,9 +113,7 @@ public final class LauncherOptionsUtils {
                     });
           });
     } catch (IOException ioe) {
-      LOGGER.error("Failed to read {}", versionsFileUrl.toString(), ioe);
-    } catch (URISyntaxException urise) {
-      LOGGER.error("Failed to parse {} as URI", versionsFileUrl.toString(), urise);
+      LOGGER.error("Failed to read {}", fileUrl.toString(), ioe);
     }
 
     val selectedVersion = LauncherConfig.lookup.get("selectedVersion");
