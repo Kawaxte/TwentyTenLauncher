@@ -3,6 +3,7 @@ package io.github.kawaxte.twentyten.launcher.util;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.auth.AbstractYggdrasilAuthImpl;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker;
+import java.util.Objects;
 import lombok.val;
 import org.json.JSONObject;
 
@@ -18,6 +19,13 @@ public final class YggdrasilAuthUtils {
 
   public static void executeYggdrasilAuthWorker(
       String username, String password, String clientToken, boolean rememberPasswordChecked) {
+    if ((Objects.isNull(username) || Objects.isNull(password) || Objects.isNull(clientToken))
+        || username.isEmpty()
+        || password.isEmpty()
+        || clientToken.isEmpty()) {
+      return;
+    }
+
     LauncherConfig.lookup.put("mojangUsername", username);
     LauncherConfig.lookup.put("mojangPassword", rememberPasswordChecked ? password : "");
     LauncherConfig.lookup.put("mojangRememberPasswordChecked", rememberPasswordChecked);
@@ -28,7 +36,10 @@ public final class YggdrasilAuthUtils {
   public static void validateAndRefreshAccessToken() {
     val accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
     val clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
-    if (accessToken.isEmpty() || clientToken.isEmpty()) {
+    if ((Objects.isNull(accessToken)
+        || Objects.isNull(clientToken)
+        || accessToken.isEmpty()
+        || clientToken.isEmpty())) {
       return;
     }
 
