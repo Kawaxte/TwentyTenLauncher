@@ -51,9 +51,9 @@ public final class LauncherLanguage {
             .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
     fileUrl.ifPresent(
         url -> {
-          try (val stream = url.openConnection().getInputStream();
-              val streamReader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-            bundle = new UTF8ResourceBundle(streamReader);
+          try (val is = url.openConnection().getInputStream();
+              val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            bundle = new UTF8ResourceBundle(isr);
           } catch (IOException ioe) {
             LOGGER.error(
                 "Failed to load {} from {}",
