@@ -1,6 +1,8 @@
 package io.github.kawaxte.twentyten.launcher.util;
 
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth;
+import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask;
 import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthWorker;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
@@ -10,7 +12,50 @@ import org.json.JSONObject;
 
 public final class MicrosoftAuthUtils {
 
+  public static String clientId;
+
+  static {
+    clientId = "e1a4bd01-2c5f-4be0-8e6a-84d71929703b";
+  }
+
   private MicrosoftAuthUtils() {}
+
+  public static void checkAndRefreshAccessToken() {
+    val refreshToken = (String) LauncherConfig.lookup.get("microsoftRefreshToken");
+    if (Objects.isNull(refreshToken)) {
+      throw new NullPointerException("refreshToken cannot be null");
+    }
+    if (refreshToken.isEmpty()) {
+      return;
+    }
+
+    val currentTimeSecs = System.currentTimeMillis() / 1000L;
+    val accessTokenExpiresIn = LauncherConfig.lookup.get("microsoftAccessTokenExpiresIn");
+    val accessTokenExpiresInSecs = Long.parseLong((String) accessTokenExpiresIn) / 1000L;
+    val expiresIn = accessTokenExpiresInSecs - currentTimeSecs;
+    if (expiresIn <= 86360) {
+      val consumersToken = MicrosoftAuth.refreshToken(clientId, refreshToken);
+      Objects.requireNonNull(consumersToken, "consumersToken cannot be null");
+      val tokenResponse = getRefreshTokenResponse(consumersToken);
+
+      val userAuthenticate = MicrosoftAuth.acquireXBLToken(tokenResponse[0]);
+      Objects.requireNonNull(userAuthenticate, "userAuthenticate cannot be null");
+      val xblTokenResponse = MicrosoftAuthTask.getXBLTokenResponse(userAuthenticate);
+
+      val xstsAuthorize = MicrosoftAuth.acquireXSTSToken(xblTokenResponse[1]);
+      Objects.requireNonNull(xstsAuthorize, "xstsAuthorize cannot be null");
+      val xstsTokenResponse = MicrosoftAuthTask.getXSTSTokenResponse(xstsAuthorize);
+
+      val authenticateLoginWithXbox =
+          MicrosoftAuth.acquireAccessToken(xblTokenResponse[0], xstsTokenResponse);
+      Objects.requireNonNull(authenticateLoginWithXbox, "authenticateLoginWithXbox cannot be null");
+      val accessTokenResponse = MicrosoftAuthTask.getAccessTokenResponse(authenticateLoginWithXbox);
+      LauncherConfig.lookup.put("microsoftAccessToken", accessTokenResponse[0]);
+      LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
+      LauncherConfig.lookup.put("microsoftRefreshToken", tokenResponse[1]);
+      LauncherConfig.saveConfig();
+    }
+  }
 
   public static void executeMicrosoftAuthWorker(String clientId) {
     if (Objects.isNull(clientId)) {
@@ -32,6 +77,12 @@ public final class MicrosoftAuthUtils {
     new MicrosoftAuthWorker(
             clientId, deviceCodeResponse[1], deviceCodeResponse[3], deviceCodeResponse[4])
         .execute();
+  }
+
+  private static String[] getRefreshTokenResponse(JSONObject object) {
+    val accessToken = object.getString("access_token");
+    val refreshToken = object.getString("refresh_token");
+    return new String[] {accessToken, refreshToken};
   }
 
   private static String[] getDeviceCodeResponse(JSONObject object) {
