@@ -5,7 +5,6 @@ import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.Color;
 import java.awt.Font;
@@ -48,7 +47,7 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguageUtils.getUTF8Bundle((String) selectedLanguage)
+            ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
             : LauncherLanguage.bundle);
   }
 
@@ -68,7 +67,7 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguageUtils.getUTF8Bundle((String) selectedLanguage)
+            ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
             : LauncherLanguage.bundle);
   }
 
