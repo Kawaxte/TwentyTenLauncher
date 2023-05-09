@@ -1,24 +1,27 @@
 package io.github.kawaxte.twentyten.launcher.util;
 
-import io.github.kawaxte.twentyten.launcher.auth.AbstractMicrosoftAuthImpl;
+import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth;
 import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthWorker;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
+import java.util.Objects;
 import lombok.val;
 import org.json.JSONObject;
 
 public final class MicrosoftAuthUtils {
 
-  public static AbstractMicrosoftAuthImpl authInstance;
-
-  static {
-    authInstance = new AbstractMicrosoftAuthImpl();
-  }
-
   private MicrosoftAuthUtils() {}
 
   public static void executeMicrosoftAuthWorker(String clientId) {
-    val consumersDeviceCode = authInstance.acquireDeviceCode(clientId);
+    if (Objects.isNull(clientId)) {
+      throw new NullPointerException("clientId cannot be null");
+    }
+    if (clientId.isEmpty()) {
+      throw new IllegalArgumentException("clientId cannot be empty");
+    }
+
+    val consumersDeviceCode = MicrosoftAuth.acquireDeviceCode(clientId);
+    Objects.requireNonNull(consumersDeviceCode, "consumersDeviceCode cannot be null");
     val deviceCodeResponse = getDeviceCodeResponse(consumersDeviceCode);
 
     LauncherUtils.addComponentToContainer(
