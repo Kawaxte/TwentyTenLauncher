@@ -7,7 +7,9 @@ import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
 import io.github.kawaxte.twentyten.launcher.ui.custom.JHyperlink;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJCheckBox;
+import io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils;
 import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
@@ -185,7 +187,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      // MicrosoftAuthUtils.executeMicrosoftAuthWorker(authInstance.getClientId());
+      MicrosoftAuthUtils.executeMicrosoftAuthWorker("e1a4bd01-2c5f-4be0-8e6a-84d71929703b");
     }
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(
@@ -204,32 +206,28 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
       val mojangUsername = LauncherConfig.lookup.get("mojangUsername");
       val mojangPassword = LauncherConfig.lookup.get("mojangPassword");
-      val mojangRememberPasswordChecked =
-          LauncherConfig.lookup.get("mojangRememberPasswordChecked");
       val mojangAccessToken = LauncherConfig.lookup.get("mojangAccessToken");
       val mojangClientToken = LauncherConfig.lookup.get("mojangClientToken");
 
-      val usernameEqual = Objects.equals(mojangUsername, username);
-      val passwordEqual = Objects.equals(mojangPassword, password);
-      val rememberPasswordCheckedEqual =
-          Objects.equals(mojangRememberPasswordChecked, rememberPasswordChecked);
+      val usernameChanged = Objects.equals(mojangUsername, username);
+      val passwordChanged = Objects.equals(mojangPassword, password) && !password.isEmpty();
       val accessTokenMatched =
           LauncherUtils.jwtPattern.matcher((String) mojangAccessToken).matches();
       val clientTokenMatched =
           LauncherUtils.uuidPattern.matcher((String) mojangClientToken).matches();
 
-      if ((!usernameEqual || !passwordEqual || !rememberPasswordCheckedEqual)
-          || (!accessTokenMatched || !clientTokenMatched)) {
+      if ((!usernameChanged || !passwordChanged) || (!accessTokenMatched || !clientTokenMatched)) {
         Arrays.stream(this.getComponents())
             .forEachOrdered(component -> component.setEnabled(false));
 
         YggdrasilAuthUtils.executeYggdrasilAuthWorker(
             username, password, (String) mojangClientToken, rememberPasswordChecked);
-      } else {
-        // TODO: Launch online instance without re-authentication
-        JOptionPane.showMessageDialog(
-            this, "You are already signed in.", "Warning", JOptionPane.WARNING_MESSAGE);
+        return;
       }
+
+      // TODO: Launch online instance without re-authentication
+      JOptionPane.showMessageDialog(
+          this, "You are already signed in.", "Warning", JOptionPane.WARNING_MESSAGE);
     }
   }
 }
