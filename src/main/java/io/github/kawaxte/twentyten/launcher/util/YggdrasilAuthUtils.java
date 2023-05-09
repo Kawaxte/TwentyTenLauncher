@@ -1,7 +1,7 @@
 package io.github.kawaxte.twentyten.launcher.util;
 
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.auth.AbstractYggdrasilAuthImpl;
+import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker;
 import java.util.Objects;
 import lombok.val;
@@ -9,21 +9,15 @@ import org.json.JSONObject;
 
 public final class YggdrasilAuthUtils {
 
-  public static AbstractYggdrasilAuthImpl authInstance;
-
-  static {
-    authInstance = new AbstractYggdrasilAuthImpl();
-  }
-
   private YggdrasilAuthUtils() {}
 
   public static void executeYggdrasilAuthWorker(
       String username, String password, String clientToken, boolean rememberPasswordChecked) {
-    if ((Objects.isNull(username) || Objects.isNull(password) || Objects.isNull(clientToken))
-        || username.isEmpty()
-        || password.isEmpty()
-        || clientToken.isEmpty()) {
-      return;
+    if ((Objects.isNull(username) || Objects.isNull(password) || Objects.isNull(clientToken))) {
+      throw new NullPointerException("username, password, or clientToken cannot be null");
+    }
+    if (clientToken.isEmpty()) {
+      throw new IllegalArgumentException("clientToken cannot be empty");
     }
 
     LauncherConfig.lookup.put("mojangUsername", username);
@@ -43,16 +37,16 @@ public final class YggdrasilAuthUtils {
       return;
     }
 
-    val validate = authInstance.validateAccessToken(accessToken, clientToken);
-    System.out.println(validate);
-    if (isValidateAccessTokenErrored(validate)) {
+    val validate = YggdrasilAuth.validateAccessToken(accessToken, clientToken);
+    Objects.requireNonNull(validate, "validate cannot be null");
+    if (!isValidateAccessTokenErrored(validate)) {
       return;
     }
 
-    val refresh = authInstance.refreshAccessToken(accessToken, clientToken);
-    System.out.println(refresh);
+    val refresh = YggdrasilAuth.refreshAccessToken(accessToken, clientToken);
+    Objects.requireNonNull(refresh, "refresh cannot be null");
     if (isRefreshAccessTokenErrored(refresh)) {
-      throw new RuntimeException("Failed to refresh access token");
+      throw new RuntimeException("Could not refresh access token");
     }
 
     val newAccessToken = refresh.getString("accessToken");
@@ -61,10 +55,10 @@ public final class YggdrasilAuthUtils {
   }
 
   private static boolean isRefreshAccessTokenErrored(JSONObject object) {
-    return !object.has("error");
+    return object.has("error");
   }
 
   private static boolean isValidateAccessTokenErrored(JSONObject object) {
-    return !object.has("error");
+    return object.has("error");
   }
 }
