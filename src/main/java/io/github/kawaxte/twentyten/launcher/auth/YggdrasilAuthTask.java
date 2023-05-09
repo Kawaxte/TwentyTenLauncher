@@ -1,8 +1,8 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
 import static io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils.authInstance;
 
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
@@ -29,14 +29,16 @@ public class YggdrasilAuthTask implements Runnable {
     if (authenticateResponse == null) {
       return;
     }
-    configInstance.setMojangAccessToken(authenticateResponse[0]);
+
+    LauncherConfig.lookup.put("mojangAccessToken", authenticateResponse[0]);
 
     if (this.isAvailableProfilesEmpty(authenticate)) {
-      configInstance.setMojangProfileName(
-          String.format("Player%s", System.currentTimeMillis() % 1000L));
-      configInstance.setMojangProfileLegacy(false);
-      configInstance.setMojangProfileDemo(true);
-      configInstance.save();
+      val name = String.format("Player%s", System.currentTimeMillis() % 1000L);
+      LauncherConfig.lookup.put("mojangProfileDemo", true);
+      LauncherConfig.lookup.put("mojangProfileId", null);
+      LauncherConfig.lookup.put("mojangProfileName", name);
+      LauncherConfig.lookup.put("mojangProfileLegacy", false);
+      LauncherConfig.saveConfig();
 
       // TODO: Call offline/demo instance of Minecraft.
       JOptionPane.showMessageDialog(
@@ -47,11 +49,11 @@ public class YggdrasilAuthTask implements Runnable {
       return;
     }
 
-    configInstance.setMojangProfileId(authenticateResponse[1]);
-    configInstance.setMojangProfileName(authenticateResponse[2]);
-    configInstance.setMojangProfileLegacy(this.isLegacyInSelectedProfile(authenticate));
-    configInstance.setMojangProfileDemo(false);
-    configInstance.save();
+    LauncherConfig.lookup.put("mojangProfileDemo", false);
+    LauncherConfig.lookup.put("mojangProfileId", authenticateResponse[1]);
+    LauncherConfig.lookup.put("mojangProfileName", authenticateResponse[2]);
+    LauncherConfig.lookup.put("mojangProfileLegacy", this.isLegacyInSelectedProfile(authenticate));
+    LauncherConfig.saveConfig();
 
     // TODO: Call online instance of Minecraft.
     JOptionPane.showMessageDialog(
