@@ -1,8 +1,7 @@
 package io.github.kawaxte.twentyten.launcher;
 
-import java.util.Objects;
+import java.util.Arrays;
 import lombok.Getter;
-import lombok.val;
 
 public enum ELanguage {
   ET("Eesti"),
@@ -20,11 +19,10 @@ public enum ELanguage {
     this.languageName = languageName;
   }
 
-  public static String getLanguage() {
-    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
-    if (Objects.isNull(selectedLanguage)) {
-      return USER_LANGUAGE;
-    }
-    return (String) selectedLanguage;
+  public static ELanguage getLanguage(String languageCode) {
+    return Arrays.stream(ELanguage.values())
+        .filter(language -> language.name().equalsIgnoreCase(languageCode))
+        .findFirst()
+        .orElse(null);
   }
 }
