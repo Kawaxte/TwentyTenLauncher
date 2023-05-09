@@ -49,8 +49,8 @@ public final class LauncherOptionsUtils {
     Arrays.stream(ELanguage.values())
         .forEachOrdered(
             language -> {
-              defaultComboBoxModel.addElement(ELanguage.getLanguage());
-              languageLookup.put(ELanguage.getLanguage(), language.toString().toLowerCase());
+              defaultComboBoxModel.addElement(language.getLanguageName());
+              languageLookup.put(language.getLanguageName(), language.toString().toLowerCase());
             });
 
     val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
