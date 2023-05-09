@@ -1,31 +1,18 @@
 package io.github.kawaxte.twentyten.launcher.util;
 
-import io.github.kawaxte.twentyten.launcher.AbstractLauncherConfigImpl;
-import io.github.kawaxte.twentyten.launcher.AbstractLauncherLanguageImpl;
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
+import io.github.kawaxte.twentyten.launcher.ui.LanguageGroupBox;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
-import io.github.kawaxte.twentyten.launcher.ui.auth.MicrosoftAuthPanel;
-import io.github.kawaxte.twentyten.launcher.ui.auth.YggdrasilAuthPanel;
-import io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox;
-import io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog;
-import io.github.kawaxte.twentyten.launcher.ui.options.OptionsPanel;
-import io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox;
+import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
+import io.github.kawaxte.twentyten.launcher.ui.OptionsDialog;
+import io.github.kawaxte.twentyten.launcher.ui.OptionsPanel;
+import io.github.kawaxte.twentyten.launcher.ui.VersionGroupBox;
+import io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel;
 import java.util.Objects;
 import javax.swing.SwingUtilities;
 import lombok.val;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public final class LauncherConfigUtils {
-
-  public static final AbstractLauncherConfigImpl configInstance;
-  public static final AbstractLauncherLanguageImpl languageInstance;
-  static Logger LOGGER;
-
-  static {
-    configInstance = new AbstractLauncherConfigImpl();
-    languageInstance = new AbstractLauncherLanguageImpl();
-    LOGGER = LogManager.getLogger(LauncherConfigUtils.class);
-  }
 
   private LauncherConfigUtils() {}
 
@@ -33,11 +20,11 @@ public final class LauncherConfigUtils {
     String selectedItem = (String) lgb.getLanguageComboBox().getSelectedItem();
     selectedItem = LauncherLanguageUtils.languageLookup.get(selectedItem);
 
-    val selectedLanguage = configInstance.getSelectedLanguage();
+    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     boolean languageChanged = !Objects.equals(selectedItem, selectedLanguage);
     if (languageChanged) {
-      configInstance.setSelectedLanguage(selectedItem);
-      configInstance.save();
+      LauncherConfig.lookup.put("selectedLanguage", selectedItem);
+      LauncherConfig.saveConfig();
 
       val finalSelectedItem = selectedItem;
       SwingUtilities.invokeLater(
@@ -72,13 +59,13 @@ public final class LauncherConfigUtils {
 
   public static void updateSelectedVersion(VersionGroupBox vgb) {
     String selectedItem = (String) vgb.getVersionComboBox().getSelectedItem();
-    selectedItem = LauncherVersionUtils.versionLookup.get(selectedItem);
+    selectedItem = LauncherVersionUtils.lookup.get(selectedItem);
 
-    val selectedVersion = configInstance.getSelectedVersion();
+    val selectedVersion = LauncherConfig.lookup.get("selectedVersion");
     boolean versionChanged = !Objects.equals(selectedItem, selectedVersion);
     if (versionChanged) {
-      configInstance.setSelectedVersion(selectedItem);
-      configInstance.save();
+      LauncherConfig.lookup.put("selectedVersion", selectedItem);
+      LauncherConfig.saveConfig();
     }
   }
 }
