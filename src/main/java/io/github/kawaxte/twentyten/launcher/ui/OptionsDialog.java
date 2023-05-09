@@ -1,9 +1,8 @@
-package io.github.kawaxte.twentyten.launcher.ui.options;
-
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
+package io.github.kawaxte.twentyten.launcher.ui;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
+import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.Window;
@@ -28,11 +27,11 @@ public class OptionsDialog extends JDialog {
     this.setLocation(this.getOwner().getLocation());
     this.setResizable(false);
 
-    val selectedLanguage = configInstance.getSelectedLanguage();
+    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     this.updateContainerKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : languageInstance.getBundle());
+            ? LauncherLanguageUtils.getUTF8Bundle((String) selectedLanguage)
+            : LauncherLanguage.bundle);
   }
 
   public void updateContainerKeyValues(UTF8ResourceBundle bundle) {

@@ -1,11 +1,10 @@
-package io.github.kawaxte.twentyten.launcher.ui.options;
+package io.github.kawaxte.twentyten.launcher.ui;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
 import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.workingDirectoryPath;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.util.JarUtils;
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
+import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
@@ -36,7 +35,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.languageGroupBox = new LanguageGroupBox();
     this.versionGroupBox = new VersionGroupBox();
     this.buildTimeLabel =
-        new JLabel(JarUtils.getManifestAttribute("Build-Time"), SwingUtilities.CENTER);
+        new JLabel(LauncherUtils.getManifestAttribute("Build-Time"), SwingUtilities.CENTER);
     this.openDirectoryButton = new JButton("op.openDirectoryButton");
     this.saveOptionsButton = new JButton("op.saveOptionsButton");
   }
@@ -53,11 +52,11 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.openDirectoryButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
 
-    val selectedLanguage = configInstance.getSelectedLanguage();
+    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : languageInstance.getBundle());
+            ? LauncherLanguageUtils.getUTF8Bundle((String) selectedLanguage)
+            : LauncherLanguage.bundle);
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
