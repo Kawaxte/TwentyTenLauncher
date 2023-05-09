@@ -71,8 +71,8 @@ public final class LauncherConfig {
     }
 
     val properties = new LinkedProperties();
-    try (val stream = new FileInputStream(configFilePath.toFile())) {
-      properties.load(stream);
+    try (val fis = new FileInputStream(configFilePath.toFile())) {
+      properties.load(fis);
       properties.forEach((key, value) -> lookup.put((String) key, value));
     } catch (FileNotFoundException fnfe) {
       LOGGER.error("Failed to find {}", configFilePath.toAbsolutePath(), fnfe);
@@ -96,7 +96,7 @@ public final class LauncherConfig {
       return;
     }
 
-    try (val stream = new FileOutputStream(configFilePath.toFile())) {
+    try (val fos = new FileOutputStream(configFilePath.toFile())) {
       val properties = new LinkedProperties();
 
       lookup
@@ -106,9 +106,9 @@ public final class LauncherConfig {
                 val value = lookup.get(key);
                 properties.put(key, Optional.ofNullable(value).map(Object::toString).orElse(""));
               });
-      properties.store(stream, "TwentyTen Launcher");
+      properties.store(fos, "TwentyTen Launcher");
 
-      stream.flush();
+      fos.flush();
     } catch (FileNotFoundException fnfe) {
       LOGGER.error("Failed to locate {}", configFilePath.toAbsolutePath(), fnfe);
     } catch (IOException ioe) {
