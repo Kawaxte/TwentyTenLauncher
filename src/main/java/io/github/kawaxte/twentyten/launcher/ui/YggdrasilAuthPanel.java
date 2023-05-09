@@ -187,7 +187,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      MicrosoftAuthUtils.executeMicrosoftAuthWorker("e1a4bd01-2c5f-4be0-8e6a-84d71929703b");
+      MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.clientId);
     }
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(
