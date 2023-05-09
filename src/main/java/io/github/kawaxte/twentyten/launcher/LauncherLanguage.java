@@ -1,9 +1,11 @@
 package io.github.kawaxte.twentyten.launcher;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.UTF8ResourceBundle.UTF8Control;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.val;
@@ -27,6 +29,17 @@ public final class LauncherLanguage {
   }
 
   private LauncherLanguage() {}
+
+  public static UTF8ResourceBundle getUTF8Bundle(String languageCode) {
+    return Optional.ofNullable(languageCode)
+        .map(
+            code ->
+                (UTF8ResourceBundle)
+                    UTF8ResourceBundle.getBundle(
+                        "messages", Locale.forLanguageTag(code), new UTF8Control()))
+        .orElseGet(
+            () -> (UTF8ResourceBundle) UTF8ResourceBundle.getBundle("messages", new UTF8Control()));
+  }
 
   public static void loadLanguage(String baseName, String languageCode) {
     val fileName = String.format("%s_%s.properties", baseName, languageCode);
