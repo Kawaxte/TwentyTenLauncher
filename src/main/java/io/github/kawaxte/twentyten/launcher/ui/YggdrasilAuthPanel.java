@@ -27,7 +27,6 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import lombok.Getter;
 import lombok.val;
 
 public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
@@ -35,12 +34,12 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   private static final long serialVersionUID = 1L;
   public static YggdrasilAuthPanel instance;
   private final TransparentJButton microsoftSigninButton;
-  @Getter private final JLabel usernameLabel;
-  @Getter private final JLabel passwordLabel;
+  private final JLabel usernameLabel;
+  private final JLabel passwordLabel;
   private final JTextField usernameField;
   private final JPasswordField passwordField;
   private final TransparentJButton optionsButton;
-  @Getter private final TransparentJCheckBox rememberPasswordCheckBox;
+  private final TransparentJCheckBox rememberPasswordCheckBox;
   private final JHyperlink linkLabel;
   private final TransparentJButton signinButton;
 
@@ -187,7 +186,17 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.clientId);
+      val microsoftAccessToken = LauncherConfig.lookup.get("microsoftAccessToken");
+      val accessTokenMatched =
+          LauncherUtils.jwtPattern.matcher((String) microsoftAccessToken).matches();
+      if (accessTokenMatched) {
+        MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.clientId);
+        return;
+      }
+
+      // TODO: Launch online instance without re-authentication
+      JOptionPane.showMessageDialog(
+          this, "You are already signed in.", "Warning", JOptionPane.WARNING_MESSAGE);
     }
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(
