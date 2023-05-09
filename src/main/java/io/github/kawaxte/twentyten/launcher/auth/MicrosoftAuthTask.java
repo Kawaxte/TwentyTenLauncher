@@ -1,11 +1,11 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
 import static io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils.authInstance;
 
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.ui.auth.MicrosoftAuthPanel;
+import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,7 +39,6 @@ public class MicrosoftAuthTask implements Runnable {
     }
 
     val consumerToken = authInstance.acquireToken(clientId, deviceCode);
-    System.out.println(consumerToken);
     val tokenResponse = this.getTokenResponse(consumerToken);
     if (tokenResponse == null) {
       return;
@@ -54,17 +53,18 @@ public class MicrosoftAuthTask implements Runnable {
     val authenticateLoginWithXbox =
         authInstance.acquireAccessToken(xblTokenResponse[0], xstsTokenResponse);
     val accessTokenResponse = this.getAccessTokenResponse(authenticateLoginWithXbox);
-    configInstance.setMicrosoftAccessToken(accessTokenResponse[0]);
-    configInstance.setMicrosoftAccessTokenExpiresIn(Long.parseLong(accessTokenResponse[1]));
-    configInstance.setMicrosoftRefreshToken(tokenResponse[1]);
+    LauncherConfig.lookup.put("microsoftAccessToken", accessTokenResponse[0]);
+    LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
+    LauncherConfig.lookup.put("microsoftRefreshToken", tokenResponse[1]);
 
     val entitlementsMcStore = authInstance.acquireMinecraftStoreItems(accessTokenResponse[0]);
     val itemNameEqualToGameMinecraft = this.isItemNameEqualToGameMinecraft(entitlementsMcStore);
     if (!itemNameEqualToGameMinecraft) {
-      configInstance.setMicrosoftProfileName(
-          String.format("Player%s", System.currentTimeMillis() % 1000L));
-      configInstance.setMicrosoftProfileDemo(true);
-      configInstance.save();
+      val name = String.format("Player%s", System.currentTimeMillis() % 1000L);
+      LauncherConfig.lookup.put("microsoftProfileDemo", true);
+      LauncherConfig.lookup.put("microsoftProfileId", null);
+      LauncherConfig.lookup.put("microsoftProfileName", name);
+      LauncherConfig.saveConfig();
 
       // TODO: Call offline/demo instance of Minecraft.
       JOptionPane.showMessageDialog(
@@ -77,10 +77,10 @@ public class MicrosoftAuthTask implements Runnable {
 
     val minecraftProfile = authInstance.acquireMinecraftProfile(accessTokenResponse[0]);
     val minecraftProfileResponse = this.getMinecraftProfileResponse(minecraftProfile);
-    configInstance.setMicrosoftProfileId(minecraftProfileResponse[0]);
-    configInstance.setMicrosoftProfileName(minecraftProfileResponse[1]);
-    configInstance.setMicrosoftProfileDemo(false);
-    configInstance.save();
+    LauncherConfig.lookup.put("microsoftProfileDemo", false);
+    LauncherConfig.lookup.put("microsoftProfileId", minecraftProfileResponse[0]);
+    LauncherConfig.lookup.put("microsoftProfileName", minecraftProfileResponse[1]);
+    LauncherConfig.saveConfig();
 
     // TODO: Call online instance of Minecraft.
     JOptionPane.showMessageDialog(
@@ -111,8 +111,9 @@ public class MicrosoftAuthTask implements Runnable {
 
   private String[] getAccessTokenResponse(JSONObject object) {
     val accessToken = object.getString("access_token");
-    val expiresIn = String.valueOf(object.getInt("expires_in"));
-    return new String[] {accessToken, expiresIn};
+    val expiresIn = object.getInt("expires_in");
+    val expiresInMillis = System.currentTimeMillis() + (expiresIn * 1000L);
+    return new String[] {accessToken, String.valueOf(expiresInMillis)};
   }
 
   private String getXSTSTokenResponse(JSONObject object) {
