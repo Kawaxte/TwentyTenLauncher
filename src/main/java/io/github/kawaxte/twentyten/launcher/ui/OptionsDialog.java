@@ -3,7 +3,6 @@ package io.github.kawaxte.twentyten.launcher.ui;
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.Window;
 import java.util.Objects;
@@ -30,7 +29,7 @@ public class OptionsDialog extends JDialog {
     val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     this.updateContainerKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguageUtils.getUTF8Bundle((String) selectedLanguage)
+            ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
             : LauncherLanguage.bundle);
   }
 
