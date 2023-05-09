@@ -1,14 +1,12 @@
 package io.github.kawaxte.twentyten.launcher.ui;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.languageInstance;
-
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.ui.auth.YggdrasilAuthPanel;
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
+import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
+import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
+import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
 import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
-import io.github.kawaxte.twentyten.ui.CustomJPanel;
-import io.github.kawaxte.twentyten.ui.TransparentJButton;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.LayoutManager;
@@ -47,11 +45,11 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    val selectedLanguage = configInstance.getSelectedLanguage();
+    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : languageInstance.getBundle());
+            ? LauncherLanguageUtils.getUTF8Bundle((String) selectedLanguage)
+            : LauncherLanguage.bundle);
   }
 
   public LauncherOfflinePanel(String message) {
@@ -67,11 +65,11 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    val selectedLanguage = configInstance.getSelectedLanguage();
+    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguageUtils.getUTF8Bundle(selectedLanguage)
-            : languageInstance.getBundle());
+            ? LauncherLanguageUtils.getUTF8Bundle((String) selectedLanguage)
+            : LauncherLanguage.bundle);
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
