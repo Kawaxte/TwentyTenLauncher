@@ -3,13 +3,13 @@ package io.github.kawaxte.twentyten.launcher.util;
 import io.github.kawaxte.twentyten.launcher.ELanguage;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.ui.LanguageGroupBox;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
 import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
-import io.github.kawaxte.twentyten.launcher.ui.OptionsDialog;
-import io.github.kawaxte.twentyten.launcher.ui.OptionsPanel;
-import io.github.kawaxte.twentyten.launcher.ui.VersionGroupBox;
 import io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel;
+import io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox;
+import io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog;
+import io.github.kawaxte.twentyten.launcher.ui.options.OptionsPanel;
+import io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -29,17 +29,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
-public final class OptionsUtils {
+public final class LauncherOptionsUtils {
 
   private static final Logger LOGGER;
   public static Map<String, String> languageLookup;
   public static Map<String, String> versionLookup;
 
   static {
-    LOGGER = LogManager.getLogger(OptionsUtils.class);
+    LOGGER = LogManager.getLogger(LauncherOptionsUtils.class);
   }
 
-  private OptionsUtils() {}
+  private LauncherOptionsUtils() {}
 
   public static void updateLanguageComboBox(LanguageGroupBox lgb) {
     languageLookup = new HashMap<>();
@@ -70,7 +70,8 @@ public final class OptionsUtils {
     val versions =
         Collections.unmodifiableList(Arrays.asList("legacy_beta", "legacy_alpha", "legacy_infdev"));
     val versionsFileUrl =
-        Optional.ofNullable(OptionsUtils.class.getClassLoader().getResource("versions.json"))
+        Optional.ofNullable(
+                LauncherOptionsUtils.class.getClassLoader().getResource("versions.json"))
             .orElseThrow(() -> new NullPointerException("versionsFileUrl must not be null"));
     try (val br = Files.newBufferedReader(Paths.get(versionsFileUrl.toURI()))) {
       val json = new JSONObject(br.lines().collect(Collectors.joining()));
