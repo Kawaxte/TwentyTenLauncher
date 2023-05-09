@@ -1,12 +1,12 @@
-package io.github.kawaxte.twentyten.launcher.ui;
+package io.github.kawaxte.twentyten.launcher.ui.options;
 
 import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.workingDirectoryPath;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
+import io.github.kawaxte.twentyten.launcher.util.LauncherOptionsUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
-import io.github.kawaxte.twentyten.launcher.util.OptionsUtils;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -109,8 +109,8 @@ public class OptionsPanel extends JPanel implements ActionListener {
       LauncherUtils.openDesktop(workingDirectoryPath);
     }
     if (Objects.equals(source, this.saveOptionsButton)) {
-      OptionsUtils.updateSelectedLanguage(this.languageGroupBox);
-      OptionsUtils.updateSelectedVersion(this.versionGroupBox);
+      LauncherOptionsUtils.updateSelectedLanguage(this.languageGroupBox);
+      LauncherOptionsUtils.updateSelectedVersion(this.versionGroupBox);
 
       this.saveOptionsButton.setEnabled(false);
     }
