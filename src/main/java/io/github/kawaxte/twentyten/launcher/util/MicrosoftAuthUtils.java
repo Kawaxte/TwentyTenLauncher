@@ -3,7 +3,7 @@ package io.github.kawaxte.twentyten.launcher.util;
 import io.github.kawaxte.twentyten.launcher.auth.AbstractMicrosoftAuthImpl;
 import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthWorker;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.ui.auth.MicrosoftAuthPanel;
+import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
 import lombok.val;
 import org.json.JSONObject;
 
