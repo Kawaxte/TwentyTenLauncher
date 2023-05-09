@@ -45,10 +45,10 @@ public final class MicrosoftAuthUtils {
   public static boolean isAccessTokenExpired() {
     val refreshToken = (String) LauncherConfig.lookup.get("microsoftRefreshToken");
     if (Objects.isNull(refreshToken)) {
-      throw new NullPointerException("refreshToken cannot be null");
+      return false;
     }
     if (refreshToken.isEmpty()) {
-      return true;
+      return false;
     }
 
     val currentTimeSecs = System.currentTimeMillis() / 1000L;
