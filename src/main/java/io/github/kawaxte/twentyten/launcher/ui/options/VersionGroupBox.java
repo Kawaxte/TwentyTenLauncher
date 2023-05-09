@@ -1,11 +1,11 @@
-package io.github.kawaxte.twentyten.launcher.ui;
+package io.github.kawaxte.twentyten.launcher.ui.options;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.ui.custom.JGroupBox;
+import io.github.kawaxte.twentyten.launcher.util.LauncherOptionsUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
-import io.github.kawaxte.twentyten.launcher.util.OptionsUtils;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,7 +64,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
             ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
             : LauncherLanguage.bundle);
 
-    OptionsUtils.updateVersionComboBox(this);
+    LauncherOptionsUtils.updateVersionComboBox(this);
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -156,7 +156,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
                 .anyMatch(s -> (boolean) LauncherConfig.lookup.get(s));
         OptionsPanel.instance.getSaveOptionsButton().setEnabled(showVersionsSelected);
 
-        OptionsUtils.updateVersionComboBox(this);
+        LauncherOptionsUtils.updateVersionComboBox(this);
         break;
       }
     }
