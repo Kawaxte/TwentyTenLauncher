@@ -112,22 +112,22 @@ public final class LauncherUtils {
   }
 
   public static String getManifestAttribute(String key) {
-    val jarFileUrl =
+    val fileUrl =
         Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
-            .orElseThrow(() -> new NullPointerException("jarFileUrl must not be null"));
-    try (val jarFile = new JarFile(new File(jarFileUrl.toURI()))) {
-      val manifest = jarFile.getManifest();
+            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
+    try (val file = new JarFile(new File(fileUrl.toURI()))) {
+      val manifest = file.getManifest();
       val attributes = manifest.getMainAttributes();
       return attributes.getValue(key);
     } catch (FileNotFoundException fnfe) {
       return "9999.999999.999.9";
     } catch (IOException ioe) {
-      LOGGER.error("Failed to retrieve '{}' from {}", key, jarFileUrl, ioe);
+      LOGGER.error("Failed to retrieve '{}' from {}", key, fileUrl, ioe);
     } catch (URISyntaxException urise) {
-      LOGGER.error("Failed to parse {} as URI", jarFileUrl, urise);
+      LOGGER.error("Failed to parse {} as URI", fileUrl, urise);
     } finally {
-      if (jarFileUrl.getFile().endsWith(".jar")) {
-        LOGGER.info("Retrieved '{}' from {}", key, jarFileUrl);
+      if (fileUrl.getFile().endsWith(".jar")) {
+        LOGGER.info("Retrieved '{}' from {}", key, fileUrl);
       }
     }
     return null;
