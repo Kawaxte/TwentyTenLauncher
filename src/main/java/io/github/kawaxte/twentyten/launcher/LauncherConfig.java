@@ -103,7 +103,7 @@ public final class LauncherConfig {
           .keySet()
           .forEach(
               key -> {
-                Object value = lookup.get(key);
+                val value = lookup.get(key);
                 properties.put(key, Optional.ofNullable(value).map(Object::toString).orElse(""));
               });
       properties.store(stream, "TwentyTen Launcher");
