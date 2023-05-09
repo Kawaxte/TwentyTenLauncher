@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.ui;
+package io.github.kawaxte.twentyten.launcher.ui.custom;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;

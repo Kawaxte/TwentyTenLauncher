@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.ui;
+package io.github.kawaxte.twentyten.launcher.ui.custom;
 
 import java.awt.Toolkit;
 import javax.swing.JButton;

@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.ui;
+package io.github.kawaxte.twentyten.launcher.ui.custom;
 
 import java.awt.Color;
 import java.awt.Cursor;
