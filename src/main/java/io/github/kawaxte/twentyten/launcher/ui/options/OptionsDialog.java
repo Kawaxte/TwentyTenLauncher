@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.launcher.ui;
+package io.github.kawaxte.twentyten.launcher.ui.options;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
