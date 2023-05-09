@@ -5,7 +5,6 @@ import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker;
 import java.util.Objects;
 import lombok.val;
-import org.json.JSONObject;
 
 public final class YggdrasilAuthUtils {
 
@@ -27,38 +26,33 @@ public final class YggdrasilAuthUtils {
     new YggdrasilAuthWorker(username, password, clientToken).execute();
   }
 
-  public static void validateAndRefreshAccessToken() {
+  public static boolean isAccessTokenExpired() {
     val accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
     val clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
-    if ((Objects.isNull(accessToken)
-        || Objects.isNull(clientToken)
-        || accessToken.isEmpty()
-        || clientToken.isEmpty())) {
-      return;
+    if (Objects.isNull(accessToken) || Objects.isNull(clientToken)) {
+      throw new NullPointerException("accessToken or clientToken cannot be null");
+    }
+    if (accessToken.isEmpty() || clientToken.isEmpty()) {
+      return true;
     }
 
     val validate = YggdrasilAuth.validateAccessToken(accessToken, clientToken);
     Objects.requireNonNull(validate, "validate cannot be null");
-    if (!isValidateAccessTokenErrored(validate)) {
-      return;
-    }
+    return validate.has("error");
+  }
+
+  public static void refreshAccessToken() {
+    val accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
+    val clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
 
     val refresh = YggdrasilAuth.refreshAccessToken(accessToken, clientToken);
     Objects.requireNonNull(refresh, "refresh cannot be null");
-    if (isRefreshAccessTokenErrored(refresh)) {
+    if (refresh.has("error")) {
       throw new RuntimeException("Could not refresh access token");
     }
 
     val newAccessToken = refresh.getString("accessToken");
     LauncherConfig.lookup.put("mojangAccessToken", newAccessToken);
     LauncherConfig.saveConfig();
-  }
-
-  private static boolean isRefreshAccessTokenErrored(JSONObject object) {
-    return object.has("error");
-  }
-
-  private static boolean isValidateAccessTokenErrored(JSONObject object) {
-    return object.has("error");
   }
 }
