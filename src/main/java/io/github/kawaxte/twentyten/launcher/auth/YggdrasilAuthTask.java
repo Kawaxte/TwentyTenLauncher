@@ -1,11 +1,10 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
-import static io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils.authInstance;
-
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import java.util.Objects;
 import javax.swing.JOptionPane;
 import lombok.val;
 import org.json.JSONObject;
@@ -24,7 +23,8 @@ public class YggdrasilAuthTask implements Runnable {
 
   @Override
   public void run() {
-    val authenticate = authInstance.authenticate(username, password, clientToken);
+    val authenticate = YggdrasilAuth.authenticate(username, password, clientToken);
+    Objects.requireNonNull(authenticate, "authenticate cannot be null");
     val authenticateResponse = this.getAuthenticateResponse(authenticate);
     if (authenticateResponse == null) {
       return;
