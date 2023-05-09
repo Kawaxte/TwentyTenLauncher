@@ -1,10 +1,12 @@
 package io.github.kawaxte.twentyten.launcher.util;
 
-import io.github.kawaxte.twentyten.EPlatform;
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.ui.JGroupBox;
+import io.github.kawaxte.twentyten.launcher.EPlatform;
+import io.github.kawaxte.twentyten.launcher.ui.custom.JGroupBox;
 import java.awt.Container;
 import java.awt.Desktop;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,7 +18,9 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
@@ -107,6 +111,28 @@ public final class LauncherUtils {
     return workingDirectory.toPath();
   }
 
+  public static String getManifestAttribute(String key) {
+    val jarFileUrl =
+        Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
+            .orElseThrow(() -> new NullPointerException("jarFileUrl must not be null"));
+    try (val jarFile = new JarFile(new File(jarFileUrl.toURI()))) {
+      val manifest = jarFile.getManifest();
+      val attributes = manifest.getMainAttributes();
+      return attributes.getValue(key);
+    } catch (FileNotFoundException fnfe) {
+      return "9999.999999.999.9";
+    } catch (IOException ioe) {
+      LOGGER.error("Failed to retrieve '{}' from {}", key, jarFileUrl, ioe);
+    } catch (URISyntaxException urise) {
+      LOGGER.error("Failed to parse {} as URI", jarFileUrl, urise);
+    } finally {
+      if (jarFileUrl.getFile().endsWith(".jar")) {
+        LOGGER.info("Retrieved '{}' from {}", key, jarFileUrl);
+      }
+    }
+    return null;
+  }
+
   public static boolean isOutdated() {
     if (outdated == null) {
       val worker =
@@ -124,7 +150,7 @@ public final class LauncherUtils {
                 val body = new JSONArray(request);
                 val tagName = body.getJSONObject(0).getString("tag_name");
 
-                val buildTime = JarUtils.getManifestAttribute("Build-Time");
+                val buildTime = getManifestAttribute("Build-Time");
                 return Objects.compare(buildTime, tagName, String::compareTo) < 0;
               } catch (IOException ioe) {
                 LOGGER.error("Failed to check for updates", ioe);
