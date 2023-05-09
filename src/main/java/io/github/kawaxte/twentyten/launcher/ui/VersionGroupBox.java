@@ -4,9 +4,8 @@ import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.ui.custom.JGroupBox;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherVersionUtils;
+import io.github.kawaxte.twentyten.launcher.util.OptionsUtils;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,10 +61,10 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguageUtils.getUTF8Bundle((String) selectedLanguage)
+            ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
             : LauncherLanguage.bundle);
 
-    LauncherVersionUtils.updateVersionComboBox(this);
+    OptionsUtils.updateVersionComboBox(this);
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -157,7 +156,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
                 .anyMatch(s -> (boolean) LauncherConfig.lookup.get(s));
         OptionsPanel.instance.getSaveOptionsButton().setEnabled(showVersionsSelected);
 
-        LauncherVersionUtils.updateVersionComboBox(this);
+        OptionsUtils.updateVersionComboBox(this);
         break;
       }
     }
