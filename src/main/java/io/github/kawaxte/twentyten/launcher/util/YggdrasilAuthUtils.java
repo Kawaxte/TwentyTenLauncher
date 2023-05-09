@@ -1,9 +1,8 @@
 package io.github.kawaxte.twentyten.launcher.util;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherConfigUtils.configInstance;
-
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.auth.AbstractYggdrasilAuthImpl;
-import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthTask;
+import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker;
 import lombok.val;
 import org.json.JSONObject;
 
@@ -17,38 +16,37 @@ public final class YggdrasilAuthUtils {
 
   private YggdrasilAuthUtils() {}
 
-  public static void runYggdrasilAuthTask(
+  public static void executeYggdrasilAuthWorker(
       String username, String password, String clientToken, boolean rememberPasswordChecked) {
-    configInstance.setMojangUsername(username);
-    configInstance.setMojangPassword(rememberPasswordChecked ? password : "");
-    configInstance.setMojangRememberPasswordChecked(rememberPasswordChecked);
+    LauncherConfig.lookup.put("mojangUsername", username);
+    LauncherConfig.lookup.put("mojangPassword", rememberPasswordChecked ? password : "");
+    LauncherConfig.lookup.put("mojangRememberPasswordChecked", rememberPasswordChecked);
 
-    new YggdrasilAuthTask(username, password, clientToken).run();
+    new YggdrasilAuthWorker(username, password, clientToken).execute();
   }
 
   public static void validateAndRefreshAccessToken() {
-    if (configInstance.getMojangAccessToken().isEmpty()
-        || configInstance.getMojangClientToken().isEmpty()) {
+    val accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
+    val clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
+    if (accessToken.isEmpty() || clientToken.isEmpty()) {
       return;
     }
 
-    val validate =
-        authInstance.validateAccessToken(
-            configInstance.getMojangAccessToken(), configInstance.getMojangClientToken());
+    val validate = authInstance.validateAccessToken(accessToken, clientToken);
+    System.out.println(validate);
     if (isValidateAccessTokenErrored(validate)) {
       return;
     }
 
-    val refresh =
-        authInstance.refreshAccessToken(
-            configInstance.getMojangAccessToken(), configInstance.getMojangClientToken());
+    val refresh = authInstance.refreshAccessToken(accessToken, clientToken);
+    System.out.println(refresh);
     if (isRefreshAccessTokenErrored(refresh)) {
       throw new RuntimeException("Failed to refresh access token");
     }
 
-    val accessToken = refresh.getString("accessToken");
-    configInstance.setMojangAccessToken(accessToken);
-    configInstance.save();
+    val newAccessToken = refresh.getString("accessToken");
+    LauncherConfig.lookup.put("mojangAccessToken", newAccessToken);
+    LauncherConfig.saveConfig();
   }
 
   private static boolean isRefreshAccessTokenErrored(JSONObject object) {
