@@ -7,7 +7,6 @@ import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
 import io.github.kawaxte.twentyten.launcher.ui.custom.JHyperlink;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJCheckBox;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
 import java.awt.LayoutManager;
@@ -15,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -94,7 +94,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguageUtils.getUTF8Bundle((String) selectedLanguage)
+            ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
             : LauncherLanguage.bundle);
   }
 
@@ -214,28 +214,22 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
       val rememberPasswordCheckedEqual =
           Objects.equals(mojangRememberPasswordChecked, rememberPasswordChecked);
       val accessTokenMatched =
-          LauncherUtils.jwtPattern.matcher((CharSequence) mojangAccessToken).matches();
+          LauncherUtils.jwtPattern.matcher((String) mojangAccessToken).matches();
       val clientTokenMatched =
-          LauncherUtils.uuidPattern.matcher((CharSequence) mojangClientToken).matches();
+          LauncherUtils.uuidPattern.matcher((String) mojangClientToken).matches();
 
       if ((!usernameEqual || !passwordEqual || !rememberPasswordCheckedEqual)
           || (!accessTokenMatched || !clientTokenMatched)) {
-        this.microsoftSigninButton.setEnabled(false);
-        this.usernameField.setEnabled(false);
-        this.passwordField.setEnabled(false);
-        this.optionsButton.setEnabled(false);
-        this.rememberPasswordCheckBox.setEnabled(false);
-        this.linkLabel.setEnabled(false);
-        this.signinButton.setEnabled(false);
+        Arrays.stream(this.getComponents())
+            .forEachOrdered(component -> component.setEnabled(false));
 
         YggdrasilAuthUtils.executeYggdrasilAuthWorker(
             username, password, (String) mojangClientToken, rememberPasswordChecked);
-        return;
+      } else {
+        // TODO: Launch online instance without re-authentication
+        JOptionPane.showMessageDialog(
+            this, "You are already signed in.", "Warning", JOptionPane.WARNING_MESSAGE);
       }
-
-      // TODO: Launch online instance without re-authentication
-      JOptionPane.showMessageDialog(
-          this, "You are already signed in.", "Warning", JOptionPane.WARNING_MESSAGE);
     }
   }
 }
