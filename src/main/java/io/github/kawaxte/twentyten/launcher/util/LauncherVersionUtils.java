@@ -1,6 +1,7 @@
 package io.github.kawaxte.twentyten.launcher.util;
 
-import io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox;
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
+import io.github.kawaxte.twentyten.launcher.ui.VersionGroupBox;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -22,7 +23,7 @@ import org.json.JSONObject;
 public final class LauncherVersionUtils {
 
   private static final Logger LOGGER;
-  public static Map<String, String> versionLookup;
+  public static Map<String, String> lookup;
 
   static {
     LOGGER = LogManager.getLogger(LauncherVersionUtils.class);
@@ -31,7 +32,7 @@ public final class LauncherVersionUtils {
   private LauncherVersionUtils() {}
 
   public static void updateVersionComboBox(VersionGroupBox vgb) {
-    versionLookup = new HashMap<>();
+    lookup = new HashMap<>();
 
     val defaultComboBoxModel = new DefaultComboBoxModel<String>();
 
@@ -54,13 +55,18 @@ public final class LauncherVersionUtils {
                 .forEach(
                     versionObject -> {
                       val showBetaVersionsSelected =
-                          LauncherConfigUtils.configInstance.isShowBetaVersionsSelected()
+                          Boolean.parseBoolean(
+                                  LauncherConfig.lookup.get("showBetaVersionsSelected").toString())
                               && Objects.equals(version, versions.get(0));
                       val showAlphaVersionsSelected =
-                          LauncherConfigUtils.configInstance.isShowAlphaVersionsSelected()
+                          Boolean.parseBoolean(
+                                  LauncherConfig.lookup.get("showAlphaVersionsSelected").toString())
                               && Objects.equals(version, versions.get(1));
                       val showInfdevVersionsSelected =
-                          LauncherConfigUtils.configInstance.isShowInfdevVersionsSelected()
+                          Boolean.parseBoolean(
+                                  LauncherConfig.lookup
+                                      .get("showInfdevVersionsSelected")
+                                      .toString())
                               && Objects.equals(version, versions.get(2));
                       if (showBetaVersionsSelected
                           || showAlphaVersionsSelected
@@ -68,7 +74,7 @@ public final class LauncherVersionUtils {
                         val versionId = versionObject.getString("versionId");
                         val versionName = versionObject.getString("versionName");
 
-                        versionLookup.put(versionName, versionId);
+                        lookup.put(versionName, versionId);
                         defaultComboBoxModel.addElement(versionName);
                       }
                     });
@@ -79,8 +85,8 @@ public final class LauncherVersionUtils {
       LOGGER.error("Failed to parse {} as URI", versionsFileUrl.toString(), urise);
     }
 
-    val selectedVersion = LauncherConfigUtils.configInstance.getSelectedVersion();
-    versionLookup.entrySet().stream()
+    val selectedVersion = LauncherConfig.lookup.get("selectedVersion");
+    lookup.entrySet().stream()
         .filter(entry -> entry.getValue().equals(selectedVersion))
         .findFirst()
         .ifPresent(entry -> defaultComboBoxModel.setSelectedItem(entry.getKey()));
