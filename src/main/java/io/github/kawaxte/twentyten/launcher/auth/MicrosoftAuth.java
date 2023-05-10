@@ -26,7 +26,7 @@ public final class MicrosoftAuth {
 
   private MicrosoftAuth() {}
 
-  public static URL[] getYggdrasilAuthUrls() {
+  private static URL[] getYggdrasilAuthUrls() {
     val urls = new URL[7];
     try {
       urls[0] =
@@ -300,7 +300,7 @@ public final class MicrosoftAuth {
     return null;
   }
 
-  public static JSONObject acquireMcStoreItems(String accessToken) {
+  public static JSONObject checkEntitlementsMcStore(String accessToken) {
     val service = Executors.newSingleThreadExecutor();
     val future =
         service.submit(
