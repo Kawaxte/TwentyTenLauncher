@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -83,7 +84,19 @@ public final class LauncherOptionsUtils {
             IntStream.range(0, versionArray.length())
                 .mapToObj(versionArray::getJSONObject)
                 .sorted(
-                    (o1, o2) -> o2.getString("versionName").compareTo(o1.getString("versionName")))
+                    Collections.reverseOrder(
+                        Comparator.comparing(
+                            object -> {
+                              val versionId = object.getString("versionId");
+                              val versionIdSplit = versionId.split("_");
+                              return versionIdSplit.length == 1
+                                  ? versionIdSplit[0]
+                                  : new StringBuilder()
+                                      .append(versionIdSplit[0])
+                                      .append(".")
+                                      .append(versionIdSplit[1])
+                                      .toString();
+                            })))
                 .collect(Collectors.toList())
                 .forEach(
                     versionObject -> {
