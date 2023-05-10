@@ -27,7 +27,8 @@ public class JGroupBox extends JPanel {
   }
 
   /**
-   * Sets the titled border of the group box by creating an empty border and a titled border.
+   * Sets the titled border of the group box by creating an empty border outside, and a titled
+   * border inside.
    *
    * @param title the title of the group box
    * @return the title of the group box
