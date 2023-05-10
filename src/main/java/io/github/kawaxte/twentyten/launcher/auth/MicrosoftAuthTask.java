@@ -140,7 +140,7 @@ public class MicrosoftAuthTask implements Runnable {
     LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
     LauncherConfig.lookup.put("microsoftRefreshToken", tokenResponse[1]);
 
-    val entitlementsMcStore = MicrosoftAuth.acquireMcStoreItems(accessTokenResponse[0]);
+    val entitlementsMcStore = MicrosoftAuth.checkEntitlementsMcStore(accessTokenResponse[0]);
     Objects.requireNonNull(entitlementsMcStore, "entitlementsMcStore cannot be null");
     val itemNameEqualToGameMinecraft = isItemNameEqualToGameMinecraft(entitlementsMcStore);
     if (!itemNameEqualToGameMinecraft) {
