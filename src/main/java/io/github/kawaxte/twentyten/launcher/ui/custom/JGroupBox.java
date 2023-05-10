@@ -15,10 +15,13 @@ public class JGroupBox extends JPanel {
   private static final long serialVersionUID = 1L;
 
   /**
-   * Creates a new {@link JGroupBox} with the given title and sets the titled border.
+   * Creates a new {@link JGroupBox} with a title, FlowLayout and the specified buffering strategy.
+   *
+   * <p>It also calls the {@code setTitledBorder(String)} method to set the titled border of the
+   * group box.
    *
    * @param title the title of the group box
-   * @param isDoubleBuffered a boolean indicating whether or not to use double-buffering
+   * @param isDoubleBuffered a boolean, true for double-buffering, which uses additional memory
    */
   public JGroupBox(String title, boolean isDoubleBuffered) {
     super(isDoubleBuffered);
@@ -27,8 +30,8 @@ public class JGroupBox extends JPanel {
   }
 
   /**
-   * Sets the titled border of the group box by creating an empty border outside, and a titled
-   * border inside.
+   * Sets the titled border of the group box by creating an empty border outside and a titled border
+   * inside of the compound border.
    *
    * @param title the title of the group box
    * @return the title of the group box
