@@ -1,6 +1,5 @@
 package io.github.kawaxte.twentyten.launcher;
 
-import java.util.Arrays;
 import lombok.Getter;
 
 public enum ELanguage {
@@ -17,12 +16,5 @@ public enum ELanguage {
 
   ELanguage(String languageName) {
     this.languageName = languageName;
-  }
-
-  public static ELanguage getLanguage(String languageCode) {
-    return Arrays.stream(ELanguage.values())
-        .filter(language -> language.name().equalsIgnoreCase(languageCode))
-        .findFirst()
-        .orElse(null);
   }
 }
