@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -215,22 +214,16 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
       val mojangUsername = LauncherConfig.lookup.get("mojangUsername");
       val mojangPassword = LauncherConfig.lookup.get("mojangPassword");
-      val mojangAccessToken = LauncherConfig.lookup.get("mojangAccessToken");
-      val mojangClientToken = LauncherConfig.lookup.get("mojangClientToken");
+      val mojangAccessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
+      val mojangClientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
 
       val usernameChanged = Objects.equals(mojangUsername, username);
       val passwordChanged = Objects.equals(mojangPassword, password) && !password.isEmpty();
-      val accessTokenMatched =
-          LauncherUtils.jwtPattern.matcher((String) mojangAccessToken).matches();
-      val clientTokenMatched =
-          LauncherUtils.uuidPattern.matcher((String) mojangClientToken).matches();
-
+      val accessTokenMatched = LauncherUtils.jwtPattern.matcher(mojangAccessToken).matches();
+      val clientTokenMatched = LauncherUtils.uuidPattern.matcher(mojangClientToken).matches();
       if ((!usernameChanged || !passwordChanged) || (!accessTokenMatched || !clientTokenMatched)) {
-        Arrays.stream(this.getComponents())
-            .forEachOrdered(component -> component.setEnabled(false));
-
         YggdrasilAuthUtils.executeYggdrasilAuthWorker(
-            username, password, (String) mojangClientToken, rememberPasswordChecked);
+            username, password, mojangClientToken, rememberPasswordChecked);
         return;
       }
 
