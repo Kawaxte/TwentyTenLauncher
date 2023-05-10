@@ -120,7 +120,7 @@ public final class LauncherUtils {
       val attributes = manifest.getMainAttributes();
       return attributes.getValue(key);
     } catch (FileNotFoundException fnfe) {
-      return "9999.999999.999.9";
+      return "9.99.9999_99";
     } catch (IOException ioe) {
       LOGGER.error("Failed to retrieve '{}' from {}", key, fileUrl, ioe);
     } catch (URISyntaxException urise) {
