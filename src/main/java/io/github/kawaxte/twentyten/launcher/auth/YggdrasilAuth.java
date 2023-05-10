@@ -24,7 +24,7 @@ public final class YggdrasilAuth {
 
   private YggdrasilAuth() {}
 
-  public static URL[] getYggdrasilAuthUrls() {
+  private static URL[] getYggdrasilAuthUrls() {
     val authUrls = new URL[3];
 
     try {
