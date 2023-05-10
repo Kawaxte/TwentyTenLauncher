@@ -185,9 +185,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      val microsoftAccessToken = LauncherConfig.lookup.get("microsoftAccessToken");
-      val accessTokenMatched =
-          LauncherUtils.jwtPattern.matcher((String) microsoftAccessToken).matches();
+      val microsoftAccessToken = (String) LauncherConfig.lookup.get("microsoftAccessToken");
+      val accessTokenMatched = LauncherUtils.jwtPattern.matcher(microsoftAccessToken).matches();
       if (!accessTokenMatched) {
         MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.clientId);
         return;
