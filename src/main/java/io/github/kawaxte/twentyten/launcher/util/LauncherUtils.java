@@ -125,10 +125,6 @@ public final class LauncherUtils {
       LOGGER.error("Failed to retrieve '{}' from {}", key, fileUrl, ioe);
     } catch (URISyntaxException urise) {
       LOGGER.error("Failed to parse {} as URI", fileUrl, urise);
-    } finally {
-      if (fileUrl.getFile().endsWith(".jar")) {
-        LOGGER.info("Retrieved '{}' from {}", key, fileUrl);
-      }
     }
     return null;
   }
