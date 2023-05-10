@@ -8,10 +8,22 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 import lombok.val;
 
+/**
+ * This class extends {@link JPanel} and paints it the same way Markus "Notch" Persson did in the
+ * original Minecraft Launcher.
+ *
+ * @author Markus "Notch" Persson
+ */
 public class CustomJPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Creates a new {@link CustomJPanel} with FlowLayout and the specified buffering strategy.
+   *
+   * @param isDoubleBuffered a boolean, true for double-buffering, which uses additional memory
+   * @see JPanel#JPanel(boolean)
+   */
   public CustomJPanel(boolean isDoubleBuffered) {
     super(isDoubleBuffered);
   }
