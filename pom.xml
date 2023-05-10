@@ -15,7 +15,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Build-Time>${maven.build.timestamp}</Build-Time>
+              <Build-Time>${version}</Build-Time>
             </manifestEntries>
           </archive>
         </configuration>
@@ -112,10 +112,12 @@
   <name>${project.groupId}:${project.artifactId}</name>
 
   <properties>
-    <maven.build.timestamp.format>yyww.HHmmss.SSS.u</maven.build.timestamp.format>
+    <maven.build.timestamp.format>M.ddyy</maven.build.timestamp.format>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <version.major>1</version.major>
+    <version.minor>0</version.minor>
   </properties>
 
   <repositories>
@@ -125,5 +127,8 @@
     </repository>
   </repositories>
 
-  <version>20230510</version>
+  <!--
+  <version>${version.major}.${maven.build.timestamp}_${version.minor}</version>
+  -->
+  <version>${version.major}.${maven.build.timestamp}</version>
 </project>
