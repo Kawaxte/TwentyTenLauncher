@@ -43,7 +43,7 @@ public enum EPlatform {
 
   public static EPlatform getOSArch() {
     return Arrays.stream(values())
-        .filter(platform -> platform.arch != null && platform.arch.equalsIgnoreCase(OS_ARCH))
+        .filter(platform -> Objects.equals(platform.arch, OS_ARCH))
         .findFirst()
         .orElse(null);
   }
