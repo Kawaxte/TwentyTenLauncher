@@ -60,15 +60,15 @@ public enum EPlatform {
     return Objects.equals(LINUX, getOSName());
   }
 
-  public static boolean isAARCH64() {
-    return Objects.equals(AARCH64, getOSArch());
+  public static boolean isX86() {
+    return Objects.equals(X86, getOSArch());
   }
 
   public static boolean isAMD64() {
     return Objects.equals(AMD64, getOSArch());
   }
 
-  public static boolean isX86() {
-    return Objects.equals(X86, getOSArch());
+  public static boolean isAARCH64() {
+    return Objects.equals(AARCH64, getOSArch());
   }
 }
