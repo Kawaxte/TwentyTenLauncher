@@ -53,7 +53,7 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
 
       this.logger.error("Interrupted while scheduling authentication task", ie);
     } catch (TimeoutException te) {
-      LauncherUtils.addComponentToContainer(
+      LauncherUtils.swapContainers(
           LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
 
       this.logger.error("Timed out while scheduling authentication task", te);
