@@ -71,7 +71,7 @@ public final class LauncherOptionsUtils {
     val fileUrl =
         Optional.ofNullable(
                 LauncherOptionsUtils.class.getClassLoader().getResource("versions.json"))
-            .orElseThrow(() -> new NullPointerException("fileUrl must not be null"));
+            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
     try (val br =
         new BufferedReader(new InputStreamReader(fileUrl.openStream(), StandardCharsets.UTF_8))) {
       val json = new JSONObject(br.lines().collect(Collectors.joining()));
@@ -118,7 +118,7 @@ public final class LauncherOptionsUtils {
                           || showAlphaVersionsSelected
                           || showInfdevVersionsSelected) {
                         val versionId = versionObject.getString("versionId");
-                        val versionName = versionObject.getString("versionName");
+                        String versionName = versionObject.getString("versionName");
 
                         versionLookup.put(versionName, versionId);
                         defaultComboBoxModel.addElement(versionName);
