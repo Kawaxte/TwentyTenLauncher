@@ -1,6 +1,7 @@
 package io.github.kawaxte.twentyten.launcher.ui;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.launcher.Launcher;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
@@ -20,7 +21,6 @@ import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -109,7 +109,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     LauncherUtils.updateComponentKeyValue(
         bundle,
         this.linkLabel,
-        LauncherUtils.outdated != null && LauncherUtils.outdated
+        Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
             ? "ylp.linkLabel.update"
             : "ylp.linkLabel.signup");
     LauncherUtils.updateComponentKeyValue(bundle, this.signinButton, "ylp.signinButton");
@@ -180,11 +180,13 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     val source = event.getSource();
     if (Objects.equals(source, this.microsoftSigninButton)) {
       if (LauncherUtils.isOutdated()) {
-        LauncherUtils.addComponentToContainer(
+        LauncherUtils.swapContainers(
             this.getParent(), new LauncherOfflinePanel("lop.errorLabel.signin_outdated"));
         return;
       }
 
+      val microsoftProfileName = (String) LauncherConfig.lookup.get("microsoftProfileName");
+      val microsoftProfileId = (String) LauncherConfig.lookup.get("microsoftProfileId");
       val microsoftAccessToken = (String) LauncherConfig.lookup.get("microsoftAccessToken");
       val accessTokenMatched = LauncherUtils.jwtPattern.matcher(microsoftAccessToken).matches();
       if (!accessTokenMatched) {
@@ -192,9 +194,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      // TODO: Launch online instance without re-authentication
-      JOptionPane.showMessageDialog(
-          this, "You are already signed in.", "Warning", JOptionPane.WARNING_MESSAGE);
+      // TODO: set the "hasPaid" variable based on the "microsoftProfileDemo" variable.
+      Launcher.launchMinecraft(microsoftProfileName, microsoftAccessToken, microsoftProfileId);
     }
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(
@@ -202,7 +203,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     }
     if (Objects.equals(source, this.signinButton)) {
       if (LauncherUtils.isOutdated()) {
-        LauncherUtils.addComponentToContainer(
+        LauncherUtils.swapContainers(
             this.getParent(), new LauncherOfflinePanel("lop.errorLabel.signin_outdated"));
         return;
       }
@@ -213,6 +214,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
       val mojangUsername = LauncherConfig.lookup.get("mojangUsername");
       val mojangPassword = LauncherConfig.lookup.get("mojangPassword");
+      val mojangProfileName = (String) LauncherConfig.lookup.get("mojangProfileName");
+      val mojangProfileId = (String) LauncherConfig.lookup.get("mojangProfileId");
       val mojangAccessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
       val mojangClientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
 
@@ -226,9 +229,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      // TODO: Launch online instance without re-authentication
-      JOptionPane.showMessageDialog(
-          this, "You are already signed in.", "Warning", JOptionPane.WARNING_MESSAGE);
+      // TODO: set the "hasPaid" variable based on the "mojangProfileDemo" variable.
+      Launcher.launchMinecraft(mojangProfileName, mojangAccessToken, mojangProfileId);
     }
   }
 }
