@@ -13,6 +13,10 @@ public class GameUpdaterTask implements Runnable {
 
   @Override
   public void run() {
+    GameAppletWrapper.instance.setTaskState(EState.CHECK_CACHE.ordinal());
+    GameAppletWrapper.instance.setTaskStateMessage(EState.CHECK_CACHE.getMessage());
+    GameAppletWrapper.instance.setTaskProgressMessage("");
+    GameAppletWrapper.instance.setTaskProgress(5);
     if (!GameUpdater.isGameCached()) {
       GameUpdater.downloadPackages(urls);
       GameUpdater.extractDownloadedPackages();
