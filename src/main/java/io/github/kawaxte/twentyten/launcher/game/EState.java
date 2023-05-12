@@ -11,9 +11,9 @@ public enum EState {
   UPDATE_CLASSPATH(LauncherLanguage.bundle.getString("es_enum.updateClasspath")),
   DONE(LauncherLanguage.bundle.getString("es_enum.done"));
 
-  @Getter private final String stateMessage;
+  @Getter private final String message;
 
-  EState(String stateMessage) {
-    this.stateMessage = stateMessage;
+  EState(String message) {
+    this.message = message;
   }
 }
