@@ -83,7 +83,7 @@ public final class MicrosoftAuth {
                   .append("profile")
                   .toString());
     } catch (MalformedURLException murle) {
-      LOGGER.error("Failed to create URL for Microsoft API", murle);
+      LOGGER.error("Cannot create URL for Microsoft API", murle);
     }
     return urls;
   }
