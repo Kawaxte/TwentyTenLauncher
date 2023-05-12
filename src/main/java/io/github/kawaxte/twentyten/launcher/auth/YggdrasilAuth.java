@@ -47,7 +47,7 @@ public final class YggdrasilAuth {
                   .append("refresh")
                   .toString());
     } catch (MalformedURLException murle) {
-      LOGGER.error("Failed to create URL for Mojang API", murle);
+      LOGGER.error("Cannot create URL for Mojang API", murle);
     }
     return authUrls;
   }
