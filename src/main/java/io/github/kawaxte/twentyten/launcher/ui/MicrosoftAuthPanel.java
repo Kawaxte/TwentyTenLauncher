@@ -126,7 +126,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
       LauncherUtils.openBrowser(this.verificationUri);
     }
     if (Objects.equals(source, this.cancelButton)) {
-      LauncherUtils.addComponentToContainer(this.getParent(), new LauncherPanel());
+      LauncherUtils.swapContainers(this.getParent(), new LauncherPanel());
     }
   }
 }
