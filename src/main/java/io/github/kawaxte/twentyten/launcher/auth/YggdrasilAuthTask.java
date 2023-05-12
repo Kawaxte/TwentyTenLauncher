@@ -1,11 +1,11 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
+import io.github.kawaxte.twentyten.launcher.Launcher;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
-import javax.swing.JOptionPane;
 import lombok.val;
 import org.json.JSONObject;
 
@@ -26,41 +26,33 @@ public class YggdrasilAuthTask implements Runnable {
     val authenticate = YggdrasilAuth.authenticate(username, password, clientToken);
     Objects.requireNonNull(authenticate, "authenticate cannot be null");
     val authenticateResponse = this.getAuthenticateResponse(authenticate);
-    if (authenticateResponse == null) {
+    if (Objects.isNull(authenticateResponse)) {
       return;
     }
 
     LauncherConfig.lookup.put("mojangAccessToken", authenticateResponse[0]);
 
     if (this.isAvailableProfilesEmpty(authenticate)) {
-      val name = String.format("Player%s", System.currentTimeMillis() % 1000L);
       LauncherConfig.lookup.put("mojangProfileDemo", true);
       LauncherConfig.lookup.put("mojangProfileId", null);
-      LauncherConfig.lookup.put("mojangProfileName", name);
+      LauncherConfig.lookup.put("mojangProfileName", null);
       LauncherConfig.lookup.put("mojangProfileLegacy", false);
       LauncherConfig.saveConfig();
 
-      // TODO: Call offline/demo instance of Minecraft.
-      JOptionPane.showMessageDialog(
-          LauncherPanel.instance,
-          "You are not entitled to play full version of Minecraft.",
-          "Error",
-          JOptionPane.ERROR_MESSAGE);
-      return;
+      // TODO: set the "hasPaid" variable based on the "mojangProfileDemo" variable.
+      Launcher.launchMinecraft(null, authenticateResponse[0], null);
+    } else {
+      LauncherConfig.lookup.put("mojangProfileDemo", false);
+      LauncherConfig.lookup.put("mojangProfileId", authenticateResponse[1]);
+      LauncherConfig.lookup.put("mojangProfileName", authenticateResponse[2]);
+      LauncherConfig.lookup.put(
+          "mojangProfileLegacy", this.isLegacyInSelectedProfile(authenticate));
+      LauncherConfig.saveConfig();
+
+      // TODO: set the "hasPaid" variable based on the "mojangProfileDemo" variable.
+      Launcher.launchMinecraft(
+          authenticateResponse[2], authenticateResponse[0], authenticateResponse[1]);
     }
-
-    LauncherConfig.lookup.put("mojangProfileDemo", false);
-    LauncherConfig.lookup.put("mojangProfileId", authenticateResponse[1]);
-    LauncherConfig.lookup.put("mojangProfileName", authenticateResponse[2]);
-    LauncherConfig.lookup.put("mojangProfileLegacy", this.isLegacyInSelectedProfile(authenticate));
-    LauncherConfig.saveConfig();
-
-    // TODO: Call online instance of Minecraft.
-    JOptionPane.showMessageDialog(
-        LauncherPanel.instance,
-        "You are entitled to play full version of Minecraft.",
-        "Success",
-        JOptionPane.INFORMATION_MESSAGE);
   }
 
   private boolean isLegacyInSelectedProfile(JSONObject object) {
@@ -74,7 +66,7 @@ public class YggdrasilAuthTask implements Runnable {
 
   private String[] getAuthenticateResponse(JSONObject object) {
     if (object.has("error")) {
-      LauncherUtils.addComponentToContainer(
+      LauncherUtils.swapContainers(
           LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
       return null;
     }
