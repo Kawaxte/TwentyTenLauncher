@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -95,13 +96,13 @@ public class LinkedProperties extends Properties {
   @Override
   public String getProperty(String key) {
     val value = (String) this.linkedMap.get(key);
-    return value == null ? super.getProperty(key) : value;
+    return Optional.ofNullable(value).orElseGet(() -> super.getProperty(key));
   }
 
   @Override
   public String getProperty(String key, String defaultValue) {
     val value = (String) this.linkedMap.get(key);
-    return value == null ? defaultValue : value;
+    return Optional.ofNullable(value).orElse(defaultValue);
   }
 
   @Override
