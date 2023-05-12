@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.val;
@@ -66,7 +67,7 @@ public final class LauncherConfig {
 
   public static void loadConfig() {
     val configFilePath = getConfigFilePath();
-    if (configFilePath == null) {
+    if (Objects.isNull(configFilePath)) {
       return;
     }
 
@@ -75,7 +76,7 @@ public final class LauncherConfig {
       properties.load(fis);
       properties.forEach((key, value) -> lookup.put((String) key, value));
     } catch (FileNotFoundException fnfe) {
-      LOGGER.error("Failed to find {}", configFilePath.toAbsolutePath(), fnfe);
+      LOGGER.error("Cannot find {}", configFilePath.toAbsolutePath(), fnfe);
     } catch (IOException ioe) {
       LOGGER.error("Failed to load {}", configFilePath.toAbsolutePath(), ioe);
     } finally {
@@ -92,7 +93,7 @@ public final class LauncherConfig {
 
   public static void saveConfig() {
     val configFilePath = getConfigFilePath();
-    if (configFilePath == null) {
+    if (Objects.isNull(configFilePath)) {
       return;
     }
 
@@ -110,7 +111,7 @@ public final class LauncherConfig {
 
       fos.flush();
     } catch (FileNotFoundException fnfe) {
-      LOGGER.error("Failed to locate {}", configFilePath.toAbsolutePath(), fnfe);
+      LOGGER.error("Cannot find {}", configFilePath.toAbsolutePath(), fnfe);
     } catch (IOException ioe) {
       LOGGER.error("Failed to save {}", configFilePath.toAbsolutePath(), ioe);
     } finally {
