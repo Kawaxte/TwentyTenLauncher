@@ -103,7 +103,7 @@ public final class LauncherUtils {
               }
             });
 
-    val workingDirectory = workingDirectoryLookup.get(EPlatform.getPlatform()).toFile();
+    val workingDirectory = workingDirectoryLookup.get(EPlatform.getOSName()).toFile();
     if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
       LOGGER.warn("Could not create {}", workingDirectory.getAbsolutePath());
       return null;
@@ -151,7 +151,7 @@ public final class LauncherUtils {
               } catch (IOException ioe) {
                 LOGGER.error("Failed to check for updates", ioe);
               } catch (URISyntaxException urise) {
-                LOGGER.error("Failed to parse {} as URI", releasesUrl, urise);
+                LOGGER.error("Failed to convert {} to URI", releasesUrl, urise);
               }
               return false;
             }
@@ -226,7 +226,7 @@ public final class LauncherUtils {
     } catch (IOException ioe) {
       LauncherUtils.LOGGER.error("Failed to browse {}", url, ioe);
     } catch (URISyntaxException urise) {
-      LauncherUtils.LOGGER.error("Failed to parse {} as URI", url, urise);
+      LauncherUtils.LOGGER.error("Failed to convert {} to URI", url, urise);
     } finally {
       LOGGER.info("Opened {} in browser", url);
     }
