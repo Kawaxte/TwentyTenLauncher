@@ -32,7 +32,7 @@ public final class MicrosoftAuthUtils {
     Objects.requireNonNull(consumersDeviceCode, "consumersDeviceCode cannot be null");
     val deviceCodeResponse = getDeviceCodeResponse(consumersDeviceCode);
 
-    LauncherUtils.addComponentToContainer(
+    LauncherUtils.swapContainers(
         LauncherPanel.instance,
         new MicrosoftAuthPanel(
             deviceCodeResponse[0], deviceCodeResponse[2], deviceCodeResponse[3]));
