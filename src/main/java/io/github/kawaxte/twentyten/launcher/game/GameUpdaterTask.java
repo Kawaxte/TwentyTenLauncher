@@ -23,6 +23,7 @@ public class GameUpdaterTask implements Runnable {
 
       GameAppletWrapper.instance.setTaskState(EState.DONE.ordinal());
       GameAppletWrapper.instance.setTaskStateMessage(EState.DONE.getMessage());
+      GameAppletWrapper.instance.setTaskProgressMessage("");
       GameAppletWrapper.instance.setTaskProgress(95);
     }
   }
