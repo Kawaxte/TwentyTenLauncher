@@ -48,7 +48,7 @@ public final class YggdrasilAuthUtils {
     val refresh = YggdrasilAuth.refreshAccessToken(accessToken, clientToken);
     Objects.requireNonNull(refresh, "refresh cannot be null");
     if (refresh.has("error")) {
-      throw new RuntimeException("Could not refresh access token");
+      throw new RuntimeException("Failed to refresh access token");
     }
 
     val newAccessToken = refresh.getString("accessToken");
