@@ -111,7 +111,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
             event -> {
               val source = (Timer) event.getSource();
               if (Objects.isNull(minecraftApplet)) {
-                update(getGraphics());
+                repaint();
               } else {
                 source.stop();
               }
@@ -172,8 +172,8 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
 
       val title =
           GameAppletWrapper.instance.isUpdaterTaskErrored()
-              ? LauncherLanguage.bundle.getString("lp.updaterErrored")
-              : LauncherLanguage.bundle.getString("lp.updaterStarted");
+              ? LauncherLanguage.bundle.getString("gaw.updaterErrored")
+              : LauncherLanguage.bundle.getString("gaw.updaterStarted");
       this.drawTitleString(title, appletWidth, appletHeight, g2dBuffered);
       this.drawStateString(
           GameAppletWrapper.instance.getTaskStateMessage(), appletWidth, appletHeight, g2dBuffered);
@@ -263,13 +263,12 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
 
     this.setLayout(new BorderLayout());
     this.setBackground(Color.BLACK);
-    this.add(applet, BorderLayout.CENTER);
+    this.setContentPane(applet);
 
     applet.init();
     this.active = true;
     applet.start();
 
-    this.revalidate();
     this.repaint();
   }
 }
