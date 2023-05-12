@@ -2,12 +2,15 @@ package io.github.kawaxte.twentyten.launcher.util;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.EPlatform;
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.ui.custom.JGroupBox;
 import java.awt.Container;
 import java.awt.Desktop;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -22,6 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -34,6 +38,7 @@ import org.apache.hc.client5.http.fluent.Request;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 public final class LauncherUtils {
 
@@ -81,11 +86,67 @@ public final class LauncherUtils {
                   .append("releases")
                   .toString());
     } catch (IOException ioe) {
-      LOGGER.error("Failed to create URL", ioe);
+      LOGGER.error("Failed to create URL(s)", ioe);
     }
   }
 
   private LauncherUtils() {}
+
+  public static String[] getProxyHostAndPort() {
+    val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
+    val fileUrl =
+        Optional.ofNullable(
+                LauncherOptionsUtils.class.getClassLoader().getResource("versions.json"))
+            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
+    try (val br =
+        new BufferedReader(new InputStreamReader(fileUrl.openStream(), StandardCharsets.UTF_8))) {
+      val json = new JSONObject(br.lines().collect(Collectors.joining()));
+
+      JSONArray versionArray = null;
+      if (selectedVersion.startsWith("b")) {
+        versionArray = json.getJSONArray("legacy_beta");
+      }
+      if (selectedVersion.startsWith("a")) {
+        versionArray = json.getJSONArray("legacy_alpha");
+      }
+      if (selectedVersion.startsWith("inf")) {
+        versionArray = json.getJSONArray("legacy_infdev");
+      }
+
+      if (Objects.nonNull(versionArray)) {
+        for (int i = 0; i < versionArray.length(); i++) {
+          val version = versionArray.getJSONObject(i);
+          val versionId = version.getString("versionId");
+          if (Objects.equals(versionId, selectedVersion)) {
+            val proxyHost = version.getString("bcProxyHost");
+            val proxyPort = version.getInt("bcProxyPort");
+            return new String[] {proxyHost, String.valueOf(proxyPort)};
+          }
+        }
+      }
+    } catch (IOException ioe) {
+      LOGGER.error("Failed to read {}", fileUrl, ioe);
+    }
+    return null;
+  }
+
+  public static String getManifestAttribute(String key) {
+    val fileUrl =
+        Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
+            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
+    try (val file = new JarFile(new File(fileUrl.toURI()))) {
+      val manifest = file.getManifest();
+      val attributes = manifest.getMainAttributes();
+      return attributes.getValue(key);
+    } catch (FileNotFoundException fnfe) {
+      return "9.99.9999_99";
+    } catch (IOException ioe) {
+      LOGGER.error("Failed to retrieve '{}' from {}", key, fileUrl, ioe);
+    } catch (URISyntaxException urise) {
+      LOGGER.error("Cannot parse {} as URI", fileUrl, urise);
+    }
+    return null;
+  }
 
   public static Path getWorkingDirectoryPath() {
     val userHome = System.getProperty("user.home", ".");
@@ -111,26 +172,8 @@ public final class LauncherUtils {
     return workingDirectory.toPath();
   }
 
-  public static String getManifestAttribute(String key) {
-    val fileUrl =
-        Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
-            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
-    try (val file = new JarFile(new File(fileUrl.toURI()))) {
-      val manifest = file.getManifest();
-      val attributes = manifest.getMainAttributes();
-      return attributes.getValue(key);
-    } catch (FileNotFoundException fnfe) {
-      return "9.99.9999_99";
-    } catch (IOException ioe) {
-      LOGGER.error("Failed to retrieve '{}' from {}", key, fileUrl, ioe);
-    } catch (URISyntaxException urise) {
-      LOGGER.error("Failed to parse {} as URI", fileUrl, urise);
-    }
-    return null;
-  }
-
   public static boolean isOutdated() {
-    if (outdated == null) {
+    if (Objects.isNull(outdated)) {
       val worker =
           new SwingWorker<Boolean, Void>() {
             @Override
@@ -151,7 +194,7 @@ public final class LauncherUtils {
               } catch (IOException ioe) {
                 LOGGER.error("Failed to check for updates", ioe);
               } catch (URISyntaxException urise) {
-                LOGGER.error("Failed to convert {} to URI", releasesUrl, urise);
+                LOGGER.error("Cannot convert {} to URI", releasesUrl, urise);
               }
               return false;
             }
@@ -173,7 +216,7 @@ public final class LauncherUtils {
     return outdated;
   }
 
-  public static void addComponentToContainer(Container c1, JComponent c2) {
+  public static void swapContainers(Container c1, Container c2) {
     if (SwingUtilities.isEventDispatchThread()) {
       c1.removeAll();
       c1.add(c2);
@@ -226,9 +269,7 @@ public final class LauncherUtils {
     } catch (IOException ioe) {
       LauncherUtils.LOGGER.error("Failed to browse {}", url, ioe);
     } catch (URISyntaxException urise) {
-      LauncherUtils.LOGGER.error("Failed to convert {} to URI", url, urise);
-    } finally {
-      LOGGER.info("Opened {} in browser", url);
+      LauncherUtils.LOGGER.error("Cannot convert {} to URI", url, urise);
     }
   }
 
