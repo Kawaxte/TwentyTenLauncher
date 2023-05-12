@@ -82,12 +82,12 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
                 groupLayout
                     .createSequentialGroup()
                     .addComponent(
-                        this.playOnlineLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                    .addGroup(
-                        groupLayout
-                            .createSequentialGroup()
-                            .addComponent(this.playOfflineButton, 0, width, Short.MAX_VALUE)
-                            .addComponent(this.tryAgainButton, 0, width, Short.MAX_VALUE))));
+                        this.playOnlineLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
+            .addGroup(
+                groupLayout
+                    .createSequentialGroup()
+                    .addComponent(this.playOfflineButton, 0, width, Short.MAX_VALUE)
+                    .addComponent(this.tryAgainButton, 0, width, Short.MAX_VALUE)));
     groupLayout.setVerticalGroup(
         groupLayout
             .createSequentialGroup()
@@ -108,7 +108,7 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.tryAgainButton)) {
-      LauncherUtils.addComponentToContainer(this.getParent(), new YggdrasilAuthPanel());
+      LauncherUtils.swapContainers(this.getParent(), new YggdrasilAuthPanel());
     }
   }
 }
