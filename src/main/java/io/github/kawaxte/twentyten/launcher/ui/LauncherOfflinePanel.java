@@ -3,6 +3,7 @@ package io.github.kawaxte.twentyten.launcher.ui;
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
+import io.github.kawaxte.twentyten.launcher.game.GameUpdater;
 import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
@@ -26,29 +27,13 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
   private final JLabel playOnlineLabel;
   private final JButton playOfflineButton;
   private final JButton tryAgainButton;
-  private String errorMessage;
+  private final String errorMessage;
 
   {
     this.errorLabel = new JLabel((String) null, SwingConstants.CENTER);
     this.playOnlineLabel = new JLabel("lop.playOnlineLabel", SwingConstants.LEFT);
     this.playOfflineButton = new TransparentJButton("lop.playOfflineButton");
     this.tryAgainButton = new TransparentJButton("lop.tryAgainButton");
-  }
-
-  public LauncherOfflinePanel() {
-    super(true);
-
-    LauncherOfflinePanel.instance = this;
-    this.setLayout(this.getGroupLayout());
-
-    this.playOfflineButton.addActionListener(this);
-    this.tryAgainButton.addActionListener(this);
-
-    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
-    this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
-            : LauncherLanguage.bundle);
   }
 
   public LauncherOfflinePanel(String message) {
@@ -60,6 +45,8 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.errorLabel.setText(this.errorMessage);
     this.errorLabel.setFont(this.getFont().deriveFont(Font.ITALIC, 16F));
     this.errorLabel.setForeground(Color.RED.darker());
+    this.playOfflineButton.setEnabled(GameUpdater.isGameCached());
+    this.playOnlineLabel.setVisible(!GameUpdater.isGameCached());
 
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
@@ -79,6 +66,11 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
   }
 
   private LayoutManager getGroupLayout() {
+    int width = 0;
+    for (val button : new JButton[] {this.playOfflineButton, this.tryAgainButton}) {
+      width = Math.max(width, button.getPreferredSize().width);
+    }
+
     val groupLayout = new GroupLayout(this);
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
@@ -90,12 +82,12 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
                 groupLayout
                     .createSequentialGroup()
                     .addComponent(
-                        this.playOnlineLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
-            .addGroup(
-                groupLayout
-                    .createSequentialGroup()
-                    .addComponent(this.playOfflineButton, 0, 0, Short.MAX_VALUE)
-                    .addComponent(this.tryAgainButton, 0, 0, Short.MAX_VALUE)));
+                        this.playOnlineLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                    .addGroup(
+                        groupLayout
+                            .createSequentialGroup()
+                            .addComponent(this.playOfflineButton, 0, width, Short.MAX_VALUE)
+                            .addComponent(this.tryAgainButton, 0, width, Short.MAX_VALUE))));
     groupLayout.setVerticalGroup(
         groupLayout
             .createSequentialGroup()
@@ -106,7 +98,7 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
                     .addComponent(this.playOnlineLabel))
             .addGroup(
                 groupLayout
-                    .createParallelGroup(Alignment.BASELINE)
+                    .createParallelGroup(Alignment.CENTER)
                     .addComponent(this.playOfflineButton)
                     .addComponent(this.tryAgainButton)));
     return groupLayout;
