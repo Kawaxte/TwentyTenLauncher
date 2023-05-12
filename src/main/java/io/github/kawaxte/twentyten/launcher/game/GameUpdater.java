@@ -289,7 +289,7 @@ public final class GameUpdater {
             int progress = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
             GameAppletWrapper.instance.setTaskProgressMessage(
                 MessageFormat.format(
-                    LauncherLanguage.bundle.getString("lp.taskProgressMessage.progress"),
+                    LauncherLanguage.bundle.getString("gaw.taskProgressMessage.progress"),
                     fileName,
                     downloadProgress));
             GameAppletWrapper.instance.setTaskProgress(progress);
@@ -405,7 +405,7 @@ public final class GameUpdater {
               int progress = 55 + ((currentExtractSize * 20) / totalExtractSize);
               GameAppletWrapper.instance.setTaskProgressMessage(
                   MessageFormat.format(
-                      LauncherLanguage.bundle.getString("lp.taskProgressMessage.progress"),
+                      LauncherLanguage.bundle.getString("gaw.taskProgressMessage.progress"),
                       libraryName,
                       extractProgress));
               GameAppletWrapper.instance.setTaskProgress(progress);
@@ -548,7 +548,7 @@ public final class GameUpdater {
     val state = GameAppletWrapper.instance.getTaskState();
     val fatalErrorMessage =
         MessageFormat.format(
-            LauncherLanguage.bundle.getString("lp.taskStateMessage.error"), state, message);
+            LauncherLanguage.bundle.getString("gaw.taskStateMessage.error"), state, message);
     GameAppletWrapper.instance.setTaskStateMessage(fatalErrorMessage);
     GameAppletWrapper.instance.setTaskProgressMessage("");
   }
