@@ -1,5 +1,6 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
+import io.github.kawaxte.twentyten.launcher.Launcher;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
@@ -7,7 +8,6 @@ import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
-import javax.swing.JOptionPane;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +40,7 @@ public class MicrosoftAuthTask implements Runnable {
         return null;
       }
 
-      LauncherUtils.addComponentToContainer(
+      LauncherUtils.swapContainers(
           LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
       return null;
     }
@@ -68,15 +68,15 @@ public class MicrosoftAuthTask implements Runnable {
       val xerr = object.getLong("XErr");
       switch ((int) xerr) {
         case (int) 2148916233L:
-          LauncherUtils.addComponentToContainer(
+          LauncherUtils.swapContainers(
               LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin_2148916233"));
           break;
         case (int) 2148916238L:
-          LauncherUtils.addComponentToContainer(
+          LauncherUtils.swapContainers(
               LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin_2148916238"));
           break;
         default:
-          LauncherUtils.addComponentToContainer(
+          LauncherUtils.swapContainers(
               LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
           break;
       }
@@ -120,7 +120,7 @@ public class MicrosoftAuthTask implements Runnable {
     val consumersToken = MicrosoftAuth.acquireToken(clientId, deviceCode);
     Objects.requireNonNull(consumersToken, "consumerToken cannot be null");
     val tokenResponse = getTokenResponse(consumersToken);
-    if (tokenResponse == null) {
+    if (Objects.isNull(tokenResponse)) {
       return;
     }
 
@@ -144,35 +144,26 @@ public class MicrosoftAuthTask implements Runnable {
     Objects.requireNonNull(entitlementsMcStore, "entitlementsMcStore cannot be null");
     val itemNameEqualToGameMinecraft = isItemNameEqualToGameMinecraft(entitlementsMcStore);
     if (!itemNameEqualToGameMinecraft) {
-      val name = String.format("Player%s", System.currentTimeMillis() % 1000L);
       LauncherConfig.lookup.put("microsoftProfileDemo", true);
       LauncherConfig.lookup.put("microsoftProfileId", null);
-      LauncherConfig.lookup.put("microsoftProfileName", name);
+      LauncherConfig.lookup.put("microsoftProfileName", null);
       LauncherConfig.saveConfig();
 
-      // TODO: Call offline/demo instance of Minecraft.
-      JOptionPane.showMessageDialog(
-          LauncherPanel.instance,
-          "You are not entitled to play full version of Minecraft.",
-          "Error",
-          JOptionPane.ERROR_MESSAGE);
-      return;
+      // TODO: set the "hasPaid" variable based on the "microsoftProfileDemo" variable.
+      Launcher.launchMinecraft(null, accessTokenResponse[0], null);
+    } else {
+      val minecraftProfile = MicrosoftAuth.acquireMinecraftProfile(accessTokenResponse[0]);
+      Objects.requireNonNull(minecraftProfile, "minecraftProfile cannot be null");
+      val minecraftProfileResponse = getMinecraftProfileResponse(minecraftProfile);
+      LauncherConfig.lookup.put("microsoftProfileDemo", false);
+      LauncherConfig.lookup.put("microsoftProfileId", minecraftProfileResponse[0]);
+      LauncherConfig.lookup.put("microsoftProfileName", minecraftProfileResponse[1]);
+      LauncherConfig.saveConfig();
+
+      // TODO: set the "hasPaid" variable based on the "microsoftProfileDemo" variable.
+      Launcher.launchMinecraft(
+          minecraftProfileResponse[1], accessTokenResponse[0], minecraftProfileResponse[0]);
     }
-
-    val minecraftProfile = MicrosoftAuth.acquireMinecraftProfile(accessTokenResponse[0]);
-    Objects.requireNonNull(minecraftProfile, "minecraftProfile cannot be null");
-    val minecraftProfileResponse = getMinecraftProfileResponse(minecraftProfile);
-    LauncherConfig.lookup.put("microsoftProfileDemo", false);
-    LauncherConfig.lookup.put("microsoftProfileId", minecraftProfileResponse[0]);
-    LauncherConfig.lookup.put("microsoftProfileName", minecraftProfileResponse[1]);
-    LauncherConfig.saveConfig();
-
-    // TODO: Call online instance of Minecraft.
-    JOptionPane.showMessageDialog(
-        LauncherPanel.instance,
-        "You are entitled to play full version of Minecraft.",
-        "Success",
-        JOptionPane.INFORMATION_MESSAGE);
 
     service.shutdown();
   }
