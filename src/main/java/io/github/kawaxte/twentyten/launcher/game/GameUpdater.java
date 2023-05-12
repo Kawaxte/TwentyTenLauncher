@@ -261,6 +261,7 @@ public final class GameUpdater {
     if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
       GameAppletWrapper.instance.setTaskState(EState.DOWNLOAD_PACKAGES.ordinal());
       GameAppletWrapper.instance.setTaskStateMessage(EState.DOWNLOAD_PACKAGES.getMessage());
+      GameAppletWrapper.instance.setTaskProgressMessage("");
       GameAppletWrapper.instance.setTaskProgress(10);
     }
 
@@ -331,10 +332,6 @@ public final class GameUpdater {
         p.toFile().listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
     if (Objects.nonNull(zipFiles)) {
       for (val zipFile : zipFiles) {
-        if (!p.resolve(zipFile.getName()).toFile().exists()) {
-          continue;
-        }
-
         val lwjglNativesZipFileDest = nativesDirectoryPath.resolve(zipFile.getName()).toFile();
         try {
           Files.move(zipFile.toPath(), lwjglNativesZipFileDest.toPath());
@@ -349,6 +346,8 @@ public final class GameUpdater {
 
     val jarFiles = getLWJGLJars();
     for (val jarFile : jarFiles) {
+      // For some unknown reason, "jinput.jar" shows up as missing, despite being present in
+      // "binDirectoryPath". This IF statement is a workaround for that.
       if (!p.resolve(jarFile).toFile().exists()) {
         continue;
       }
@@ -370,6 +369,7 @@ public final class GameUpdater {
     if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
       GameAppletWrapper.instance.setTaskState(EState.EXTRACT_PACKAGES.ordinal());
       GameAppletWrapper.instance.setTaskStateMessage(EState.EXTRACT_PACKAGES.getMessage());
+      GameAppletWrapper.instance.setTaskProgressMessage("");
       GameAppletWrapper.instance.setTaskProgress(55);
     }
 
@@ -430,9 +430,12 @@ public final class GameUpdater {
   }
 
   public static void updateClasspath() {
-    GameAppletWrapper.instance.setTaskState(EState.UPDATE_CLASSPATH.ordinal());
-    GameAppletWrapper.instance.setTaskStateMessage(EState.UPDATE_CLASSPATH.getMessage());
-    GameAppletWrapper.instance.setTaskProgress(90);
+    if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
+      GameAppletWrapper.instance.setTaskState(EState.UPDATE_CLASSPATH.ordinal());
+      GameAppletWrapper.instance.setTaskStateMessage(EState.UPDATE_CLASSPATH.getMessage());
+      GameAppletWrapper.instance.setTaskProgressMessage("");
+      GameAppletWrapper.instance.setTaskProgress(90);
+    }
 
     val jarFiles = binDirectoryPath.toFile().listFiles((dir, name) -> name.endsWith(".jar"));
     val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
