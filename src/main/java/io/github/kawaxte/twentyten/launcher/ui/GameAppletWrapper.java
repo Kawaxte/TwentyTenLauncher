@@ -71,10 +71,10 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
 
-    val proxyHostAndPorts = LauncherUtils.getProxyHostAndPorts();
-    if (Objects.nonNull(proxyHostAndPorts)) {
-      System.setProperty("http.proxyHost", proxyHostAndPorts[0]);
-      System.setProperty("http.proxyPort", proxyHostAndPorts[1]);
+    val hostAndPort = LauncherUtils.getProxyHostAndPort();
+    if (Objects.nonNull(hostAndPort)) {
+      System.setProperty("http.proxyHost", hostAndPort[0]);
+      System.setProperty("http.proxyPort", hostAndPort[1]);
     }
     System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
   }
