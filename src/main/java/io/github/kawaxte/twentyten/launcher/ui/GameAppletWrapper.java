@@ -171,21 +171,13 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
       g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
       val title =
-          GameAppletWrapper.instance.isUpdaterTaskErrored()
+          updaterTaskErrored
               ? LauncherLanguage.bundle.getString("gaw.updaterErrored")
               : LauncherLanguage.bundle.getString("gaw.updaterStarted");
       this.drawTitleString(title, appletWidth, appletHeight, g2dBuffered);
-      this.drawStateString(
-          GameAppletWrapper.instance.getTaskStateMessage(), appletWidth, appletHeight, g2dBuffered);
-
-      if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
-        this.drawProgressString(
-            GameAppletWrapper.instance.getTaskProgressMessage(),
-            appletWidth,
-            appletHeight,
-            g2dBuffered);
-        this.drawTaskProgressRect(appletWidth, appletHeight, g2dBuffered);
-      }
+      this.drawStateString(taskStateMessage, appletWidth, appletHeight, g2dBuffered);
+      this.drawProgressString(taskProgressMessage, appletWidth, appletHeight, g2dBuffered);
+      this.drawTaskProgressRect(appletWidth, appletHeight, g2dBuffered);
     } finally {
       g2dBuffered.dispose();
     }
@@ -202,19 +194,11 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     g2d.setColor(Color.BLACK);
     g2d.fillRect(rectX, rectY, rectWidth + 1, rectHeight);
 
-    g2d.setColor(Color.GREEN.darker().darker());
-    g2d.fillRect(
-        rectX,
-        rectY,
-        (GameAppletWrapper.instance.getTaskProgress() * (rectWidth)) / 100,
-        rectHeight - 1);
+    g2d.setColor(!updaterTaskErrored ? Color.GREEN.darker().darker() : Color.RED.darker().darker());
+    g2d.fillRect(rectX, rectY, (taskProgress * (rectWidth)) / 100, rectHeight - 1);
 
-    g2d.setColor(Color.GREEN.darker());
-    g2d.fillRect(
-        rectX,
-        rectY + 1,
-        ((GameAppletWrapper.instance.getTaskProgress() * rectWidth) / 100) - 2,
-        rectHeight - 4);
+    g2d.setColor(!updaterTaskErrored ? Color.GREEN.darker() : Color.RED.darker());
+    g2d.fillRect(rectX, rectY + 1, ((taskProgress * rectWidth) / 100) - 2, rectHeight - 4);
   }
 
   private void drawProgressString(String s, int width, int height, Graphics2D g2d) {
