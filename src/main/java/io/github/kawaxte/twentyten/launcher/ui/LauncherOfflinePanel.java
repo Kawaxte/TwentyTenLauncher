@@ -51,10 +51,10 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
     this.playOfflineButton.addActionListener(this);
     this.tryAgainButton.addActionListener(this);
 
-    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
+    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
+            ? LauncherLanguage.getUTF8Bundle(selectedLanguage)
             : LauncherLanguage.bundle);
   }
 
