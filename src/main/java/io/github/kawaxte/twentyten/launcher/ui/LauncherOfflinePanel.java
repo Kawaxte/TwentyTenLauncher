@@ -1,6 +1,7 @@
 package io.github.kawaxte.twentyten.launcher.ui;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.launcher.Launcher;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.game.GameUpdater;
@@ -107,6 +108,9 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
   @Override
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
+    if (Objects.equals(source, this.playOfflineButton)) {
+      Launcher.launchMinecraft(null, null, null);
+    }
     if (Objects.equals(source, this.tryAgainButton)) {
       LauncherUtils.swapContainers(this.getParent(), new YggdrasilAuthPanel());
     }
