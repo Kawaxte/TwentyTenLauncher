@@ -16,6 +16,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Objects;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
@@ -48,17 +49,14 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
     MicrosoftAuthPanel.instance = this;
     this.userCodeLabel.setFont(this.userCodeLabel.getFont().deriveFont(Font.BOLD, 24f));
     this.userCodeLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    this.openBrowserButton.setEnabled(false);
 
     this.userCodeLabel.addMouseListener(
         new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent event) {
-            val clipboard = LauncherPanel.instance.getToolkit().getSystemClipboard();
+            val clipboard = getToolkit().getSystemClipboard();
             val transferable = new StringSelection(userCodeLabel.getText());
             clipboard.setContents(transferable, null);
-
-            openBrowserButton.setEnabled(true);
           }
         });
     this.openBrowserButton.addActionListener(this);
@@ -88,6 +86,13 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
   }
 
   private LayoutManager getGroupLayout() {
+    int width = 0;
+
+    val buttons = new JButton[] {this.openBrowserButton, this.cancelButton};
+    for (val button : buttons) {
+      width = Math.max(width, button.getPreferredSize().width);
+    }
+
     val groupLayout = new GroupLayout(this);
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
@@ -103,8 +108,8 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
                     .addGroup(
                         groupLayout
                             .createSequentialGroup()
-                            .addComponent(this.openBrowserButton, 0, 0, Short.MAX_VALUE)
-                            .addComponent(this.cancelButton, 0, 0, Short.MAX_VALUE))));
+                            .addComponent(this.openBrowserButton, 0, width, Short.MAX_VALUE)
+                            .addComponent(this.cancelButton, 0, width, Short.MAX_VALUE))));
     groupLayout.setVerticalGroup(
         groupLayout
             .createSequentialGroup()
@@ -123,6 +128,10 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.openBrowserButton)) {
+      val clipboard = this.getToolkit().getSystemClipboard();
+      val transferable = new StringSelection(this.userCodeLabel.getText());
+      clipboard.setContents(transferable, null);
+
       LauncherUtils.openBrowser(this.verificationUri);
     }
     if (Objects.equals(source, this.cancelButton)) {
