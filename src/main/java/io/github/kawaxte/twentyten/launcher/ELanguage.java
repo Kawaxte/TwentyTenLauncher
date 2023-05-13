@@ -13,6 +13,7 @@ public enum ELanguage {
   FR("Français"),
   HU("Magyar"),
   IT("Italiano"),
+  JA("日本語"),
   PL("Polski"),
   RU("Русский");
 
