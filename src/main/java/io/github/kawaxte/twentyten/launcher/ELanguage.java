@@ -3,8 +3,9 @@ package io.github.kawaxte.twentyten.launcher;
 import lombok.Getter;
 
 public enum ELanguage {
+  EN("English"),
   ET("Eesti"),
-  EN("English");
+  FI("Suomi");
 
   public static final String USER_LANGUAGE;
 
