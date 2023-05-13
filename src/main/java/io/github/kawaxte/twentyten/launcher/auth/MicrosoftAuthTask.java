@@ -144,23 +144,19 @@ public class MicrosoftAuthTask implements Runnable {
     Objects.requireNonNull(entitlementsMcStore, "entitlementsMcStore cannot be null");
     val itemNameEqualToGameMinecraft = isItemNameEqualToGameMinecraft(entitlementsMcStore);
     if (!itemNameEqualToGameMinecraft) {
-      LauncherConfig.lookup.put("microsoftProfileDemo", true);
       LauncherConfig.lookup.put("microsoftProfileId", null);
       LauncherConfig.lookup.put("microsoftProfileName", null);
       LauncherConfig.saveConfig();
 
-      // TODO: set the "hasPaid" variable based on the "microsoftProfileDemo" variable.
       Launcher.launchMinecraft(null, accessTokenResponse[0], null);
     } else {
       val minecraftProfile = MicrosoftAuth.acquireMinecraftProfile(accessTokenResponse[0]);
       Objects.requireNonNull(minecraftProfile, "minecraftProfile cannot be null");
       val minecraftProfileResponse = getMinecraftProfileResponse(minecraftProfile);
-      LauncherConfig.lookup.put("microsoftProfileDemo", false);
       LauncherConfig.lookup.put("microsoftProfileId", minecraftProfileResponse[0]);
       LauncherConfig.lookup.put("microsoftProfileName", minecraftProfileResponse[1]);
       LauncherConfig.saveConfig();
 
-      // TODO: set the "hasPaid" variable based on the "microsoftProfileDemo" variable.
       Launcher.launchMinecraft(
           minecraftProfileResponse[1], accessTokenResponse[0], minecraftProfileResponse[0]);
     }
