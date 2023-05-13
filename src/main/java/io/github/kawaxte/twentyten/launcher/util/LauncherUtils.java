@@ -18,7 +18,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -139,7 +141,7 @@ public final class LauncherUtils {
       val attributes = manifest.getMainAttributes();
       return attributes.getValue(key);
     } catch (FileNotFoundException fnfe) {
-      return "9.99.9999_99";
+      return new SimpleDateFormat("1.M.ddyy").format(new Date());
     } catch (IOException ioe) {
       LOGGER.error("Failed to retrieve '{}' from {}", key, fileUrl, ioe);
     } catch (URISyntaxException urise) {
