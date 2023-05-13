@@ -9,6 +9,8 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/messages_et.properties" />
     <file url="file://$PROJECT_DIR$/src/main/resources/messages_fi.properties" />
     <file url="file://$PROJECT_DIR$/src/main/resources/messages_fr.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/messages_hu.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/messages_it.properties" />
     <file url="file://$PROJECT_DIR$/src/main/resources/messages_pl.properties" />
     <custom-resource-bundle>
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_bg.properties" />
@@ -22,6 +24,7 @@
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_hu.properties" />
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_it.properties" />
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_pl.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/messages_ru.properties" />
       <base-name>messages</base-name>
     </custom-resource-bundle>
   </component>
