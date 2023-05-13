@@ -1,6 +1,6 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
-import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.concurrent.ExecutionException;
@@ -54,7 +54,7 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
       this.logger.error("Interrupted while scheduling authentication task", ie);
     } catch (TimeoutException te) {
       LauncherUtils.swapContainers(
-          LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
+          LauncherPanel.instance, new LauncherNoNetworkPanel("lnnp.errorLabel.signin"));
 
       this.logger.error("Timed out while scheduling authentication task", te);
     } finally {
