@@ -2,7 +2,7 @@ package io.github.kawaxte.twentyten.launcher.auth;
 
 import io.github.kawaxte.twentyten.launcher.Launcher;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
@@ -63,7 +63,7 @@ public class YggdrasilAuthTask implements Runnable {
   private String[] getAuthenticateResponse(JSONObject object) {
     if (object.has("error")) {
       LauncherUtils.swapContainers(
-          LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
+          LauncherPanel.instance, new LauncherNoNetworkPanel("lnnp.errorLabel.signin"));
       return null;
     }
 
