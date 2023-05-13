@@ -8,7 +8,8 @@ public enum ELanguage {
   ES("Español"),
   ET("Eesti"),
   FI("Suomi"),
-  FR("Français");
+  FR("Français"),
+  PL("Polski");
 
   public static final String USER_LANGUAGE;
 
