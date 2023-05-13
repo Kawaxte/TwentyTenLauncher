@@ -32,7 +32,6 @@ public final class LauncherConfig {
     lookup.put("showAlphaVersionsSelected", false);
     lookup.put("showInfdevVersionsSelected", false);
     lookup.put("selectedVersion", "b1.1_02");
-    lookup.put("microsoftProfileDemo", false);
     lookup.put("microsoftProfileId", null);
     lookup.put("microsoftProfileName", null);
     lookup.put("microsoftAccessToken", null);
@@ -42,7 +41,6 @@ public final class LauncherConfig {
     lookup.put("mojangUsername", null);
     lookup.put("mojangPassword", null);
     lookup.put("mojangRememberPasswordChecked", false);
-    lookup.put("mojangProfileDemo", false);
     lookup.put("mojangProfileId", null);
     lookup.put("mojangProfileName", null);
     lookup.put("mojangProfileLegacy", false);
