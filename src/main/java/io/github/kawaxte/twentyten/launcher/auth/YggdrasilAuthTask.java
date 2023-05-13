@@ -33,23 +33,19 @@ public class YggdrasilAuthTask implements Runnable {
     LauncherConfig.lookup.put("mojangAccessToken", authenticateResponse[0]);
 
     if (this.isAvailableProfilesEmpty(authenticate)) {
-      LauncherConfig.lookup.put("mojangProfileDemo", true);
       LauncherConfig.lookup.put("mojangProfileId", null);
       LauncherConfig.lookup.put("mojangProfileName", null);
       LauncherConfig.lookup.put("mojangProfileLegacy", false);
       LauncherConfig.saveConfig();
 
-      // TODO: set the "hasPaid" variable based on the "mojangProfileDemo" variable.
       Launcher.launchMinecraft(null, authenticateResponse[0], null);
     } else {
-      LauncherConfig.lookup.put("mojangProfileDemo", false);
       LauncherConfig.lookup.put("mojangProfileId", authenticateResponse[1]);
       LauncherConfig.lookup.put("mojangProfileName", authenticateResponse[2]);
       LauncherConfig.lookup.put(
           "mojangProfileLegacy", this.isLegacyInSelectedProfile(authenticate));
       LauncherConfig.saveConfig();
 
-      // TODO: set the "hasPaid" variable based on the "mojangProfileDemo" variable.
       Launcher.launchMinecraft(
           authenticateResponse[2], authenticateResponse[0], authenticateResponse[1]);
     }
