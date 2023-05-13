@@ -165,29 +165,22 @@ public final class LauncherOptionsUtils {
       SwingUtilities.invokeLater(
           () -> {
             val bundle = LauncherLanguage.getUTF8Bundle(finalSelectedItem);
-            if (bundle != null) {
-              if (LanguageGroupBox.instance != null) {
-                LanguageGroupBox.instance.updateComponentKeyValues(bundle);
-              }
-              if (OptionsDialog.instance != null) {
-                OptionsDialog.instance.updateContainerKeyValues(bundle);
-              }
-              if (OptionsPanel.instance != null) {
-                OptionsPanel.instance.updateComponentKeyValues(bundle);
-              }
-              if (VersionGroupBox.instance != null) {
-                VersionGroupBox.instance.updateComponentKeyValues(bundle);
-              }
-              if (LauncherNoNetworkPanel.instance != null) {
+            if (Objects.nonNull(bundle)) {
+              LanguageGroupBox.instance.updateComponentKeyValues(bundle);
+              OptionsDialog.instance.updateContainerKeyValues(bundle);
+              OptionsPanel.instance.updateComponentKeyValues(bundle);
+              VersionGroupBox.instance.updateComponentKeyValues(bundle);
+
+              if (Objects.nonNull(LauncherNoNetworkPanel.instance)) {
                 LauncherNoNetworkPanel.instance.updateComponentKeyValues(bundle);
               }
-              if (MicrosoftAuthPanel.instance != null) {
+              if (Objects.nonNull(MicrosoftAuthPanel.instance)) {
                 MicrosoftAuthPanel.instance.updateComponentKeyValues(bundle);
               }
-              if (YggdrasilAuthPanel.instance != null) {
-                YggdrasilAuthPanel.instance.updateComponentKeyValues(bundle);
-              }
+              YggdrasilAuthPanel.instance.updateComponentKeyValues(bundle);
             }
+
+            OptionsDialog.instance.pack();
           });
     }
   }
