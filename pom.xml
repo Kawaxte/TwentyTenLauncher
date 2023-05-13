@@ -117,7 +117,7 @@
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.major>1</version.major>
-    <version.minor>01</version.minor>
+    <version.minor>02</version.minor>
   </properties>
 
   <repositories>
