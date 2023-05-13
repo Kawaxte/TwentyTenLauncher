@@ -189,7 +189,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
       if (LauncherUtils.isOutdated()) {
         LauncherUtils.swapContainers(
-            this.getParent(), new LauncherOfflinePanel("lop.errorLabel.signin_outdated"));
+            this.getParent(), new LauncherNoNetworkPanel("lnnp.errorLabel.signin_outdated"));
         return;
       }
 
@@ -216,7 +216,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
       if (LauncherUtils.isOutdated()) {
         LauncherUtils.swapContainers(
-            this.getParent(), new LauncherOfflinePanel("lop.errorLabel.signin_outdated"));
+            this.getParent(), new LauncherNoNetworkPanel("lnnp.errorLabel.signin_outdated"));
         return;
       }
 
