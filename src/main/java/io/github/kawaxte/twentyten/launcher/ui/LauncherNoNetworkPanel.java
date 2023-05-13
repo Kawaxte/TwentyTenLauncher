@@ -27,14 +27,14 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
   private final JLabel errorLabel;
   private final JLabel playOnlineLabel;
   private final JButton playOfflineButton;
-  private final JButton tryAgainButton;
+  private final JButton retryButton;
   private final String errorMessage;
 
   {
     this.errorLabel = new JLabel((String) null, SwingConstants.CENTER);
     this.playOnlineLabel = new JLabel("lnnp.playOnlineLabel", SwingConstants.LEFT);
     this.playOfflineButton = new TransparentJButton("lnnp.playOfflineButton");
-    this.tryAgainButton = new TransparentJButton("lnnp.tryAgainButton");
+    this.retryButton = new TransparentJButton("lnnp.retryButton");
   }
 
   public LauncherNoNetworkPanel(String message) {
@@ -50,7 +50,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     this.playOnlineLabel.setVisible(!GameUpdater.isGameCached());
 
     this.playOfflineButton.addActionListener(this);
-    this.tryAgainButton.addActionListener(this);
+    this.retryButton.addActionListener(this);
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
@@ -63,13 +63,13 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     LauncherUtils.updateComponentKeyValue(bundle, this.errorLabel, this.errorMessage);
     LauncherUtils.updateComponentKeyValue(bundle, this.playOnlineLabel, "lnnp.playOnlineLabel");
     LauncherUtils.updateComponentKeyValue(bundle, this.playOfflineButton, "lnnp.playOfflineButton");
-    LauncherUtils.updateComponentKeyValue(bundle, this.tryAgainButton, "lnnp.tryAgainButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.retryButton, "lnnp.retryButton");
   }
 
   private LayoutManager getGroupLayout() {
     int width = 0;
 
-    val buttons = new JButton[] {this.playOfflineButton, this.tryAgainButton};
+    val buttons = new JButton[] {this.playOfflineButton, this.retryButton};
     for (val button : buttons) {
       width = Math.max(width, button.getPreferredSize().width);
     }
@@ -90,7 +90,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
                 groupLayout
                     .createSequentialGroup()
                     .addComponent(this.playOfflineButton, 0, width, Short.MAX_VALUE)
-                    .addComponent(this.tryAgainButton, 0, width, Short.MAX_VALUE)));
+                    .addComponent(this.retryButton, 0, width, Short.MAX_VALUE)));
     groupLayout.setVerticalGroup(
         groupLayout
             .createSequentialGroup()
@@ -103,7 +103,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
                 groupLayout
                     .createParallelGroup(Alignment.CENTER)
                     .addComponent(this.playOfflineButton)
-                    .addComponent(this.tryAgainButton)));
+                    .addComponent(this.retryButton)));
     return groupLayout;
   }
 
@@ -113,7 +113,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     if (Objects.equals(source, this.playOfflineButton)) {
       Launcher.launchMinecraft(null, null, null);
     }
-    if (Objects.equals(source, this.tryAgainButton)) {
+    if (Objects.equals(source, this.retryButton)) {
       LauncherUtils.swapContainers(this.getParent(), new YggdrasilAuthPanel());
     }
   }
