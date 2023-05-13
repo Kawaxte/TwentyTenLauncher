@@ -21,9 +21,9 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import lombok.val;
 
-public class LauncherOfflinePanel extends CustomJPanel implements ActionListener {
+public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListener {
 
-  public static LauncherOfflinePanel instance;
+  public static LauncherNoNetworkPanel instance;
   private final JLabel errorLabel;
   private final JLabel playOnlineLabel;
   private final JButton playOfflineButton;
@@ -32,12 +32,12 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
 
   {
     this.errorLabel = new JLabel((String) null, SwingConstants.CENTER);
-    this.playOnlineLabel = new JLabel("lop.playOnlineLabel", SwingConstants.LEFT);
-    this.playOfflineButton = new TransparentJButton("lop.playOfflineButton");
-    this.tryAgainButton = new TransparentJButton("lop.tryAgainButton");
+    this.playOnlineLabel = new JLabel("lnnp.playOnlineLabel", SwingConstants.LEFT);
+    this.playOfflineButton = new TransparentJButton("lnnp.playOfflineButton");
+    this.tryAgainButton = new TransparentJButton("lnnp.tryAgainButton");
   }
 
-  public LauncherOfflinePanel(String message) {
+  public LauncherNoNetworkPanel(String message) {
     super(true);
 
     this.setLayout(this.getGroupLayout());
@@ -61,14 +61,16 @@ public class LauncherOfflinePanel extends CustomJPanel implements ActionListener
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
     LauncherUtils.updateComponentKeyValue(bundle, this.errorLabel, this.errorMessage);
-    LauncherUtils.updateComponentKeyValue(bundle, this.playOnlineLabel, "lop.playOnlineLabel");
-    LauncherUtils.updateComponentKeyValue(bundle, this.playOfflineButton, "lop.playOfflineButton");
-    LauncherUtils.updateComponentKeyValue(bundle, this.tryAgainButton, "lop.tryAgainButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.playOnlineLabel, "lnnp.playOnlineLabel");
+    LauncherUtils.updateComponentKeyValue(bundle, this.playOfflineButton, "lnnp.playOfflineButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.tryAgainButton, "lnnp.tryAgainButton");
   }
 
   private LayoutManager getGroupLayout() {
     int width = 0;
-    for (val button : new JButton[] {this.playOfflineButton, this.tryAgainButton}) {
+
+    val buttons = new JButton[] {this.playOfflineButton, this.tryAgainButton};
+    for (val button : buttons) {
       width = Math.max(width, button.getPreferredSize().width);
     }
 
