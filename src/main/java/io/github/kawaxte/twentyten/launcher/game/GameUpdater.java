@@ -389,7 +389,7 @@ public final class GameUpdater {
           val bis = new BufferedInputStream(fis);
           val zis = new ZipInputStream(bis)) {
         ZipEntry entry;
-        while ((entry = zis.getNextEntry()) != null) {
+        while (Objects.nonNull(entry = zis.getNextEntry())) {
           val libraryName = entry.getName();
           if (!entry.isDirectory() && libraryName.indexOf(47) != -1) {
             continue;
@@ -486,7 +486,7 @@ public final class GameUpdater {
           val bis = new BufferedInputStream(fis);
           val zis = new ZipInputStream(bis)) {
         ZipEntry entry;
-        while ((entry = zis.getNextEntry()) != null) {
+        while (Objects.nonNull(entry = zis.getNextEntry())) {
           size += entry.getSize();
         }
       } catch (FileNotFoundException fnfe) {
