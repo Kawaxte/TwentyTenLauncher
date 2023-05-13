@@ -5,7 +5,8 @@ import lombok.Getter;
 public enum ELanguage {
   EN("English"),
   ET("Eesti"),
-  FI("Suomi");
+  FI("Suomi"),
+  FR("Français");
 
   public static final String USER_LANGUAGE;
 
