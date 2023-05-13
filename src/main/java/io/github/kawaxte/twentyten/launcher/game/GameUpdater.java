@@ -39,11 +39,11 @@ import org.apache.logging.log4j.Logger;
 
 public final class GameUpdater {
 
+  private static final Path versionDirectoryPath;
   private static final Logger LOGGER;
   private static final Path binDirectoryPath;
   private static final Path nativesDirectoryPath;
   private static final Path versionsDirectoryPath;
-  private static final Path versionDirectoryPath;
 
   static {
     LOGGER = LogManager.getLogger(GameUpdater.class);
@@ -67,18 +67,18 @@ public final class GameUpdater {
   private GameUpdater() {}
 
   public static boolean isGameCached() {
-    return isLWJGLJarsPresent() && isLWJGLNativesPresent() && isClientJarPresent();
+    return isLWJGLJarExistent() && isLWJGLNativeExistent() && isClientJarExistent();
   }
 
-  private static boolean isLWJGLJarsPresent() {
-    val lwjglJars = getLWJGLJars();
+  private static boolean isLWJGLJarExistent() {
+    val lwjglJars = getListOfLWJGLJars();
     return lwjglJars.stream()
         .allMatch(lwjglJar -> Files.exists(binDirectoryPath.resolve(lwjglJar)));
   }
 
-  private static boolean isLWJGLNativesPresent() {
+  private static boolean isLWJGLNativeExistent() {
     val lwjglNatives =
-        Optional.ofNullable(getLWJGLNatives())
+        Optional.ofNullable(getListLWJGLNatives())
             .orElseThrow(() -> new NullPointerException("lwjglNatives cannot be null"));
     return lwjglNatives.stream()
         .findFirst()
@@ -86,17 +86,17 @@ public final class GameUpdater {
         .isPresent();
   }
 
-  private static boolean isClientJarPresent() {
+  private static boolean isClientJarExistent() {
     val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
     val clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
     return Files.exists(versionDirectoryPath.resolve(clientJar));
   }
 
-  private static List<String> getLWJGLJars() {
+  private static List<String> getListOfLWJGLJars() {
     return Arrays.asList("jinput.jar", "jutils.jar", "lwjgl.jar", "lwjgl_util.jar");
   }
 
-  private static List<String> getLWJGLNatives() {
+  private static List<String> getListLWJGLNatives() {
     if (EPlatform.isLinux()) {
       return EPlatform.isAARCH64() || EPlatform.isAMD64()
           ? Arrays.asList("libjinput-linux64.so", "liblwjgl64.so", "libopenal64.so")
@@ -219,17 +219,17 @@ public final class GameUpdater {
 
     val lwjglNativesZips =
         new String[] {"natives-linux.zip", "natives-macosx.zip", "natives-windows.zip"};
-    val lwjglJars = getLWJGLJars();
+    val lwjglJars = getListOfLWJGLJars();
     val clientUrls = getClientUrls();
     val lwjglUrls = getLWJGLUrls();
     val urls = new URL[6];
     try {
-      if (!isLWJGLJarsPresent()) {
+      if (!isLWJGLJarExistent()) {
         for (int i = 0; i < lwjglJars.size(); i++) {
           urls[i] = new URL(getLWJGLUrls(), lwjglJars.get(i));
         }
       }
-      if (!isLWJGLNativesPresent()) {
+      if (!isLWJGLNativeExistent()) {
         if (EPlatform.isLinux()) {
           urls[4] = new URL(lwjglUrls, lwjglNativesZips[0]);
         }
@@ -240,7 +240,7 @@ public final class GameUpdater {
           urls[4] = new URL(lwjglUrls, lwjglNativesZips[2]);
         }
       }
-      if (!isClientJarPresent()) {
+      if (!isClientJarExistent()) {
         if (selectedVersion.startsWith("b")) {
           urls[5] = new URL(clientUrls[0], clientJar);
         }
@@ -290,7 +290,7 @@ public final class GameUpdater {
             int progress = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
             GameAppletWrapper.instance.setTaskProgressMessage(
                 MessageFormat.format(
-                    LauncherLanguage.bundle.getString("gaw.taskProgressMessage.progress"),
+                    LauncherLanguage.bundle.getString("gaw.taskProgressMessage"),
                     fileName,
                     downloadProgress));
             GameAppletWrapper.instance.setTaskProgress(progress);
@@ -332,6 +332,10 @@ public final class GameUpdater {
         p.toFile().listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
     if (Objects.nonNull(zipFiles)) {
       for (val zipFile : zipFiles) {
+        if (!p.resolve(zipFile.getName()).toFile().exists()) {
+          continue;
+        }
+
         val lwjglNativesZipFileDest = nativesDirectoryPath.resolve(zipFile.getName()).toFile();
         try {
           Files.move(zipFile.toPath(), lwjglNativesZipFileDest.toPath());
@@ -344,10 +348,8 @@ public final class GameUpdater {
       }
     }
 
-    val jarFiles = getLWJGLJars();
+    val jarFiles = getListOfLWJGLJars();
     for (val jarFile : jarFiles) {
-      // For some unknown reason, "jinput.jar" shows up as missing, despite being present in
-      // "binDirectoryPath". This IF statement is a workaround for that.
       if (!p.resolve(jarFile).toFile().exists()) {
         continue;
       }
@@ -405,7 +407,7 @@ public final class GameUpdater {
               int progress = 55 + ((currentExtractSize * 20) / totalExtractSize);
               GameAppletWrapper.instance.setTaskProgressMessage(
                   MessageFormat.format(
-                      LauncherLanguage.bundle.getString("gaw.taskProgressMessage.progress"),
+                      LauncherLanguage.bundle.getString("gaw.taskProgressMessage"),
                       libraryName,
                       extractProgress));
               GameAppletWrapper.instance.setTaskProgress(progress);
