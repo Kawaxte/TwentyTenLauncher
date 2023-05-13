@@ -118,7 +118,7 @@ public final class LauncherOptionsUtils {
                           || showAlphaVersionsSelected
                           || showInfdevVersionsSelected) {
                         val versionId = versionObject.getString("versionId");
-                        String versionName = versionObject.getString("versionName");
+                        val versionName = versionObject.getString("versionName");
 
                         versionLookup.put(versionName, versionId);
                         defaultComboBoxModel.addElement(versionName);
