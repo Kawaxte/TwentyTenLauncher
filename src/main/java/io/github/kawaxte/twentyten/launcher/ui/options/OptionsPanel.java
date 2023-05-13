@@ -27,7 +27,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
   private final LanguageGroupBox languageGroupBox;
   private final VersionGroupBox versionGroupBox;
   private final JLabel buildTimeLabel;
-  private final JButton openDirectoryButton;
+  private final JButton openFolderButton;
   @Getter private final JButton saveOptionsButton;
 
   {
@@ -35,7 +35,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.versionGroupBox = new VersionGroupBox();
     this.buildTimeLabel =
         new JLabel(LauncherUtils.getManifestAttribute("Build-Time"), SwingUtilities.CENTER);
-    this.openDirectoryButton = new JButton("op.openDirectoryButton");
+    this.openFolderButton = new JButton("op.openFolderButton");
     this.saveOptionsButton = new JButton("op.saveOptionsButton");
   }
 
@@ -48,7 +48,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.buildTimeLabel.setEnabled(false);
     this.saveOptionsButton.setEnabled(false);
 
-    this.openDirectoryButton.addActionListener(this);
+    this.openFolderButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
@@ -65,8 +65,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
         this.languageGroupBox.setTitledBorder("op.languageGroupBox"));
     LauncherUtils.updateComponentKeyValue(
         bundle, this.versionGroupBox, this.versionGroupBox.setTitledBorder("op.versionGroupBox"));
-    LauncherUtils.updateComponentKeyValue(
-        bundle, this.openDirectoryButton, "op.openDirectoryButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.openFolderButton, "op.openFolderButton");
     LauncherUtils.updateComponentKeyValue(bundle, this.saveOptionsButton, "op.saveOptionsButton");
   }
 
@@ -88,7 +87,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
                             .addComponent(
                                 this.buildTimeLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(
-                                this.openDirectoryButton,
+                                this.openFolderButton,
                                 0,
                                 GroupLayout.PREFERRED_SIZE,
                                 Short.MAX_VALUE)
@@ -106,7 +105,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
                 groupLayout
                     .createParallelGroup(Alignment.CENTER)
                     .addComponent(this.buildTimeLabel)
-                    .addComponent(this.openDirectoryButton)
+                    .addComponent(this.openFolderButton)
                     .addComponent(this.saveOptionsButton)));
     return groupLayout;
   }
@@ -114,7 +113,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
-    if (Objects.equals(source, this.openDirectoryButton)) {
+    if (Objects.equals(source, this.openFolderButton)) {
       LauncherUtils.openDesktop(workingDirectoryPath);
     }
     if (Objects.equals(source, this.saveOptionsButton)) {
