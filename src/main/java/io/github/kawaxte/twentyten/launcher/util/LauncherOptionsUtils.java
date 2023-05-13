@@ -3,7 +3,7 @@ package io.github.kawaxte.twentyten.launcher.util;
 import io.github.kawaxte.twentyten.launcher.ELanguage;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
 import io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel;
 import io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox;
@@ -177,8 +177,8 @@ public final class LauncherOptionsUtils {
               if (VersionGroupBox.instance != null) {
                 VersionGroupBox.instance.updateComponentKeyValues(bundle);
               }
-              if (LauncherOfflinePanel.instance != null) {
-                LauncherOfflinePanel.instance.updateComponentKeyValues(bundle);
+              if (LauncherNoNetworkPanel.instance != null) {
+                LauncherNoNetworkPanel.instance.updateComponentKeyValues(bundle);
               }
               if (MicrosoftAuthPanel.instance != null) {
                 MicrosoftAuthPanel.instance.updateComponentKeyValues(bundle);
