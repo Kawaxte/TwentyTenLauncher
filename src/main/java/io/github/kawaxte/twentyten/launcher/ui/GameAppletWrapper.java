@@ -1,5 +1,6 @@
 package io.github.kawaxte.twentyten.launcher.ui;
 
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.game.EState;
 import io.github.kawaxte.twentyten.launcher.game.GameUpdater;
@@ -170,10 +171,11 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
               });
       g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
+      val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
       val title =
           updaterTaskErrored
-              ? LauncherLanguage.bundle.getString("gaw.updaterErrored")
-              : LauncherLanguage.bundle.getString("gaw.updaterStarted");
+              ? LauncherLanguage.getUTF8Bundle(selectedLanguage).getString("gaw.updaterErrored")
+              : LauncherLanguage.getUTF8Bundle(selectedLanguage).getString("gaw.updaterStarted");
       this.drawTitleString(title, appletWidth, appletHeight, g2dBuffered);
       this.drawStateString(taskStateMessage, appletWidth, appletHeight, g2dBuffered);
       this.drawProgressString(taskProgressMessage, appletWidth, appletHeight, g2dBuffered);
