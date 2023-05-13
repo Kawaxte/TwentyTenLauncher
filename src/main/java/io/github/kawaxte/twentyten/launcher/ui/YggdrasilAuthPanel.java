@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -43,20 +44,20 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   private final TransparentJButton signinButton;
 
   {
-    this.microsoftSigninButton = new TransparentJButton("ylp.microsoftSigninButton");
-    this.usernameLabel = new JLabel("ylp.usernameLabel", SwingConstants.RIGHT);
-    this.passwordLabel = new JLabel("ylp.passwordLabel", SwingConstants.RIGHT);
+    this.microsoftSigninButton = new TransparentJButton("yap.microsoftSigninButton");
+    this.usernameLabel = new JLabel("yap.usernameLabel", SwingConstants.RIGHT);
+    this.passwordLabel = new JLabel("yap.passwordLabel", SwingConstants.RIGHT);
     this.usernameField = new JTextField(20);
     this.passwordField = new JPasswordField(20);
-    this.optionsButton = new TransparentJButton("ylp.optionsButton");
-    this.rememberPasswordCheckBox = new TransparentJCheckBox("ylp.rememberPasswordCheckBox");
+    this.optionsButton = new TransparentJButton("yap.optionsButton");
+    this.rememberPasswordCheckBox = new TransparentJCheckBox("yap.rememberPasswordCheckBox");
     this.linkLabel =
         new JHyperlink(
             Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
-                ? "ylp.linkLabel.update"
-                : "ylp.linkLabel.signup",
+                ? "yap.linkLabel.update"
+                : "yap.linkLabel.signup",
             SwingConstants.LEFT);
-    this.signinButton = new TransparentJButton("ylp.signinButton");
+    this.signinButton = new TransparentJButton("yap.signinButton");
   }
 
   public YggdrasilAuthPanel() {
@@ -91,28 +92,28 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         });
     this.signinButton.addActionListener(this);
 
-    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
+    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
+            ? LauncherLanguage.getUTF8Bundle(selectedLanguage)
             : LauncherLanguage.bundle);
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
     LauncherUtils.updateComponentKeyValue(
-        bundle, this.microsoftSigninButton, "ylp.microsoftSigninButton");
-    LauncherUtils.updateComponentKeyValue(bundle, this.usernameLabel, "ylp.usernameLabel");
-    LauncherUtils.updateComponentKeyValue(bundle, this.passwordLabel, "ylp.passwordLabel");
-    LauncherUtils.updateComponentKeyValue(bundle, this.optionsButton, "ylp.optionsButton");
+        bundle, this.microsoftSigninButton, "yap.microsoftSigninButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.usernameLabel, "yap.usernameLabel");
+    LauncherUtils.updateComponentKeyValue(bundle, this.passwordLabel, "yap.passwordLabel");
+    LauncherUtils.updateComponentKeyValue(bundle, this.optionsButton, "yap.optionsButton");
     LauncherUtils.updateComponentKeyValue(
-        bundle, this.rememberPasswordCheckBox, "ylp.rememberPasswordCheckBox");
+        bundle, this.rememberPasswordCheckBox, "yap.rememberPasswordCheckBox");
     LauncherUtils.updateComponentKeyValue(
         bundle,
         this.linkLabel,
         Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
-            ? "ylp.linkLabel.update"
-            : "ylp.linkLabel.signup");
-    LauncherUtils.updateComponentKeyValue(bundle, this.signinButton, "ylp.signinButton");
+            ? "yap.linkLabel.update"
+            : "yap.linkLabel.signup");
+    LauncherUtils.updateComponentKeyValue(bundle, this.signinButton, "yap.signinButton");
   }
 
   private LayoutManager getGroupLayout() {
@@ -177,8 +178,15 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
   @Override
   public void actionPerformed(ActionEvent event) {
+    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+
     val source = event.getSource();
     if (Objects.equals(source, this.microsoftSigninButton)) {
+      Arrays.stream(this.getComponents()).forEachOrdered(component -> component.setEnabled(false));
+      this.microsoftSigninButton.setText(
+          LauncherLanguage.getUTF8Bundle(selectedLanguage)
+              .getString("yap.microsoftSigninButton.signing_in"));
+
       if (LauncherUtils.isOutdated()) {
         LauncherUtils.swapContainers(
             this.getParent(), new LauncherOfflinePanel("lop.errorLabel.signin_outdated"));
@@ -194,7 +202,6 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      // TODO: set the "hasPaid" variable based on the "microsoftProfileDemo" variable.
       Launcher.launchMinecraft(microsoftProfileName, microsoftAccessToken, microsoftProfileId);
     }
     if (Objects.equals(source, this.optionsButton)) {
@@ -202,6 +209,11 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
           () -> new OptionsDialog(SwingUtilities.getWindowAncestor(this)).setVisible(true));
     }
     if (Objects.equals(source, this.signinButton)) {
+      Arrays.stream(this.getComponents()).forEachOrdered(component -> component.setEnabled(false));
+      this.signinButton.setText(
+          LauncherLanguage.getUTF8Bundle(selectedLanguage)
+              .getString("yap.signinButton.signing_in"));
+
       if (LauncherUtils.isOutdated()) {
         LauncherUtils.swapContainers(
             this.getParent(), new LauncherOfflinePanel("lop.errorLabel.signin_outdated"));
@@ -229,7 +241,6 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      // TODO: set the "hasPaid" variable based on the "mojangProfileDemo" variable.
       Launcher.launchMinecraft(mojangProfileName, mojangAccessToken, mojangProfileId);
     }
   }
