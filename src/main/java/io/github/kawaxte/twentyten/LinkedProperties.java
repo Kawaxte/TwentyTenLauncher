@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class LinkedProperties extends Properties {
 
   @Override
   public void store(Writer writer, String comments) throws IOException {
-    if (comments != null) {
+    if (Objects.nonNull(comments)) {
       val sb = new StringBuilder();
       sb.append("#");
       sb.append(comments);
@@ -54,7 +55,7 @@ public class LinkedProperties extends Properties {
         val sb = new StringBuilder();
         sb.append(key);
         sb.append("=");
-        if (value != null) {
+        if (Objects.nonNull(value)) {
           sb.append(value);
         }
         sb.append(System.lineSeparator());
@@ -65,7 +66,7 @@ public class LinkedProperties extends Properties {
 
   @Override
   public void store(OutputStream os, String comments) throws IOException {
-    if (comments != null) {
+    if (Objects.nonNull(comments)) {
       val sb = new StringBuilder();
       sb.append("#");
       sb.append(comments);
@@ -84,7 +85,7 @@ public class LinkedProperties extends Properties {
         val sb = new StringBuilder();
         sb.append(key);
         sb.append("=");
-        if (value != null) {
+        if (Objects.nonNull(value)) {
           sb.append(value);
         }
         sb.append(System.lineSeparator());
