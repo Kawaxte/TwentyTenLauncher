@@ -51,10 +51,10 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.openDirectoryButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
 
-    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
+    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUTF8Bundle((String) selectedLanguage)
+            ? LauncherLanguage.getUTF8Bundle(selectedLanguage)
             : LauncherLanguage.bundle);
   }
 
