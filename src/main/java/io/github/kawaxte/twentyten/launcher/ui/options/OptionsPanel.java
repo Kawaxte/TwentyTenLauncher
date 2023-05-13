@@ -71,13 +71,6 @@ public class OptionsPanel extends JPanel implements ActionListener {
   }
 
   private LayoutManager getGroupLayout() {
-    int width = 0;
-
-    val buttons = new JButton[] {this.openDirectoryButton, this.saveOptionsButton};
-    for (val button : buttons) {
-      width = Math.max(width, button.getPreferredSize().width);
-    }
-
     val groupLayout = new GroupLayout(this);
     groupLayout.setAutoCreateContainerGaps(true);
     groupLayout.setAutoCreateGaps(true);
@@ -92,9 +85,18 @@ public class OptionsPanel extends JPanel implements ActionListener {
                     .addGroup(
                         groupLayout
                             .createSequentialGroup()
-                            .addComponent(this.buildTimeLabel, 0, width, Short.MAX_VALUE)
-                            .addComponent(this.openDirectoryButton, 0, width, Short.MAX_VALUE)
-                            .addComponent(this.saveOptionsButton, 0, width, Short.MAX_VALUE))));
+                            .addComponent(
+                                this.buildTimeLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                            .addComponent(
+                                this.openDirectoryButton,
+                                0,
+                                GroupLayout.PREFERRED_SIZE,
+                                Short.MAX_VALUE)
+                            .addComponent(
+                                this.saveOptionsButton,
+                                0,
+                                GroupLayout.PREFERRED_SIZE,
+                                Short.MAX_VALUE))));
     groupLayout.setVerticalGroup(
         groupLayout
             .createSequentialGroup()
