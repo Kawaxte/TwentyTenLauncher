@@ -48,6 +48,7 @@ public final class LauncherOptionsUtils {
     val defaultComboBoxModel = new DefaultComboBoxModel<String>();
 
     Arrays.stream(ELanguage.values())
+        .sorted(Comparator.comparing(ELanguage::getLanguageName))
         .forEachOrdered(
             language -> {
               defaultComboBoxModel.addElement(language.getLanguageName());
