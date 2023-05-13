@@ -54,8 +54,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     this.linkLabel =
         new JHyperlink(
             Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
-                ? "yap.linkLabel.update"
-                : "yap.linkLabel.signup",
+                ? "yap.linkLabel.outdated"
+                : "yap.linkLabel",
             SwingConstants.LEFT);
     this.signinButton = new TransparentJButton("yap.signinButton");
   }
@@ -111,8 +111,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         bundle,
         this.linkLabel,
         Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
-            ? "yap.linkLabel.update"
-            : "yap.linkLabel.signup");
+            ? "yap.linkLabel.outdated"
+            : "yap.linkLabel");
     LauncherUtils.updateComponentKeyValue(bundle, this.signinButton, "yap.signinButton");
   }
 
