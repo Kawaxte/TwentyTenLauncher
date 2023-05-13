@@ -20,6 +20,7 @@
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_fi.properties" />
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_fr.properties" />
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_hu.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/messages_it.properties" />
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_pl.properties" />
       <base-name>messages</base-name>
     </custom-resource-bundle>
