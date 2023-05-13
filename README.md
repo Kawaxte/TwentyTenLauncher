@@ -1,10 +1,8 @@
 # TwentyTen Launcher
 
 ![GitHub Latest](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&style=for-the-badge)
-![GitHub Downloads (Latest)](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/latest/total?sort=semver&logo=github&style=for-the-badge)
-
 ![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)
-![GitHub Downloads (Pre-Release)](https://img.shields.io/github/downloads-pre/Kawaxte/TwentyTenLauncher/latest/total?sort=semver&logo=github&label=downloads@pre-release&style=for-the-badge)
+![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?sort=semver&logo=github&style=for-the-badge)
 
 This repository contains an application that lets you play older versions of Minecraft. It's named
 after the year the original Minecraft Launcher was released, and is
