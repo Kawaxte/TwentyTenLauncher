@@ -2,7 +2,7 @@ package io.github.kawaxte.twentyten.launcher.auth;
 
 import io.github.kawaxte.twentyten.launcher.Launcher;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherOfflinePanel;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
@@ -41,7 +41,7 @@ public class MicrosoftAuthTask implements Runnable {
       }
 
       LauncherUtils.swapContainers(
-          LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
+          LauncherPanel.instance, new LauncherNoNetworkPanel("lnnp.errorLabel.signin"));
       return null;
     }
 
@@ -69,15 +69,17 @@ public class MicrosoftAuthTask implements Runnable {
       switch ((int) xerr) {
         case (int) 2148916233L:
           LauncherUtils.swapContainers(
-              LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin_2148916233"));
+              LauncherPanel.instance,
+              new LauncherNoNetworkPanel("lnnp.errorLabel.signin_2148916233"));
           break;
         case (int) 2148916238L:
           LauncherUtils.swapContainers(
-              LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin_2148916238"));
+              LauncherPanel.instance,
+              new LauncherNoNetworkPanel("lnnp.errorLabel.signin_2148916238"));
           break;
         default:
           LauncherUtils.swapContainers(
-              LauncherPanel.instance, new LauncherOfflinePanel("lop.errorLabel.signin"));
+              LauncherPanel.instance, new LauncherNoNetworkPanel("lnnp.errorLabel.signin"));
           break;
       }
 
