@@ -9,6 +9,7 @@
     <custom-resource-bundle>
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_de.properties" />
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_en.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/messages_es.properties" />
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_et.properties" />
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_fi.properties" />
       <file value="file://$PROJECT_DIR$/src/main/resources/messages_fr.properties" />
