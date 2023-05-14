@@ -17,6 +17,7 @@ public enum EState {
 
   EState(String message) {
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
-    this.message = LauncherLanguage.getUTF8Bundle(selectedLanguage).getString(message);
+    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+    this.message = bundle.getString(message);
   }
 }
