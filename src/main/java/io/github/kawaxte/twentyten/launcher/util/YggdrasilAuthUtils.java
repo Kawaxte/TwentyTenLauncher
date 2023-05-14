@@ -37,7 +37,9 @@ public final class YggdrasilAuthUtils {
     }
 
     val validate = YggdrasilAuth.validateAccessToken(accessToken, clientToken);
-    Objects.requireNonNull(validate, "validate cannot be null");
+    if (Objects.isNull(validate)) {
+      return false;
+    }
     return validate.has("error");
   }
 
@@ -46,7 +48,9 @@ public final class YggdrasilAuthUtils {
     val clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
 
     val refresh = YggdrasilAuth.refreshAccessToken(accessToken, clientToken);
-    Objects.requireNonNull(refresh, "refresh cannot be null");
+    if (Objects.isNull(refresh)) {
+      return;
+    }
     if (refresh.has("error")) {
       throw new RuntimeException("Failed to refresh access token");
     }
