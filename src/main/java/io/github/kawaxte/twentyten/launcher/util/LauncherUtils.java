@@ -3,6 +3,8 @@ package io.github.kawaxte.twentyten.launcher.util;
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.EPlatform;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.ui.custom.JGroupBox;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -14,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -193,6 +196,10 @@ public final class LauncherUtils {
 
                 val buildTime = getManifestAttribute("Build-Time");
                 return Objects.compare(buildTime, tagName, String::compareTo) < 0;
+              } catch (UnknownHostException uhe) {
+                LauncherUtils.swapContainers(
+                    LauncherPanel.instance,
+                    new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", uhe.getMessage()));
               } catch (IOException ioe) {
                 LOGGER.error("Failed to check for updates", ioe);
               } catch (URISyntaxException urise) {
@@ -210,7 +217,9 @@ public final class LauncherUtils {
 
         LOGGER.error("Interrupted while checking for updates", ie);
       } catch (ExecutionException ee) {
-        LOGGER.error("Error while checking for updates", ee.getCause());
+        val cause = ee.getCause();
+
+        LOGGER.error("Error while checking for updates", cause);
       } finally {
         worker.cancel(true);
       }
