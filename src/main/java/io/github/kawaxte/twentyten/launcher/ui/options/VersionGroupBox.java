@@ -59,10 +59,9 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     this.versionComboBox.addActionListener(this);
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUTF8Bundle(selectedLanguage)
-            : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
 
     LauncherOptionsUtils.updateVersionComboBox(this);
   }
