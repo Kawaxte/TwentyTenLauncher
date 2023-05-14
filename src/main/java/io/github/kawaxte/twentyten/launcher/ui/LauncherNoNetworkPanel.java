@@ -29,6 +29,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
   private final JButton playOfflineButton;
   private final JButton retryButton;
   private final String errorMessage;
+  private final Object[] errorMessageArgs;
 
   {
     this.errorLabel = new JLabel((String) null, SwingConstants.CENTER);
@@ -37,12 +38,13 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     this.retryButton = new TransparentJButton("lnnp.retryButton");
   }
 
-  public LauncherNoNetworkPanel(String message) {
+  public LauncherNoNetworkPanel(String key, Object... args) {
     super(true);
 
     this.setLayout(this.getGroupLayout());
 
-    this.errorMessage = message;
+    this.errorMessage = key;
+    this.errorMessageArgs = args;
     this.errorLabel.setText(this.errorMessage);
     this.errorLabel.setFont(this.getFont().deriveFont(Font.ITALIC, 16F));
     this.errorLabel.setForeground(Color.RED.darker());
@@ -53,14 +55,14 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     this.retryButton.addActionListener(this);
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUTF8Bundle(selectedLanguage)
-            : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(bundle, this.errorLabel, this.errorMessage);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.errorLabel, this.errorMessage, this.errorMessageArgs);
     LauncherUtils.updateComponentKeyValue(bundle, this.playOnlineLabel, "lnnp.playOnlineLabel");
     LauncherUtils.updateComponentKeyValue(bundle, this.playOfflineButton, "lnnp.playOfflineButton");
     LauncherUtils.updateComponentKeyValue(bundle, this.retryButton, "lnnp.retryButton");
