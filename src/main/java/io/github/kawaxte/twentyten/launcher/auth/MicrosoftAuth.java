@@ -1,7 +1,11 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
+import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
+import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -115,7 +119,15 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring device code", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring device code", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        LauncherUtils.swapContainers(
+            LauncherPanel.instance,
+            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+        return null;
+      }
+
+      LOGGER.error("Error while acquiring device code", cause);
     } finally {
       service.shutdown();
     }
@@ -149,7 +161,15 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring token", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        LauncherUtils.swapContainers(
+            LauncherPanel.instance,
+            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+        return null;
+      }
+
+      LOGGER.error("Error while acquiring token", cause);
     } finally {
       service.shutdown();
     }
@@ -183,7 +203,12 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while refreshing token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while refreshing token", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        return null;
+      }
+
+      LOGGER.error("Error while refreshing token", cause);
     } finally {
       service.shutdown();
     }
@@ -222,7 +247,15 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring XBL token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring XBL token", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        LauncherUtils.swapContainers(
+            LauncherPanel.instance,
+            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+        return null;
+      }
+
+      LOGGER.error("Error while acquiring XBL token", cause);
     } finally {
       service.shutdown();
     }
@@ -260,7 +293,15 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring XSTS token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring XSTS token", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        LauncherUtils.swapContainers(
+            LauncherPanel.instance,
+            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+        return null;
+      }
+
+      LOGGER.error("Error while acquiring XSTS token", cause);
     } finally {
       service.shutdown();
     }
@@ -293,7 +334,15 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring access token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring access token", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        LauncherUtils.swapContainers(
+            LauncherPanel.instance,
+            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+        return null;
+      }
+
+      LOGGER.error("Error while acquiring access token", cause);
     } finally {
       service.shutdown();
     }
@@ -322,7 +371,15 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring items", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while acquiring items", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        LauncherUtils.swapContainers(
+            LauncherPanel.instance,
+            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+        return null;
+      }
+
+      LOGGER.error("Error while acquiring items", cause);
     } finally {
       service.shutdown();
     }
@@ -351,7 +408,15 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while checking Minecraft profile", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while checking Minecraft profile", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        LauncherUtils.swapContainers(
+            LauncherPanel.instance,
+            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+        return null;
+      }
+
+      LOGGER.error("Error while checking Minecraft profile", cause);
     } finally {
       service.shutdown();
     }
