@@ -15,7 +15,7 @@ public class GameUpdaterTask implements Runnable {
   public void run() {
     GameAppletWrapper.instance.setTaskState(EState.CHECK_CACHE.ordinal());
     GameAppletWrapper.instance.setTaskStateMessage(EState.CHECK_CACHE.getMessage());
-    GameAppletWrapper.instance.setTaskProgressMessage("");
+    GameAppletWrapper.instance.setTaskProgressMessage(null);
     GameAppletWrapper.instance.setTaskProgress(5);
     if (!GameUpdater.isGameCached()) {
       GameUpdater.downloadPackages(urls);
@@ -27,7 +27,7 @@ public class GameUpdaterTask implements Runnable {
 
       GameAppletWrapper.instance.setTaskState(EState.DONE.ordinal());
       GameAppletWrapper.instance.setTaskStateMessage(EState.DONE.getMessage());
-      GameAppletWrapper.instance.setTaskProgressMessage("");
+      GameAppletWrapper.instance.setTaskProgressMessage(null);
       GameAppletWrapper.instance.setTaskProgress(95);
     }
   }
