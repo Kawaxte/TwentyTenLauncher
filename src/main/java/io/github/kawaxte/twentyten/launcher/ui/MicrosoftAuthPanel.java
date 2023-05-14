@@ -65,10 +65,9 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
     this.setLayout(this.getGroupLayout());
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUTF8Bundle(selectedLanguage)
-            : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
   }
 
   public MicrosoftAuthPanel(String userCode, String verificationUri, String expiresIn) {
