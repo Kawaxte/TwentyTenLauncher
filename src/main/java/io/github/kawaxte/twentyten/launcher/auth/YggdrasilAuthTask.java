@@ -24,7 +24,9 @@ public class YggdrasilAuthTask implements Runnable {
   @Override
   public void run() {
     val authenticate = YggdrasilAuth.authenticate(username, password, clientToken);
-    Objects.requireNonNull(authenticate, "authenticate cannot be null");
+    if (Objects.isNull(authenticate)) {
+      return;
+    }
     val authenticateResponse = this.getAuthenticateResponse(authenticate);
     if (Objects.isNull(authenticateResponse)) {
       return;
