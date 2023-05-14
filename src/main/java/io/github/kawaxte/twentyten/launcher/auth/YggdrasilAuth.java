@@ -1,7 +1,11 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
+import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
+import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
+import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -85,7 +89,15 @@ public final class YggdrasilAuth {
 
       LOGGER.error("Interrupted while authenticating with Mojang", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while authenticating with Mojang", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        LauncherUtils.swapContainers(
+            LauncherPanel.instance,
+            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+        return null;
+      }
+
+      LOGGER.error("Error while authenticating with Mojang", cause);
     } finally {
       service.shutdown();
     }
@@ -118,7 +130,12 @@ public final class YggdrasilAuth {
 
       LOGGER.error("Interrupted while validating access token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while validating access token", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        return null;
+      }
+
+      LOGGER.error("Error while validating access token", cause);
     } finally {
       service.shutdown();
     }
@@ -152,7 +169,12 @@ public final class YggdrasilAuth {
 
       LOGGER.error("Interrupted while refreshing access token", ie);
     } catch (ExecutionException ee) {
-      LOGGER.error("Error while refreshing access token", ee.getCause());
+      val cause = ee.getCause();
+      if (cause instanceof UnknownHostException) {
+        return null;
+      }
+
+      LOGGER.error("Error while refreshing access token", cause);
     } finally {
       service.shutdown();
     }
