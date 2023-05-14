@@ -27,10 +27,9 @@ public class OptionsDialog extends JDialog {
     this.setResizable(false);
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateContainerKeyValues(
-        Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUTF8Bundle(selectedLanguage)
-            : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
   }
 
   public void updateContainerKeyValues(UTF8ResourceBundle bundle) {
