@@ -29,7 +29,9 @@ public final class MicrosoftAuthUtils {
     }
 
     val consumersDeviceCode = MicrosoftAuth.acquireDeviceCode(clientId);
-    Objects.requireNonNull(consumersDeviceCode, "consumersDeviceCode cannot be null");
+    if (Objects.isNull(consumersDeviceCode)) {
+      return;
+    }
     val deviceCodeResponse = getDeviceCodeResponse(consumersDeviceCode);
 
     LauncherUtils.swapContainers(
@@ -62,20 +64,28 @@ public final class MicrosoftAuthUtils {
     val refreshToken = (String) LauncherConfig.lookup.get("microsoftRefreshToken");
 
     val consumersToken = MicrosoftAuth.refreshToken(clientId, refreshToken);
-    Objects.requireNonNull(consumersToken, "consumersToken cannot be null");
+    if (Objects.isNull(consumersToken)) {
+      return;
+    }
     val tokenResponse = getRefreshTokenResponse(consumersToken);
 
     val userAuthenticate = MicrosoftAuth.acquireXBLToken(tokenResponse[0]);
-    Objects.requireNonNull(userAuthenticate, "userAuthenticate cannot be null");
+    if (Objects.isNull(userAuthenticate)) {
+      return;
+    }
     val xblTokenResponse = MicrosoftAuthTask.getXBLTokenResponse(userAuthenticate);
 
     val xstsAuthorize = MicrosoftAuth.acquireXSTSToken(xblTokenResponse[1]);
-    Objects.requireNonNull(xstsAuthorize, "xstsAuthorize cannot be null");
+    if (Objects.isNull(xstsAuthorize)) {
+      return;
+    }
     val xstsTokenResponse = MicrosoftAuthTask.getXSTSTokenResponse(xstsAuthorize);
 
     val authenticateLoginWithXbox =
         MicrosoftAuth.acquireAccessToken(xblTokenResponse[0], xstsTokenResponse);
-    Objects.requireNonNull(authenticateLoginWithXbox, "authenticateLoginWithXbox cannot be null");
+    if (Objects.isNull(authenticateLoginWithXbox)) {
+      return;
+    }
     val accessTokenResponse = MicrosoftAuthTask.getAccessTokenResponse(authenticateLoginWithXbox);
     LauncherConfig.lookup.put("microsoftAccessToken", accessTokenResponse[0]);
     LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
