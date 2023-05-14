@@ -17,6 +17,7 @@ import java.awt.Graphics2D;
 import java.awt.Transparency;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -43,7 +44,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
   private final Map<String, String> parameters;
   @Getter @Setter private ClassLoader mcAppletClassLoader;
   @Getter @Setter private String taskStateMessage;
-  @Getter @Setter private String taskProgressMessage;
+  @Getter private String taskProgressMessage;
   @Getter @Setter private int taskState;
   @Getter @Setter private int taskProgress;
   @Getter @Setter private boolean updaterTaskStarted;
@@ -78,6 +79,17 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
       System.setProperty("http.proxyPort", hostAndPort[1]);
     }
     System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
+  }
+
+  public void setTaskProgressMessage(String message, Object... args) {
+    if (Objects.isNull(message)) {
+      this.taskProgressMessage = "";
+      return;
+    }
+
+    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+    this.taskProgressMessage = MessageFormat.format(bundle.getString(message), args);
   }
 
   @Override
@@ -172,10 +184,11 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
       g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
       val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+      val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
       val title =
           updaterTaskErrored
-              ? LauncherLanguage.getUTF8Bundle(selectedLanguage).getString("gaw.updaterErrored")
-              : LauncherLanguage.getUTF8Bundle(selectedLanguage).getString("gaw.updaterStarted");
+              ? bundle.getString("gaw.updaterErrored")
+              : bundle.getString("gaw.updaterStarted");
       this.drawTitleString(title, appletWidth, appletHeight, g2dBuffered);
       this.drawStateString(taskStateMessage, appletWidth, appletHeight, g2dBuffered);
       this.drawProgressString(taskProgressMessage, appletWidth, appletHeight, g2dBuffered);
