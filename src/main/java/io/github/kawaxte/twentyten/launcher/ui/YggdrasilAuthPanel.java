@@ -93,10 +93,9 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     this.signinButton.addActionListener(this);
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage)
-            ? LauncherLanguage.getUTF8Bundle(selectedLanguage)
-            : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -179,13 +178,12 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent event) {
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
 
     val source = event.getSource();
     if (Objects.equals(source, this.microsoftSigninButton)) {
       Arrays.stream(this.getComponents()).forEachOrdered(component -> component.setEnabled(false));
-      this.microsoftSigninButton.setText(
-          LauncherLanguage.getUTF8Bundle(selectedLanguage)
-              .getString("yap.microsoftSigninButton.signing_in"));
+      this.microsoftSigninButton.setText(bundle.getString("yap.microsoftSigninButton.signing_in"));
 
       if (LauncherUtils.isOutdated()) {
         LauncherUtils.swapContainers(
@@ -210,9 +208,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     }
     if (Objects.equals(source, this.signinButton)) {
       Arrays.stream(this.getComponents()).forEachOrdered(component -> component.setEnabled(false));
-      this.signinButton.setText(
-          LauncherLanguage.getUTF8Bundle(selectedLanguage)
-              .getString("yap.signinButton.signing_in"));
+      this.signinButton.setText(bundle.getString("yap.signinButton.signing_in"));
 
       if (LauncherUtils.isOutdated()) {
         LauncherUtils.swapContainers(
