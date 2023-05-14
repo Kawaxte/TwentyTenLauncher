@@ -120,30 +120,40 @@ public class MicrosoftAuthTask implements Runnable {
     }
 
     val consumersToken = MicrosoftAuth.acquireToken(clientId, deviceCode);
-    Objects.requireNonNull(consumersToken, "consumerToken cannot be null");
+    if (Objects.isNull(consumersToken)) {
+      return;
+    }
     val tokenResponse = getTokenResponse(consumersToken);
     if (Objects.isNull(tokenResponse)) {
       return;
     }
 
     val userAuthenticate = MicrosoftAuth.acquireXBLToken(tokenResponse[0]);
-    Objects.requireNonNull(userAuthenticate, "userAuthenticate cannot be null");
+    if (Objects.isNull(userAuthenticate)) {
+      return;
+    }
     val xblTokenResponse = getXBLTokenResponse(userAuthenticate);
 
     val xstsAuthorize = MicrosoftAuth.acquireXSTSToken(xblTokenResponse[1]);
-    Objects.requireNonNull(xstsAuthorize, "xstsAuthorize cannot be null");
+    if (Objects.isNull(xstsAuthorize)) {
+      return;
+    }
     val xstsTokenResponse = getXSTSTokenResponse(xstsAuthorize);
 
     val authenticateLoginWithXbox =
         MicrosoftAuth.acquireAccessToken(xblTokenResponse[0], xstsTokenResponse);
-    Objects.requireNonNull(authenticateLoginWithXbox, "authenticateLoginWithXbox cannot be null");
+    if (Objects.isNull(authenticateLoginWithXbox)) {
+      return;
+    }
     val accessTokenResponse = getAccessTokenResponse(authenticateLoginWithXbox);
     LauncherConfig.lookup.put("microsoftAccessToken", accessTokenResponse[0]);
     LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
     LauncherConfig.lookup.put("microsoftRefreshToken", tokenResponse[1]);
 
     val entitlementsMcStore = MicrosoftAuth.checkEntitlementsMcStore(accessTokenResponse[0]);
-    Objects.requireNonNull(entitlementsMcStore, "entitlementsMcStore cannot be null");
+    if (Objects.isNull(entitlementsMcStore)) {
+      return;
+    }
     val itemNameEqualToGameMinecraft = isItemNameEqualToGameMinecraft(entitlementsMcStore);
     if (!itemNameEqualToGameMinecraft) {
       LauncherConfig.lookup.put("microsoftProfileId", null);
@@ -153,7 +163,9 @@ public class MicrosoftAuthTask implements Runnable {
       Launcher.launchMinecraft(null, accessTokenResponse[0], null);
     } else {
       val minecraftProfile = MicrosoftAuth.acquireMinecraftProfile(accessTokenResponse[0]);
-      Objects.requireNonNull(minecraftProfile, "minecraftProfile cannot be null");
+      if (Objects.isNull(minecraftProfile)) {
+        return;
+      }
       val minecraftProfileResponse = getMinecraftProfileResponse(minecraftProfile);
       LauncherConfig.lookup.put("microsoftProfileId", minecraftProfileResponse[0]);
       LauncherConfig.lookup.put("microsoftProfileName", minecraftProfileResponse[1]);
