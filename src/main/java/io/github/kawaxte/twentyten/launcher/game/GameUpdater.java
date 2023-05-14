@@ -261,7 +261,7 @@ public final class GameUpdater {
     if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
       GameAppletWrapper.instance.setTaskState(EState.DOWNLOAD_PACKAGES.ordinal());
       GameAppletWrapper.instance.setTaskStateMessage(EState.DOWNLOAD_PACKAGES.getMessage());
-      GameAppletWrapper.instance.setTaskProgressMessage("");
+      GameAppletWrapper.instance.setTaskProgressMessage(null);
       GameAppletWrapper.instance.setTaskProgress(10);
     }
 
@@ -289,23 +289,20 @@ public final class GameUpdater {
             int downloadProgress = (currentDownloadSize * 100) / totalDownloadSize;
             int progress = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
             GameAppletWrapper.instance.setTaskProgressMessage(
-                MessageFormat.format(
-                    LauncherLanguage.bundle.getString("gaw.taskProgressMessage"),
-                    fileName,
-                    downloadProgress));
+                "gaw.taskProgressMessage", fileName, downloadProgress);
             GameAppletWrapper.instance.setTaskProgress(progress);
           }
         }
       } catch (FileNotFoundException fnfe) {
-        displayErrorMessage(fnfe.getLocalizedMessage());
+        displayErrorMessage(fnfe.getMessage());
 
         LOGGER.error("Cannot find {}", url.toString(), fnfe);
       } catch (IOException ioe) {
-        displayErrorMessage(ioe.getLocalizedMessage());
+        displayErrorMessage(ioe.getMessage());
 
         LOGGER.error("Failed to download {}", url.toString(), ioe);
       } catch (URISyntaxException urise) {
-        displayErrorMessage(urise.getLocalizedMessage());
+        displayErrorMessage(urise.getMessage());
 
         LOGGER.error("Cannot parse {} as URI", url.toString(), urise);
       }
@@ -320,9 +317,11 @@ public final class GameUpdater {
     val clientJarFile = p.resolve(clientJar).toFile();
     val clientJarFileDest = versionDirectoryPath.resolve(clientJar).toFile();
     try {
-      Files.move(clientJarFile.toPath(), clientJarFileDest.toPath());
+      if (clientJarFile.exists()) {
+        Files.move(clientJarFile.toPath(), clientJarFileDest.toPath());
+      }
     } catch (IOException ioe) {
-      displayErrorMessage(ioe.getLocalizedMessage());
+      displayErrorMessage(ioe.getMessage());
 
       LOGGER.error("Failed to move {} to {}", clientJarFile, clientJarFileDest, ioe);
       return;
@@ -332,15 +331,14 @@ public final class GameUpdater {
         p.toFile().listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
     if (Objects.nonNull(zipFiles)) {
       for (val zipFile : zipFiles) {
-        if (!p.resolve(zipFile.getName()).toFile().exists()) {
-          continue;
-        }
-
+        val lwjglNativesZipFile = p.resolve(zipFile.getName()).toFile();
         val lwjglNativesZipFileDest = nativesDirectoryPath.resolve(zipFile.getName()).toFile();
         try {
-          Files.move(zipFile.toPath(), lwjglNativesZipFileDest.toPath());
+          if (lwjglNativesZipFile.exists()) {
+            Files.move(zipFile.toPath(), lwjglNativesZipFileDest.toPath());
+          }
         } catch (IOException ioe) {
-          displayErrorMessage(ioe.getLocalizedMessage());
+          displayErrorMessage(ioe.getMessage());
 
           LOGGER.error("Failed to move {} to {}", zipFile, lwjglNativesZipFileDest, ioe);
           return;
@@ -350,16 +348,14 @@ public final class GameUpdater {
 
     val jarFiles = getListOfLWJGLJars();
     for (val jarFile : jarFiles) {
-      if (!p.resolve(jarFile).toFile().exists()) {
-        continue;
-      }
-
       val lwjglJarFile = p.resolve(jarFile).toFile();
       val lwjglJarFileDest = binDirectoryPath.resolve(jarFile).toFile();
       try {
-        Files.move(lwjglJarFile.toPath(), lwjglJarFileDest.toPath());
+        if (lwjglJarFile.exists()) {
+          Files.move(lwjglJarFile.toPath(), lwjglJarFileDest.toPath());
+        }
       } catch (IOException ioe) {
-        displayErrorMessage(ioe.getLocalizedMessage());
+        displayErrorMessage(ioe.getMessage());
 
         LOGGER.error("Failed to move {} to {}", lwjglJarFile, lwjglJarFileDest, ioe);
         return;
@@ -371,7 +367,7 @@ public final class GameUpdater {
     if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
       GameAppletWrapper.instance.setTaskState(EState.EXTRACT_PACKAGES.ordinal());
       GameAppletWrapper.instance.setTaskStateMessage(EState.EXTRACT_PACKAGES.getMessage());
-      GameAppletWrapper.instance.setTaskProgressMessage("");
+      GameAppletWrapper.instance.setTaskProgressMessage(null);
       GameAppletWrapper.instance.setTaskProgress(55);
     }
 
@@ -379,24 +375,25 @@ public final class GameUpdater {
         nativesDirectoryPath
             .toFile()
             .listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
-    Objects.requireNonNull(lwjglNativesZipFiles, "lwjglNativesZipFiles cannot be null");
+    if (Objects.isNull(lwjglNativesZipFiles)) {
+      return;
+    }
 
-    int currentExtractSize = 0;
     int totalExtractSize = calcTotalExtractSize(lwjglNativesZipFiles);
-
+    int currentExtractSize = 0;
     for (val lwjglNativesZipFile : lwjglNativesZipFiles) {
       try (val fis = new FileInputStream(lwjglNativesZipFile);
           val bis = new BufferedInputStream(fis);
           val zis = new ZipInputStream(bis)) {
         ZipEntry entry;
         while (Objects.nonNull(entry = zis.getNextEntry())) {
-          val libraryName = entry.getName();
-          if (!entry.isDirectory() && libraryName.indexOf(47) != -1) {
+          val name = entry.getName();
+          if (!entry.isDirectory() && name.indexOf(47) != -1) {
             continue;
           }
 
-          val libraryFile = nativesDirectoryPath.resolve(libraryName).toFile();
-          try (val fos = new FileOutputStream(libraryFile)) {
+          val nativeFile = nativesDirectoryPath.resolve(name).toFile();
+          try (val fos = new FileOutputStream(nativeFile)) {
             val buffer = new byte[65536];
             int bufferSize;
             while ((bufferSize = zis.read(buffer, 0, buffer.length)) != -1) {
@@ -406,20 +403,17 @@ public final class GameUpdater {
               int extractProgress = (currentExtractSize * 100) / totalExtractSize;
               int progress = 55 + ((currentExtractSize * 20) / totalExtractSize);
               GameAppletWrapper.instance.setTaskProgressMessage(
-                  MessageFormat.format(
-                      LauncherLanguage.bundle.getString("gaw.taskProgressMessage"),
-                      libraryName,
-                      extractProgress));
+                  "gaw.taskProgressMessage", name, extractProgress);
               GameAppletWrapper.instance.setTaskProgress(progress);
             }
           }
         }
       } catch (FileNotFoundException fnfe) {
-        displayErrorMessage(fnfe.getLocalizedMessage());
+        displayErrorMessage(fnfe.getMessage());
 
         LOGGER.error("Cannot find {}", lwjglNativesZipFile.toString(), fnfe);
       } catch (IOException ioe) {
-        displayErrorMessage(ioe.getLocalizedMessage());
+        displayErrorMessage(ioe.getMessage());
 
         LOGGER.error("Failed to extract {}", lwjglNativesZipFile.toString(), ioe);
       } finally {
@@ -435,7 +429,7 @@ public final class GameUpdater {
     if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
       GameAppletWrapper.instance.setTaskState(EState.UPDATE_CLASSPATH.ordinal());
       GameAppletWrapper.instance.setTaskStateMessage(EState.UPDATE_CLASSPATH.getMessage());
-      GameAppletWrapper.instance.setTaskProgressMessage("");
+      GameAppletWrapper.instance.setTaskProgressMessage(null);
       GameAppletWrapper.instance.setTaskProgress(90);
     }
 
@@ -453,7 +447,7 @@ public final class GameUpdater {
 
         jarUrls[jarFiles.length] = clientJarFile.toURI().toURL();
       } catch (MalformedURLException murle) {
-        displayErrorMessage(murle.getLocalizedMessage());
+        displayErrorMessage(murle.getMessage());
 
         LOGGER.error("Cannot convert {} to URL", jarUrls, murle);
       }
@@ -490,11 +484,11 @@ public final class GameUpdater {
           size += entry.getSize();
         }
       } catch (FileNotFoundException fnfe) {
-        displayErrorMessage(fnfe.getLocalizedMessage());
+        displayErrorMessage(fnfe.getMessage());
 
         LOGGER.error("Cannot find {}", file.toString(), fnfe);
       } catch (IOException ioe) {
-        displayErrorMessage(ioe.getLocalizedMessage());
+        displayErrorMessage(ioe.getMessage());
 
         LOGGER.error("Failed to calculate size for {}", file.toString(), ioe);
       }
@@ -516,15 +510,15 @@ public final class GameUpdater {
                   val contentLength = request.getFirstHeader(HttpHeaders.CONTENT_LENGTH);
                   return Integer.parseInt(contentLength.getValue());
                 } catch (NumberFormatException nfe) {
-                  displayErrorMessage(nfe.getLocalizedMessage());
+                  displayErrorMessage(nfe.getMessage());
 
                   LOGGER.error("Could not parse content size for {}", url.toString(), nfe);
                 } catch (IOException ioe) {
-                  displayErrorMessage(ioe.getLocalizedMessage());
+                  displayErrorMessage(ioe.getMessage());
 
                   LOGGER.error("Failed to calculate content size for {}", url.toString(), ioe);
                 } catch (URISyntaxException urise) {
-                  displayErrorMessage(urise.getLocalizedMessage());
+                  displayErrorMessage(urise.getMessage());
 
                   LOGGER.error("Cannot parse {} as URI", url.toString(), urise);
                 }
@@ -555,6 +549,6 @@ public final class GameUpdater {
         MessageFormat.format(
             LauncherLanguage.bundle.getString("gaw.taskStateMessage.error"), state, message);
     GameAppletWrapper.instance.setTaskStateMessage(fatalErrorMessage);
-    GameAppletWrapper.instance.setTaskProgressMessage("");
+    GameAppletWrapper.instance.setTaskProgressMessage(null);
   }
 }
