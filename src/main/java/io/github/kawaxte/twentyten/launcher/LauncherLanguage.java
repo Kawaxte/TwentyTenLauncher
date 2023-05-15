@@ -56,7 +56,7 @@ public final class LauncherLanguage {
             bundle = new UTF8ResourceBundle(isr);
           } catch (IOException ioe) {
             LOGGER.error(
-                "Failed to load {} from {}",
+                "Cannot load {} from {}",
                 fileUrl.get().getFile().substring(fileUrlIndex + 1),
                 fileUrl.get().getFile().substring(0, fileUrlIndex),
                 ioe);
