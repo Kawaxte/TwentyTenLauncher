@@ -127,7 +127,7 @@ public final class LauncherOptionsUtils {
                     });
           });
     } catch (IOException ioe) {
-      LOGGER.error("Failed to read {}", fileUrl.toString(), ioe);
+      LOGGER.error("Cannot read {}", fileUrl.toString(), ioe);
     }
 
     val selectedVersion = LauncherConfig.lookup.get("selectedVersion");
