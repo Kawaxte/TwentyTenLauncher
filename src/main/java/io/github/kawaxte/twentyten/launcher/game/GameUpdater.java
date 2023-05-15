@@ -300,7 +300,7 @@ public final class GameUpdater {
       } catch (IOException ioe) {
         displayErrorMessage(ioe.getMessage());
 
-        LOGGER.error("Failed to download {}", url.toString(), ioe);
+        LOGGER.error("Cannot download {}", url.toString(), ioe);
       } catch (URISyntaxException urise) {
         displayErrorMessage(urise.getMessage());
 
@@ -323,7 +323,7 @@ public final class GameUpdater {
     } catch (IOException ioe) {
       displayErrorMessage(ioe.getMessage());
 
-      LOGGER.error("Failed to move {} to {}", clientJarFile, clientJarFileDest, ioe);
+      LOGGER.error("Cannot move {} to {}", clientJarFile, clientJarFileDest, ioe);
       return;
     }
 
@@ -340,7 +340,7 @@ public final class GameUpdater {
         } catch (IOException ioe) {
           displayErrorMessage(ioe.getMessage());
 
-          LOGGER.error("Failed to move {} to {}", zipFile, lwjglNativesZipFileDest, ioe);
+          LOGGER.error("Cannot move {} to {}", zipFile, lwjglNativesZipFileDest, ioe);
           return;
         }
       }
@@ -357,7 +357,7 @@ public final class GameUpdater {
       } catch (IOException ioe) {
         displayErrorMessage(ioe.getMessage());
 
-        LOGGER.error("Failed to move {} to {}", lwjglJarFile, lwjglJarFileDest, ioe);
+        LOGGER.error("Cannot move {} to {}", lwjglJarFile, lwjglJarFileDest, ioe);
         return;
       }
     }
@@ -415,7 +415,7 @@ public final class GameUpdater {
       } catch (IOException ioe) {
         displayErrorMessage(ioe.getMessage());
 
-        LOGGER.error("Failed to extract {}", lwjglNativesZipFile.toString(), ioe);
+        LOGGER.error("Cannot extract {}", lwjglNativesZipFile.toString(), ioe);
       } finally {
         if (!lwjglNativesZipFile.delete()) {
           LOGGER.warn("Could not delete {}", lwjglNativesZipFile);
@@ -490,7 +490,7 @@ public final class GameUpdater {
       } catch (IOException ioe) {
         displayErrorMessage(ioe.getMessage());
 
-        LOGGER.error("Failed to calculate size for {}", file.toString(), ioe);
+        LOGGER.error("Cannot calculate size for {}", file.toString(), ioe);
       }
     }
     return size;
@@ -512,11 +512,11 @@ public final class GameUpdater {
                 } catch (NumberFormatException nfe) {
                   displayErrorMessage(nfe.getMessage());
 
-                  LOGGER.error("Could not parse content size for {}", url.toString(), nfe);
+                  LOGGER.error("Cannot parse content size for {}", url.toString(), nfe);
                 } catch (IOException ioe) {
                   displayErrorMessage(ioe.getMessage());
 
-                  LOGGER.error("Failed to calculate content size for {}", url.toString(), ioe);
+                  LOGGER.error("Cannot calculate content size for {}", url.toString(), ioe);
                 } catch (URISyntaxException urise) {
                   displayErrorMessage(urise.getMessage());
 
