@@ -39,11 +39,11 @@ import org.apache.logging.log4j.Logger;
 
 public final class GameUpdater {
 
-  private static final Path versionDirectoryPath;
+  public static final Path versionDirectoryPath;
+  public static final Path binDirectoryPath;
+  public static final Path nativesDirectoryPath;
+  public static final Path versionsDirectoryPath;
   private static final Logger LOGGER;
-  private static final Path binDirectoryPath;
-  private static final Path nativesDirectoryPath;
-  private static final Path versionsDirectoryPath;
 
   static {
     LOGGER = LogManager.getLogger(GameUpdater.class);
