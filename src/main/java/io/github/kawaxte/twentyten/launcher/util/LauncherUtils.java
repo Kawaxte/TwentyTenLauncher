@@ -91,7 +91,7 @@ public final class LauncherUtils {
                   .append("releases")
                   .toString());
     } catch (IOException ioe) {
-      LOGGER.error("Failed to create URL(s)", ioe);
+      LOGGER.error("Cannot create URL(s)", ioe);
     }
   }
 
@@ -130,7 +130,7 @@ public final class LauncherUtils {
         }
       }
     } catch (IOException ioe) {
-      LOGGER.error("Failed to read {}", fileUrl, ioe);
+      LOGGER.error("Cannot read {}", fileUrl, ioe);
     }
     return null;
   }
@@ -146,7 +146,7 @@ public final class LauncherUtils {
     } catch (FileNotFoundException fnfe) {
       return new SimpleDateFormat("1.M.ddyy").format(new Date());
     } catch (IOException ioe) {
-      LOGGER.error("Failed to retrieve '{}' from {}", key, fileUrl, ioe);
+      LOGGER.error("Cannot retrieve '{}' from {}", key, fileUrl, ioe);
     } catch (URISyntaxException urise) {
       LOGGER.error("Cannot parse {} as URI", fileUrl, urise);
     }
@@ -201,7 +201,7 @@ public final class LauncherUtils {
                     LauncherPanel.instance,
                     new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", uhe.getMessage()));
               } catch (IOException ioe) {
-                LOGGER.error("Failed to check for updates", ioe);
+                LOGGER.error("Cannot check for updates", ioe);
               } catch (URISyntaxException urise) {
                 LOGGER.error("Cannot convert {} to URI", releasesUrl, urise);
               }
@@ -278,7 +278,7 @@ public final class LauncherUtils {
         Desktop.getDesktop().browse(new URI(url));
       }
     } catch (IOException ioe) {
-      LauncherUtils.LOGGER.error("Failed to browse {}", url, ioe);
+      LauncherUtils.LOGGER.error("Cannot browse {}", url, ioe);
     } catch (URISyntaxException urise) {
       LauncherUtils.LOGGER.error("Cannot convert {} to URI", url, urise);
     }
@@ -290,7 +290,7 @@ public final class LauncherUtils {
         Desktop.getDesktop().open(p.toFile());
       }
     } catch (IOException ioe) {
-      LauncherUtils.LOGGER.error("Failed to open {}", p, ioe);
+      LauncherUtils.LOGGER.error("Cannot open {}", p, ioe);
     }
   }
 }
