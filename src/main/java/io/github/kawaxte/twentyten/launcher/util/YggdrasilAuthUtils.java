@@ -52,7 +52,7 @@ public final class YggdrasilAuthUtils {
       return;
     }
     if (refresh.has("error")) {
-      throw new RuntimeException("Failed to refresh access token");
+      throw new RuntimeException("Cannot refresh access token");
     }
 
     val newAccessToken = refresh.getString("accessToken");
