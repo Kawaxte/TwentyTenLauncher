@@ -58,7 +58,7 @@ public final class LauncherConfig {
     try {
       return !configFile.exists() && !configFile.createNewFile() ? null : filePath;
     } catch (IOException ioe) {
-      LOGGER.error("Failed to create {}", configFile.getAbsolutePath(), ioe);
+      LOGGER.error("Cannot create {}", configFile.getAbsolutePath(), ioe);
     }
     return null;
   }
@@ -76,7 +76,7 @@ public final class LauncherConfig {
     } catch (FileNotFoundException fnfe) {
       LOGGER.error("Cannot find {}", configFilePath.toAbsolutePath(), fnfe);
     } catch (IOException ioe) {
-      LOGGER.error("Failed to load {}", configFilePath.toAbsolutePath(), ioe);
+      LOGGER.error("Cannot load {}", configFilePath.toAbsolutePath(), ioe);
     } finally {
       if (!properties.isEmpty()) {
         LOGGER.info(
@@ -111,7 +111,7 @@ public final class LauncherConfig {
     } catch (FileNotFoundException fnfe) {
       LOGGER.error("Cannot find {}", configFilePath.toAbsolutePath(), fnfe);
     } catch (IOException ioe) {
-      LOGGER.error("Failed to save {}", configFilePath.toAbsolutePath(), ioe);
+      LOGGER.error("Cannot save {}", configFilePath.toAbsolutePath(), ioe);
     } finally {
       LOGGER.info(
           "Saved {} to {}",
