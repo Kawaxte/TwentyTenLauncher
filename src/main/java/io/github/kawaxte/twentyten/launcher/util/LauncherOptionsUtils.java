@@ -87,17 +87,19 @@ public final class LauncherOptionsUtils {
                 .sorted(
                     Collections.reverseOrder(
                         Comparator.comparing(
-                            object -> {
-                              val versionId = object.getString("versionId");
+                            o -> {
+                              val versionId = o.getString("versionId");
                               val versionIdSplit = versionId.split("_");
-                              return versionIdSplit.length == 1
-                                  ? versionIdSplit[0]
-                                  : new StringBuilder()
-                                      .append(versionIdSplit[0])
-                                      .append(".")
-                                      .append(versionIdSplit[1])
-                                      .toString();
-                            })))
+
+                              if (versionIdSplit.length == 1) {
+                                return versionId;
+                              }
+
+                              val majorVersion = versionIdSplit[0];
+                              val minorVersion = versionIdSplit[1].split("_")[0];
+                              return String.format("%s.%s", majorVersion, minorVersion);
+                            },
+                            Comparator.nullsLast(String::compareTo))))
                 .collect(Collectors.toList())
                 .forEach(
                     versionObject -> {
@@ -183,5 +185,18 @@ public final class LauncherOptionsUtils {
             OptionsDialog.instance.pack();
           });
     }
+  }
+
+  private static String apply(JSONObject o) {
+    val versionId = o.getString("versionId");
+    val versionIdSplit = versionId.split("_");
+
+    if (versionIdSplit.length == 1) {
+      return versionId;
+    }
+
+    val majorVersion = versionIdSplit[0];
+    val minorVersion = versionIdSplit[1].split("_")[0];
+    return String.format("%s.%s", majorVersion, minorVersion);
   }
 }
