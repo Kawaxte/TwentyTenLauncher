@@ -16,6 +16,7 @@ package io.github.kawaxte.twentyten.launcher.game;
 
 import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
 import java.applet.Applet;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -51,6 +52,7 @@ public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
             GameAppletWrapper.instance
                 .getMcAppletClassLoader()
                 .loadClass("net.minecraft.client.MinecraftApplet")
+                .getDeclaredConstructor()
                 .newInstance();
       }
     } catch (ExecutionException ee) {
@@ -65,6 +67,10 @@ public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
       LOGGER.error("Cannot instantiate MinecraftApplet", ie);
     } catch (IllegalAccessException iae) {
       LOGGER.error("Cannot access MinecraftApplet", iae);
+    } catch (InvocationTargetException ite) {
+      LOGGER.error("Cannot invoke MinecraftApplet", ite);
+    } catch (NoSuchMethodException nsme) {
+      LOGGER.error("Cannot find MinecraftApplet constructor", nsme);
     } finally {
       service.shutdown();
     }
