@@ -130,5 +130,5 @@
   <!--
   <version>${version.major}.${maven.build.timestamp}_${version.minor}</version>
   -->
-  <version>${version.major}.${maven.build.timestamp}_${version.minor}</version>
+  <version>${version.major}.${maven.build.timestamp}</version>
 </project>
