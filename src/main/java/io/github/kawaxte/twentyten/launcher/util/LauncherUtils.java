@@ -164,8 +164,8 @@ public final class LauncherUtils {
       Attributes attributes = manifest.getMainAttributes();
       return attributes.getValue(key);
     } catch (FileNotFoundException fnfe) {
-      val currentInstant = Instant.now();
-      return new SimpleDateFormat("1.M.ddyy").format(currentInstant.toEpochMilli());
+      val now = Instant.now();
+      return new SimpleDateFormat("1.M.ddyy").format(now.toEpochMilli());
     } catch (IOException ioe) {
       LOGGER.error("Cannot retrieve '{}' from {}", key, fileUrl, ioe);
     } catch (URISyntaxException urise) {
