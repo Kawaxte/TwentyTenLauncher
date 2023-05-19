@@ -1,81 +1,91 @@
-<div align="center">
-  <a href="https://i.imgur.com/VxyZRcZ.png">
-    <img src="https://i.imgur.com/VxyZRcZ.png">
-  </a>
-</div>
+# TwentyTen Launcher
 
-<p align="center">
-  <a href="https://www.azul.com/downloads/?version=java-7-lts&package=jre">
-    <img src="https://img.shields.io/badge/Java-7%2B-blue.svg">
-  </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
-    <img src="https://img.shields.io/github/v/release/sojlabjoi/TwentyTenLauncher?label=latest">
-  </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/releases/latest">
-    <img src="https://img.shields.io/github/downloads/sojlabjoi/TwentyTenLauncher/latest/total.svg">
-  </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/blob/stable/LICENSE">
-    <img src="https://img.shields.io/github/license/sojlabjoi/TwentyTenLauncher">
-  </a>
-</p>
+[![GitHub Latest](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases/latest)
+[![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases)
 
----
+![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?sort=semver&logo=github&style=for-the-badge)
 
-__TwentyTen Launcher__ is a third-party Minecraft launcher that offers a selection of legacy
-Minecraft
-versions from June 2010 up to January 2011. It is named after the year the original launcher was
-released and is based on the November 2010 build of the original launcher.
+This repository contains an application that lets you play older versions of Minecraft. It's named
+after the year the original Minecraft Launcher was released, and is
+designed to give you an authentic experience of playing Minecraft as it was in the past.
 
-With this launcher, you can sign in with your Mojang or Microsoft account and choose different
-languages and legacy versions of Minecraft to play. The launcher is designed to give you an
-authentic experience of playing the game as it was in the past.
+## Features
 
-> _Please note that this application requires at least Java 7 or greater to run._
-
-<h2 align="center">Managing Issues and Contributions</h2>
-<p align="center">
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/issues">
-    <img src="https://img.shields.io/github/issues/sojlabjoi/TwentyTenLauncher">
-  </a>
-  <a href="https://github.com/sojlabjoi/TwentyTenLauncher/pulls">
-    <img src="https://img.shields.io/github/issues-pr/sojlabjoi/TwentyTenLauncher">
-  </a>
-</p>
+- Play different versions of Minecraft from the past; from February 2010 up to
+  September 2011.
+- Hear the classic sounds of Minecraft, like the scary cave sounds and the infamous hurt sound.
+- Join servers that still run older versions of Minecraft, and see your skin or cape (_if the
+  version
+  supports it_) in both singleplayer and multiplayer.
+- Use legacy mods just like you would in the past - just drag and drop `.class` files into the
+  client `.jar` file, provided that you have ModLoader installed first.
+- Change the language of the launcher without having to restart the application.
 
 ---
 
-We encourage the community to help us improve our launcher by reporting issues and suggesting new
-features. To do this, we use GitHub's issue tracker and pull request feature.
+## Contributing
 
-<h3 align="center">Reporting Issues and Suggestions</h3>
+[![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/stargazers)
+[![GitHub Watchers](https://img.shields.io/github/watchers/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/watchers)
+[![GitHub Forks](https://img.shields.io/github/forks/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/forks)
+[![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/graphs/contributors)
 
-If you encounter a problem or have an idea for a new feature, please follow these steps:
+If you find this project useful or interesting, please consider giving it a ⭐. It's a
+quick and easy way to show your support.
 
-1. Go to the [issue tracker](https://github.com/sojlabjoi/TwentyTenLauncher/issues) for this
+### Reporting Issues or Suggesting Features
+
+[![GitHub Issues (Open)](https://img.shields.io/github/issues/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/issues)
+[![GitHub Issues (Closed)](https://img.shields.io/github/issues-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/issues?q=is%3Aissue+is%3Aclosed)
+
+If you find a bug or have a suggestion for a new feature, you can report (or suggest) it by
+following
+these steps:
+
+1. Go to the [issue tracker](https://github.com/Kawaxte/TwentyTenLauncher/issues) on this
    repository.
-2. Click on the ``New issue`` button.
-3. Describe the issue or suggestion in the provided form, making sure to be clear and concise.
-4. Include any relevant details, like error messages or steps to reproduce the issue.
-5. Click on the ``Submit new issue`` button to open the issue.
-6. Wait for the issue to be reviewed and resolved.
+2. Click the `New issue` button.
+3. Describe the issue or suggestion clearly and provide any relevant details.
+4. Click the `Submit new issue` button to create the issue.
 
-<h3 align="center">Submitting Pull Requests</h3>
+### Forking and Making Pull Requests
 
-If you would like to submit a change or addition to
-the launcher, please follow these steps:
+[![GitHub Pull Requests (Open)](https://img.shields.io/github/issues-pr/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/pulls)
+[![GitHub Pull Requests (Closed)](https://img.shields.io/github/issues-pr-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/pulls?q=is%3Apr+is%3Aclosed)
 
-1. First, create a copy of the repository by forking it, which will create a personal copy of the
-   repository that you can modify.
-2. Make the changes you want to make in a new branch of your forked repository.
-3. Thoroughly test your changes.
-4. Submit a pull request from your forked repository to the original repository.
-   Provide a detailed explanation of your changes and any relevant information.
-5. Wait for the pull request to be reviewed and merged.
+If you are a developer and would like to contribute by adding a new feature or
+fixing a bug, you can do so by following these steps:
+
+1. Make a copy of this repository by forking it on GitHub.
+2. Make the changes you want in a new branch of your forked repository.
+3. Test your changes thoroughly.
+4. Submit a pull request from your forked repository with a detailed
+   explanation of your changes.
 
 ---
 
-<div align="center">
-  <a href="https://i.imgur.com/XI2qib8.png">
-    <img src="https://i.imgur.com/XI2qib8.png">
-  </a>
-</div>
+## Building from Source
+
+[![Java](https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge)](https://www.java.com/en/download/)
+[![Maven](https://img.shields.io/badge/Maven-3.8.1-blue?logo=apachemaven&color=C71A36&style=for-the-badge)](https://maven.apache.org/download.cgi)
+[![Git](https://img.shields.io/badge/Git-2.40.1-blue?logo=git&color=F05032&style=for-the-badge)](https://git-scm.com/downloads)
+
+This project uses [Apache Maven](https://maven.apache.org/) to manage dependencies and build the
+application. To build the application from source, follow these steps:
+
+1. Clone the repository to your computer by using [Git](https://git-scm.com/) or by downloading the
+   source code as a `.zip` file.
+2. Load the project into your IDE of choice or open a terminal in the project directory.
+3. Make any changes you want to the source code.
+4. Run the command `mvn clean package shade:shade` to build the application or use the Run
+   Configuration
+   in your IDE.
+
+The finished build will be saved as a `.jar` file in the `target` directory.
+
+## License
+
+[![GitHub License](https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/blob/nightly/LICENSE)
+
+This project is licensed under
+the [GNU Lesser General Public License v3.0](https://choosealicense.com/licenses/lgpl-3.0/).

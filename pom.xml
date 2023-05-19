@@ -2,86 +2,81 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>TwentyTenLauncher</artifactId>
+  <artifactId>twentyten-launcher</artifactId>
 
   <build>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <Build-Time>${version}</Build-Time>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.3.0</version>
+      </plugin>
       <plugin>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
         <artifactId>maven-shade-plugin</artifactId>
         <configuration>
           <artifactSet>
             <includes>
-              <include>org.json:json</include>
-              <include>org.projectlombok:lombok</include>
-              <include>net.java.dev.jna:jna</include>
-              <include>net.java.dev.jna:jna-platform</include>
-              <include>commons-codec:commons-codec</include>
+              <include>*:*:*</include>
             </includes>
           </artifactSet>
           <createDependencyReducedPom>false</createDependencyReducedPom>
-          <shadedArtifactAttached>true</shadedArtifactAttached>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/maven/**</exclude>
+                <exclude>META-INF/MANIFEST.MF</exclude>
+                <exclude>META-INF/DEPENDENCIES</exclude>
+                <exclude>META-INF/LICENSE</exclude>
+                <exclude>META-INF/NOTICE</exclude>
+              </excludes>
+            </filter>
+          </filters>
+          <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
           <transformers>
             <transformer
               implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              <mainClass>ee.twentyten.Launcher</mainClass>
+              <mainClass>io.github.kawaxte.twentyten.launcher.Launcher</mainClass>
             </transformer>
           </transformers>
         </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
         <groupId>org.apache.maven.plugins</groupId>
-        <version>3.1.1</version>
-      </plugin>
-      <plugin>
-        <!-- https://mvnrepository.com/artifact/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin -->
-        <artifactId>launch4j-maven-plugin</artifactId>
-        <configuration>
-          <classPath>
-            <mainClass>ee.twentyten.Launcher</mainClass>
-          </classPath>
-          <errTitle>launch4j</errTitle>
-          <headerType>gui</headerType>
-          <icon>${project.basedir}/src/main/resources/icon/favicon.ico</icon>
-          <jar>${project.build.directory}/${project.build.finalName}-shaded.jar</jar>
-          <jre>
-            <jdkPreference>preferJre</jdkPreference>
-            <minVersion>1.7.0</minVersion>
-          </jre>
-          <messages>
-            <jreVersionErr>This application requires Java Runtime Environment 1.7.0</jreVersionErr>
-            <launcherErr>An error occurred while launching the application.</launcherErr>
-            <startupErr>An error occurred while starting the application.</startupErr>
-          </messages>
-          <outfile>${project.build.directory}/TwentyTen_${project.version}.exe</outfile>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>launch4j</goal>
-            </goals>
-            <id>l4j-clui</id>
-            <phase>package</phase>
-          </execution>
-        </executions>
-        <groupId>com.akathist.maven.plugins.launch4j</groupId>
-        <version>1.7.25</version>
+        <inherited>true</inherited>
+        <version>3.4.1</version>
       </plugin>
     </plugins>
   </build>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5-fluent -->
     <dependency>
-      <artifactId>jna-platform</artifactId>
-      <groupId>net.java.dev.jna</groupId>
-      <version>5.13.0</version>
+      <artifactId>httpclient5-fluent</artifactId>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <version>5.2.1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5 -->
+    <dependency>
+      <artifactId>httpcore5</artifactId>
+      <groupId>org.apache.httpcomponents.core5</groupId>
+      <version>5.2.1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.json/json -->
+    <dependency>
+      <artifactId>json</artifactId>
+      <groupId>org.json</groupId>
+      <version>20230227</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
     <dependency>
@@ -90,33 +85,50 @@
       <scope>provided</scope>
       <version>1.18.26</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.json/json -->
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
     <dependency>
-      <artifactId>json</artifactId>
-      <groupId>org.json</groupId>
-      <version>20220924</version>
+      <artifactId>log4j-api</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <version>2.20.0</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
     <dependency>
-      <artifactId>commons-codec</artifactId>
-      <groupId>commons-codec</groupId>
-      <version>1.15</version>
+      <artifactId>log4j-core</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <version>2.20.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->
+    <dependency>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <version>2.20.0</version>
     </dependency>
   </dependencies>
-  <groupId>ee.twentyten</groupId>
+
+  <description>Resurrection of Minecraft Launcher from 2010</description>
+  <groupId>io.github.kawaxte</groupId>
+  <inceptionYear>2022</inceptionYear>
   <modelVersion>4.0.0</modelVersion>
+  <name>${project.groupId}:${project.artifactId}</name>
 
   <properties>
-    <maven.compiler.source>7</maven.compiler.source>
-    <maven.compiler.target>7</maven.compiler.target>
+    <maven.build.timestamp.format>M.ddyy</maven.build.timestamp.format>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <version.major>1</version.major>
+    <version.minor>04</version.minor>
   </properties>
+
   <repositories>
     <repository>
       <id>scijava.public</id>
       <url>https://maven.scijava.org/content/repositories/public/</url>
     </repository>
   </repositories>
-  <version>20230313</version>
 
+  <!--
+  <version>${version.major}.${maven.build.timestamp}_${version.minor}</version>
+  -->
+  <version>${version.major}.${maven.build.timestamp}</version>
 </project>

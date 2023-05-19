@@ -1,13 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="ee.twentyten.Launcher" />
-    <module name="TwentyTenLauncher" />
-    <extension name="coverage">
-      <pattern>
-        <option name="PATTERN" value="ee.twentyten.*" />
-        <option name="ENABLED" value="true" />
-      </pattern>
-    </extension>
+    <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../../Program Files/Java/jre-1.8" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="io.github.kawaxte.twentyten.launcher.Launcher" />
+    <module name="twentyten-launcher" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

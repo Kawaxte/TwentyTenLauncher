@@ -1,0 +1,155 @@
+/*
+ * Copyright (C) 2023 Kawaxte
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License as published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
+ * program. If not, see <https://www.gnu.org/licenses/>.
+ */
+package io.github.kawaxte.twentyten.launcher.ui;
+
+import io.github.kawaxte.twentyten.UTF8ResourceBundle;
+import io.github.kawaxte.twentyten.launcher.LauncherConfig;
+import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
+import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
+import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
+import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.LayoutManager;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Objects;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
+import lombok.Getter;
+import lombok.val;
+
+@Getter
+public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
+
+  private static final long serialVersionUID = 1L;
+  public static MicrosoftAuthPanel instance;
+  private final JLabel copyCodeLabel;
+  private final JLabel userCodeLabel;
+  private final JProgressBar expiresInProgressBar;
+  private final TransparentJButton openBrowserButton;
+  private final TransparentJButton cancelButton;
+  private String verificationUri;
+
+  {
+    this.copyCodeLabel = new JLabel("map.copyCodeLabel", SwingConstants.CENTER);
+    this.userCodeLabel = new JLabel("", SwingConstants.CENTER);
+    this.expiresInProgressBar = new JProgressBar();
+    this.openBrowserButton = new TransparentJButton("map.openBrowserButton");
+    this.cancelButton = new TransparentJButton("map.cancelButton");
+  }
+
+  public MicrosoftAuthPanel() {
+    super(true);
+
+    MicrosoftAuthPanel.instance = this;
+    this.userCodeLabel.setFont(this.userCodeLabel.getFont().deriveFont(Font.BOLD, 24f));
+    this.userCodeLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+    this.userCodeLabel.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent event) {
+            Clipboard clipboard = getToolkit().getSystemClipboard();
+            val transferable = new StringSelection(userCodeLabel.getText());
+            clipboard.setContents(transferable, null);
+          }
+        });
+    this.openBrowserButton.addActionListener(this);
+    this.cancelButton.addActionListener(this);
+
+    this.setLayout(this.getGroupLayout());
+
+    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+    this.updateComponentKeyValues(
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
+  }
+
+  public MicrosoftAuthPanel(String userCode, String verificationUri, String expiresIn) {
+    this();
+    this.userCodeLabel.setText(userCode);
+    this.expiresInProgressBar.setMaximum(Integer.parseInt(expiresIn));
+    this.expiresInProgressBar.setValue(Integer.parseInt(expiresIn));
+    this.verificationUri = verificationUri;
+  }
+
+  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
+    LauncherUtils.updateComponentKeyValue(bundle, this.copyCodeLabel, "map.copyCodeLabel");
+    LauncherUtils.updateComponentKeyValue(bundle, this.openBrowserButton, "map.openBrowserButton");
+    LauncherUtils.updateComponentKeyValue(bundle, this.cancelButton, "map.cancelButton");
+  }
+
+  private LayoutManager getGroupLayout() {
+    int width = 0;
+
+    val buttons = new JButton[] {this.openBrowserButton, this.cancelButton};
+    for (val button : buttons) {
+      width = Math.max(width, button.getPreferredSize().width);
+    }
+
+    val groupLayout = new GroupLayout(this);
+    groupLayout.setAutoCreateContainerGaps(true);
+    groupLayout.setAutoCreateGaps(true);
+    groupLayout.setHorizontalGroup(
+        groupLayout
+            .createSequentialGroup()
+            .addGroup(
+                groupLayout
+                    .createParallelGroup()
+                    .addComponent(this.copyCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.expiresInProgressBar)
+                    .addGroup(
+                        groupLayout
+                            .createSequentialGroup()
+                            .addComponent(this.openBrowserButton, 0, width, Short.MAX_VALUE)
+                            .addComponent(this.cancelButton, 0, width, Short.MAX_VALUE))));
+    groupLayout.setVerticalGroup(
+        groupLayout
+            .createSequentialGroup()
+            .addComponent(this.copyCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(this.expiresInProgressBar)
+            .addGroup(
+                groupLayout
+                    .createParallelGroup()
+                    .addComponent(this.openBrowserButton)
+                    .addComponent(this.cancelButton)));
+    return groupLayout;
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent event) {
+    val source = event.getSource();
+    if (Objects.equals(source, this.openBrowserButton)) {
+      Clipboard clipboard = this.getToolkit().getSystemClipboard();
+      val transferable = new StringSelection(this.userCodeLabel.getText());
+      clipboard.setContents(transferable, null);
+
+      LauncherUtils.openBrowser(this.verificationUri);
+    }
+    if (Objects.equals(source, this.cancelButton)) {
+      LauncherUtils.swapContainers(this.getParent(), new LauncherPanel());
+    }
+  }
+}
