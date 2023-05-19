@@ -1,7 +1,7 @@
 # TwentyTen Launcher
 
-![GitHub Latest](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&style=for-the-badge)
-![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)
+[![GitHub Latest](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases/latest)
+[![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases)
 
 ![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?sort=semver&logo=github&style=for-the-badge)
 
@@ -25,18 +25,18 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 
 ## Contributing
 
-![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
-![GitHub Watchers](https://img.shields.io/github/watchers/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
-![GitHub Forks](https://img.shields.io/github/forks/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
-![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+[![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/stargazers)
+[![GitHub Watchers](https://img.shields.io/github/watchers/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/watchers)
+[![GitHub Forks](https://img.shields.io/github/forks/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/forks)
+[![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/graphs/contributors)
 
 If you find this project useful or interesting, please consider giving it a ⭐. It's a
 quick and easy way to show your support.
 
 ### Reporting Issues or Suggesting Features
 
-![GitHub Issues (Open)](https://img.shields.io/github/issues/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
-![GitHub Issues (Closed)](https://img.shields.io/github/issues-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+[![GitHub Issues (Open)](https://img.shields.io/github/issues/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/issues)
+[![GitHub Issues (Closed)](https://img.shields.io/github/issues-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/issues?q=is%3Aissue+is%3Aclosed)
 
 If you find a bug or have a suggestion for a new feature, you can report (or suggest) it by
 following
@@ -50,8 +50,8 @@ these steps:
 
 ### Forking and Making Pull Requests
 
-![GitHub Pull Requests (Open)](https://img.shields.io/github/issues-pr/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
-![GitHub Pull Requests (Closed)](https://img.shields.io/github/issues-pr-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+[![GitHub Pull Requests (Open)](https://img.shields.io/github/issues-pr/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/pulls)
+[![GitHub Pull Requests (Closed)](https://img.shields.io/github/issues-pr-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/pulls?q=is%3Apr+is%3Aclosed)
 
 If you are a developer and would like to contribute by adding a new feature or
 fixing a bug, you can do so by following these steps:
@@ -66,9 +66,9 @@ fixing a bug, you can do so by following these steps:
 
 ## Building from Source
 
-![Java](https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge)
-![Maven](https://img.shields.io/badge/Maven-3.8.1-blue?logo=apachemaven&color=C71A36&style=for-the-badge)
-![Git](https://img.shields.io/badge/Git-2.40.1-blue?logo=git&color=F05032&style=for-the-badge)
+[![Java](https://img.shields.io/badge/Java-8%2B-blue?style=for-the-badge)](https://www.java.com/en/download/)
+[![Maven](https://img.shields.io/badge/Maven-3.8.1-blue?logo=apachemaven&color=C71A36&style=for-the-badge)](https://maven.apache.org/download.cgi)
+[![Git](https://img.shields.io/badge/Git-2.40.1-blue?logo=git&color=F05032&style=for-the-badge)](https://git-scm.com/downloads)
 
 This project uses [Apache Maven](https://maven.apache.org/) to manage dependencies and build the
 application. To build the application from source, follow these steps:
@@ -85,6 +85,7 @@ The finished build will be saved as a `.jar` file in the `target` directory.
 
 ## License
 
-![GitHub License](https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)
+[![GitHub License](https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/blob/nightly/LICENSE)
 
-This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).
+This project is licensed under
+the [GNU Lesser General Public License v3.0](https://choosealicense.com/licenses/lgpl-3.0/).
