@@ -30,12 +30,8 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.val;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 public class LinkedProperties extends Properties {
 
   private static final long serialVersionUID = 1L;
