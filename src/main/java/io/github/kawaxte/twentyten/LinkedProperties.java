@@ -17,6 +17,7 @@ package io.github.kawaxte.twentyten;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -84,7 +85,7 @@ public class LinkedProperties extends Properties {
       sb.append("#");
       sb.append(LocalDateTime.now());
       sb.append(System.lineSeparator());
-      os.write(sb.toString().getBytes());
+      os.write(sb.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     synchronized (this) {
@@ -99,7 +100,7 @@ public class LinkedProperties extends Properties {
           sb.append(value);
         }
         sb.append(System.lineSeparator());
-        os.write(sb.toString().getBytes());
+        os.write(sb.toString().getBytes(StandardCharsets.UTF_8));
       }
     }
   }
