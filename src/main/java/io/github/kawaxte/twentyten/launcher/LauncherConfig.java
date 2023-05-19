@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
@@ -84,7 +85,7 @@ public final class LauncherConfig {
       return;
     }
 
-    val filePathUri = filePath.toUri();
+    URI filePathUri = filePath.toUri();
 
     val properties = new LinkedProperties();
     try (val fis = new FileInputStream(filePath.toFile())) {
