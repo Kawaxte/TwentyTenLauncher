@@ -79,25 +79,24 @@ public final class LauncherConfig {
   }
 
   public static void loadConfig() {
-    val configFilePath = getConfigFilePath();
-    if (Objects.isNull(configFilePath)) {
+    val filePath = getConfigFilePath();
+    if (Objects.isNull(filePath)) {
       return;
     }
 
+    val filePathUri = filePath.toUri();
+
     val properties = new LinkedProperties();
-    try (val fis = new FileInputStream(configFilePath.toFile())) {
+    try (val fis = new FileInputStream(filePath.toFile())) {
       properties.load(fis);
       properties.forEach((key, value) -> lookup.put((String) key, value));
     } catch (FileNotFoundException fnfe) {
-      LOGGER.error("Cannot find {}", configFilePath.toAbsolutePath(), fnfe);
+      LOGGER.error("Cannot find {}", filePathUri, fnfe);
     } catch (IOException ioe) {
-      LOGGER.error("Cannot load {}", configFilePath.toAbsolutePath(), ioe);
+      LOGGER.error("Cannot load {}", filePathUri, ioe);
     } finally {
       if (!properties.isEmpty()) {
-        LOGGER.info(
-            "Loaded {} from {}",
-            configFilePath.getFileName(),
-            configFilePath.toAbsolutePath().getParent());
+        LOGGER.info("Loaded {}", filePathUri);
       } else {
         saveConfig();
       }

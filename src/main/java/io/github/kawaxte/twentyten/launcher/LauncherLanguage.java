@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Objects;
@@ -60,7 +61,7 @@ public final class LauncherLanguage {
 
   public static void loadLanguage(String baseName, String languageCode) {
     val fileName = String.format("%s_%s.properties", baseName, languageCode);
-    val fileNameUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
+    URL fileUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
 
     InputStream is =
         Optional.ofNullable(
@@ -69,9 +70,9 @@ public final class LauncherLanguage {
     try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       bundle = new UTF8ResourceBundle(br);
     } catch (IOException ioe) {
-      LOGGER.error("Cannot load", fileNameUrl, ioe);
+      LOGGER.error("Cannot load", fileUrl, ioe);
     } finally {
-      LOGGER.info("Loaded {}", fileNameUrl);
+      LOGGER.info("Loaded {}", fileUrl);
     }
   }
 }

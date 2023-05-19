@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -116,12 +117,14 @@ public final class LauncherUtils {
 
   public static String[] getProxyHostAndPort() {
     val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    URL fileUrl =
-        Optional.ofNullable(
-                LauncherOptionsUtils.class.getClassLoader().getResource("versions.json"))
-            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
-    try (val br =
-        new BufferedReader(new InputStreamReader(fileUrl.openStream(), StandardCharsets.UTF_8))) {
+
+    val fileName = "versions.json";
+    URL fileUrl = LauncherUtils.class.getClassLoader().getResource(fileName);
+
+    InputStream is =
+        Optional.ofNullable(LauncherUtils.class.getClassLoader().getResourceAsStream(fileName))
+            .orElseThrow(() -> new NullPointerException("is cannot be null"));
+    try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       val json = new JSONObject(br.lines().collect(Collectors.joining()));
 
       JSONArray versionArray = null;

@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -88,7 +89,7 @@ public final class LauncherOptionsUtils {
     val defaultComboBoxModel = new DefaultComboBoxModel<String>();
 
     val fileName = "versions.json";
-    val fileNameUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
+    URL fileUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
 
     InputStream is =
         Optional.ofNullable(
@@ -149,9 +150,9 @@ public final class LauncherOptionsUtils {
                     });
           });
     } catch (IOException ioe) {
-      LOGGER.error("Cannot read {}", fileNameUrl, ioe);
+      LOGGER.error("Cannot read {}", fileUrl, ioe);
     } finally {
-      LOGGER.info("Read {}", fileNameUrl);
+      LOGGER.info("Read {}", fileUrl);
     }
 
     val selectedVersion = LauncherConfig.lookup.get("selectedVersion");
