@@ -22,9 +22,11 @@ import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
+import javax.swing.JProgressBar;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class MicrosoftAuthTask implements Runnable {
@@ -49,7 +51,7 @@ public class MicrosoftAuthTask implements Runnable {
     if (object.has("error")) {
       val error = object.getString("error");
       if (Objects.equals(error, "authorization_pending")) {
-        val progressBar = MicrosoftAuthPanel.instance.getExpiresInProgressBar();
+        JProgressBar progressBar = MicrosoftAuthPanel.instance.getExpiresInProgressBar();
         progressBar.setValue(progressBar.getValue() - 1);
         return null;
       }
@@ -71,7 +73,7 @@ public class MicrosoftAuthTask implements Runnable {
 
   public static String[] getXBLTokenResponse(JSONObject object) {
     val displayClaims = object.getJSONObject("DisplayClaims");
-    val xui = displayClaims.getJSONArray("xui");
+    JSONArray xui = displayClaims.getJSONArray("xui");
     val uhs = xui.getJSONObject(0).getString("uhs");
     val token = object.getString("Token");
     return new String[] {uhs, token};
@@ -111,7 +113,7 @@ public class MicrosoftAuthTask implements Runnable {
   }
 
   private static boolean isItemNameEqualToGameMinecraft(JSONObject object) {
-    val items = object.getJSONArray("items");
+    JSONArray items = object.getJSONArray("items");
     if (!items.isEmpty()) {
       for (val item : items) {
         val name = ((JSONObject) item).getString("name");

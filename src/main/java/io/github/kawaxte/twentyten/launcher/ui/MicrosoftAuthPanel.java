@@ -23,6 +23,7 @@ import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.LayoutManager;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,7 +69,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
         new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent event) {
-            val clipboard = getToolkit().getSystemClipboard();
+            Clipboard clipboard = getToolkit().getSystemClipboard();
             val transferable = new StringSelection(userCodeLabel.getText());
             clipboard.setContents(transferable, null);
           }
@@ -79,7 +80,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
     this.setLayout(this.getGroupLayout());
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
-    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+    UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
   }
@@ -141,7 +142,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     val source = event.getSource();
     if (Objects.equals(source, this.openBrowserButton)) {
-      val clipboard = this.getToolkit().getSystemClipboard();
+      Clipboard clipboard = this.getToolkit().getSystemClipboard();
       val transferable = new StringSelection(this.userCodeLabel.getText());
       clipboard.setContents(transferable, null);
 

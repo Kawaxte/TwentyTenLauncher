@@ -14,6 +14,7 @@
  */
 package io.github.kawaxte.twentyten.launcher.ui;
 
+import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.game.EState;
@@ -26,9 +27,13 @@ import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Image;
 import java.awt.Transparency;
+import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -102,7 +107,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     }
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
-    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+    UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.taskProgressMessage = MessageFormat.format(bundle.getString(message), args);
   }
 
@@ -167,19 +172,19 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
       return;
     }
 
-    val bgImageUrl =
+    URL bgImageUrl =
         Optional.ofNullable(this.getClass().getClassLoader().getResource("dirt.png"))
             .orElseThrow(() -> new NullPointerException("bgImageUrl cannot be null"));
-    val bgImage = this.getToolkit().getImage(bgImageUrl);
+    Image bgImage = this.getToolkit().getImage(bgImageUrl);
     int bgImageWidth = bgImage.getWidth(this) << 1;
     int bgImageheight = bgImage.getHeight(this) << 1;
     int appletWidth = this.getWidth();
     int appletHeight = this.getHeight();
 
     val g2d = (Graphics2D) g;
-    val deviceConfiguration = g2d.getDeviceConfiguration();
+    GraphicsConfiguration deviceConfiguration = g2d.getDeviceConfiguration();
 
-    val bufferedImage =
+    BufferedImage bufferedImage =
         deviceConfiguration.createCompatibleImage(
             appletWidth >> 1, appletHeight >> 1, Transparency.OPAQUE);
     val g2dBuffered = bufferedImage.createGraphics();
@@ -198,7 +203,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
       g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
       val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
-      val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+      UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
       val title =
           updaterTaskErrored
               ? bundle.getString("gaw.updaterErrored")
@@ -234,7 +239,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     g2d.setFont(this.getFont().deriveFont(Font.PLAIN, 12f));
     g2d.setColor(Color.LIGHT_GRAY);
 
-    val fm = g2d.getFontMetrics();
+    FontMetrics fm = g2d.getFontMetrics();
     int titleWidth = fm.stringWidth(s);
     int titleHeight = fm.getHeight();
     int titleX = (width >> 1 >> 1) - (titleWidth >> 1);
@@ -246,7 +251,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     g2d.setFont(this.getFont().deriveFont(Font.PLAIN, 12f));
     g2d.setColor(Color.LIGHT_GRAY);
 
-    val fm = g2d.getFontMetrics();
+    FontMetrics fm = g2d.getFontMetrics();
     int titleWidth = fm.stringWidth(s);
     int titleHeight = fm.getHeight();
     int titleX = (width >> 1 >> 1) - (titleWidth >> 1);
@@ -258,7 +263,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     g2d.setFont(this.getFont().deriveFont(Font.BOLD, 20f));
     g2d.setColor(Color.LIGHT_GRAY);
 
-    val fm = g2d.getFontMetrics();
+    FontMetrics fm = g2d.getFontMetrics();
     int titleWidth = fm.stringWidth(s);
     int titleHeight = fm.getHeight();
     int titleX = (width >> 1 >> 1) - (titleWidth >> 1);

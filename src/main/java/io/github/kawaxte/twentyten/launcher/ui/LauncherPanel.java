@@ -17,11 +17,16 @@ package io.github.kawaxte.twentyten.launcher.ui;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Transparency;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import javax.swing.JPanel;
@@ -48,19 +53,19 @@ public class LauncherPanel extends JPanel {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    val bgImageUrl =
+    URL bgImageUrl =
         Optional.ofNullable(this.getClass().getClassLoader().getResource("dirt.png"))
             .orElseThrow(() -> new NullPointerException("bgImageUrl cannot be null"));
-    val bgImage = this.getToolkit().getImage(bgImageUrl);
+    Image bgImage = this.getToolkit().getImage(bgImageUrl);
     int bgImageWidth = bgImage.getWidth(this) << 1;
     int bgImageheight = bgImage.getHeight(this) << 1;
     int panelWidth = this.getWidth();
     int panelHeight = this.getHeight();
 
     val g2d = (Graphics2D) g;
-    val deviceConfiguration = g2d.getDeviceConfiguration();
+    GraphicsConfiguration deviceConfiguration = g2d.getDeviceConfiguration();
 
-    val bufferedImage =
+    BufferedImage bufferedImage =
         deviceConfiguration.createCompatibleImage(
             panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
     val g2dBuffered = bufferedImage.createGraphics();
@@ -90,7 +95,7 @@ public class LauncherPanel extends JPanel {
     g2d.setFont(this.getFont().deriveFont(Font.BOLD, 20f));
     g2d.setColor(Color.LIGHT_GRAY);
 
-    val fm = g2d.getFontMetrics();
+    FontMetrics fm = g2d.getFontMetrics();
     int titleWidth = fm.stringWidth(s);
     int titleHeight = fm.getHeight();
     int titleX = (width >> 1 >> 1) - (titleWidth >> 1);

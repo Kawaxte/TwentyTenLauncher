@@ -17,7 +17,9 @@ package io.github.kawaxte.twentyten.launcher;
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.UTF8ResourceBundle.UTF8Control;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Objects;
@@ -57,7 +59,7 @@ public final class LauncherLanguage {
 
   public static void loadLanguage(String baseName, String languageCode) {
     val fileName = String.format("%s_%s.properties", baseName, languageCode);
-    val fileUrl =
+    Optional<URL> fileUrl =
         Optional.ofNullable(LauncherLanguage.class.getClassLoader().getResource(fileName));
     int fileUrlIndex =
         fileUrl
@@ -65,7 +67,7 @@ public final class LauncherLanguage {
             .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
     fileUrl.ifPresent(
         url -> {
-          try (val is = url.openConnection().getInputStream();
+          try (InputStream is = url.openConnection().getInputStream();
               val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             bundle = new UTF8ResourceBundle(isr);
           } catch (IOException ioe) {

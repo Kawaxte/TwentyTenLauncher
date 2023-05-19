@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -59,7 +60,7 @@ public class LinkedProperties extends Properties {
     }
 
     synchronized (this) {
-      for (val entry : this.linkedMap.entrySet()) {
+      for (Entry<Object, Object> entry : this.linkedMap.entrySet()) {
         val key = entry.getKey();
         val value = entry.getValue();
 
@@ -89,7 +90,7 @@ public class LinkedProperties extends Properties {
     }
 
     synchronized (this) {
-      for (val entry : this.linkedMap.entrySet()) {
+      for (Entry<Object, Object> entry : this.linkedMap.entrySet()) {
         val key = entry.getKey();
         val value = entry.getValue();
 

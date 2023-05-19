@@ -15,9 +15,10 @@
 package io.github.kawaxte.twentyten.launcher.auth;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import javax.swing.SwingWorker;
-import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,8 +41,8 @@ public class YggdrasilAuthWorker extends SwingWorker<Object, Void> {
 
   @Override
   protected Object doInBackground() {
-    val service = Executors.newSingleThreadExecutor();
-    val future = service.submit(new YggdrasilAuthTask(username, password, clientToken));
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<?> future = service.submit(new YggdrasilAuthTask(username, password, clientToken));
     try {
       return future.get();
     } catch (ExecutionException ee) {

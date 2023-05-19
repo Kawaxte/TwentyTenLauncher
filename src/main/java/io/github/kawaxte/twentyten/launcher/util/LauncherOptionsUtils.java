@@ -14,6 +14,7 @@
  */
 package io.github.kawaxte.twentyten.launcher.util;
 
+import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.ELanguage;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
@@ -27,11 +28,13 @@ import io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,6 +45,7 @@ import javax.swing.SwingUtilities;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public final class LauncherOptionsUtils {
@@ -83,19 +87,19 @@ public final class LauncherOptionsUtils {
 
     val defaultComboBoxModel = new DefaultComboBoxModel<String>();
 
-    val fileUrl =
+    URL fileUrl =
         Optional.ofNullable(
                 LauncherOptionsUtils.class.getClassLoader().getResource("versions.json"))
             .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
     try (val br =
         new BufferedReader(new InputStreamReader(fileUrl.openStream(), StandardCharsets.UTF_8))) {
       val json = new JSONObject(br.lines().collect(Collectors.joining()));
-      val versionArrays =
+      List<String> versionArrays =
           Collections.unmodifiableList(
               Arrays.asList("legacy_beta", "legacy_alpha", "legacy_infdev"));
       versionArrays.forEach(
           version -> {
-            val versionArray = json.getJSONArray(version);
+            JSONArray versionArray = json.getJSONArray(version);
             IntStream.range(0, versionArray.length())
                 .mapToObj(versionArray::getJSONObject)
                 .sorted(
@@ -180,7 +184,7 @@ public final class LauncherOptionsUtils {
       val finalSelectedItem = selectedItem;
       SwingUtilities.invokeLater(
           () -> {
-            val bundle = LauncherLanguage.getUTF8Bundle(finalSelectedItem);
+            UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(finalSelectedItem);
             if (Objects.nonNull(bundle)) {
               LanguageGroupBox.instance.updateComponentKeyValues(bundle);
               OptionsDialog.instance.updateContainerKeyValues(bundle);

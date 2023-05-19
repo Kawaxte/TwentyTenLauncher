@@ -39,10 +39,13 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.swing.AbstractButton;
@@ -113,7 +116,7 @@ public final class LauncherUtils {
 
   public static String[] getProxyHostAndPort() {
     val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    val fileUrl =
+    URL fileUrl =
         Optional.ofNullable(
                 LauncherOptionsUtils.class.getClassLoader().getResource("versions.json"))
             .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
@@ -150,12 +153,12 @@ public final class LauncherUtils {
   }
 
   public static String getManifestAttribute(String key) {
-    val fileUrl =
+    URL fileUrl =
         Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
             .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
     try (val file = new JarFile(new File(fileUrl.toURI()))) {
-      val manifest = file.getManifest();
-      val attributes = manifest.getMainAttributes();
+      Manifest manifest = file.getManifest();
+      Attributes attributes = manifest.getMainAttributes();
       return attributes.getValue(key);
     } catch (FileNotFoundException fnfe) {
       val currentInstant = Instant.now();
@@ -172,7 +175,7 @@ public final class LauncherUtils {
     val userHome = System.getProperty("user.home", ".");
     val appData = System.getenv("APPDATA");
 
-    val workingDirectoryLookup =
+    Map<EPlatform, Path> workingDirectoryLookup =
         Collections.unmodifiableMap(
             new HashMap<EPlatform, Path>() {
               {

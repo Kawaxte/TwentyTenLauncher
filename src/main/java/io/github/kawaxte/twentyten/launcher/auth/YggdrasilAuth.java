@@ -23,10 +23,13 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import lombok.val;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,8 +85,8 @@ public final class YggdrasilAuth {
     body.put("clientToken", clientToken);
     body.put("requestUser", true);
 
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.post(getYggdrasilAuthUrls()[0].toURI())
@@ -91,7 +94,7 @@ public final class YggdrasilAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
@@ -123,8 +126,8 @@ public final class YggdrasilAuth {
     body.put("accessToken", accessToken);
     body.put("clientToken", clientToken);
 
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.post(getYggdrasilAuthUrls()[1].toURI())
@@ -132,7 +135,7 @@ public final class YggdrasilAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
@@ -162,8 +165,8 @@ public final class YggdrasilAuth {
     body.put("clientToken", clientToken);
     body.put("requestUser", true);
 
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.post(getYggdrasilAuthUrls()[2].toURI())
@@ -171,7 +174,7 @@ public final class YggdrasilAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";

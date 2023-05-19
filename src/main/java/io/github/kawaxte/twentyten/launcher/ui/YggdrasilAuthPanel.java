@@ -107,7 +107,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     this.signinButton.addActionListener(this);
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
-    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+    UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
   }
@@ -192,7 +192,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent event) {
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
-    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+    UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
 
     val source = event.getSource();
     if (Objects.equals(source, this.microsoftSigninButton)) {

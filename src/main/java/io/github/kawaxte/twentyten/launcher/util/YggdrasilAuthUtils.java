@@ -19,6 +19,7 @@ import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker;
 import java.util.Objects;
 import lombok.val;
+import org.json.JSONObject;
 
 public final class YggdrasilAuthUtils {
 
@@ -50,7 +51,7 @@ public final class YggdrasilAuthUtils {
       return false;
     }
 
-    val validate = YggdrasilAuth.validateAccessToken(accessToken, clientToken);
+    JSONObject validate = YggdrasilAuth.validateAccessToken(accessToken, clientToken);
     if (Objects.isNull(validate)) {
       return false;
     }
@@ -61,7 +62,7 @@ public final class YggdrasilAuthUtils {
     val accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
     val clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
 
-    val refresh = YggdrasilAuth.refreshAccessToken(accessToken, clientToken);
+    JSONObject refresh = YggdrasilAuth.refreshAccessToken(accessToken, clientToken);
     if (Objects.isNull(refresh)) {
       return;
     }

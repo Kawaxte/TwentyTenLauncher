@@ -23,11 +23,14 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import lombok.val;
 import org.apache.hc.client5.http.fluent.Form;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.logging.log4j.LogManager;
@@ -112,8 +115,8 @@ public final class MicrosoftAuth {
     body.add("response_type", "code");
     body.add("scope", "XboxLive.signin offline_access");
 
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.post(getYggdrasilAuthUrls()[0].toURI())
@@ -121,7 +124,7 @@ public final class MicrosoftAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
@@ -154,8 +157,8 @@ public final class MicrosoftAuth {
     body.add("device_code", deviceCode);
     body.add("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
 
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.post(getYggdrasilAuthUrls()[1].toURI())
@@ -163,7 +166,7 @@ public final class MicrosoftAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
@@ -196,8 +199,8 @@ public final class MicrosoftAuth {
     body.add("refresh_token", refreshToken);
     body.add("grant_type", "refresh_token");
 
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.post(getYggdrasilAuthUrls()[1].toURI())
@@ -205,7 +208,7 @@ public final class MicrosoftAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
@@ -240,8 +243,8 @@ public final class MicrosoftAuth {
     body.put("RelyingParty", "http://auth.xboxlive.com");
     body.put("TokenType", "JWT");
 
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.post(getYggdrasilAuthUrls()[2].toURI())
@@ -249,7 +252,7 @@ public final class MicrosoftAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
@@ -286,8 +289,8 @@ public final class MicrosoftAuth {
     body.put("RelyingParty", "rp://api.minecraftservices.com/");
     body.put("TokenType", "JWT");
 
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.post(getYggdrasilAuthUrls()[3].toURI())
@@ -295,7 +298,7 @@ public final class MicrosoftAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
@@ -327,8 +330,8 @@ public final class MicrosoftAuth {
     body.put("identityToken", String.format("XBL3.0 x=%s;%s", uhs, token));
     body.put("ensureLegacyEnabled", true);
 
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.post(getYggdrasilAuthUrls()[4].toURI())
@@ -336,7 +339,7 @@ public final class MicrosoftAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
@@ -364,8 +367,8 @@ public final class MicrosoftAuth {
   }
 
   public static JSONObject checkEntitlementsMcStore(String accessToken) {
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.get(getYggdrasilAuthUrls()[5].toURI())
@@ -373,7 +376,7 @@ public final class MicrosoftAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";
@@ -401,8 +404,8 @@ public final class MicrosoftAuth {
   }
 
   public static JSONObject acquireMinecraftProfile(String accessToken) {
-    val service = Executors.newSingleThreadExecutor();
-    val future =
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<String> future =
         service.submit(
             () ->
                 Request.get(getYggdrasilAuthUrls()[6].toURI())
@@ -410,7 +413,7 @@ public final class MicrosoftAuth {
                     .execute()
                     .handleResponse(
                         response -> {
-                          val responseEntity = response.getEntity();
+                          HttpEntity responseEntity = response.getEntity();
                           return Objects.nonNull(responseEntity)
                               ? EntityUtils.toString(responseEntity, StandardCharsets.UTF_8)
                               : "{}";

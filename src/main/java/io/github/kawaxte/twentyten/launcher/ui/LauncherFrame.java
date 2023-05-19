@@ -17,9 +17,9 @@ package io.github.kawaxte.twentyten.launcher.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.net.URL;
 import java.util.Optional;
 import javax.swing.JFrame;
-import lombok.val;
 
 public class LauncherFrame extends JFrame {
 
@@ -30,7 +30,7 @@ public class LauncherFrame extends JFrame {
     super();
 
     LauncherFrame.instance = this;
-    val iconUrl =
+    URL iconUrl =
         Optional.ofNullable(LauncherFrame.class.getClassLoader().getResource("favicon.png"))
             .orElseThrow(() -> new NullPointerException("iconUrl cannot be null"));
     this.setIconImage(this.getToolkit().getImage(iconUrl));

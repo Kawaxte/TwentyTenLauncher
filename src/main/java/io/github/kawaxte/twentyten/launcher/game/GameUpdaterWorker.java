@@ -20,7 +20,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import javax.swing.SwingWorker;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
@@ -42,8 +44,8 @@ public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
 
   @Override
   protected Applet doInBackground() {
-    val service = Executors.newSingleThreadExecutor();
-    val future = service.submit(new GameUpdaterTask(urls));
+    ExecutorService service = Executors.newSingleThreadExecutor();
+    Future<?> future = service.submit(new GameUpdaterTask(urls));
     try {
       future.get();
 

@@ -14,6 +14,7 @@
  */
 package io.github.kawaxte.twentyten.launcher.game;
 
+import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import lombok.Getter;
@@ -31,7 +32,7 @@ public enum EState {
 
   EState(String message) {
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
-    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+    UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.message = bundle.getString(message);
   }
 }

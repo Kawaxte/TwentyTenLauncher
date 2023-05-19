@@ -17,6 +17,7 @@ package io.github.kawaxte.twentyten.launcher;
 import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.workingDirectoryPath;
 
 import io.github.kawaxte.twentyten.LinkedProperties;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -68,7 +69,7 @@ public final class LauncherConfig {
     val userName = System.getProperty("user.name");
     val fileName = String.format("%s_%s.properties", "twentyten", userName);
     val filePath = Paths.get(String.valueOf(workingDirectoryPath), fileName);
-    val configFile = filePath.toFile();
+    File configFile = filePath.toFile();
     try {
       return !configFile.exists() && !configFile.createNewFile() ? null : filePath;
     } catch (IOException ioe) {

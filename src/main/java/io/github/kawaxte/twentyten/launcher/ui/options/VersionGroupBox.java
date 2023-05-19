@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 import javax.swing.GroupLayout;
@@ -73,7 +74,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     this.versionComboBox.addActionListener(this);
 
     val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
-    val bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
+    UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
 
@@ -81,8 +82,8 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    val versions = Collections.unmodifiableList(Arrays.asList("Beta", "Alpha", "Infdev"));
-    val releaseDateRange =
+    List<String> versions = Collections.unmodifiableList(Arrays.asList("Beta", "Alpha", "Infdev"));
+    List<String> releaseDateRange =
         Collections.unmodifiableList(
             Arrays.asList(
                 "2010-12-20 -> 2011-09-15",

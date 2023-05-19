@@ -41,13 +41,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import lombok.val;
+import org.apache.hc.client5.http.fluent.Content;
 import org.apache.hc.client5.http.fluent.Request;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -286,13 +290,12 @@ public final class GameUpdater {
     int totalDownloadSize = calcTotalDownloadSize(urls);
     for (val url : urls) {
       try {
-        val request = Request.get(url.toURI()).execute();
-        val content = request.returnContent();
+        Content request = Request.get(url.toURI()).execute().returnContent();
 
         val fileNameIndex = url.toString().lastIndexOf("/") + 1;
         val fileName = url.toString().substring(fileNameIndex);
         val file = javaIoTmpDirPath.resolve(fileName).toFile();
-        try (val bis = new BufferedInputStream(content.asStream());
+        try (val bis = new BufferedInputStream(request.asStream());
             val fos = new FileOutputStream(file)) {
           val buffer = new byte[65536];
           int bytesRead;
@@ -513,15 +516,15 @@ public final class GameUpdater {
   private static int calcTotalDownloadSize(URL[] urls) {
     int size = 0;
 
-    val service = Executors.newFixedThreadPool(urls.length);
-    val futures = new ArrayList<Future<Integer>>();
+    ExecutorService service = Executors.newFixedThreadPool(urls.length);
+    ArrayList<Future<Integer>> futures = new ArrayList<>();
     for (val url : urls) {
       futures.add(
           service.submit(
               () -> {
                 try {
-                  val request = Request.head(url.toURI()).execute().returnResponse();
-                  val contentLength = request.getFirstHeader(HttpHeaders.CONTENT_LENGTH);
+                  HttpResponse request = Request.head(url.toURI()).execute().returnResponse();
+                  Header contentLength = request.getFirstHeader(HttpHeaders.CONTENT_LENGTH);
                   return Integer.parseInt(contentLength.getValue());
                 } catch (NumberFormatException nfe) {
                   displayErrorMessage(nfe.getMessage());

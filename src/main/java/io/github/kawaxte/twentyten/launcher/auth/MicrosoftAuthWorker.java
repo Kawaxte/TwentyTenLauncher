@@ -20,10 +20,10 @@ import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.swing.SwingWorker;
-import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,8 +49,8 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
 
   @Override
   protected Object doInBackground() {
-    val service = Executors.newSingleThreadScheduledExecutor();
-    val future = new Future<?>[1];
+    ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+    Future<?>[] future = new Future<?>[1];
     future[0] =
         service.scheduleAtFixedRate(
             new MicrosoftAuthTask(service, clientId, deviceCode),
