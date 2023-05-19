@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -84,7 +85,7 @@ public class LinkedProperties extends Properties {
       sb.append(comments);
       sb.append(System.lineSeparator());
       sb.append("#");
-      sb.append(LocalDateTime.now());
+      sb.append(LocalDateTime.now(ZoneId.systemDefault()));
       sb.append(System.lineSeparator());
       os.write(sb.toString().getBytes(StandardCharsets.UTF_8));
     }
