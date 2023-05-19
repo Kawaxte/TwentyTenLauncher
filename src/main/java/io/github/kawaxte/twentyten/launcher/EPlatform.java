@@ -14,17 +14,20 @@
  */
 package io.github.kawaxte.twentyten.launcher;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 public enum EPlatform {
-  LINUX(new String[] {"aix", "nix", "nux"}),
-  MACOS(new String[] {"darwin", "mac"}),
-  WINDOWS(new String[] {"win"}),
-  AARCH64("aarch64"),
-  AMD64("amd64"),
-  X86("x86");
+  LINUX(Arrays.asList("aix", "nix", "nux"), null),
+  MACOS(Arrays.asList("darwin", "mac"), null),
+  WINDOWS(Collections.singletonList("win"), null),
+  AARCH64(null, "aarch64"),
+  AMD64(null, "amd64"),
+  X86(null, "x86");
 
   public static final String OS_NAME;
   public static final String OS_ARCH;
@@ -34,14 +37,12 @@ public enum EPlatform {
     OS_ARCH = System.getProperty("os.arch");
   }
 
-  private String[] names;
-  private String arch;
+  private final List<String> names;
+  private final String arch;
 
-  EPlatform(String[] names) {
-    this.names = names;
-  }
-
-  EPlatform(String arch) {
+  EPlatform(List<String> names, String arch) {
+    this.names =
+        Objects.isNull(names) ? null : Collections.unmodifiableList(new ArrayList<>(names));
     this.arch = arch;
   }
 
@@ -49,8 +50,9 @@ public enum EPlatform {
     return Arrays.stream(values())
         .filter(
             platform ->
-                Arrays.stream(platform.names)
-                    .anyMatch(name -> OS_NAME.toLowerCase(Locale.ROOT).contains(name)))
+                Objects.nonNull(platform.names)
+                    && platform.names.stream()
+                        .anyMatch(name -> OS_NAME.toLowerCase(Locale.ROOT).contains(name)))
         .findFirst()
         .orElse(null);
   }
