@@ -108,14 +108,18 @@ public class LinkedProperties extends Properties {
 
   @Override
   public String getProperty(String key) {
-    val value = (String) this.linkedMap.get(key);
-    return Optional.ofNullable(value).orElseGet(() -> super.getProperty(key));
+    synchronized (this) {
+      val value = (String) this.linkedMap.get(key);
+      return Optional.ofNullable(value).orElseGet(() -> super.getProperty(key));
+    }
   }
 
   @Override
   public String getProperty(String key, String defaultValue) {
-    val value = (String) this.linkedMap.get(key);
-    return Optional.ofNullable(value).orElse(defaultValue);
+    synchronized (this) {
+      val value = (String) this.linkedMap.get(key);
+      return Optional.ofNullable(value).orElse(defaultValue);
+    }
   }
 
   @Override
@@ -147,7 +151,9 @@ public class LinkedProperties extends Properties {
 
   @Override
   public boolean containsValue(Object value) {
-    return this.linkedMap.containsValue(value);
+    synchronized (this) {
+      return this.linkedMap.containsValue(value);
+    }
   }
 
   @Override
@@ -193,17 +199,23 @@ public class LinkedProperties extends Properties {
 
   @Override
   public Set<Object> keySet() {
-    return this.linkedMap.keySet();
+    synchronized (this) {
+      return this.linkedMap.keySet();
+    }
   }
 
   @Override
   public Set<Map.Entry<Object, Object>> entrySet() {
-    return this.linkedMap.entrySet();
+    synchronized (this) {
+      return this.linkedMap.entrySet();
+    }
   }
 
   @Override
   public Collection<Object> values() {
-    return this.linkedMap.values();
+    synchronized (this) {
+      return this.linkedMap.values();
+    }
   }
 
   @Override
