@@ -24,10 +24,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import javax.net.ssl.HttpsURLConnection;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sun.net.www.protocol.file.FileURLConnection;
 
 public final class LauncherLanguage {
 
@@ -68,9 +68,9 @@ public final class LauncherLanguage {
             .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
     fileUrl.ifPresent(
         url -> {
-          HttpsURLConnection connection = null;
+          FileURLConnection connection = null;
           try {
-            connection = (HttpsURLConnection) url.openConnection();
+            connection = (FileURLConnection) url.openConnection();
             try (InputStream is = url.openConnection().getInputStream();
                 val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
               bundle = new UTF8ResourceBundle(isr);
@@ -83,7 +83,7 @@ public final class LauncherLanguage {
                 ioe);
           } finally {
             if (Objects.nonNull(connection)) {
-              connection.disconnect();
+              connection.close();
             }
 
             LOGGER.info(
