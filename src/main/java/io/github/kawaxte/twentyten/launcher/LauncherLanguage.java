@@ -16,6 +16,8 @@ package io.github.kawaxte.twentyten.launcher;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.UTF8ResourceBundle.UTF8Control;
+import io.github.kawaxte.twentyten.launcher.util.LauncherOptionsUtils;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,7 +29,6 @@ import java.util.Optional;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sun.net.www.protocol.file.FileURLConnection;
 
 public final class LauncherLanguage {
 
@@ -66,31 +67,23 @@ public final class LauncherLanguage {
         fileUrl
             .map(value -> value.getFile().lastIndexOf("/"))
             .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
-    fileUrl.ifPresent(
-        url -> {
-          FileURLConnection connection = null;
-          try {
-            connection = (FileURLConnection) url.openConnection();
-            try (InputStream is = url.openConnection().getInputStream();
-                val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-              bundle = new UTF8ResourceBundle(isr);
-            }
-          } catch (IOException ioe) {
-            LOGGER.error(
-                "Cannot load {} from {}",
-                fileUrl.get().getFile().substring(fileUrlIndex + 1),
-                fileUrl.get().getFile().substring(0, fileUrlIndex),
-                ioe);
-          } finally {
-            if (Objects.nonNull(connection)) {
-              connection.close();
-            }
-
-            LOGGER.info(
-                "Loaded {} from {}",
-                fileUrl.get().getFile().substring(fileUrlIndex + 1),
-                fileUrl.get().getFile().substring(0, fileUrlIndex));
-          }
-        });
+    InputStream is =
+        Optional.ofNullable(
+                LauncherOptionsUtils.class.getClassLoader().getResourceAsStream("versions.json"))
+            .orElseThrow(() -> new NullPointerException("is cannot be null"));
+    try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+      bundle = new UTF8ResourceBundle(br);
+    } catch (IOException ioe) {
+      LOGGER.error(
+          "Cannot load {} from {}",
+          fileUrl.get().getFile().substring(fileUrlIndex + 1),
+          fileUrl.get().getFile().substring(0, fileUrlIndex),
+          ioe);
+    } finally {
+      LOGGER.info(
+          "Loaded {} from {}",
+          fileUrl.get().getFile().substring(fileUrlIndex + 1),
+          fileUrl.get().getFile().substring(0, fileUrlIndex));
+    }
   }
 }
