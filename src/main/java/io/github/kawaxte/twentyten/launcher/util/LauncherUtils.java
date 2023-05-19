@@ -36,8 +36,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -158,7 +158,8 @@ public final class LauncherUtils {
       val attributes = manifest.getMainAttributes();
       return attributes.getValue(key);
     } catch (FileNotFoundException fnfe) {
-      return new SimpleDateFormat("1.M.ddyy").format(new Date());
+      val currentInstant = Instant.now();
+      return new SimpleDateFormat("1.M.ddyy").format(currentInstant.toEpochMilli());
     } catch (IOException ioe) {
       LOGGER.error("Cannot retrieve '{}' from {}", key, fileUrl, ioe);
     } catch (URISyntaxException urise) {

@@ -17,9 +17,9 @@ package io.github.kawaxte.twentyten;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -86,7 +86,7 @@ public class LinkedProperties extends Properties {
       sb.append(comments);
       sb.append(System.lineSeparator());
       sb.append("#");
-      sb.append(new Date());
+      sb.append(LocalDateTime.now());
       sb.append(System.lineSeparator());
       os.write(sb.toString().getBytes());
     }
