@@ -21,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Objects;
@@ -61,29 +60,18 @@ public final class LauncherLanguage {
 
   public static void loadLanguage(String baseName, String languageCode) {
     val fileName = String.format("%s_%s.properties", baseName, languageCode);
-    Optional<URL> fileUrl =
-        Optional.ofNullable(LauncherLanguage.class.getClassLoader().getResource(fileName));
-    int fileUrlIndex =
-        fileUrl
-            .map(value -> value.getFile().lastIndexOf("/"))
-            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
+    val fileNameUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
+
     InputStream is =
         Optional.ofNullable(
-                LauncherOptionsUtils.class.getClassLoader().getResourceAsStream("versions.json"))
+                LauncherOptionsUtils.class.getClassLoader().getResourceAsStream(fileName))
             .orElseThrow(() -> new NullPointerException("is cannot be null"));
     try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       bundle = new UTF8ResourceBundle(br);
     } catch (IOException ioe) {
-      LOGGER.error(
-          "Cannot load {} from {}",
-          fileUrl.get().getFile().substring(fileUrlIndex + 1),
-          fileUrl.get().getFile().substring(0, fileUrlIndex),
-          ioe);
+      LOGGER.error("Cannot load", fileNameUrl, ioe);
     } finally {
-      LOGGER.info(
-          "Loaded {} from {}",
-          fileUrl.get().getFile().substring(fileUrlIndex + 1),
-          fileUrl.get().getFile().substring(0, fileUrlIndex));
+      LOGGER.info("Loaded {}", fileNameUrl);
     }
   }
 }

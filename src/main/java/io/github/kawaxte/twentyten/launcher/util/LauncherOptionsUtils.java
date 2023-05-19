@@ -27,8 +27,8 @@ import io.github.kawaxte.twentyten.launcher.ui.options.OptionsPanel;
 import io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -87,12 +87,14 @@ public final class LauncherOptionsUtils {
 
     val defaultComboBoxModel = new DefaultComboBoxModel<String>();
 
-    URL fileUrl =
+    val fileName = "versions.json";
+    val fileNameUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
+
+    InputStream is =
         Optional.ofNullable(
-                LauncherOptionsUtils.class.getClassLoader().getResource("versions.json"))
-            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
-    try (val br =
-        new BufferedReader(new InputStreamReader(fileUrl.openStream(), StandardCharsets.UTF_8))) {
+                LauncherOptionsUtils.class.getClassLoader().getResourceAsStream(fileName))
+            .orElseThrow(() -> new NullPointerException("is cannot be null"));
+    try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       val json = new JSONObject(br.lines().collect(Collectors.joining()));
       List<String> versionArrays =
           Collections.unmodifiableList(
@@ -147,7 +149,9 @@ public final class LauncherOptionsUtils {
                     });
           });
     } catch (IOException ioe) {
-      LOGGER.error("Cannot read {}", fileUrl.toString(), ioe);
+      LOGGER.error("Cannot read {}", fileNameUrl, ioe);
+    } finally {
+      LOGGER.info("Read {}", fileNameUrl);
     }
 
     val selectedVersion = LauncherConfig.lookup.get("selectedVersion");
