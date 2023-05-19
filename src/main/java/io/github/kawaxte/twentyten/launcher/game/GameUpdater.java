@@ -487,7 +487,7 @@ public final class GameUpdater {
   }
 
   private static int calcTotalExtractSize(File[] files) {
-    int size = 0;
+    long size = 0;
 
     for (val file : files) {
       try (val fis = new FileInputStream(file);
@@ -507,7 +507,7 @@ public final class GameUpdater {
         LOGGER.error("Cannot calculate size for {}", file.toString(), ioe);
       }
     }
-    return size;
+    return (int) size;
   }
 
   private static int calcTotalDownloadSize(URL[] urls) {
