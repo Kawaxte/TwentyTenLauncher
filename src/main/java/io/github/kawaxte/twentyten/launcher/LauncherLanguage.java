@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import javax.net.ssl.HttpsURLConnection;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,9 +68,13 @@ public final class LauncherLanguage {
             .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
     fileUrl.ifPresent(
         url -> {
-          try (InputStream is = url.openConnection().getInputStream();
-              val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-            bundle = new UTF8ResourceBundle(isr);
+          HttpsURLConnection connection = null;
+          try {
+            connection = (HttpsURLConnection) url.openConnection();
+            try (InputStream is = url.openConnection().getInputStream();
+                val isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+              bundle = new UTF8ResourceBundle(isr);
+            }
           } catch (IOException ioe) {
             LOGGER.error(
                 "Cannot load {} from {}",
@@ -77,6 +82,10 @@ public final class LauncherLanguage {
                 fileUrl.get().getFile().substring(0, fileUrlIndex),
                 ioe);
           } finally {
+            if (Objects.nonNull(connection)) {
+              connection.disconnect();
+            }
+
             LOGGER.info(
                 "Loaded {} from {}",
                 fileUrl.get().getFile().substring(fileUrlIndex + 1),
