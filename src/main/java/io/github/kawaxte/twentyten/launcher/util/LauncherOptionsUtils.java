@@ -154,23 +154,6 @@ public final class LauncherOptionsUtils {
     vgb.getVersionComboBox().setModel(defaultComboBoxModel);
   }
 
-  public static int compareVersionIds(String v1, String v2) {
-    String[] v1Split = v1.replaceAll("[^\\d._]", "").split("[._]");
-    String[] v2Split = v2.replaceAll("[^\\d._]", "").split("[._]");
-    int v1SplitLength = v1Split.length;
-    int v2SplitLength = v2Split.length;
-    int vSplitLength = Math.max(v1SplitLength, v2SplitLength);
-
-    for (int i = 0; i < vSplitLength; i++) {
-      int v1SplitValue = i < v1SplitLength ? Integer.parseInt(v1Split[i]) : 0;
-      int v2SplitValue = i < v2SplitLength ? Integer.parseInt(v2Split[i]) : 0;
-      if (!Objects.equals(v1SplitValue, v2SplitValue)) {
-        return Integer.compare(v1SplitValue, v2SplitValue);
-      }
-    }
-    return 0;
-  }
-
   public static void updateSelectedVersion(VersionGroupBox vgb) {
     String selectedItem = (String) vgb.getVersionComboBox().getSelectedItem();
     selectedItem = versionLookup.get(selectedItem);
@@ -215,5 +198,22 @@ public final class LauncherOptionsUtils {
             OptionsDialog.instance.pack();
           });
     }
+  }
+
+  private static int compareVersionIds(String v1, String v2) {
+    String[] v1Split = v1.replaceAll("[^\\d._]", "").split("[._]");
+    String[] v2Split = v2.replaceAll("[^\\d._]", "").split("[._]");
+    int v1SplitLength = v1Split.length;
+    int v2SplitLength = v2Split.length;
+    int vSplitLength = Math.max(v1SplitLength, v2SplitLength);
+
+    for (int i = 0; i < vSplitLength; i++) {
+      int v1SplitValue = i < v1SplitLength ? Integer.parseInt(v1Split[i]) : 0;
+      int v2SplitValue = i < v2SplitLength ? Integer.parseInt(v2Split[i]) : 0;
+      if (!Objects.equals(v1SplitValue, v2SplitValue)) {
+        return Integer.compare(v1SplitValue, v2SplitValue);
+      }
+    }
+    return 0;
   }
 }
