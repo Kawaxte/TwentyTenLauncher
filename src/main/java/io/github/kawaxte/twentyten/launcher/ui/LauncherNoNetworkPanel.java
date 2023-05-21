@@ -33,7 +33,6 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import lombok.val;
 
 public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListener {
 
@@ -68,7 +67,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     this.playOfflineButton.addActionListener(this);
     this.retryButton.addActionListener(this);
 
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
@@ -85,47 +84,39 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
   private LayoutManager getGroupLayout() {
     int width = 0;
 
-    val buttons = new JButton[] {this.playOfflineButton, this.retryButton};
-    for (val button : buttons) {
+    JButton[] buttons = new JButton[] {this.playOfflineButton, this.retryButton};
+    for (JButton button : buttons) {
       width = Math.max(width, button.getPreferredSize().width);
     }
 
-    val groupLayout = new GroupLayout(this);
-    groupLayout.setAutoCreateContainerGaps(true);
-    groupLayout.setAutoCreateGaps(true);
-    groupLayout.setHorizontalGroup(
-        groupLayout
-            .createParallelGroup()
+    GroupLayout gl = new GroupLayout(this);
+    gl.setAutoCreateContainerGaps(true);
+    gl.setAutoCreateGaps(true);
+    gl.setHorizontalGroup(
+        gl.createParallelGroup()
             .addComponent(this.errorLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
             .addGroup(
-                groupLayout
-                    .createSequentialGroup()
+                gl.createSequentialGroup()
                     .addComponent(
                         this.playOnlineLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
             .addGroup(
-                groupLayout
-                    .createSequentialGroup()
+                gl.createSequentialGroup()
                     .addComponent(this.playOfflineButton, 0, width, Short.MAX_VALUE)
                     .addComponent(this.retryButton, 0, width, Short.MAX_VALUE)));
-    groupLayout.setVerticalGroup(
-        groupLayout
-            .createSequentialGroup()
+    gl.setVerticalGroup(
+        gl.createSequentialGroup()
             .addComponent(this.errorLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+            .addGroup(gl.createParallelGroup(Alignment.BASELINE).addComponent(this.playOnlineLabel))
             .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.BASELINE)
-                    .addComponent(this.playOnlineLabel))
-            .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.CENTER)
+                gl.createParallelGroup(Alignment.CENTER)
                     .addComponent(this.playOfflineButton)
                     .addComponent(this.retryButton)));
-    return groupLayout;
+    return gl;
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    val source = event.getSource();
+    Object source = event.getSource();
     if (Objects.equals(source, this.playOfflineButton)) {
       Launcher.launchMinecraft(null, null, null);
     }
