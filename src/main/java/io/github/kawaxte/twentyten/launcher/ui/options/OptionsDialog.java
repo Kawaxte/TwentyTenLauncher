@@ -21,7 +21,6 @@ import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.Window;
 import java.util.Objects;
 import javax.swing.JDialog;
-import lombok.val;
 
 public class OptionsDialog extends JDialog {
 
@@ -40,7 +39,7 @@ public class OptionsDialog extends JDialog {
     this.setLocation(this.getOwner().getLocation());
     this.setResizable(false);
 
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateContainerKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
