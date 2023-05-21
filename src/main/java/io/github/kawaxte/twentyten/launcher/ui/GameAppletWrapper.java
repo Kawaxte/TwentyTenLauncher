@@ -92,7 +92,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
 
-    val hostAndPort = LauncherUtils.getProxyHostAndPort();
+    String[] hostAndPort = LauncherUtils.getProxyHostAndPort();
     if (Objects.nonNull(hostAndPort)) {
       System.setProperty("http.proxyHost", hostAndPort[0]);
       System.setProperty("http.proxyPort", hostAndPort[1]);
@@ -106,7 +106,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
       return;
     }
 
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.taskProgressMessage = MessageFormat.format(bundle.getString(message), args);
   }
@@ -141,7 +141,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     new Timer(
             10,
             event -> {
-              val source = (Timer) event.getSource();
+              Timer source = (Timer) event.getSource();
               if (Objects.isNull(minecraftApplet)) {
                 repaint();
               } else {
