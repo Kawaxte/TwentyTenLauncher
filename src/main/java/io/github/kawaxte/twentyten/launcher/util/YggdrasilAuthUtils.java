@@ -18,7 +18,6 @@ import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker;
 import java.util.Objects;
-import lombok.val;
 import org.json.JSONObject;
 
 public final class YggdrasilAuthUtils {
@@ -42,8 +41,8 @@ public final class YggdrasilAuthUtils {
   }
 
   public static boolean isAccessTokenExpired() {
-    val accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
-    val clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
+    String accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
+    String clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
     if (Objects.isNull(accessToken) || Objects.isNull(clientToken)) {
       return false;
     }
@@ -59,8 +58,8 @@ public final class YggdrasilAuthUtils {
   }
 
   public static void refreshAccessToken() {
-    val accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
-    val clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
+    String accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
+    String clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
 
     JSONObject refresh = YggdrasilAuth.refreshAccessToken(accessToken, clientToken);
     if (Objects.isNull(refresh)) {
@@ -70,7 +69,7 @@ public final class YggdrasilAuthUtils {
       throw new RuntimeException("Cannot refresh access token");
     }
 
-    val newAccessToken = refresh.getString("accessToken");
+    String newAccessToken = refresh.getString("accessToken");
     LauncherConfig.lookup.put("mojangAccessToken", newAccessToken);
     LauncherConfig.saveConfig();
   }
