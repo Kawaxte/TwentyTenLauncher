@@ -67,8 +67,9 @@ public final class MicrosoftAuthUtils {
     }
 
     long currentTimeSecs = System.currentTimeMillis() / 1000L;
-    Object accessTokenExpiresIn = LauncherConfig.lookup.get("microsoftAccessTokenExpiresIn");
-    long accessTokenExpiresInSecs = Long.parseLong((String) accessTokenExpiresIn) / 1000L;
+    String accessTokenExpiresIn =
+        (String) LauncherConfig.lookup.get("microsoftAccessTokenExpiresIn");
+    long accessTokenExpiresInSecs = Long.parseLong(accessTokenExpiresIn) / 1000L;
     long expiresIn = accessTokenExpiresInSecs - currentTimeSecs;
     return expiresIn <= 900;
   }
