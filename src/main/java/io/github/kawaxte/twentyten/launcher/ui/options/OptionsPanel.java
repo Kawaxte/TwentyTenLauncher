@@ -32,7 +32,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import lombok.Getter;
-import lombok.val;
 
 public class OptionsPanel extends JPanel implements ActionListener {
 
@@ -65,7 +64,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.openFolderButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
 
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
@@ -83,20 +82,17 @@ public class OptionsPanel extends JPanel implements ActionListener {
   }
 
   private LayoutManager getGroupLayout() {
-    val groupLayout = new GroupLayout(this);
-    groupLayout.setAutoCreateContainerGaps(true);
-    groupLayout.setAutoCreateGaps(true);
-    groupLayout.setHorizontalGroup(
-        groupLayout
-            .createSequentialGroup()
+    GroupLayout gl = new GroupLayout(this);
+    gl.setAutoCreateContainerGaps(true);
+    gl.setAutoCreateGaps(true);
+    gl.setHorizontalGroup(
+        gl.createSequentialGroup()
             .addGroup(
-                groupLayout
-                    .createParallelGroup()
+                gl.createParallelGroup()
                     .addComponent(this.languageGroupBox)
                     .addComponent(this.versionGroupBox)
                     .addGroup(
-                        groupLayout
-                            .createSequentialGroup()
+                        gl.createSequentialGroup()
                             .addComponent(
                                 this.buildTimeLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                             .addComponent(
@@ -109,23 +105,21 @@ public class OptionsPanel extends JPanel implements ActionListener {
                                 0,
                                 GroupLayout.PREFERRED_SIZE,
                                 Short.MAX_VALUE))));
-    groupLayout.setVerticalGroup(
-        groupLayout
-            .createSequentialGroup()
+    gl.setVerticalGroup(
+        gl.createSequentialGroup()
             .addComponent(this.languageGroupBox)
             .addComponent(this.versionGroupBox)
             .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.CENTER)
+                gl.createParallelGroup(Alignment.CENTER)
                     .addComponent(this.buildTimeLabel)
                     .addComponent(this.openFolderButton)
                     .addComponent(this.saveOptionsButton)));
-    return groupLayout;
+    return gl;
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    val source = event.getSource();
+    Object source = event.getSource();
     if (Objects.equals(source, this.openFolderButton)) {
       LauncherUtils.openDesktop(workingDirectoryPath);
     }
