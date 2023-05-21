@@ -30,7 +30,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import lombok.Getter;
-import lombok.val;
 
 public class LanguageGroupBox extends JGroupBox implements ActionListener {
 
@@ -52,7 +51,7 @@ public class LanguageGroupBox extends JGroupBox implements ActionListener {
 
     this.languageComboBox.addActionListener(this);
 
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
@@ -65,30 +64,27 @@ public class LanguageGroupBox extends JGroupBox implements ActionListener {
   }
 
   private LayoutManager getGroupLayout() {
-    val groupLayout = new GroupLayout(this);
-    groupLayout.setAutoCreateContainerGaps(true);
-    groupLayout.setAutoCreateGaps(true);
-    groupLayout.setHorizontalGroup(
-        groupLayout
-            .createSequentialGroup()
+    GroupLayout gl = new GroupLayout(this);
+    gl.setAutoCreateContainerGaps(true);
+    gl.setAutoCreateGaps(true);
+    gl.setHorizontalGroup(
+        gl.createSequentialGroup()
             .addComponent(this.setLanguageLabel)
             .addComponent(this.languageComboBox));
-    groupLayout.setVerticalGroup(
-        groupLayout
-            .createSequentialGroup()
+    gl.setVerticalGroup(
+        gl.createSequentialGroup()
             .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.BASELINE)
+                gl.createParallelGroup(Alignment.BASELINE)
                     .addComponent(this.setLanguageLabel)
                     .addComponent(this.languageComboBox)));
-    return groupLayout;
+    return gl;
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    val source = event.getSource();
+    Object source = event.getSource();
     if (Objects.equals(source, this.languageComboBox)) {
-      val selectedLanguageEqual =
+      boolean selectedLanguageEqual =
           Objects.equals(
               LauncherConfig.lookup.get("selectedLanguage"),
               this.languageComboBox.getSelectedItem());
