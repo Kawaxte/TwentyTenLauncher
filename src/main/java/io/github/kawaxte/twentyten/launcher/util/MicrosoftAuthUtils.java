@@ -21,7 +21,6 @@ import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthWorker;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
 import java.util.Objects;
-import lombok.val;
 import org.json.JSONObject;
 
 public final class MicrosoftAuthUtils {
@@ -42,11 +41,11 @@ public final class MicrosoftAuthUtils {
       throw new IllegalArgumentException("clientId cannot be empty");
     }
 
-    val consumersDeviceCode = MicrosoftAuth.acquireDeviceCode(clientId);
+    JSONObject consumersDeviceCode = MicrosoftAuth.acquireDeviceCode(clientId);
     if (Objects.isNull(consumersDeviceCode)) {
       return;
     }
-    val deviceCodeResponse = getDeviceCodeResponse(consumersDeviceCode);
+    String[] deviceCodeResponse = getDeviceCodeResponse(consumersDeviceCode);
 
     LauncherUtils.swapContainers(
         LauncherPanel.instance,
@@ -59,7 +58,7 @@ public final class MicrosoftAuthUtils {
   }
 
   public static boolean isAccessTokenExpired() {
-    val refreshToken = (String) LauncherConfig.lookup.get("microsoftRefreshToken");
+    String refreshToken = (String) LauncherConfig.lookup.get("microsoftRefreshToken");
     if (Objects.isNull(refreshToken)) {
       return false;
     }
@@ -67,40 +66,42 @@ public final class MicrosoftAuthUtils {
       return false;
     }
 
-    val currentTimeSecs = System.currentTimeMillis() / 1000L;
-    val accessTokenExpiresIn = LauncherConfig.lookup.get("microsoftAccessTokenExpiresIn");
-    val accessTokenExpiresInSecs = Long.parseLong((String) accessTokenExpiresIn) / 1000L;
-    val expiresIn = accessTokenExpiresInSecs - currentTimeSecs;
+    long currentTimeSecs = System.currentTimeMillis() / 1000L;
+    Object accessTokenExpiresIn = LauncherConfig.lookup.get("microsoftAccessTokenExpiresIn");
+    long accessTokenExpiresInSecs = Long.parseLong((String) accessTokenExpiresIn) / 1000L;
+    long expiresIn = accessTokenExpiresInSecs - currentTimeSecs;
     return expiresIn <= 900;
   }
 
   public static void refreshAccessToken() {
-    val refreshToken = (String) LauncherConfig.lookup.get("microsoftRefreshToken");
+    String refreshToken = (String) LauncherConfig.lookup.get("microsoftRefreshToken");
 
-    val consumersToken = MicrosoftAuth.refreshToken(clientId, refreshToken);
+    JSONObject consumersToken = MicrosoftAuth.refreshToken(clientId, refreshToken);
     if (Objects.isNull(consumersToken)) {
       return;
     }
-    val tokenResponse = getRefreshTokenResponse(consumersToken);
+    String[] tokenResponse = getRefreshTokenResponse(consumersToken);
 
-    val userAuthenticate = MicrosoftAuth.acquireXBLToken(tokenResponse[0]);
+    JSONObject userAuthenticate = MicrosoftAuth.acquireXBLToken(tokenResponse[0]);
     if (Objects.isNull(userAuthenticate)) {
       return;
     }
-    val xblTokenResponse = MicrosoftAuthTask.getXBLTokenResponse(userAuthenticate);
+    String[] xblTokenResponse = MicrosoftAuthTask.getXBLTokenResponse(userAuthenticate);
 
-    val xstsAuthorize = MicrosoftAuth.acquireXSTSToken(xblTokenResponse[1]);
+    JSONObject xstsAuthorize = MicrosoftAuth.acquireXSTSToken(xblTokenResponse[1]);
     if (Objects.isNull(xstsAuthorize)) {
       return;
     }
-    val xstsTokenResponse = MicrosoftAuthTask.getXSTSTokenResponse(xstsAuthorize);
+    String xstsTokenResponse = MicrosoftAuthTask.getXSTSTokenResponse(xstsAuthorize);
 
-    val authenticateLoginWithXbox =
+    JSONObject authenticateLoginWithXbox =
         MicrosoftAuth.acquireAccessToken(xblTokenResponse[0], xstsTokenResponse);
     if (Objects.isNull(authenticateLoginWithXbox)) {
       return;
     }
-    val accessTokenResponse = MicrosoftAuthTask.getAccessTokenResponse(authenticateLoginWithXbox);
+
+    String[] accessTokenResponse =
+        MicrosoftAuthTask.getAccessTokenResponse(authenticateLoginWithXbox);
     LauncherConfig.lookup.put("microsoftAccessToken", accessTokenResponse[0]);
     LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
     LauncherConfig.lookup.put("microsoftRefreshToken", tokenResponse[1]);
@@ -108,17 +109,17 @@ public final class MicrosoftAuthUtils {
   }
 
   private static String[] getRefreshTokenResponse(JSONObject object) {
-    val accessToken = object.getString("access_token");
-    val refreshToken = object.getString("refresh_token");
+    String accessToken = object.getString("access_token");
+    String refreshToken = object.getString("refresh_token");
     return new String[] {accessToken, refreshToken};
   }
 
   private static String[] getDeviceCodeResponse(JSONObject object) {
-    val userCode = object.getString("user_code");
-    val deviceCode = object.getString("device_code");
-    val verificationUri = object.getString("verification_uri");
-    val expiresIn = String.valueOf(object.getInt("expires_in"));
-    val interval = String.valueOf(object.getInt("interval"));
+    String userCode = object.getString("user_code");
+    String deviceCode = object.getString("device_code");
+    String verificationUri = object.getString("verification_uri");
+    String expiresIn = String.valueOf(object.getInt("expires_in"));
+    String interval = String.valueOf(object.getInt("interval"));
     return new String[] {userCode, deviceCode, verificationUri, expiresIn, interval};
   }
 }
