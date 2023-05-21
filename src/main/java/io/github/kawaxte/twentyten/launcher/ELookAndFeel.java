@@ -68,7 +68,7 @@ public enum ELookAndFeel {
           iae);
     } catch (UnsupportedLookAndFeelException ulafe) {
       LOGGER.error(
-          "'{}' is not supported on '{}'",
+          "'{}' unsupported on '{}'",
           UIManager.getLookAndFeel().getName(),
           EPlatform.OS_NAME,
           ulafe);
