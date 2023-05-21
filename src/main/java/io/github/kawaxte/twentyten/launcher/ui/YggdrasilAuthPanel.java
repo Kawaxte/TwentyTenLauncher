@@ -80,9 +80,10 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     YggdrasilAuthPanel.instance = this;
     this.setLayout(this.getGroupLayout());
 
-    val mojangUsername = LauncherConfig.lookup.get("mojangUsername");
-    val mojangPassword = LauncherConfig.lookup.get("mojangPassword");
-    val mojangRememberPasswordChecked = LauncherConfig.lookup.get("mojangRememberPasswordChecked");
+    Object mojangUsername = LauncherConfig.lookup.get("mojangUsername");
+    Object mojangPassword = LauncherConfig.lookup.get("mojangPassword");
+    Object mojangRememberPasswordChecked =
+        LauncherConfig.lookup.get("mojangRememberPasswordChecked");
     if (Objects.nonNull(mojangUsername)) {
       this.usernameField.setText((String) mojangUsername);
     }
@@ -106,7 +107,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         });
     this.signinButton.addActionListener(this);
 
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
