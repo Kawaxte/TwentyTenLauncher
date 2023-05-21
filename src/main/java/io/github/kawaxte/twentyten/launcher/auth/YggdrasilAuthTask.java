@@ -20,7 +20,6 @@ import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
-import lombok.val;
 import org.json.JSONObject;
 
 public class YggdrasilAuthTask implements Runnable {
@@ -37,11 +36,12 @@ public class YggdrasilAuthTask implements Runnable {
 
   @Override
   public void run() {
-    val authenticate = YggdrasilAuth.authenticate(username, password, clientToken);
+    JSONObject authenticate = YggdrasilAuth.authenticate(username, password, clientToken);
     if (Objects.isNull(authenticate)) {
       return;
     }
-    val authenticateResponse = this.getAuthenticateResponse(authenticate);
+
+    String[] authenticateResponse = this.getAuthenticateResponse(authenticate);
     if (Objects.isNull(authenticateResponse)) {
       return;
     }
@@ -68,7 +68,7 @@ public class YggdrasilAuthTask implements Runnable {
   }
 
   private boolean isLegacyInSelectedProfile(JSONObject object) {
-    val selectedProfile = object.getJSONObject("selectedProfile");
+    JSONObject selectedProfile = object.getJSONObject("selectedProfile");
     return selectedProfile.has("legacy") && selectedProfile.getBoolean("legacy");
   }
 
@@ -83,10 +83,10 @@ public class YggdrasilAuthTask implements Runnable {
       return null;
     }
 
-    val accessToken = object.getString("accessToken");
-    val selectedProfile = object.getJSONObject("selectedProfile");
-    val id = selectedProfile.getString("id");
-    val name = selectedProfile.getString("name");
+    String accessToken = object.getString("accessToken");
+    JSONObject selectedProfile = object.getJSONObject("selectedProfile");
+    String id = selectedProfile.getString("id");
+    String name = selectedProfile.getString("name");
     return new String[] {accessToken, id, name};
   }
 }
