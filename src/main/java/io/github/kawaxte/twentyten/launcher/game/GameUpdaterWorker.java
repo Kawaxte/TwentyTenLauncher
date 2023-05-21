@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import javax.swing.SwingWorker;
-import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -82,7 +81,7 @@ public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
   @Override
   protected void done() {
     try {
-      val applet = this.get();
+      Applet applet = this.get();
       if (Objects.nonNull(applet)) {
         GameAppletWrapper.instance.replace(applet);
       }
