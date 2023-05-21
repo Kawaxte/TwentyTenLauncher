@@ -48,7 +48,7 @@ public final class MicrosoftAuth {
   private MicrosoftAuth() {}
 
   private static URL[] getYggdrasilAuthUrls() {
-    val urls = new URL[7];
+    URL[] urls = new URL[7];
     try {
       urls[0] =
           new URL(
@@ -110,7 +110,7 @@ public final class MicrosoftAuth {
   }
 
   public static JSONObject acquireDeviceCode(String clientId) {
-    val body = Form.form();
+    Form body = Form.form();
     body.add("client_id", clientId);
     body.add("response_type", "code");
     body.add("scope", "XboxLive.signin offline_access");
@@ -136,7 +136,7 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring device code", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
             LauncherPanel.instance,
@@ -152,7 +152,7 @@ public final class MicrosoftAuth {
   }
 
   public static JSONObject acquireToken(String clientId, String deviceCode) {
-    val body = Form.form();
+    Form body = Form.form();
     body.add("client_id", clientId);
     body.add("device_code", deviceCode);
     body.add("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
@@ -178,7 +178,7 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring token", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
             LauncherPanel.instance,
@@ -194,7 +194,7 @@ public final class MicrosoftAuth {
   }
 
   public static JSONObject refreshToken(String clientId, String refreshToken) {
-    val body = Form.form();
+    Form body = Form.form();
     body.add("client_id", clientId);
     body.add("refresh_token", refreshToken);
     body.add("grant_type", "refresh_token");
@@ -220,7 +220,7 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while refreshing token", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         return null;
       }
@@ -233,12 +233,12 @@ public final class MicrosoftAuth {
   }
 
   public static JSONObject acquireXBLToken(String accessToken) {
-    val properties = new JSONObject();
+    JSONObject properties = new JSONObject();
     properties.put("AuthMethod", "RPS");
     properties.put("SiteName", "user.auth.xboxlive.com");
     properties.put("RpsTicket", String.format("d=%s", accessToken));
 
-    val body = new JSONObject();
+    JSONObject body = new JSONObject();
     body.put("Properties", properties);
     body.put("RelyingParty", "http://auth.xboxlive.com");
     body.put("TokenType", "JWT");
@@ -264,7 +264,7 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring XBL token", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
             LauncherPanel.instance,
