@@ -56,7 +56,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import lombok.val;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -116,16 +115,17 @@ public final class LauncherUtils {
   private LauncherUtils() {}
 
   public static String[] getProxyHostAndPort() {
-    val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
+    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
 
-    val fileName = "versions.json";
+    String fileName = "versions.json";
     URL fileUrl = LauncherUtils.class.getClassLoader().getResource(fileName);
 
     InputStream is =
         Optional.ofNullable(LauncherUtils.class.getClassLoader().getResourceAsStream(fileName))
             .orElseThrow(() -> new NullPointerException("is cannot be null"));
-    try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-      val json = new JSONObject(br.lines().collect(Collectors.joining()));
+    try (BufferedReader br =
+        new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+      JSONObject json = new JSONObject(br.lines().collect(Collectors.joining()));
 
       JSONArray versionArray = null;
       if (selectedVersion.startsWith("b")) {
@@ -140,11 +140,11 @@ public final class LauncherUtils {
 
       if (Objects.nonNull(versionArray)) {
         for (int i = 0; i < versionArray.length(); i++) {
-          val version = versionArray.getJSONObject(i);
-          val versionId = version.getString("versionId");
+          JSONObject version = versionArray.getJSONObject(i);
+          String versionId = version.getString("versionId");
           if (Objects.equals(versionId, selectedVersion)) {
-            val proxyHost = version.getString("bcProxyHost");
-            val proxyPort = version.getInt("bcProxyPort");
+            String proxyHost = version.getString("bcProxyHost");
+            int proxyPort = version.getInt("bcProxyPort");
             return new String[] {proxyHost, String.valueOf(proxyPort)};
           }
         }
@@ -159,12 +159,12 @@ public final class LauncherUtils {
     URL fileUrl =
         Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
             .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
-    try (val file = new JarFile(new File(fileUrl.toURI()))) {
+    try (JarFile file = new JarFile(new File(fileUrl.toURI()))) {
       Manifest manifest = file.getManifest();
       Attributes attributes = manifest.getMainAttributes();
       return attributes.getValue(key);
     } catch (FileNotFoundException fnfe) {
-      val now = Instant.now();
+      Instant now = Instant.now();
       return new SimpleDateFormat("1.M.ddyy").format(now.toEpochMilli());
     } catch (IOException ioe) {
       LOGGER.error("Cannot retrieve '{}' from {}", key, fileUrl, ioe);
@@ -175,10 +175,10 @@ public final class LauncherUtils {
   }
 
   public static Path getWorkingDirectoryPath() {
-    val userHome = System.getProperty("user.home", ".");
-    val appData = System.getenv("APPDATA");
+    String userHome = System.getProperty("user.home", ".");
+    String appData = System.getenv("APPDATA");
 
-    Map<EPlatform, Path> workingDirectoryLookup =
+    Map<EPlatform, Path> lookup =
         Collections.unmodifiableMap(
             new HashMap<EPlatform, Path>() {
               {
@@ -190,32 +190,31 @@ public final class LauncherUtils {
               }
             });
 
-    val workingDirectory = workingDirectoryLookup.get(EPlatform.getOSName()).toFile();
-    if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
-      LOGGER.warn("Could not create {}", workingDirectory.getAbsolutePath());
+    File workingDir = lookup.get(EPlatform.getOSName()).toFile();
+    if (!workingDir.exists() && !workingDir.mkdirs()) {
+      LOGGER.warn("Could not create {}", workingDir.getAbsolutePath());
       return null;
     }
-    return workingDirectory.toPath();
+    return workingDir.toPath();
   }
 
   public static boolean isOutdated() {
     if (Objects.isNull(outdated)) {
-      val worker =
+      SwingWorker<Boolean, Void> worker =
           new SwingWorker<Boolean, Void>() {
             @Override
             protected Boolean doInBackground() {
               try {
-                val request =
+                String request =
                     Request.get(releasesUrl.toURI())
                         .addHeader("accept", "application/vnd.github+json")
                         .addHeader("X-GitHub-Api-Version", "2022-11-28")
                         .execute()
                         .returnContent()
                         .asString(StandardCharsets.UTF_8);
-                val body = new JSONArray(request);
-                val tagName = body.getJSONObject(0).getString("tag_name");
-
-                val buildTime = getManifestAttribute("Build-Time");
+                JSONArray body = new JSONArray(request);
+                String tagName = body.getJSONObject(0).getString("tag_name");
+                String buildTime = getManifestAttribute("Build-Time");
                 return Objects.compare(buildTime, tagName, String::compareTo) < 0;
               } catch (UnknownHostException uhe) {
                 LauncherUtils.swapContainers(
@@ -238,7 +237,7 @@ public final class LauncherUtils {
 
         LOGGER.error("Interrupted while checking for updates", ie);
       } catch (ExecutionException ee) {
-        val cause = ee.getCause();
+        Throwable cause = ee.getCause();
 
         LOGGER.error("Error while checking for updates", cause);
       } finally {
@@ -268,11 +267,11 @@ public final class LauncherUtils {
   public static void updateContainerKeyValue(
       UTF8ResourceBundle bundle, Container c, String key, Object... args) {
     if (c instanceof JFrame) {
-      val frame = (JFrame) c;
+      JFrame frame = (JFrame) c;
       frame.setTitle(MessageFormat.format(bundle.getString(key), args));
     }
     if (c instanceof JDialog) {
-      val dialog = (JDialog) c;
+      JDialog dialog = (JDialog) c;
       dialog.setTitle(MessageFormat.format(bundle.getString(key), args));
     }
   }
@@ -280,15 +279,15 @@ public final class LauncherUtils {
   public static void updateComponentKeyValue(
       UTF8ResourceBundle bundle, JComponent c, String key, Object... args) {
     if (c instanceof AbstractButton) {
-      val button = (AbstractButton) c;
+      AbstractButton button = (AbstractButton) c;
       button.setText(MessageFormat.format(bundle.getString(key), args));
     }
     if (c instanceof JGroupBox) {
-      val groupBox = (JGroupBox) c;
+      JGroupBox groupBox = (JGroupBox) c;
       groupBox.setTitledBorder(MessageFormat.format(bundle.getString(key), args));
     }
     if (c instanceof JLabel) {
-      val label = (JLabel) c;
+      JLabel label = (JLabel) c;
       label.setText(MessageFormat.format(bundle.getString(key), args));
     }
   }
