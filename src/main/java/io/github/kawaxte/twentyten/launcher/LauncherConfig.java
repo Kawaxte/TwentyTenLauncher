@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,9 +66,10 @@ public final class LauncherConfig {
   private LauncherConfig() {}
 
   private static Path getConfigFilePath() {
-    val userName = System.getProperty("user.name");
-    val fileName = String.format("%s_%s.properties", "twentyten", userName);
-    val filePath = Paths.get(String.valueOf(workingDirectoryPath), fileName);
+    String userName = System.getProperty("user.name");
+    String fileName = String.format("%s_%s.properties", "twentyten", userName);
+
+    Path filePath = Paths.get(String.valueOf(workingDirectoryPath), fileName);
     File configFile = filePath.toFile();
     try {
       return !configFile.exists() && !configFile.createNewFile() ? null : filePath;
@@ -80,15 +80,15 @@ public final class LauncherConfig {
   }
 
   public static void loadConfig() {
-    val filePath = getConfigFilePath();
+    Path filePath = getConfigFilePath();
     if (Objects.isNull(filePath)) {
       return;
     }
 
     URI filePathUri = filePath.toUri();
 
-    val properties = new LinkedProperties();
-    try (val fis = new FileInputStream(filePath.toFile())) {
+    LinkedProperties properties = new LinkedProperties();
+    try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
       properties.load(fis);
       properties.forEach((key, value) -> lookup.put((String) key, value));
     } catch (FileNotFoundException fnfe) {
@@ -105,33 +105,34 @@ public final class LauncherConfig {
   }
 
   public static void saveConfig() {
-    val configFilePath = getConfigFilePath();
-    if (Objects.isNull(configFilePath)) {
+    Path filePath = getConfigFilePath();
+    if (Objects.isNull(filePath)) {
       return;
     }
 
-    try (val fos = new FileOutputStream(configFilePath.toFile())) {
-      val properties = new LinkedProperties();
+    URI filePathUri = filePath.toUri();
+
+    try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
+      LinkedProperties properties = new LinkedProperties();
 
       lookup
           .keySet()
           .forEach(
               key -> {
-                val value = lookup.get(key);
+                Object value = lookup.get(key);
                 properties.put(key, Optional.ofNullable(value).map(Object::toString).orElse(""));
               });
       properties.store(fos, "TwentyTen Launcher");
 
       fos.flush();
     } catch (FileNotFoundException fnfe) {
-      LOGGER.error("Cannot find {}", configFilePath.toAbsolutePath(), fnfe);
+      LOGGER.error("Cannot find {}", filePathUri, fnfe);
     } catch (IOException ioe) {
-      LOGGER.error("Cannot save {}", configFilePath.toAbsolutePath(), ioe);
+      LOGGER.error("Cannot save {}", filePathUri, ioe);
     } finally {
-      LOGGER.info(
-          "Saved {} to {}",
-          configFilePath.getFileName(),
-          configFilePath.toAbsolutePath().getParent());
+      if (filePath.toFile().exists()) {
+        LOGGER.info("Saved {}", filePathUri);
+      }
     }
   }
 }
