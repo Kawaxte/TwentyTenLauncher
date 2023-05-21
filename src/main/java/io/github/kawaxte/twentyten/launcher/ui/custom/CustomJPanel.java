@@ -20,7 +20,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import javax.swing.JPanel;
-import lombok.val;
 
 public class CustomJPanel extends JPanel {
 
@@ -39,7 +38,7 @@ public class CustomJPanel extends JPanel {
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    val g2d = (Graphics2D) g;
+    Graphics2D g2d = (Graphics2D) g;
     g2d.setColor(Color.BLACK);
     g2d.setStroke(new BasicStroke(2));
     g2d.drawRect(1, 1, this.getWidth() - 2, this.getHeight() - 2);
