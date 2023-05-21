@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingUtilities;
-import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -64,7 +63,7 @@ public final class LauncherOptionsUtils {
   public static void updateLanguageComboBox(LanguageGroupBox lgb) {
     languageLookup = new HashMap<>();
 
-    val defaultComboBoxModel = new DefaultComboBoxModel<String>();
+    DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<>();
 
     Arrays.stream(ELanguage.values())
         .sorted(Comparator.comparing(ELanguage::getLanguageName))
@@ -74,7 +73,7 @@ public final class LauncherOptionsUtils {
               languageLookup.put(language.getLanguageName(), language.toString().toLowerCase());
             });
 
-    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
+    Object selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     languageLookup.entrySet().stream()
         .filter(entry -> Objects.equals(entry.getValue(), selectedLanguage))
         .findFirst()
@@ -86,63 +85,54 @@ public final class LauncherOptionsUtils {
   public static void updateVersionComboBox(VersionGroupBox vgb) {
     versionLookup = new HashMap<>();
 
-    val defaultComboBoxModel = new DefaultComboBoxModel<String>();
+    DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<>();
 
-    val fileName = "versions.json";
+    String fileName = "versions.json";
     URL fileUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
 
     InputStream is =
         Optional.ofNullable(
                 LauncherOptionsUtils.class.getClassLoader().getResourceAsStream(fileName))
             .orElseThrow(() -> new NullPointerException("is cannot be null"));
-    try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-      val json = new JSONObject(br.lines().collect(Collectors.joining()));
-      List<String> versionArrays =
+    try (BufferedReader br =
+        new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+      JSONObject json = new JSONObject(br.lines().collect(Collectors.joining()));
+      List<String> types =
           Collections.unmodifiableList(
               Arrays.asList("legacy_beta", "legacy_alpha", "legacy_infdev"));
-      versionArrays.forEach(
+      types.forEach(
           version -> {
             JSONArray versionArray = json.getJSONArray(version);
             IntStream.range(0, versionArray.length())
                 .mapToObj(versionArray::getJSONObject)
                 .sorted(
-                    Collections.reverseOrder(
-                        Comparator.comparing(
-                            o -> {
-                              val versionId = o.getString("versionId");
-                              val versionIdSplit = versionId.split("_");
-
-                              if (versionIdSplit.length == 1) {
-                                return versionId;
-                              }
-
-                              val majorVersion = versionIdSplit[0];
-                              val minorVersion = versionIdSplit[1].split("_")[0];
-                              return String.format("%s.%s", majorVersion, minorVersion);
-                            },
-                            Comparator.nullsLast(String::compareTo))))
+                    (o1, o2) -> {
+                      String v1 = o1.getString("versionId");
+                      String v2 = o2.getString("versionId");
+                      return -compareVersionIds(v1, v2);
+                    })
                 .collect(Collectors.toList())
                 .forEach(
-                    versionObject -> {
-                      val showBetaVersionsSelected =
+                    o -> {
+                      boolean showBetaVersionsSelected =
                           Boolean.parseBoolean(
                                   LauncherConfig.lookup.get("showBetaVersionsSelected").toString())
-                              && Objects.equals(version, versionArrays.get(0));
-                      val showAlphaVersionsSelected =
+                              && Objects.equals(version, types.get(0));
+                      boolean showAlphaVersionsSelected =
                           Boolean.parseBoolean(
                                   LauncherConfig.lookup.get("showAlphaVersionsSelected").toString())
-                              && Objects.equals(version, versionArrays.get(1));
-                      val showInfdevVersionsSelected =
+                              && Objects.equals(version, types.get(1));
+                      boolean showInfdevVersionsSelected =
                           Boolean.parseBoolean(
                                   LauncherConfig.lookup
                                       .get("showInfdevVersionsSelected")
                                       .toString())
-                              && Objects.equals(version, versionArrays.get(2));
+                              && Objects.equals(version, types.get(2));
                       if (showBetaVersionsSelected
                           || showAlphaVersionsSelected
                           || showInfdevVersionsSelected) {
-                        val versionId = versionObject.getString("versionId");
-                        val versionName = versionObject.getString("versionName");
+                        String versionId = o.getString("versionId");
+                        String versionName = o.getString("versionName");
 
                         versionLookup.put(versionName, versionId);
                         defaultComboBoxModel.addElement(versionName);
@@ -155,7 +145,7 @@ public final class LauncherOptionsUtils {
       LOGGER.info("Read {}", fileUrl);
     }
 
-    val selectedVersion = LauncherConfig.lookup.get("selectedVersion");
+    Object selectedVersion = LauncherConfig.lookup.get("selectedVersion");
     versionLookup.entrySet().stream()
         .filter(entry -> entry.getValue().equals(selectedVersion))
         .findFirst()
@@ -164,11 +154,28 @@ public final class LauncherOptionsUtils {
     vgb.getVersionComboBox().setModel(defaultComboBoxModel);
   }
 
+  public static int compareVersionIds(String v1, String v2) {
+    String[] v1Split = v1.replaceAll("[^\\d._]", "").split("[._]");
+    String[] v2Split = v2.replaceAll("[^\\d._]", "").split("[._]");
+    int v1SplitLength = v1Split.length;
+    int v2SplitLength = v2Split.length;
+    int vSplitLength = Math.max(v1SplitLength, v2SplitLength);
+
+    for (int i = 0; i < vSplitLength; i++) {
+      int v1SplitValue = i < v1SplitLength ? Integer.parseInt(v1Split[i]) : 0;
+      int v2SplitValue = i < v2SplitLength ? Integer.parseInt(v2Split[i]) : 0;
+      if (!Objects.equals(v1SplitValue, v2SplitValue)) {
+        return Integer.compare(v1SplitValue, v2SplitValue);
+      }
+    }
+    return 0;
+  }
+
   public static void updateSelectedVersion(VersionGroupBox vgb) {
     String selectedItem = (String) vgb.getVersionComboBox().getSelectedItem();
     selectedItem = versionLookup.get(selectedItem);
 
-    val selectedVersion = LauncherConfig.lookup.get("selectedVersion");
+    Object selectedVersion = LauncherConfig.lookup.get("selectedVersion");
     boolean versionChanged = !Objects.equals(selectedItem, selectedVersion);
     if (versionChanged) {
       LauncherConfig.lookup.put("selectedVersion", selectedItem);
@@ -180,13 +187,13 @@ public final class LauncherOptionsUtils {
     String selectedItem = (String) lgb.getLanguageComboBox().getSelectedItem();
     selectedItem = languageLookup.get(selectedItem);
 
-    val selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
+    Object selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
     boolean languageChanged = !Objects.equals(selectedItem, selectedLanguage);
     if (languageChanged) {
       LauncherConfig.lookup.put("selectedLanguage", selectedItem);
       LauncherConfig.saveConfig();
 
-      val finalSelectedItem = selectedItem;
+      String finalSelectedItem = selectedItem;
       SwingUtilities.invokeLater(
           () -> {
             UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(finalSelectedItem);
