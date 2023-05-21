@@ -26,7 +26,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import lombok.val;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
@@ -46,7 +45,7 @@ public final class YggdrasilAuth {
   private YggdrasilAuth() {}
 
   private static URL[] getYggdrasilAuthUrls() {
-    val authUrls = new URL[3];
+    URL[] authUrls = new URL[3];
 
     try {
       authUrls[0] =
@@ -74,11 +73,11 @@ public final class YggdrasilAuth {
   }
 
   public static JSONObject authenticate(String username, String password, String clientToken) {
-    val agent = new JSONObject();
+    JSONObject agent = new JSONObject();
     agent.put("name", "Minecraft");
     agent.put("version", 1);
 
-    val body = new JSONObject();
+    JSONObject body = new JSONObject();
     body.put("agent", agent);
     body.put("username", username);
     body.put("password", password);
@@ -106,7 +105,7 @@ public final class YggdrasilAuth {
 
       LOGGER.error("Interrupted while authenticating with Mojang", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
             LauncherPanel.instance,
@@ -122,7 +121,7 @@ public final class YggdrasilAuth {
   }
 
   public static JSONObject validateAccessToken(String accessToken, String clientToken) {
-    val body = new JSONObject();
+    JSONObject body = new JSONObject();
     body.put("accessToken", accessToken);
     body.put("clientToken", clientToken);
 
@@ -147,7 +146,7 @@ public final class YggdrasilAuth {
 
       LOGGER.error("Interrupted while validating access token", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         return null;
       }
@@ -160,7 +159,7 @@ public final class YggdrasilAuth {
   }
 
   public static JSONObject refreshAccessToken(String accessToken, String clientToken) {
-    val body = new JSONObject();
+    JSONObject body = new JSONObject();
     body.put("accessToken", accessToken);
     body.put("clientToken", clientToken);
     body.put("requestUser", true);
@@ -186,7 +185,7 @@ public final class YggdrasilAuth {
 
       LOGGER.error("Interrupted while refreshing access token", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         return null;
       }
