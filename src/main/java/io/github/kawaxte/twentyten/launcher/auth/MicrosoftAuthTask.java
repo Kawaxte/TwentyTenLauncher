@@ -49,7 +49,7 @@ public class MicrosoftAuthTask implements Runnable {
 
   private static String[] getTokenResponse(JSONObject object) {
     if (object.has("error")) {
-      val error = object.getString("error");
+      String error = object.getString("error");
       if (Objects.equals(error, "authorization_pending")) {
         JProgressBar progressBar = MicrosoftAuthPanel.instance.getExpiresInProgressBar();
         progressBar.setValue(progressBar.getValue() - 1);
@@ -66,22 +66,23 @@ public class MicrosoftAuthTask implements Runnable {
     MicrosoftAuthPanel.instance.getExpiresInProgressBar().setIndeterminate(true);
     MicrosoftAuthPanel.instance.getOpenBrowserButton().setVisible(false);
 
-    val accessToken = object.getString("access_token");
-    val refreshToken = object.getString("refresh_token");
+    String accessToken = object.getString("access_token");
+    String refreshToken = object.getString("refresh_token");
     return new String[] {accessToken, refreshToken};
   }
 
   public static String[] getXBLTokenResponse(JSONObject object) {
-    val displayClaims = object.getJSONObject("DisplayClaims");
+    JSONObject displayClaims = object.getJSONObject("DisplayClaims");
     JSONArray xui = displayClaims.getJSONArray("xui");
-    val uhs = xui.getJSONObject(0).getString("uhs");
-    val token = object.getString("Token");
+
+    String uhs = xui.getJSONObject(0).getString("uhs");
+    String token = object.getString("Token");
     return new String[] {uhs, token};
   }
 
   public static String getXSTSTokenResponse(JSONObject object) {
     if (object.has("XErr")) {
-      val xerr = object.getLong("XErr");
+      long xerr = object.getLong("XErr");
       switch ((int) xerr) {
         case (int) 2148916233L:
           LauncherUtils.swapContainers(
@@ -106,17 +107,17 @@ public class MicrosoftAuthTask implements Runnable {
   }
 
   public static String[] getAccessTokenResponse(JSONObject object) {
-    val accessToken = object.getString("access_token");
-    val expiresIn = object.getInt("expires_in");
-    val expiresInMillis = System.currentTimeMillis() + (expiresIn * 1000L);
+    String accessToken = object.getString("access_token");
+    int expiresIn = object.getInt("expires_in");
+    long expiresInMillis = System.currentTimeMillis() + (expiresIn * 1000L);
     return new String[] {accessToken, String.valueOf(expiresInMillis)};
   }
 
   private static boolean isItemNameEqualToGameMinecraft(JSONObject object) {
     JSONArray items = object.getJSONArray("items");
     if (!items.isEmpty()) {
-      for (val item : items) {
-        val name = ((JSONObject) item).getString("name");
+      for (Object item : items) {
+        String name = ((JSONObject) item).getString("name");
         return Objects.equals(name, "game_minecraft");
       }
     }
@@ -135,42 +136,47 @@ public class MicrosoftAuthTask implements Runnable {
       service.shutdown();
     }
 
-    val consumersToken = MicrosoftAuth.acquireToken(clientId, deviceCode);
+    JSONObject consumersToken = MicrosoftAuth.acquireToken(clientId, deviceCode);
     if (Objects.isNull(consumersToken)) {
       return;
     }
-    val tokenResponse = getTokenResponse(consumersToken);
+
+    String[] tokenResponse = getTokenResponse(consumersToken);
     if (Objects.isNull(tokenResponse)) {
       return;
     }
 
-    val userAuthenticate = MicrosoftAuth.acquireXBLToken(tokenResponse[0]);
+    JSONObject userAuthenticate = MicrosoftAuth.acquireXBLToken(tokenResponse[0]);
     if (Objects.isNull(userAuthenticate)) {
       return;
     }
-    val xblTokenResponse = getXBLTokenResponse(userAuthenticate);
 
-    val xstsAuthorize = MicrosoftAuth.acquireXSTSToken(xblTokenResponse[1]);
+    String[] xblTokenResponse = getXBLTokenResponse(userAuthenticate);
+
+    JSONObject xstsAuthorize = MicrosoftAuth.acquireXSTSToken(xblTokenResponse[1]);
     if (Objects.isNull(xstsAuthorize)) {
       return;
     }
-    val xstsTokenResponse = getXSTSTokenResponse(xstsAuthorize);
 
-    val authenticateLoginWithXbox =
+    String xstsTokenResponse = getXSTSTokenResponse(xstsAuthorize);
+
+    JSONObject authenticateLoginWithXbox =
         MicrosoftAuth.acquireAccessToken(xblTokenResponse[0], xstsTokenResponse);
     if (Objects.isNull(authenticateLoginWithXbox)) {
       return;
     }
-    val accessTokenResponse = getAccessTokenResponse(authenticateLoginWithXbox);
+
+    String[] accessTokenResponse = getAccessTokenResponse(authenticateLoginWithXbox);
     LauncherConfig.lookup.put("microsoftAccessToken", accessTokenResponse[0]);
     LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
     LauncherConfig.lookup.put("microsoftRefreshToken", tokenResponse[1]);
 
-    val entitlementsMcStore = MicrosoftAuth.checkEntitlementsMcStore(accessTokenResponse[0]);
+    JSONObject entitlementsMcStore = MicrosoftAuth.checkEntitlementsMcStore(accessTokenResponse[0]);
     if (Objects.isNull(entitlementsMcStore)) {
       return;
     }
-    val itemNameEqualToGameMinecraft = isItemNameEqualToGameMinecraft(entitlementsMcStore);
+
+    boolean itemNameEqualToGameMinecraft = isItemNameEqualToGameMinecraft(entitlementsMcStore);
     if (!itemNameEqualToGameMinecraft) {
       LauncherConfig.lookup.put("microsoftProfileId", null);
       LauncherConfig.lookup.put("microsoftProfileName", null);
@@ -178,11 +184,12 @@ public class MicrosoftAuthTask implements Runnable {
 
       Launcher.launchMinecraft(null, accessTokenResponse[0], null);
     } else {
-      val minecraftProfile = MicrosoftAuth.acquireMinecraftProfile(accessTokenResponse[0]);
+      JSONObject minecraftProfile = MicrosoftAuth.acquireMinecraftProfile(accessTokenResponse[0]);
       if (Objects.isNull(minecraftProfile)) {
         return;
       }
-      val minecraftProfileResponse = getMinecraftProfileResponse(minecraftProfile);
+
+      String[] minecraftProfileResponse = getMinecraftProfileResponse(minecraftProfile);
       LauncherConfig.lookup.put("microsoftProfileId", minecraftProfileResponse[0]);
       LauncherConfig.lookup.put("microsoftProfileName", minecraftProfileResponse[1]);
       LauncherConfig.saveConfig();
