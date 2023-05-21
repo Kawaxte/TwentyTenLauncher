@@ -33,7 +33,6 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import lombok.val;
 
 public class LinkedProperties extends Properties {
 
@@ -54,7 +53,7 @@ public class LinkedProperties extends Properties {
   @Override
   public void store(Writer writer, String comments) throws IOException {
     if (Objects.nonNull(comments)) {
-      val sb = new StringBuilder();
+      StringBuilder sb = new StringBuilder();
       sb.append("#");
       sb.append(comments);
       writer.write(sb.toString());
@@ -62,15 +61,16 @@ public class LinkedProperties extends Properties {
 
     synchronized (this) {
       for (Entry<Object, Object> entry : this.linkedMap.entrySet()) {
-        val key = entry.getKey();
-        val value = entry.getValue();
+        Object key = entry.getKey();
+        Object value = entry.getValue();
 
-        val sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append(key);
         sb.append("=");
         if (Objects.nonNull(value)) {
           sb.append(value);
         }
+
         sb.append(System.lineSeparator());
         writer.write(sb.toString());
       }
@@ -80,7 +80,7 @@ public class LinkedProperties extends Properties {
   @Override
   public void store(OutputStream os, String comments) throws IOException {
     if (Objects.nonNull(comments)) {
-      val sb = new StringBuilder();
+      StringBuilder sb = new StringBuilder();
       sb.append("#");
       sb.append(comments);
       sb.append(System.lineSeparator());
@@ -92,15 +92,16 @@ public class LinkedProperties extends Properties {
 
     synchronized (this) {
       for (Entry<Object, Object> entry : this.linkedMap.entrySet()) {
-        val key = entry.getKey();
-        val value = entry.getValue();
+        Object key = entry.getKey();
+        Object value = entry.getValue();
 
-        val sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append(key);
         sb.append("=");
         if (Objects.nonNull(value)) {
           sb.append(value);
         }
+
         sb.append(System.lineSeparator());
         os.write(sb.toString().getBytes(StandardCharsets.UTF_8));
       }
@@ -110,7 +111,7 @@ public class LinkedProperties extends Properties {
   @Override
   public String getProperty(String key) {
     synchronized (this) {
-      val value = (String) this.linkedMap.get(key);
+      String value = (String) this.linkedMap.get(key);
       return Optional.ofNullable(value).orElseGet(() -> super.getProperty(key));
     }
   }
@@ -118,7 +119,7 @@ public class LinkedProperties extends Properties {
   @Override
   public String getProperty(String key, String defaultValue) {
     synchronized (this) {
-      val value = (String) this.linkedMap.get(key);
+      String value = (String) this.linkedMap.get(key);
       return Optional.ofNullable(value).orElse(defaultValue);
     }
   }
@@ -193,7 +194,7 @@ public class LinkedProperties extends Properties {
 
   @Override
   public synchronized Object clone() {
-    val clone = (LinkedProperties) super.clone();
+    LinkedProperties clone = (LinkedProperties) super.clone();
     clone.linkedMap.putAll(this.linkedMap);
     return clone;
   }
