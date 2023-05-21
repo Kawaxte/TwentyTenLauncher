@@ -68,15 +68,17 @@ public final class GameUpdater {
 
     binDirectoryPath = Paths.get(LauncherUtils.workingDirectoryPath.toString(), "bin");
     nativesDirectoryPath = Paths.get(binDirectoryPath.toString(), "natives");
-    val nativesDirectory = nativesDirectoryPath.toFile();
+
+    File nativesDirectory = nativesDirectoryPath.toFile();
     if (!nativesDirectory.exists() && !nativesDirectory.mkdirs()) {
       LOGGER.warn("Could not create {}", nativesDirectoryPath);
     }
 
-    val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
+    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
     versionsDirectoryPath = Paths.get(LauncherUtils.workingDirectoryPath.toString(), "versions");
     versionDirectoryPath = Paths.get(versionsDirectoryPath.toString(), selectedVersion);
-    val versionDirectory = versionDirectoryPath.toFile();
+
+    File versionDirectory = versionDirectoryPath.toFile();
     if (!versionDirectory.exists() && !versionDirectory.mkdirs()) {
       LOGGER.warn("Could not create {}", versionDirectoryPath);
     }
@@ -89,7 +91,7 @@ public final class GameUpdater {
   }
 
   private static boolean isLWJGLJarExistent() {
-    val lwjglJars = getListOfLWJGLJars();
+    List<String> lwjglJars = getListOfLWJGLJars();
     return lwjglJars.stream()
         .allMatch(lwjglJar -> Files.exists(binDirectoryPath.resolve(lwjglJar)));
   }
@@ -105,8 +107,8 @@ public final class GameUpdater {
   }
 
   private static boolean isClientJarExistent() {
-    val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    val clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
+    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
+    String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
     return Files.exists(versionDirectoryPath.resolve(clientJar));
   }
 
