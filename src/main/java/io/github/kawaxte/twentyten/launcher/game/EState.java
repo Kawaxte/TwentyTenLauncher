@@ -18,7 +18,6 @@ import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import lombok.Getter;
-import lombok.val;
 
 public enum EState {
   INITIALISE("es_enum.initialise"),
@@ -31,7 +30,7 @@ public enum EState {
   @Getter private final String message;
 
   EState(String message) {
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.message = bundle.getString(message);
   }
