@@ -36,7 +36,6 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import lombok.Getter;
-import lombok.val;
 
 @Getter
 public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
@@ -70,7 +69,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
           @Override
           public void mouseClicked(MouseEvent event) {
             Clipboard clipboard = getToolkit().getSystemClipboard();
-            val transferable = new StringSelection(userCodeLabel.getText());
+            StringSelection transferable = new StringSelection(userCodeLabel.getText());
             clipboard.setContents(transferable, null);
           }
         });
@@ -79,7 +78,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
 
     this.setLayout(this.getGroupLayout());
 
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
@@ -102,48 +101,43 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
   private LayoutManager getGroupLayout() {
     int width = 0;
 
-    val buttons = new JButton[] {this.openBrowserButton, this.cancelButton};
-    for (val button : buttons) {
+    JButton[] buttons = new JButton[] {this.openBrowserButton, this.cancelButton};
+    for (JButton button : buttons) {
       width = Math.max(width, button.getPreferredSize().width);
     }
 
-    val groupLayout = new GroupLayout(this);
-    groupLayout.setAutoCreateContainerGaps(true);
-    groupLayout.setAutoCreateGaps(true);
-    groupLayout.setHorizontalGroup(
-        groupLayout
-            .createSequentialGroup()
+    GroupLayout gl = new GroupLayout(this);
+    gl.setAutoCreateContainerGaps(true);
+    gl.setAutoCreateGaps(true);
+    gl.setHorizontalGroup(
+        gl.createSequentialGroup()
             .addGroup(
-                groupLayout
-                    .createParallelGroup()
+                gl.createParallelGroup()
                     .addComponent(this.copyCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(this.expiresInProgressBar)
                     .addGroup(
-                        groupLayout
-                            .createSequentialGroup()
+                        gl.createSequentialGroup()
                             .addComponent(this.openBrowserButton, 0, width, Short.MAX_VALUE)
                             .addComponent(this.cancelButton, 0, width, Short.MAX_VALUE))));
-    groupLayout.setVerticalGroup(
-        groupLayout
-            .createSequentialGroup()
+    gl.setVerticalGroup(
+        gl.createSequentialGroup()
             .addComponent(this.copyCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(this.expiresInProgressBar)
             .addGroup(
-                groupLayout
-                    .createParallelGroup()
+                gl.createParallelGroup()
                     .addComponent(this.openBrowserButton)
                     .addComponent(this.cancelButton)));
-    return groupLayout;
+    return gl;
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    val source = event.getSource();
+    Object source = event.getSource();
     if (Objects.equals(source, this.openBrowserButton)) {
       Clipboard clipboard = this.getToolkit().getSystemClipboard();
-      val transferable = new StringSelection(this.userCodeLabel.getText());
+      StringSelection transferable = new StringSelection(this.userCodeLabel.getText());
       clipboard.setContents(transferable, null);
 
       LauncherUtils.openBrowser(this.verificationUri);
