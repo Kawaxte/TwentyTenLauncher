@@ -26,7 +26,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import lombok.val;
 import org.apache.hc.client5.http.fluent.Form;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ContentType;
@@ -280,11 +279,11 @@ public final class MicrosoftAuth {
   }
 
   public static JSONObject acquireXSTSToken(String token) {
-    val properties = new JSONObject();
+    JSONObject properties = new JSONObject();
     properties.put("SandboxId", "RETAIL");
     properties.put("UserTokens", new String[] {token});
 
-    val body = new JSONObject();
+    JSONObject body = new JSONObject();
     body.put("Properties", properties);
     body.put("RelyingParty", "rp://api.minecraftservices.com/");
     body.put("TokenType", "JWT");
@@ -310,7 +309,7 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring XSTS token", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
             LauncherPanel.instance,
@@ -326,7 +325,7 @@ public final class MicrosoftAuth {
   }
 
   public static JSONObject acquireAccessToken(String uhs, String token) {
-    val body = new JSONObject();
+    JSONObject body = new JSONObject();
     body.put("identityToken", String.format("XBL3.0 x=%s;%s", uhs, token));
     body.put("ensureLegacyEnabled", true);
 
@@ -351,7 +350,7 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring access token", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
             LauncherPanel.instance,
@@ -388,7 +387,7 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while acquiring items", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
             LauncherPanel.instance,
@@ -425,7 +424,7 @@ public final class MicrosoftAuth {
 
       LOGGER.error("Interrupted while checking Minecraft profile", ie);
     } catch (ExecutionException ee) {
-      val cause = ee.getCause();
+      Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
             LauncherPanel.instance,
