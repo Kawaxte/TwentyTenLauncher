@@ -206,7 +206,6 @@ public final class LauncherOptionsUtils {
     int v1SplitLength = v1Split.length;
     int v2SplitLength = v2Split.length;
     int vSplitLength = Math.max(v1SplitLength, v2SplitLength);
-
     for (int i = 0; i < vSplitLength; i++) {
       int v1SplitValue = i < v1SplitLength ? Integer.parseInt(v1Split[i]) : 0;
       int v2SplitValue = i < v2SplitLength ? Integer.parseInt(v2Split[i]) : 0;
