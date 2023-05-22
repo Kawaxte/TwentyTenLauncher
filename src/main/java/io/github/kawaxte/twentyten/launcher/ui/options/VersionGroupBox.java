@@ -35,7 +35,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import lombok.Getter;
-import lombok.val;
 
 public class VersionGroupBox extends JGroupBox implements ActionListener {
 
@@ -73,7 +72,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     this.showInfdevVersionsCheckBox.addActionListener(this);
     this.versionComboBox.addActionListener(this);
 
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
@@ -112,49 +111,44 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
   }
 
   private LayoutManager getGroupLayout() {
-    val groupLayout = new GroupLayout(this);
-    groupLayout.setAutoCreateContainerGaps(true);
-    groupLayout.setAutoCreateGaps(true);
-    groupLayout.setHorizontalGroup(
-        groupLayout
-            .createSequentialGroup()
+    GroupLayout gl = new GroupLayout(this);
+    gl.setAutoCreateContainerGaps(true);
+    gl.setAutoCreateGaps(true);
+    gl.setHorizontalGroup(
+        gl.createSequentialGroup()
             .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.LEADING)
+                gl.createParallelGroup(Alignment.LEADING)
                     .addComponent(this.showBetaVersionsCheckBox)
                     .addComponent(this.showAlphaVersionsCheckBox)
                     .addComponent(this.showInfdevVersionsCheckBox)
                     .addGroup(
-                        groupLayout
-                            .createSequentialGroup()
+                        gl.createSequentialGroup()
                             .addComponent(this.useVersionLabel)
                             .addComponent(this.versionComboBox))));
-    groupLayout.setVerticalGroup(
-        groupLayout
-            .createSequentialGroup()
+    gl.setVerticalGroup(
+        gl.createSequentialGroup()
             .addComponent(this.showBetaVersionsCheckBox)
             .addComponent(this.showAlphaVersionsCheckBox)
             .addComponent(this.showInfdevVersionsCheckBox)
             .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.BASELINE)
+                gl.createParallelGroup(Alignment.BASELINE)
                     .addComponent(this.useVersionLabel)
                     .addComponent(this.versionComboBox)));
-    return groupLayout;
+    return gl;
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    val source = event.getSource();
+    Object source = event.getSource();
 
-    val showVersionCheckBoxes =
+    JCheckBox[] showVersionCheckBoxes =
         new JCheckBox[] {
           this.showBetaVersionsCheckBox,
           this.showAlphaVersionsCheckBox,
           this.showInfdevVersionsCheckBox
         };
-    for (val showVersionCheckBox : showVersionCheckBoxes) {
-      if (Objects.equals(source, showVersionCheckBox)) {
+    for (JCheckBox checkBox : showVersionCheckBoxes) {
+      if (Objects.equals(source, checkBox)) {
         LauncherConfig.lookup.put(
             "showBetaVersionsSelected", this.showBetaVersionsCheckBox.isSelected());
         LauncherConfig.lookup.put(
@@ -162,7 +156,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
         LauncherConfig.lookup.put(
             "showInfdevVersionsSelected", this.showInfdevVersionsCheckBox.isSelected());
 
-        val showVersionsSelected =
+        boolean showVersionsSelected =
             Stream.of(
                     "showBetaVersionsSelected",
                     "showAlphaVersionsSelected",
@@ -175,9 +169,10 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
       }
     }
     if (Objects.equals(source, this.versionComboBox)) {
-      val selectedVersionEqual =
-          Objects.equals(
-              LauncherConfig.lookup.get("selectedVersion"), this.versionComboBox.getSelectedItem());
+      Object selectedVersion = LauncherConfig.lookup.get("selectedVersion");
+      Object selectedItem = this.versionComboBox.getSelectedItem();
+      boolean selectedVersionEqual = Objects.equals(selectedVersion, selectedItem);
+
       OptionsPanel.instance.getSaveOptionsButton().setEnabled(!selectedVersionEqual);
     }
   }
