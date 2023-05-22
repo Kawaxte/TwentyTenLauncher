@@ -46,7 +46,6 @@ import javax.swing.JApplet;
 import javax.swing.Timer;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -181,13 +180,13 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     int appletWidth = this.getWidth();
     int appletHeight = this.getHeight();
 
-    val g2d = (Graphics2D) g;
+    Graphics2D g2d = (Graphics2D) g;
     GraphicsConfiguration deviceConfiguration = g2d.getDeviceConfiguration();
 
     BufferedImage bufferedImage =
         deviceConfiguration.createCompatibleImage(
             appletWidth >> 1, appletHeight >> 1, Transparency.OPAQUE);
-    val g2dBuffered = bufferedImage.createGraphics();
+    Graphics2D g2dBuffered = bufferedImage.createGraphics();
     g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f));
     try {
       int gridWidth = (appletWidth + bgImageWidth) >> 5;
@@ -202,9 +201,10 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
               });
       g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-      val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+      String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
       UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
-      val title =
+
+      String title =
           updaterTaskErrored
               ? bundle.getString("gaw.updaterErrored")
               : bundle.getString("gaw.updaterStarted");
