@@ -21,7 +21,6 @@ import io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils;
 import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
 import java.util.Objects;
 import javax.swing.SwingUtilities;
-import lombok.val;
 
 public class Launcher {
 
@@ -48,18 +47,18 @@ public class Launcher {
   }
 
   public static void launchMinecraft(String username, String accessToken, String id) {
-    val sessionId =
+    String sessionId =
         new StringBuilder().append("token:").append(accessToken).append(":").append(id).toString();
 
-    val gameAppletWrapper = new GameAppletWrapper(username, sessionId);
-    gameAppletWrapper.init();
+    GameAppletWrapper gaw = new GameAppletWrapper(username, sessionId);
+    gaw.init();
 
     LauncherFrame.instance.remove(LauncherPanel.instance);
-    LauncherFrame.instance.setContentPane(gameAppletWrapper);
+    LauncherFrame.instance.setContentPane(gaw);
     LauncherFrame.instance.revalidate();
     LauncherFrame.instance.repaint();
 
-    gameAppletWrapper.start();
+    gaw.start();
     LauncherFrame.instance.setTitle("Minecraft");
   }
 }
