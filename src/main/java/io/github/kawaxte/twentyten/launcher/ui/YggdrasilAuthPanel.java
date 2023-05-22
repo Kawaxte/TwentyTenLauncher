@@ -41,7 +41,6 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import lombok.val;
 
 public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
@@ -131,71 +130,61 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   }
 
   private LayoutManager getGroupLayout() {
-    val groupLayout = new GroupLayout(this);
-    groupLayout.setAutoCreateContainerGaps(true);
-    groupLayout.setAutoCreateGaps(true);
-    groupLayout.setHorizontalGroup(
-        groupLayout
-            .createParallelGroup(Alignment.CENTER)
+    GroupLayout gl = new GroupLayout(this);
+    gl.setAutoCreateContainerGaps(true);
+    gl.setAutoCreateGaps(true);
+    gl.setHorizontalGroup(
+        gl.createParallelGroup(Alignment.CENTER)
             .addComponent(this.microsoftSigninButton, 0, 0, Short.MAX_VALUE)
             .addGroup(
-                groupLayout
-                    .createSequentialGroup()
+                gl.createSequentialGroup()
                     .addGroup(
-                        groupLayout
-                            .createParallelGroup(Alignment.LEADING)
+                        gl.createParallelGroup(Alignment.LEADING)
                             .addComponent(this.usernameLabel, Alignment.TRAILING)
                             .addComponent(this.passwordLabel, Alignment.TRAILING)
                             .addComponent(this.optionsButton, Alignment.TRAILING))
                     .addPreferredGap(ComponentPlacement.RELATED)
                     .addGroup(
-                        groupLayout
-                            .createParallelGroup(Alignment.LEADING)
+                        gl.createParallelGroup(Alignment.LEADING)
                             .addComponent(this.usernameField)
                             .addComponent(this.passwordField)
                             .addComponent(this.rememberPasswordCheckBox)))
             .addGroup(
-                groupLayout
-                    .createSequentialGroup()
+                gl.createSequentialGroup()
                     .addComponent(this.linkLabel)
                     .addPreferredGap(
                         ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(this.signinButton)));
-    groupLayout.setVerticalGroup(
-        groupLayout
-            .createSequentialGroup()
+    gl.setVerticalGroup(
+        gl.createSequentialGroup()
             .addComponent(this.microsoftSigninButton)
             .addPreferredGap(
                 ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.BASELINE)
+                gl.createParallelGroup(Alignment.BASELINE)
                     .addComponent(this.usernameLabel)
                     .addComponent(this.usernameField))
             .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.BASELINE)
+                gl.createParallelGroup(Alignment.BASELINE)
                     .addComponent(this.passwordLabel)
                     .addComponent(this.passwordField))
             .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.BASELINE)
+                gl.createParallelGroup(Alignment.BASELINE)
                     .addComponent(this.optionsButton)
                     .addComponent(this.rememberPasswordCheckBox))
             .addGroup(
-                groupLayout
-                    .createParallelGroup(Alignment.BASELINE)
+                gl.createParallelGroup(Alignment.BASELINE)
                     .addComponent(this.linkLabel)
                     .addComponent(this.signinButton)));
-    return groupLayout;
+    return gl;
   }
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    val selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
 
-    val source = event.getSource();
+    Object source = event.getSource();
     if (Objects.equals(source, this.microsoftSigninButton)) {
       Arrays.stream(this.getComponents()).forEachOrdered(component -> component.setEnabled(false));
       this.microsoftSigninButton.setText(bundle.getString("yap.microsoftSigninButton.signing_in"));
@@ -206,10 +195,10 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      val microsoftProfileName = (String) LauncherConfig.lookup.get("microsoftProfileName");
-      val microsoftProfileId = (String) LauncherConfig.lookup.get("microsoftProfileId");
-      val microsoftAccessToken = (String) LauncherConfig.lookup.get("microsoftAccessToken");
-      val accessTokenMatched = LauncherUtils.jwtPattern.matcher(microsoftAccessToken).matches();
+      String microsoftProfileName = (String) LauncherConfig.lookup.get("microsoftProfileName");
+      String microsoftProfileId = (String) LauncherConfig.lookup.get("microsoftProfileId");
+      String microsoftAccessToken = (String) LauncherConfig.lookup.get("microsoftAccessToken");
+      boolean accessTokenMatched = LauncherUtils.jwtPattern.matcher(microsoftAccessToken).matches();
       if (!accessTokenMatched) {
         MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.clientId);
         return;
@@ -231,21 +220,21 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      val username = this.usernameField.getText();
-      val password = new String(this.passwordField.getPassword());
-      val rememberPasswordChecked = this.rememberPasswordCheckBox.isSelected();
+      String username = this.usernameField.getText();
+      String password = new String(this.passwordField.getPassword());
+      boolean rememberPasswordChecked = this.rememberPasswordCheckBox.isSelected();
 
-      val mojangUsername = LauncherConfig.lookup.get("mojangUsername");
-      val mojangPassword = LauncherConfig.lookup.get("mojangPassword");
-      val mojangProfileName = (String) LauncherConfig.lookup.get("mojangProfileName");
-      val mojangProfileId = (String) LauncherConfig.lookup.get("mojangProfileId");
-      val mojangAccessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
-      val mojangClientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
+      Object mojangUsername = LauncherConfig.lookup.get("mojangUsername");
+      Object mojangPassword = LauncherConfig.lookup.get("mojangPassword");
+      String mojangProfileName = (String) LauncherConfig.lookup.get("mojangProfileName");
+      String mojangProfileId = (String) LauncherConfig.lookup.get("mojangProfileId");
+      String mojangAccessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
+      String mojangClientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
 
-      val usernameChanged = Objects.equals(mojangUsername, username);
-      val passwordChanged = Objects.equals(mojangPassword, password) && !password.isEmpty();
-      val accessTokenMatched = LauncherUtils.jwtPattern.matcher(mojangAccessToken).matches();
-      val clientTokenMatched = LauncherUtils.uuidPattern.matcher(mojangClientToken).matches();
+      boolean usernameChanged = Objects.equals(mojangUsername, username);
+      boolean passwordChanged = Objects.equals(mojangPassword, password) && !password.isEmpty();
+      boolean accessTokenMatched = LauncherUtils.jwtPattern.matcher(mojangAccessToken).matches();
+      boolean clientTokenMatched = LauncherUtils.uuidPattern.matcher(mojangClientToken).matches();
       if ((!usernameChanged || !passwordChanged) || (!accessTokenMatched || !clientTokenMatched)) {
         YggdrasilAuthUtils.executeYggdrasilAuthWorker(
             username, password, mojangClientToken, rememberPasswordChecked);
