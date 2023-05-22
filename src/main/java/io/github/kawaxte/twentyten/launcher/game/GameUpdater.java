@@ -46,7 +46,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import lombok.val;
 import org.apache.hc.client5.http.fluent.Content;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.Header;
@@ -97,7 +96,7 @@ public final class GameUpdater {
   }
 
   private static boolean isLWJGLNativeExistent() {
-    val lwjglNatives =
+    List<String> lwjglNatives =
         Optional.ofNullable(getListLWJGLNatives())
             .orElseThrow(() -> new NullPointerException("lwjglNatives cannot be null"));
     return lwjglNatives.stream()
@@ -142,7 +141,8 @@ public final class GameUpdater {
   }
 
   private static URL[] getClientUrls() {
-    val urls = new URL[3];
+    URL[] urls = new URL[3];
+
     try {
       urls[0] =
           new URL(
@@ -234,15 +234,16 @@ public final class GameUpdater {
   }
 
   public static URL[] getUrls() {
-    val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    val clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
+    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
+    String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
 
-    val lwjglNativesZips =
+    String[] lwjglNativesZips =
         new String[] {"natives-linux.zip", "natives-macosx.zip", "natives-windows.zip"};
-    val lwjglJars = getListOfLWJGLJars();
-    val clientUrls = getClientUrls();
-    val lwjglUrls = getLWJGLUrls();
-    val urls = new URL[6];
+    List<String> lwjglJars = getListOfLWJGLJars();
+    URL[] clientUrls = getClientUrls();
+    URL lwjglUrls = getLWJGLUrls();
+    URL[] urls = new URL[6];
+
     try {
       if (!isLWJGLJarExistent()) {
         for (int i = 0; i < lwjglJars.size(); i++) {
@@ -285,25 +286,28 @@ public final class GameUpdater {
       GameAppletWrapper.instance.setTaskProgress(10);
     }
 
-    val javaIoTmpdir = System.getProperty("java.io.tmpdir");
-    val javaIoTmpDirPath = Paths.get(javaIoTmpdir);
+    String javaIoTmpdir = System.getProperty("java.io.tmpdir");
+    Path javaIoTmpDirPath = Paths.get(javaIoTmpdir);
 
     int currentDownloadSize = 0;
     int totalDownloadSize = calcTotalDownloadSize(urls);
-    for (val url : urls) {
-      try {
-        Content request = Request.get(url.toURI()).execute().returnContent();
 
-        val fileNameIndex = url.toString().lastIndexOf("/") + 1;
-        val fileName = url.toString().substring(fileNameIndex);
-        val file = javaIoTmpDirPath.resolve(fileName).toFile();
-        try (val bis = new BufferedInputStream(request.asStream());
-            val fos = new FileOutputStream(file)) {
-          val buffer = new byte[65536];
-          int bytesRead;
-          while ((bytesRead = bis.read(buffer)) != -1) {
-            fos.write(buffer, 0, bytesRead);
-            currentDownloadSize += bytesRead;
+    for (URL url : urls) {
+      try {
+        Content content = Request.get(url.toURI()).execute().returnContent();
+
+        int fileNameIndex = url.toString().lastIndexOf("/") + 1;
+        String fileName = url.toString().substring(fileNameIndex);
+        File file = javaIoTmpDirPath.resolve(fileName).toFile();
+
+        try (BufferedInputStream bis = new BufferedInputStream(content.asStream());
+            FileOutputStream fos = new FileOutputStream(file)) {
+          byte[] buffer = new byte[65536];
+          int read;
+
+          while ((read = bis.read(buffer)) != -1) {
+            fos.write(buffer, 0, read);
+            currentDownloadSize += read;
 
             int downloadProgress = (currentDownloadSize * 100) / totalDownloadSize;
             int progress = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
@@ -331,10 +335,11 @@ public final class GameUpdater {
   }
 
   private static void moveDownloadedPackages(Path p) {
-    val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    val clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
-    val clientJarFile = p.resolve(clientJar).toFile();
-    val clientJarFileDest = versionDirectoryPath.resolve(clientJar).toFile();
+    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
+    String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
+    File clientJarFile = p.resolve(clientJar).toFile();
+    File clientJarFileDest = versionDirectoryPath.resolve(clientJar).toFile();
+
     try {
       if (clientJarFile.exists()) {
         Files.move(clientJarFile.toPath(), clientJarFileDest.toPath());
@@ -346,29 +351,31 @@ public final class GameUpdater {
       return;
     }
 
-    val zipFiles =
+    File[] zipFiles =
         p.toFile().listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
     if (Objects.nonNull(zipFiles)) {
-      for (val zipFile : zipFiles) {
-        val lwjglNativesZipFile = p.resolve(zipFile.getName()).toFile();
-        val lwjglNativesZipFileDest = nativesDirectoryPath.resolve(zipFile.getName()).toFile();
+      for (File f : zipFiles) {
+        File lwjglNativesZipFile = p.resolve(f.getName()).toFile();
+        File lwjglNativesZipFileDest = nativesDirectoryPath.resolve(f.getName()).toFile();
+
         try {
           if (lwjglNativesZipFile.exists()) {
-            Files.move(zipFile.toPath(), lwjglNativesZipFileDest.toPath());
+            Files.move(f.toPath(), lwjglNativesZipFileDest.toPath());
           }
         } catch (IOException ioe) {
           displayErrorMessage(ioe.getMessage());
 
-          LOGGER.error("Cannot move {} to {}", zipFile, lwjglNativesZipFileDest, ioe);
+          LOGGER.error("Cannot move {} to {}", f, lwjglNativesZipFileDest, ioe);
           return;
         }
       }
     }
 
-    val jarFiles = getListOfLWJGLJars();
-    for (val jarFile : jarFiles) {
-      val lwjglJarFile = p.resolve(jarFile).toFile();
-      val lwjglJarFileDest = binDirectoryPath.resolve(jarFile).toFile();
+    List<String> jarFiles = getListOfLWJGLJars();
+    for (String jar : jarFiles) {
+      File lwjglJarFile = p.resolve(jar).toFile();
+      File lwjglJarFileDest = binDirectoryPath.resolve(jar).toFile();
+
       try {
         if (lwjglJarFile.exists()) {
           Files.move(lwjglJarFile.toPath(), lwjglJarFileDest.toPath());
@@ -390,7 +397,7 @@ public final class GameUpdater {
       GameAppletWrapper.instance.setTaskProgress(55);
     }
 
-    val lwjglNativesZipFiles =
+    File[] lwjglNativesZipFiles =
         nativesDirectoryPath
             .toFile()
             .listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
@@ -400,24 +407,33 @@ public final class GameUpdater {
 
     int totalExtractSize = calcTotalExtractSize(lwjglNativesZipFiles);
     int currentExtractSize = 0;
-    for (val lwjglNativesZipFile : lwjglNativesZipFiles) {
-      try (val fis = new FileInputStream(lwjglNativesZipFile);
-          val bis = new BufferedInputStream(fis);
-          val zis = new ZipInputStream(bis)) {
+
+    for (File f : lwjglNativesZipFiles) {
+      try (FileInputStream fis = new FileInputStream(f);
+          BufferedInputStream bis = new BufferedInputStream(fis);
+          ZipInputStream zis = new ZipInputStream(bis)) {
         ZipEntry entry;
+
         while (Objects.nonNull(entry = zis.getNextEntry())) {
-          val name = entry.getName();
+          String name = entry.getName();
           if (!entry.isDirectory() && name.indexOf(47) != -1) {
             continue;
           }
 
-          val nativeFile = nativesDirectoryPath.resolve(name).toFile();
-          try (val fos = new FileOutputStream(nativeFile)) {
-            val buffer = new byte[65536];
-            int bufferSize;
-            while ((bufferSize = zis.read(buffer, 0, buffer.length)) != -1) {
-              fos.write(buffer, 0, bufferSize);
-              currentExtractSize += bufferSize;
+          File nativeFile = nativesDirectoryPath.resolve(name).toFile();
+          String nativeFileCanonicalPath = nativeFile.getCanonicalPath();
+          if (!nativeFileCanonicalPath.startsWith(nativesDirectoryPath.toString())) {
+            LOGGER.error("{} is not a valid path", nativeFile);
+            return;
+          }
+
+          try (FileOutputStream fos = new FileOutputStream(nativeFile)) {
+            byte[] buffer = new byte[65536];
+            int read;
+
+            while ((read = zis.read(buffer, 0, buffer.length)) != -1) {
+              fos.write(buffer, 0, read);
+              currentExtractSize += read;
 
               int extractProgress = (currentExtractSize * 100) / totalExtractSize;
               int progress = 55 + ((currentExtractSize * 20) / totalExtractSize);
@@ -430,14 +446,14 @@ public final class GameUpdater {
       } catch (FileNotFoundException fnfe) {
         displayErrorMessage(fnfe.getMessage());
 
-        LOGGER.error("Cannot find {}", lwjglNativesZipFile.toString(), fnfe);
+        LOGGER.error("Cannot find {}", f.toString(), fnfe);
       } catch (IOException ioe) {
         displayErrorMessage(ioe.getMessage());
 
-        LOGGER.error("Cannot extract {}", lwjglNativesZipFile.toString(), ioe);
+        LOGGER.error("Cannot extract {}", f.toString(), ioe);
       } finally {
-        if (!lwjglNativesZipFile.delete()) {
-          LOGGER.warn("Could not delete {}", lwjglNativesZipFile);
+        if (!f.delete()) {
+          LOGGER.warn("Could not delete {}", f);
         }
       }
       return;
@@ -452,13 +468,13 @@ public final class GameUpdater {
       GameAppletWrapper.instance.setTaskProgress(90);
     }
 
-    val jarFiles = binDirectoryPath.toFile().listFiles((dir, name) -> name.endsWith(".jar"));
-    val selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    val clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
-    val clientJarFile = versionDirectoryPath.resolve(clientJar).toFile();
+    File[] jarFiles = binDirectoryPath.toFile().listFiles((dir, name) -> name.endsWith(".jar"));
+    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
+    String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
+    File clientJarFile = versionDirectoryPath.resolve(clientJar).toFile();
 
     if (Objects.nonNull(jarFiles)) {
-      val jarUrls = new URL[jarFiles.length + 1];
+      URL[] jarUrls = new URL[jarFiles.length + 1];
       try {
         for (int i = 0; i < jarFiles.length; i++) {
           jarUrls[i] = jarFiles[i].toURI().toURL();
@@ -476,15 +492,16 @@ public final class GameUpdater {
               new PrivilegedAction<ClassLoader>() {
                 @Override
                 public ClassLoader run() {
-                  val contextClassLoader = Thread.currentThread().getContextClassLoader();
-                  val urlClassLoader = new URLClassLoader(jarUrls, contextClassLoader);
+                  ClassLoader loader = Thread.currentThread().getContextClassLoader();
+                  URLClassLoader urlLoader = new URLClassLoader(jarUrls, loader);
 
-                  Thread.currentThread().setContextClassLoader(urlClassLoader);
-                  return urlClassLoader;
+                  Thread.currentThread().setContextClassLoader(urlLoader);
+                  return urlLoader;
                 }
               }));
 
-      val libraryPaths = new String[] {"org.lwjgl.librarypath", "net.java.games.input.librarypath"};
+      String[] libraryPaths =
+          new String[] {"org.lwjgl.librarypath", "net.java.games.input.librarypath"};
       Arrays.stream(libraryPaths)
           .forEachOrdered(
               libraryPath -> System.setProperty(libraryPath, nativesDirectoryPath.toString()));
@@ -494,22 +511,23 @@ public final class GameUpdater {
   private static int calcTotalExtractSize(File[] files) {
     long size = 0;
 
-    for (val file : files) {
-      try (val fis = new FileInputStream(file);
-          val bis = new BufferedInputStream(fis);
-          val zis = new ZipInputStream(bis)) {
+    for (File f : files) {
+      try (FileInputStream fis = new FileInputStream(f);
+          BufferedInputStream bis = new BufferedInputStream(fis);
+          ZipInputStream zis = new ZipInputStream(bis)) {
         ZipEntry entry;
+
         while (Objects.nonNull(entry = zis.getNextEntry())) {
           size += entry.getSize();
         }
       } catch (FileNotFoundException fnfe) {
         displayErrorMessage(fnfe.getMessage());
 
-        LOGGER.error("Cannot find {}", file.toString(), fnfe);
+        LOGGER.error("Cannot find {}", f.toString(), fnfe);
       } catch (IOException ioe) {
         displayErrorMessage(ioe.getMessage());
 
-        LOGGER.error("Cannot calculate size for {}", file.toString(), ioe);
+        LOGGER.error("Cannot calculate size for {}", f.toString(), ioe);
       }
     }
     return (int) size;
@@ -520,7 +538,8 @@ public final class GameUpdater {
 
     ExecutorService service = Executors.newFixedThreadPool(urls.length);
     ArrayList<Future<Integer>> futures = new ArrayList<>();
-    for (val url : urls) {
+
+    for (URL url : urls) {
       futures.add(
           service.submit(
               () -> {
@@ -544,7 +563,7 @@ public final class GameUpdater {
                 return 0;
               }));
     }
-    for (val future : futures) {
+    for (Future<Integer> future : futures) {
       try {
         size += future.get();
       } catch (InterruptedException ie) {
@@ -563,8 +582,8 @@ public final class GameUpdater {
   private static void displayErrorMessage(String message) {
     GameAppletWrapper.instance.setUpdaterTaskErrored(true);
 
-    val state = GameAppletWrapper.instance.getTaskState();
-    val fatalErrorMessage =
+    int state = GameAppletWrapper.instance.getTaskState();
+    String fatalErrorMessage =
         MessageFormat.format(
             LauncherLanguage.bundle.getString("gaw.taskStateMessage.error"), state, message);
     GameAppletWrapper.instance.setTaskStateMessage(fatalErrorMessage);
