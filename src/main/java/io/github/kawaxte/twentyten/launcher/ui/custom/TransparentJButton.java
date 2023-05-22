@@ -18,7 +18,6 @@ import java.awt.Toolkit;
 import java.util.Objects;
 import javax.swing.JButton;
 import javax.swing.UIManager;
-import lombok.val;
 
 public class TransparentJButton extends JButton {
 
@@ -28,12 +27,13 @@ public class TransparentJButton extends JButton {
 
   @Override
   public boolean isOpaque() {
-    val defaultToolkit = Toolkit.getDefaultToolkit();
-    val windowsId = UIManager.getLookAndFeel().getID();
-    val windows = Objects.equals(windowsId, "Windows");
-    val winXpStyleThemeActive =
+    Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
+    String windowsId = UIManager.getLookAndFeel().getID();
+
+    boolean windows = Objects.equals(windowsId, "Windows");
+    Boolean winXpStyleThemeActive =
         (Boolean) defaultToolkit.getDesktopProperty("win.xpstyle.themeActive");
-    val windowsClassic = UIManager.getLookAndFeel().getName().equals("Windows Classic");
+    boolean windowsClassic = UIManager.getLookAndFeel().getName().equals("Windows Classic");
     return windows && (!winXpStyleThemeActive || windowsClassic);
   }
 }
