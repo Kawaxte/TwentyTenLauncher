@@ -23,7 +23,6 @@ import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.swing.JProgressBar;
-import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -125,8 +124,8 @@ public class MicrosoftAuthTask implements Runnable {
   }
 
   private static String[] getMinecraftProfileResponse(JSONObject object) {
-    val id = object.getString("id");
-    val name = object.getString("name");
+    String id = object.getString("id");
+    String name = object.getString("name");
     return new String[] {id, name};
   }
 
