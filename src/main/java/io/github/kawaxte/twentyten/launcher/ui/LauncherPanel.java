@@ -30,7 +30,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import javax.swing.JPanel;
-import lombok.val;
 
 public class LauncherPanel extends JPanel {
 
@@ -43,7 +42,7 @@ public class LauncherPanel extends JPanel {
     LauncherPanel.instance = this;
     this.setBackground(Color.BLACK);
 
-    val gbc = new GridBagConstraints();
+    GridBagConstraints gbc = new GridBagConstraints();
     gbc.anchor = GridBagConstraints.CENTER;
     gbc.fill = GridBagConstraints.NONE;
     this.add(new YggdrasilAuthPanel(), gbc);
@@ -62,13 +61,13 @@ public class LauncherPanel extends JPanel {
     int panelWidth = this.getWidth();
     int panelHeight = this.getHeight();
 
-    val g2d = (Graphics2D) g;
+    Graphics2D g2d = (Graphics2D) g;
     GraphicsConfiguration deviceConfiguration = g2d.getDeviceConfiguration();
 
     BufferedImage bufferedImage =
         deviceConfiguration.createCompatibleImage(
             panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
-    val g2dBuffered = bufferedImage.createGraphics();
+    Graphics2D g2dBuffered = bufferedImage.createGraphics();
     g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f));
     try {
       int gridWidth = (panelWidth + bgImageWidth) >> 5;
