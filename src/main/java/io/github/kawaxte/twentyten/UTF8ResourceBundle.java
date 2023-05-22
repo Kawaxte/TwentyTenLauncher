@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import lombok.val;
 
 public class UTF8ResourceBundle extends ResourceBundle {
 
@@ -40,8 +39,9 @@ public class UTF8ResourceBundle extends ResourceBundle {
   public UTF8ResourceBundle(InputStream is) throws IOException {
     this.lookupMap = new HashMap<>();
 
-    try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-      val properties = new Properties();
+    try (BufferedReader br =
+        new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+      Properties properties = new Properties();
       properties.load(br);
       properties
           .stringPropertyNames()
@@ -52,8 +52,8 @@ public class UTF8ResourceBundle extends ResourceBundle {
   public UTF8ResourceBundle(Reader reader) throws IOException {
     this.lookupMap = new HashMap<>();
 
-    try (val br = new BufferedReader(reader)) {
-      val properties = new Properties();
+    try (BufferedReader br = new BufferedReader(reader)) {
+      Properties properties = new Properties();
       properties.load(br);
       properties
           .stringPropertyNames()
@@ -77,9 +77,10 @@ public class UTF8ResourceBundle extends ResourceBundle {
     public ResourceBundle newBundle(
         String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
         throws IOException {
-      val bundleName = this.toBundleName(baseName, locale);
-      val resourceName = this.toResourceName(bundleName, "properties");
-      try (val is = loader.getResourceAsStream(resourceName)) {
+      String bundleName = this.toBundleName(baseName, locale);
+      String resourceName = this.toResourceName(bundleName, "properties");
+
+      try (InputStream is = loader.getResourceAsStream(resourceName)) {
         return new UTF8ResourceBundle(is);
       }
     }
