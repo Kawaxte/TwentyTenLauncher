@@ -26,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,14 +59,15 @@ public final class LauncherLanguage {
   }
 
   public static void loadLanguage(String baseName, String languageCode) {
-    val fileName = String.format("%s_%s.properties", baseName, languageCode);
+    String fileName = String.format("%s_%s.properties", baseName, languageCode);
     URL fileUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
 
     InputStream is =
         Optional.ofNullable(
                 LauncherOptionsUtils.class.getClassLoader().getResourceAsStream(fileName))
             .orElseThrow(() -> new NullPointerException("is cannot be null"));
-    try (val br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+    try (BufferedReader br =
+        new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       bundle = new UTF8ResourceBundle(br);
     } catch (IOException ioe) {
       LOGGER.error("Cannot load", fileUrl, ioe);
