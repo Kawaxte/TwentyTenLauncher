@@ -12,12 +12,15 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.game;
 
+import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.EPlatform;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -44,6 +47,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.apache.hc.client5.http.fluent.Content;
@@ -56,30 +62,30 @@ import org.apache.logging.log4j.Logger;
 
 public final class GameUpdater {
 
-  private static final Path versionDirectoryPath;
   private static final Logger LOGGER;
-  private static final Path binDirectoryPath;
-  private static final Path nativesDirectoryPath;
-  private static final Path versionsDirectoryPath;
+  private static final Path BIN_DIRECTORY_PATH;
+  private static final Path NATIVES_DIRECTORY_PATH;
+  private static final Path VERSION_DIRECTORY_PATH;
+  private static final Path VERSIONS_DIRECTORY_PATH;
 
   static {
     LOGGER = LogManager.getLogger(GameUpdater.class);
 
-    binDirectoryPath = Paths.get(LauncherUtils.workingDirectoryPath.toString(), "bin");
-    nativesDirectoryPath = Paths.get(binDirectoryPath.toString(), "natives");
+    BIN_DIRECTORY_PATH = LauncherUtils.WORKING_DIRECTORY_PATH.resolve("bin");
+    NATIVES_DIRECTORY_PATH = BIN_DIRECTORY_PATH.resolve("natives");
 
-    File nativesDirectory = nativesDirectoryPath.toFile();
+    File nativesDirectory = NATIVES_DIRECTORY_PATH.toFile();
     if (!nativesDirectory.exists() && !nativesDirectory.mkdirs()) {
-      LOGGER.warn("Could not create {}", nativesDirectoryPath);
+      LOGGER.warn("Could not create {}", NATIVES_DIRECTORY_PATH);
     }
 
-    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    versionsDirectoryPath = Paths.get(LauncherUtils.workingDirectoryPath.toString(), "versions");
-    versionDirectoryPath = Paths.get(versionsDirectoryPath.toString(), selectedVersion);
+    String selectedVersion = (String) LauncherConfig.get(4);
+    VERSIONS_DIRECTORY_PATH = LauncherUtils.WORKING_DIRECTORY_PATH.resolve("versions");
+    VERSION_DIRECTORY_PATH = VERSIONS_DIRECTORY_PATH.resolve(selectedVersion);
 
-    File versionDirectory = versionDirectoryPath.toFile();
+    File versionDirectory = VERSION_DIRECTORY_PATH.toFile();
     if (!versionDirectory.exists() && !versionDirectory.mkdirs()) {
-      LOGGER.warn("Could not create {}", versionDirectoryPath);
+      LOGGER.warn("Could not create {}", VERSION_DIRECTORY_PATH);
     }
   }
 
@@ -92,23 +98,23 @@ public final class GameUpdater {
   private static boolean isLWJGLJarExistent() {
     List<String> lwjglJars = getListOfLWJGLJars();
     return lwjglJars.stream()
-        .allMatch(lwjglJar -> Files.exists(binDirectoryPath.resolve(lwjglJar)));
+        .allMatch(lwjglJar -> Files.exists(BIN_DIRECTORY_PATH.resolve(lwjglJar)));
   }
 
   private static boolean isLWJGLNativeExistent() {
     List<String> lwjglNatives =
-        Optional.ofNullable(getListLWJGLNatives())
+        Optional.of(getListLWJGLNatives())
             .orElseThrow(() -> new NullPointerException("lwjglNatives cannot be null"));
     return lwjglNatives.stream()
         .findFirst()
-        .filter(lwjglNative -> Files.exists(nativesDirectoryPath.resolve(lwjglNative)))
+        .filter(lwjglNative -> Files.exists(NATIVES_DIRECTORY_PATH.resolve(lwjglNative)))
         .isPresent();
   }
 
   private static boolean isClientJarExistent() {
-    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
+    String selectedVersion = (String) LauncherConfig.get(4);
     String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
-    return Files.exists(versionDirectoryPath.resolve(clientJar));
+    return Files.exists(VERSION_DIRECTORY_PATH.resolve(clientJar));
   }
 
   private static List<String> getListOfLWJGLJars() {
@@ -137,12 +143,11 @@ public final class GameUpdater {
           : Arrays.asList(
               "jinput-dx8.dll", "jinput-raw.dll", "jinput-wintab.dll", "lwjgl.dll", "OpenAL32.dll");
     }
-    return null;
+    return new ArrayList<>();
   }
 
   private static URL[] getClientUrls() {
     URL[] urls = new URL[3];
-
     try {
       urls[0] =
           new URL(
@@ -234,43 +239,49 @@ public final class GameUpdater {
   }
 
   public static URL[] getUrls() {
-    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
-
-    String[] lwjglNativesZips =
-        new String[] {"natives-linux.zip", "natives-macosx.zip", "natives-windows.zip"};
-    List<String> lwjglJars = getListOfLWJGLJars();
+    String selectedVersion = (String) LauncherConfig.get(4);
+    String clientJar = selectedVersion + ".jar";
+    String[] lwjglNativesZips = {"natives-linux.zip", "natives-macosx.zip", "natives-windows.zip"};
     URL[] clientUrls = getClientUrls();
     URL lwjglUrls = getLWJGLUrls();
     URL[] urls = new URL[6];
 
     try {
+      URL clientUrl = null;
+      if (selectedVersion.startsWith("b")) {
+        clientUrl = clientUrls[0];
+      }
+      if (selectedVersion.startsWith("a")) {
+        clientUrl = clientUrls[1];
+      }
+      if (selectedVersion.startsWith("i")) {
+        clientUrl = clientUrls[2];
+      }
+
       if (!isLWJGLJarExistent()) {
-        for (int i = 0; i < lwjglJars.size(); i++) {
-          urls[i] = new URL(getLWJGLUrls(), lwjglJars.get(i));
+        for (int i = 0; i < getListOfLWJGLJars().size(); i++) {
+          urls[i] = new URL(lwjglUrls, getListOfLWJGLJars().get(i));
         }
       }
+
       if (!isLWJGLNativeExistent()) {
+        String lwjglNativesZip = null;
         if (EPlatform.isLinux()) {
-          urls[4] = new URL(lwjglUrls, lwjglNativesZips[0]);
+          lwjglNativesZip = lwjglNativesZips[0];
         }
         if (EPlatform.isMacOS()) {
-          urls[4] = new URL(lwjglUrls, lwjglNativesZips[1]);
+          lwjglNativesZip = lwjglNativesZips[1];
         }
         if (EPlatform.isWindows()) {
-          urls[4] = new URL(lwjglUrls, lwjglNativesZips[2]);
+          lwjglNativesZip = lwjglNativesZips[2];
         }
+
+        Objects.requireNonNull(lwjglNativesZip, "lwjglNativesZip cannot be null");
+        urls[4] = new URL(lwjglUrls, lwjglNativesZip);
       }
+
       if (!isClientJarExistent()) {
-        if (selectedVersion.startsWith("b")) {
-          urls[5] = new URL(clientUrls[0], clientJar);
-        }
-        if (selectedVersion.startsWith("a")) {
-          urls[5] = new URL(clientUrls[1], clientJar);
-        }
-        if (selectedVersion.startsWith("inf")) {
-          urls[5] = new URL(clientUrls[2], clientJar);
-        }
+        urls[5] = new URL(clientUrl, clientJar);
       }
     } catch (MalformedURLException murle) {
       LOGGER.error("Cannot create URL(s)", murle);
@@ -279,290 +290,61 @@ public final class GameUpdater {
   }
 
   public static void downloadPackages(URL[] urls) {
-    if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
-      GameAppletWrapper.instance.setTaskState(EState.DOWNLOAD_PACKAGES.ordinal());
-      GameAppletWrapper.instance.setTaskStateMessage(EState.DOWNLOAD_PACKAGES.getMessage());
-      GameAppletWrapper.instance.setTaskProgressMessage(null);
-      GameAppletWrapper.instance.setTaskProgress(10);
+    if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
+      GameAppletWrapper.getInstance().setTaskState(EState.DOWNLOAD_PACKAGES.ordinal());
+      GameAppletWrapper.getInstance().setTaskStateMessage(EState.DOWNLOAD_PACKAGES.getMessage());
+      GameAppletWrapper.getInstance().setTaskProgressMessage(null);
+      GameAppletWrapper.getInstance().setTaskProgress(10);
     }
 
     String javaIoTmpdir = System.getProperty("java.io.tmpdir");
     Path javaIoTmpDirPath = Paths.get(javaIoTmpdir);
 
-    int currentDownloadSize = 0;
-    int totalDownloadSize = calcTotalDownloadSize(urls);
+    AtomicInteger currentDownloadSize = new AtomicInteger(0);
+    int totalDownloadSize = calculateTotalDownloadSize(urls);
+    if (totalDownloadSize == 0) {
+      return;
+    }
 
     for (URL url : urls) {
-      try {
-        Content content = Request.get(url.toURI()).execute().returnContent();
-
-        int fileNameIndex = url.toString().lastIndexOf("/") + 1;
-        String fileName = url.toString().substring(fileNameIndex);
-        File file = javaIoTmpDirPath.resolve(fileName).toFile();
-
-        try (BufferedInputStream bis = new BufferedInputStream(content.asStream());
-            FileOutputStream fos = new FileOutputStream(file)) {
-          byte[] buffer = new byte[65536];
-          int read;
-
-          while ((read = bis.read(buffer)) != -1) {
-            fos.write(buffer, 0, read);
-            currentDownloadSize += read;
-
-            int downloadProgress = (currentDownloadSize * 100) / totalDownloadSize;
-            int progress = 10 + ((currentDownloadSize * 45) / totalDownloadSize);
-            GameAppletWrapper.instance.setTaskProgressMessage(
-                "gaw.taskProgressMessage", fileName, downloadProgress);
-            GameAppletWrapper.instance.setTaskProgress(progress);
-          }
-        }
-      } catch (FileNotFoundException fnfe) {
-        displayErrorMessage(fnfe.getMessage());
-
-        LOGGER.error("Cannot find {}", url.toString(), fnfe);
-      } catch (IOException ioe) {
-        displayErrorMessage(ioe.getMessage());
-
-        LOGGER.error("Cannot download {}", url.toString(), ioe);
-      } catch (URISyntaxException urise) {
-        displayErrorMessage(urise.getMessage());
-
-        LOGGER.error("Cannot parse {} as URI", url.toString(), urise);
-      }
+      download(javaIoTmpDirPath, currentDownloadSize, totalDownloadSize, url);
     }
-
-    moveDownloadedPackages(javaIoTmpDirPath);
+    move(javaIoTmpDirPath);
   }
 
-  private static void moveDownloadedPackages(Path p) {
-    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
-    File clientJarFile = p.resolve(clientJar).toFile();
-    File clientJarFileDest = versionDirectoryPath.resolve(clientJar).toFile();
-
-    try {
-      if (clientJarFile.exists()) {
-        Files.move(clientJarFile.toPath(), clientJarFileDest.toPath());
-      }
-    } catch (IOException ioe) {
-      displayErrorMessage(ioe.getMessage());
-
-      LOGGER.error("Cannot move {} to {}", clientJarFile, clientJarFileDest, ioe);
-      return;
-    }
-
-    File[] zipFiles =
-        p.toFile().listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
-    if (Objects.nonNull(zipFiles)) {
-      for (File f : zipFiles) {
-        File lwjglNativesZipFile = p.resolve(f.getName()).toFile();
-        File lwjglNativesZipFileDest = nativesDirectoryPath.resolve(f.getName()).toFile();
-
-        try {
-          if (lwjglNativesZipFile.exists()) {
-            Files.move(f.toPath(), lwjglNativesZipFileDest.toPath());
-          }
-        } catch (IOException ioe) {
-          displayErrorMessage(ioe.getMessage());
-
-          LOGGER.error("Cannot move {} to {}", f, lwjglNativesZipFileDest, ioe);
-          return;
-        }
-      }
-    }
-
-    List<String> jarFiles = getListOfLWJGLJars();
-    for (String jar : jarFiles) {
-      File lwjglJarFile = p.resolve(jar).toFile();
-      File lwjglJarFileDest = binDirectoryPath.resolve(jar).toFile();
-
-      try {
-        if (lwjglJarFile.exists()) {
-          Files.move(lwjglJarFile.toPath(), lwjglJarFileDest.toPath());
-        }
-      } catch (IOException ioe) {
-        displayErrorMessage(ioe.getMessage());
-
-        LOGGER.error("Cannot move {} to {}", lwjglJarFile, lwjglJarFileDest, ioe);
-        return;
-      }
-    }
-  }
-
-  public static void extractDownloadedPackages() {
-    if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
-      GameAppletWrapper.instance.setTaskState(EState.EXTRACT_PACKAGES.ordinal());
-      GameAppletWrapper.instance.setTaskStateMessage(EState.EXTRACT_PACKAGES.getMessage());
-      GameAppletWrapper.instance.setTaskProgressMessage(null);
-      GameAppletWrapper.instance.setTaskProgress(55);
-    }
-
-    File[] lwjglNativesZipFiles =
-        nativesDirectoryPath
-            .toFile()
-            .listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
-    if (Objects.isNull(lwjglNativesZipFiles)) {
-      return;
-    }
-
-    int totalExtractSize = calcTotalExtractSize(lwjglNativesZipFiles);
-    int currentExtractSize = 0;
-
-    for (File f : lwjglNativesZipFiles) {
-      try (FileInputStream fis = new FileInputStream(f);
-          BufferedInputStream bis = new BufferedInputStream(fis);
-          ZipInputStream zis = new ZipInputStream(bis)) {
-        ZipEntry entry;
-
-        while (Objects.nonNull(entry = zis.getNextEntry())) {
-          String name = entry.getName();
-          if (!entry.isDirectory() && name.indexOf(47) != -1) {
-            continue;
-          }
-
-          File nativeFile = nativesDirectoryPath.resolve(name).toFile();
-          String nativeFileCanonicalPath = nativeFile.getCanonicalPath();
-          if (!nativeFileCanonicalPath.startsWith(nativesDirectoryPath.toString())) {
-            LOGGER.error("{} is not a valid path", nativeFile);
-            return;
-          }
-
-          try (FileOutputStream fos = new FileOutputStream(nativeFile)) {
-            byte[] buffer = new byte[65536];
-            int read;
-
-            while ((read = zis.read(buffer, 0, buffer.length)) != -1) {
-              fos.write(buffer, 0, read);
-              currentExtractSize += read;
-
-              int extractProgress = (currentExtractSize * 100) / totalExtractSize;
-              int progress = 55 + ((currentExtractSize * 20) / totalExtractSize);
-              GameAppletWrapper.instance.setTaskProgressMessage(
-                  "gaw.taskProgressMessage", name, extractProgress);
-              GameAppletWrapper.instance.setTaskProgress(progress);
-            }
-          }
-        }
-      } catch (FileNotFoundException fnfe) {
-        displayErrorMessage(fnfe.getMessage());
-
-        LOGGER.error("Cannot find {}", f.toString(), fnfe);
-      } catch (IOException ioe) {
-        displayErrorMessage(ioe.getMessage());
-
-        LOGGER.error("Cannot extract {}", f.toString(), ioe);
-      } finally {
-        if (!f.delete()) {
-          LOGGER.warn("Could not delete {}", f);
-        }
-      }
-      return;
-    }
-  }
-
-  public static void updateClasspath() {
-    if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
-      GameAppletWrapper.instance.setTaskState(EState.UPDATE_CLASSPATH.ordinal());
-      GameAppletWrapper.instance.setTaskStateMessage(EState.UPDATE_CLASSPATH.getMessage());
-      GameAppletWrapper.instance.setTaskProgressMessage(null);
-      GameAppletWrapper.instance.setTaskProgress(90);
-    }
-
-    File[] jarFiles = binDirectoryPath.toFile().listFiles((dir, name) -> name.endsWith(".jar"));
-    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
-    String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
-    File clientJarFile = versionDirectoryPath.resolve(clientJar).toFile();
-
-    if (Objects.nonNull(jarFiles)) {
-      URL[] jarUrls = new URL[jarFiles.length + 1];
-      try {
-        for (int i = 0; i < jarFiles.length; i++) {
-          jarUrls[i] = jarFiles[i].toURI().toURL();
-        }
-
-        jarUrls[jarFiles.length] = clientJarFile.toURI().toURL();
-      } catch (MalformedURLException murle) {
-        displayErrorMessage(murle.getMessage());
-
-        LOGGER.error("Cannot convert {} to URL", jarUrls, murle);
-      }
-
-      GameAppletWrapper.instance.setMcAppletClassLoader(
-          AccessController.doPrivileged(
-              new PrivilegedAction<ClassLoader>() {
-                @Override
-                public ClassLoader run() {
-                  ClassLoader loader = Thread.currentThread().getContextClassLoader();
-                  URLClassLoader urlLoader = new URLClassLoader(jarUrls, loader);
-
-                  Thread.currentThread().setContextClassLoader(urlLoader);
-                  return urlLoader;
-                }
-              }));
-
-      String[] libraryPaths =
-          new String[] {"org.lwjgl.librarypath", "net.java.games.input.librarypath"};
-      Arrays.stream(libraryPaths)
-          .forEachOrdered(
-              libraryPath -> System.setProperty(libraryPath, nativesDirectoryPath.toString()));
-    }
-  }
-
-  private static int calcTotalExtractSize(File[] files) {
-    long size = 0;
-
-    for (File f : files) {
-      try (FileInputStream fis = new FileInputStream(f);
-          BufferedInputStream bis = new BufferedInputStream(fis);
-          ZipInputStream zis = new ZipInputStream(bis)) {
-        ZipEntry entry;
-
-        while (Objects.nonNull(entry = zis.getNextEntry())) {
-          size += entry.getSize();
-        }
-      } catch (FileNotFoundException fnfe) {
-        displayErrorMessage(fnfe.getMessage());
-
-        LOGGER.error("Cannot find {}", f.toString(), fnfe);
-      } catch (IOException ioe) {
-        displayErrorMessage(ioe.getMessage());
-
-        LOGGER.error("Cannot calculate size for {}", f.toString(), ioe);
-      }
-    }
-    return (int) size;
-  }
-
-  private static int calcTotalDownloadSize(URL[] urls) {
+  private static int calculateTotalDownloadSize(URL[] urls) {
     int size = 0;
 
     ExecutorService service = Executors.newFixedThreadPool(urls.length);
-    ArrayList<Future<Integer>> futures = new ArrayList<>();
+    ArrayList<Future<Integer>> futures =
+        Arrays.stream(urls)
+            .map(
+                url ->
+                    service.submit(
+                        () -> {
+                          try {
+                            HttpResponse request =
+                                Request.head(url.toURI()).execute().returnResponse();
+                            Header contentLength =
+                                request.getFirstHeader(HttpHeaders.CONTENT_LENGTH);
+                            return Integer.parseInt(contentLength.getValue());
+                          } catch (NumberFormatException nfe) {
+                            displayErrorMessage(nfe.getMessage());
 
-    for (URL url : urls) {
-      futures.add(
-          service.submit(
-              () -> {
-                try {
-                  HttpResponse request = Request.head(url.toURI()).execute().returnResponse();
-                  Header contentLength = request.getFirstHeader(HttpHeaders.CONTENT_LENGTH);
-                  return Integer.parseInt(contentLength.getValue());
-                } catch (NumberFormatException nfe) {
-                  displayErrorMessage(nfe.getMessage());
+                            LOGGER.error("Cannot parse content size for {}", url, nfe);
+                          } catch (IOException ioe) {
+                            displayErrorMessage(ioe.getMessage());
 
-                  LOGGER.error("Cannot parse content size for {}", url.toString(), nfe);
-                } catch (IOException ioe) {
-                  displayErrorMessage(ioe.getMessage());
+                            LOGGER.error("Cannot calculate content size for {}", url, ioe);
+                          } catch (URISyntaxException urise) {
+                            displayErrorMessage(urise.getMessage());
 
-                  LOGGER.error("Cannot calculate content size for {}", url.toString(), ioe);
-                } catch (URISyntaxException urise) {
-                  displayErrorMessage(urise.getMessage());
+                            LOGGER.error("Cannot parse {} as URI", url, urise);
+                          }
+                          return 0;
+                        }))
+            .collect(Collectors.toCollection(ArrayList::new));
 
-                  LOGGER.error("Cannot parse {} as URI", url.toString(), urise);
-                }
-                return 0;
-              }));
-    }
     for (Future<Integer> future : futures) {
       try {
         size += future.get();
@@ -579,14 +361,249 @@ public final class GameUpdater {
     return size;
   }
 
-  private static void displayErrorMessage(String message) {
-    GameAppletWrapper.instance.setUpdaterTaskErrored(true);
+  private static void download(Path p, AtomicInteger current, int total, URL url) {
+    try {
+      Content content = Request.get(url.toURI()).execute().returnContent();
 
-    int state = GameAppletWrapper.instance.getTaskState();
+      int fileNameIndex = url.toString().lastIndexOf("/") + 1;
+      String fileName = url.toString().substring(fileNameIndex);
+      File file = p.resolve(fileName).toFile();
+
+      try (BufferedInputStream bis = new BufferedInputStream(content.asStream());
+          FileOutputStream fos = new FileOutputStream(file)) {
+        byte[] buffer = new byte[65536];
+        int read;
+
+        while ((read = bis.read(buffer)) != -1) {
+          fos.write(buffer, 0, read);
+          current.addAndGet(read);
+
+          int downloadProgress = (current.get() * 100) / total;
+          int progress = 10 + ((current.get() * 45) / total);
+          GameAppletWrapper.getInstance()
+              .setTaskProgressMessage(
+                  LauncherLanguageUtils.getGAWKeys()[3], fileName, downloadProgress);
+          GameAppletWrapper.getInstance().setTaskProgress(progress);
+        }
+      }
+    } catch (FileNotFoundException fnfe) {
+      displayErrorMessage(fnfe.getMessage());
+
+      LOGGER.error("Cannot find {}", url, fnfe);
+    } catch (IOException ioe) {
+      displayErrorMessage(ioe.getMessage());
+
+      LOGGER.error("Cannot download {}", url, ioe);
+    } catch (URISyntaxException urise) {
+      displayErrorMessage(urise.getMessage());
+
+      LOGGER.error("Cannot parse {} as URI", url, urise);
+    }
+  }
+
+  private static void move(Path p) {
+    String selectedVersion = (String) LauncherConfig.get(4);
+    String clientJar = String.format("%s.jar", selectedVersion);
+
+    Consumer<String> move =
+        fileName -> {
+          File file = p.resolve(fileName).toFile();
+          File fileDest;
+
+          if (Objects.equals(fileName, clientJar)) {
+            fileDest = VERSION_DIRECTORY_PATH.resolve(fileName).toFile();
+          } else
+            fileDest =
+                fileName.startsWith("natives-") && fileName.endsWith(".zip")
+                    ? NATIVES_DIRECTORY_PATH.resolve(fileName).toFile()
+                    : BIN_DIRECTORY_PATH.resolve(fileName).toFile();
+
+          try {
+            if (file.exists()) {
+              Files.move(file.toPath(), fileDest.toPath());
+            }
+          } catch (IOException ioe) {
+            displayErrorMessage(ioe.getMessage());
+
+            LOGGER.error("Cannot move {} to {}", file, fileDest, ioe);
+          }
+        };
+    move.accept(clientJar);
+
+    File[] zipFiles =
+        p.toFile().listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
+    if (Objects.nonNull(zipFiles)) {
+      Arrays.stream(zipFiles).map(File::getName).forEach(move);
+    }
+
+    List<String> jarFiles = getListOfLWJGLJars();
+    jarFiles.forEach(move);
+  }
+
+  public static void extractDownloadedPackages() {
+    if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
+      GameAppletWrapper.getInstance().setTaskState(EState.EXTRACT_PACKAGES.ordinal());
+      GameAppletWrapper.getInstance().setTaskStateMessage(EState.EXTRACT_PACKAGES.getMessage());
+      GameAppletWrapper.getInstance().setTaskProgressMessage(null);
+      GameAppletWrapper.getInstance().setTaskProgress(55);
+    }
+
+    File[] zipFiles =
+        NATIVES_DIRECTORY_PATH
+            .toFile()
+            .listFiles((dir, name) -> name.startsWith("natives-") && name.endsWith(".zip"));
+    if (Objects.isNull(zipFiles)) {
+      return;
+    }
+
+    AtomicInteger currentExtractSize = new AtomicInteger(0);
+    int totalExtractSize = calculateTotalExtractSize(zipFiles);
+    if (totalExtractSize == 0) {
+      return;
+    }
+
+    Arrays.stream(zipFiles).forEach(f -> extract(currentExtractSize, totalExtractSize, f));
+  }
+
+  private static int calculateTotalExtractSize(File[] files) {
+    long size = 0;
+
+    for (File file : files) {
+      try (FileInputStream fis = new FileInputStream(file);
+          BufferedInputStream bis = new BufferedInputStream(fis);
+          ZipInputStream zis = new ZipInputStream(bis)) {
+        ZipEntry entry;
+
+        while (Objects.nonNull(entry = zis.getNextEntry())) {
+          size += entry.getSize();
+        }
+      } catch (FileNotFoundException fnfe) {
+        displayErrorMessage(fnfe.getMessage());
+
+        LOGGER.error("Cannot find {}", file, fnfe);
+      } catch (IOException ioe) {
+        displayErrorMessage(ioe.getMessage());
+
+        LOGGER.error("Cannot calculate size for {}", file, ioe);
+      }
+    }
+    return (int) size;
+  }
+
+  private static void extract(AtomicInteger current, int total, File file) {
+    try (FileInputStream fis = new FileInputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        ZipInputStream zis = new ZipInputStream(bis)) {
+      ZipEntry entry;
+
+      while (Objects.nonNull(entry = zis.getNextEntry())) {
+        String name = entry.getName();
+        if (!entry.isDirectory() && name.indexOf(47) != -1) {
+          continue;
+        }
+
+        File nativeFile = NATIVES_DIRECTORY_PATH.resolve(name).toFile();
+        String nativeFileCanonicalPath = nativeFile.getCanonicalPath();
+        if (!nativeFileCanonicalPath.startsWith(NATIVES_DIRECTORY_PATH.toString())) {
+          LOGGER.error("{} is not a valid path", nativeFile);
+          return;
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(nativeFile)) {
+          byte[] buffer = new byte[65536];
+          int read;
+
+          while ((read = zis.read(buffer, 0, buffer.length)) != -1) {
+            fos.write(buffer, 0, read);
+            current.addAndGet(read);
+
+            int extractProgress = (current.get() * 100) / total;
+            int progress = 55 + ((current.get() * 30) / total);
+            GameAppletWrapper.getInstance()
+                .setTaskProgressMessage(
+                    LauncherLanguageUtils.getGAWKeys()[3], name, extractProgress);
+            GameAppletWrapper.getInstance().setTaskProgress(progress);
+          }
+        }
+      }
+    } catch (FileNotFoundException fnfe) {
+      displayErrorMessage(fnfe.getMessage());
+
+      LOGGER.error("Cannot find {}", file, fnfe);
+    } catch (IOException ioe) {
+      displayErrorMessage(ioe.getMessage());
+
+      LOGGER.error("Cannot extract {}", file, ioe);
+    } finally {
+      try {
+        if (!Files.deleteIfExists(file.toPath())) {
+          LOGGER.warn("Could not delete {}", file);
+        }
+      } catch (IOException ioe) {
+        displayErrorMessage(ioe.getMessage());
+
+        LOGGER.error("Cannot delete {}", file, ioe);
+      }
+    }
+  }
+
+  public static void updateClasspath() {
+    if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
+      GameAppletWrapper.getInstance().setTaskState(EState.UPDATE_CLASSPATH.ordinal());
+      GameAppletWrapper.getInstance().setTaskStateMessage(EState.UPDATE_CLASSPATH.getMessage());
+      GameAppletWrapper.getInstance().setTaskProgressMessage(null);
+      GameAppletWrapper.getInstance().setTaskProgress(90);
+    }
+
+    File[] jarFiles = BIN_DIRECTORY_PATH.toFile().listFiles((dir, name) -> name.endsWith(".jar"));
+    String selectedVersion = (String) LauncherConfig.get(4);
+    String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
+    File clientJarFile = VERSION_DIRECTORY_PATH.resolve(clientJar).toFile();
+
+    if (Objects.nonNull(jarFiles)) {
+      URL[] jarUrls = new URL[jarFiles.length + 1];
+      try {
+        for (int i = 0; i < jarFiles.length; i++) {
+          jarUrls[i] = jarFiles[i].toURI().toURL();
+        }
+
+        jarUrls[jarFiles.length] = clientJarFile.toURI().toURL();
+      } catch (MalformedURLException murle) {
+        displayErrorMessage(murle.getMessage());
+
+        LOGGER.error("Cannot convert {} to URL", jarUrls, murle);
+      }
+
+      GameAppletWrapper.getInstance()
+          .setMcAppletClassLoader(
+              AccessController.doPrivileged(
+                  (PrivilegedAction<URLClassLoader>)
+                      () -> {
+                        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+                        URLClassLoader urlLoader = new URLClassLoader(jarUrls, loader);
+
+                        Thread.currentThread().setContextClassLoader(urlLoader);
+                        return urlLoader;
+                      }));
+
+      String[] libraryPaths =
+          new String[] {"org.lwjgl.librarypath", "net.java.games.input.librarypath"};
+      Arrays.stream(libraryPaths)
+          .forEachOrdered(
+              libraryPath -> System.setProperty(libraryPath, NATIVES_DIRECTORY_PATH.toString()));
+    }
+  }
+
+  private static void displayErrorMessage(String message) {
+    GameAppletWrapper.getInstance().setUpdaterTaskErrored(true);
+
+    UTF8ResourceBundle bundle = LauncherLanguage.getBundle();
+
+    int state = GameAppletWrapper.getInstance().getTaskState();
     String fatalErrorMessage =
         MessageFormat.format(
-            LauncherLanguage.bundle.getString("gaw.taskStateMessage.error"), state, message);
-    GameAppletWrapper.instance.setTaskStateMessage(fatalErrorMessage);
-    GameAppletWrapper.instance.setTaskProgressMessage(null);
+            bundle.getString(LauncherLanguageUtils.getGAWKeys()[2]), state, message);
+    GameAppletWrapper.getInstance().setTaskStateMessage(fatalErrorMessage);
+    GameAppletWrapper.getInstance().setTaskProgressMessage(null);
   }
 }
