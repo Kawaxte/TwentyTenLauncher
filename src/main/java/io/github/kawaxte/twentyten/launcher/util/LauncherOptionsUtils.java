@@ -12,13 +12,13 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.util;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.ELanguage;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
 import io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel;
 import io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox;
@@ -51,8 +51,8 @@ import org.json.JSONObject;
 public final class LauncherOptionsUtils {
 
   private static final Logger LOGGER;
-  public static Map<String, String> languageLookup;
-  public static Map<String, String> versionLookup;
+  private static Map<String, String> versionMap;
+  private static Map<String, String> languageMap;
 
   static {
     LOGGER = LogManager.getLogger(LauncherOptionsUtils.class);
@@ -61,7 +61,7 @@ public final class LauncherOptionsUtils {
   private LauncherOptionsUtils() {}
 
   public static void updateLanguageComboBox(LanguageGroupBox lgb) {
-    languageLookup = new HashMap<>();
+    languageMap = new HashMap<>();
 
     DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<>();
 
@@ -70,11 +70,11 @@ public final class LauncherOptionsUtils {
         .forEachOrdered(
             language -> {
               defaultComboBoxModel.addElement(language.getLanguageName());
-              languageLookup.put(language.getLanguageName(), language.toString().toLowerCase());
+              languageMap.put(language.getLanguageName(), language.toString().toLowerCase());
             });
 
-    Object selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
-    languageLookup.entrySet().stream()
+    Object selectedLanguage = LauncherConfig.get(0);
+    languageMap.entrySet().stream()
         .filter(entry -> Objects.equals(entry.getValue(), selectedLanguage))
         .findFirst()
         .ifPresent(entry -> defaultComboBoxModel.setSelectedItem(entry.getKey()));
@@ -83,7 +83,7 @@ public final class LauncherOptionsUtils {
   }
 
   public static void updateVersionComboBox(VersionGroupBox vgb) {
-    versionLookup = new HashMap<>();
+    versionMap = new HashMap<>();
 
     DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<>();
 
@@ -115,18 +115,13 @@ public final class LauncherOptionsUtils {
                 .forEach(
                     o -> {
                       boolean showBetaVersionsSelected =
-                          Boolean.parseBoolean(
-                                  LauncherConfig.lookup.get("showBetaVersionsSelected").toString())
+                          Boolean.parseBoolean(LauncherConfig.get(1).toString())
                               && Objects.equals(version, types.get(0));
                       boolean showAlphaVersionsSelected =
-                          Boolean.parseBoolean(
-                                  LauncherConfig.lookup.get("showAlphaVersionsSelected").toString())
+                          Boolean.parseBoolean(LauncherConfig.get(2).toString())
                               && Objects.equals(version, types.get(1));
                       boolean showInfdevVersionsSelected =
-                          Boolean.parseBoolean(
-                                  LauncherConfig.lookup
-                                      .get("showInfdevVersionsSelected")
-                                      .toString())
+                          Boolean.parseBoolean(LauncherConfig.get(3).toString())
                               && Objects.equals(version, types.get(2));
                       if (showBetaVersionsSelected
                           || showAlphaVersionsSelected
@@ -134,7 +129,7 @@ public final class LauncherOptionsUtils {
                         String versionId = o.getString("versionId");
                         String versionName = o.getString("versionName");
 
-                        versionLookup.put(versionName, versionId);
+                        versionMap.put(versionName, versionId);
                         defaultComboBoxModel.addElement(versionName);
                       }
                     });
@@ -142,11 +137,11 @@ public final class LauncherOptionsUtils {
     } catch (IOException ioe) {
       LOGGER.error("Cannot read {}", fileUrl, ioe);
     } finally {
-      LOGGER.info("Read {}", fileUrl);
+      LOGGER.info("Reading {}", fileUrl);
     }
 
-    Object selectedVersion = LauncherConfig.lookup.get("selectedVersion");
-    versionLookup.entrySet().stream()
+    Object selectedVersion = LauncherConfig.get(4);
+    versionMap.entrySet().stream()
         .filter(entry -> entry.getValue().equals(selectedVersion))
         .findFirst()
         .ifPresent(entry -> defaultComboBoxModel.setSelectedItem(entry.getKey()));
@@ -156,46 +151,44 @@ public final class LauncherOptionsUtils {
 
   public static void updateSelectedVersion(VersionGroupBox vgb) {
     String selectedItem = (String) vgb.getVersionComboBox().getSelectedItem();
-    selectedItem = versionLookup.get(selectedItem);
+    selectedItem = versionMap.get(selectedItem);
 
-    Object selectedVersion = LauncherConfig.lookup.get("selectedVersion");
+    Object selectedVersion = LauncherConfig.get(4);
     boolean versionChanged = !Objects.equals(selectedItem, selectedVersion);
     if (versionChanged) {
-      LauncherConfig.lookup.put("selectedVersion", selectedItem);
+      LauncherConfig.set(4, selectedItem);
       LauncherConfig.saveConfig();
     }
   }
 
   public static void updateSelectedLanguage(LanguageGroupBox lgb) {
     String selectedItem = (String) lgb.getLanguageComboBox().getSelectedItem();
-    selectedItem = languageLookup.get(selectedItem);
+    selectedItem = languageMap.get(selectedItem);
 
-    Object selectedLanguage = LauncherConfig.lookup.get("selectedLanguage");
+    Object selectedLanguage = LauncherConfig.get(0);
     boolean languageChanged = !Objects.equals(selectedItem, selectedLanguage);
     if (languageChanged) {
-      LauncherConfig.lookup.put("selectedLanguage", selectedItem);
+      LauncherConfig.set(0, selectedItem);
       LauncherConfig.saveConfig();
 
       String finalSelectedItem = selectedItem;
+
       SwingUtilities.invokeLater(
           () -> {
             UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(finalSelectedItem);
             if (Objects.nonNull(bundle)) {
-              LanguageGroupBox.instance.updateComponentKeyValues(bundle);
-              OptionsDialog.instance.updateContainerKeyValues(bundle);
-              OptionsPanel.instance.updateComponentKeyValues(bundle);
-              VersionGroupBox.instance.updateComponentKeyValues(bundle);
+              LanguageGroupBox.getInstance().updateComponentKeyValues(bundle);
+              OptionsDialog.getInstance().updateContainerKeyValues(bundle);
+              OptionsPanel.getInstance().updateComponentKeyValues(bundle);
+              VersionGroupBox.getInstance().updateComponentKeyValues(bundle);
 
-              if (Objects.nonNull(LauncherNoNetworkPanel.instance)) {
-                LauncherNoNetworkPanel.instance.updateComponentKeyValues(bundle);
+              if (Objects.nonNull(MicrosoftAuthPanel.getInstance())) {
+                MicrosoftAuthPanel.getInstance().updateComponentKeyValues(bundle);
               }
-              if (Objects.nonNull(MicrosoftAuthPanel.instance)) {
-                MicrosoftAuthPanel.instance.updateComponentKeyValues(bundle);
-              }
-              YggdrasilAuthPanel.instance.updateComponentKeyValues(bundle);
+              YggdrasilAuthPanel.getInstance().updateComponentKeyValues(bundle);
             }
 
-            OptionsDialog.instance.pack();
+            OptionsDialog.getInstance().pack();
           });
     }
   }
