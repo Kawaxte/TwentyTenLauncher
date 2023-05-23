@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.game;
 
 import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
@@ -48,9 +49,9 @@ public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
     try {
       future.get();
 
-      if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
+      if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
         return (Applet)
-            GameAppletWrapper.instance
+            GameAppletWrapper.getInstance()
                 .getMcAppletClassLoader()
                 .loadClass("net.minecraft.client.MinecraftApplet")
                 .getDeclaredConstructor()
@@ -83,7 +84,7 @@ public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
     try {
       Applet applet = this.get();
       if (Objects.nonNull(applet)) {
-        GameAppletWrapper.instance.replace(applet);
+        GameAppletWrapper.getInstance().replace(applet);
       }
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
