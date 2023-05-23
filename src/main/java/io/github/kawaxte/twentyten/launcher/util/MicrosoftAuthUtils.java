@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.util;
 
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
@@ -25,10 +26,10 @@ import org.json.JSONObject;
 
 public final class MicrosoftAuthUtils {
 
-  public static String clientId;
+  public static final String AZURE_CLIENT_ID;
 
   static {
-    clientId = "e1a4bd01-2c5f-4be0-8e6a-84d71929703b";
+    AZURE_CLIENT_ID = "e1a4bd01-2c5f-4be0-8e6a-84d71929703b";
   }
 
   private MicrosoftAuthUtils() {}
@@ -48,7 +49,7 @@ public final class MicrosoftAuthUtils {
     String[] deviceCodeResponse = getDeviceCodeResponse(consumersDeviceCode);
 
     LauncherUtils.swapContainers(
-        LauncherPanel.instance,
+        LauncherPanel.getInstance(),
         new MicrosoftAuthPanel(
             deviceCodeResponse[0], deviceCodeResponse[2], deviceCodeResponse[3]));
 
@@ -58,7 +59,7 @@ public final class MicrosoftAuthUtils {
   }
 
   public static boolean isAccessTokenExpired() {
-    String refreshToken = (String) LauncherConfig.lookup.get("microsoftRefreshToken");
+    String refreshToken = (String) LauncherConfig.get(9);
     if (Objects.isNull(refreshToken)) {
       return false;
     }
@@ -67,17 +68,16 @@ public final class MicrosoftAuthUtils {
     }
 
     long currentTimeSecs = System.currentTimeMillis() / 1000L;
-    String accessTokenExpiresIn =
-        (String) LauncherConfig.lookup.get("microsoftAccessTokenExpiresIn");
+    String accessTokenExpiresIn = (String) LauncherConfig.get(8);
     long accessTokenExpiresInSecs = Long.parseLong(accessTokenExpiresIn) / 1000L;
     long expiresIn = accessTokenExpiresInSecs - currentTimeSecs;
     return expiresIn <= 900;
   }
 
   public static void refreshAccessToken() {
-    String refreshToken = (String) LauncherConfig.lookup.get("microsoftRefreshToken");
+    String refreshToken = (String) LauncherConfig.get(9);
 
-    JSONObject consumersToken = MicrosoftAuth.refreshToken(clientId, refreshToken);
+    JSONObject consumersToken = MicrosoftAuth.refreshToken(AZURE_CLIENT_ID, refreshToken);
     if (Objects.isNull(consumersToken)) {
       return;
     }
@@ -103,9 +103,9 @@ public final class MicrosoftAuthUtils {
 
     String[] accessTokenResponse =
         MicrosoftAuthTask.getAccessTokenResponse(authenticateLoginWithXbox);
-    LauncherConfig.lookup.put("microsoftAccessToken", accessTokenResponse[0]);
-    LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
-    LauncherConfig.lookup.put("microsoftRefreshToken", tokenResponse[1]);
+    LauncherConfig.set(7, accessTokenResponse[0]);
+    LauncherConfig.set(8, accessTokenResponse[1]);
+    LauncherConfig.set(9, tokenResponse[1]);
     LauncherConfig.saveConfig();
   }
 
