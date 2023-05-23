@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten;
 
 import java.io.IOException;
@@ -34,10 +35,10 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class LinkedProperties extends Properties {
+public final class LinkedProperties extends Properties {
 
   private static final long serialVersionUID = 1L;
-  private final Map<Object, Object> linkedMap;
+  private final transient Map<Object, Object> linkedMap;
 
   public LinkedProperties() {
     super();
@@ -193,13 +194,6 @@ public class LinkedProperties extends Properties {
   }
 
   @Override
-  public synchronized Object clone() {
-    LinkedProperties clone = (LinkedProperties) super.clone();
-    clone.linkedMap.putAll(this.linkedMap);
-    return clone;
-  }
-
-  @Override
   public Set<Object> keySet() {
     synchronized (this) {
       return this.linkedMap.keySet();
@@ -277,5 +271,15 @@ public class LinkedProperties extends Properties {
   public synchronized Object merge(
       Object key, Object value, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
     return this.linkedMap.merge(key, value, remappingFunction);
+  }
+
+  @Override
+  public synchronized boolean equals(Object o) {
+    return this.linkedMap.equals(o);
+  }
+
+  @Override
+  public synchronized int hashCode() {
+    return this.linkedMap.hashCode();
   }
 }
