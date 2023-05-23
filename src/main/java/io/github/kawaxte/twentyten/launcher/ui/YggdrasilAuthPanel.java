@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
@@ -23,6 +24,7 @@ import io.github.kawaxte.twentyten.launcher.ui.custom.JHyperlink;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJCheckBox;
 import io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils;
 import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
@@ -45,7 +47,7 @@ import javax.swing.SwingUtilities;
 public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  public static YggdrasilAuthPanel instance;
+  private static YggdrasilAuthPanel instance;
   private final TransparentJButton microsoftSigninButton;
   private final JLabel usernameLabel;
   private final JLabel passwordLabel;
@@ -56,33 +58,32 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   private final JHyperlink linkLabel;
   private final TransparentJButton signinButton;
 
-  {
-    this.microsoftSigninButton = new TransparentJButton("yap.microsoftSigninButton");
-    this.usernameLabel = new JLabel("yap.usernameLabel", SwingConstants.RIGHT);
-    this.passwordLabel = new JLabel("yap.passwordLabel", SwingConstants.RIGHT);
-    this.usernameField = new JTextField(20);
-    this.passwordField = new JPasswordField(20);
-    this.optionsButton = new TransparentJButton("yap.optionsButton");
-    this.rememberPasswordCheckBox = new TransparentJCheckBox("yap.rememberPasswordCheckBox");
-    this.linkLabel =
-        new JHyperlink(
-            Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
-                ? "yap.linkLabel.outdated"
-                : "yap.linkLabel",
-            SwingConstants.LEFT);
-    this.signinButton = new TransparentJButton("yap.signinButton");
-  }
-
   public YggdrasilAuthPanel() {
     super(true);
 
-    YggdrasilAuthPanel.instance = this;
+    setInstance(this);
+
+    this.microsoftSigninButton = new TransparentJButton(LauncherLanguageUtils.getYAPKeys()[0]);
+    this.usernameLabel = new JLabel(LauncherLanguageUtils.getYAPKeys()[2], SwingConstants.RIGHT);
+    this.passwordLabel = new JLabel(LauncherLanguageUtils.getYAPKeys()[3], SwingConstants.RIGHT);
+    this.usernameField = new JTextField(20);
+    this.passwordField = new JPasswordField(20);
+    this.optionsButton = new TransparentJButton(LauncherLanguageUtils.getYAPKeys()[4]);
+    this.rememberPasswordCheckBox = new TransparentJCheckBox(LauncherLanguageUtils.getYAPKeys()[5]);
+    this.linkLabel =
+        new JHyperlink(
+            Objects.nonNull(LauncherUtils.getOutdated())
+                    && Boolean.TRUE.equals(LauncherUtils.getOutdated())
+                ? LauncherLanguageUtils.getYAPKeys()[7]
+                : LauncherLanguageUtils.getYAPKeys()[6],
+            SwingConstants.LEFT);
+    this.signinButton = new TransparentJButton(LauncherLanguageUtils.getYAPKeys()[8]);
+
     this.setLayout(this.getGroupLayout());
 
-    Object mojangUsername = LauncherConfig.lookup.get("mojangUsername");
-    Object mojangPassword = LauncherConfig.lookup.get("mojangPassword");
-    Object mojangRememberPasswordChecked =
-        LauncherConfig.lookup.get("mojangRememberPasswordChecked");
+    Object mojangUsername = LauncherConfig.get(11);
+    Object mojangPassword = LauncherConfig.get(12);
+    Object mojangRememberPasswordChecked = LauncherConfig.get(13);
     if (Objects.nonNull(mojangUsername)) {
       this.usernameField.setText((String) mojangUsername);
     }
@@ -99,34 +100,48 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
           @Override
           public void mouseClicked(MouseEvent event) {
             LauncherUtils.openBrowser(
-                Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
-                    ? String.valueOf(LauncherUtils.releasesUrl)
-                    : String.valueOf(LauncherUtils.signupUrl));
+                Objects.nonNull(LauncherUtils.getOutdated())
+                        && Boolean.TRUE.equals(LauncherUtils.getOutdated())
+                    ? String.valueOf(LauncherUtils.getLinkLabelUrls()[1])
+                    : String.valueOf(LauncherUtils.getLinkLabelUrls()[0]));
           }
         });
     this.signinButton.addActionListener(this);
 
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
+  }
+
+  public static YggdrasilAuthPanel getInstance() {
+    return instance;
+  }
+
+  private static void setInstance(YggdrasilAuthPanel yap) {
+    YggdrasilAuthPanel.instance = yap;
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
     LauncherUtils.updateComponentKeyValue(
-        bundle, this.microsoftSigninButton, "yap.microsoftSigninButton");
-    LauncherUtils.updateComponentKeyValue(bundle, this.usernameLabel, "yap.usernameLabel");
-    LauncherUtils.updateComponentKeyValue(bundle, this.passwordLabel, "yap.passwordLabel");
-    LauncherUtils.updateComponentKeyValue(bundle, this.optionsButton, "yap.optionsButton");
+        bundle, this.microsoftSigninButton, LauncherLanguageUtils.getYAPKeys()[0]);
     LauncherUtils.updateComponentKeyValue(
-        bundle, this.rememberPasswordCheckBox, "yap.rememberPasswordCheckBox");
+        bundle, this.usernameLabel, LauncherLanguageUtils.getYAPKeys()[2]);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.passwordLabel, LauncherLanguageUtils.getYAPKeys()[3]);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.optionsButton, LauncherLanguageUtils.getYAPKeys()[4]);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.rememberPasswordCheckBox, LauncherLanguageUtils.getYAPKeys()[5]);
     LauncherUtils.updateComponentKeyValue(
         bundle,
         this.linkLabel,
-        Objects.nonNull(LauncherUtils.outdated) && LauncherUtils.outdated
-            ? "yap.linkLabel.outdated"
-            : "yap.linkLabel");
-    LauncherUtils.updateComponentKeyValue(bundle, this.signinButton, "yap.signinButton");
+        Objects.nonNull(LauncherUtils.getOutdated())
+                && Boolean.TRUE.equals(LauncherUtils.getOutdated())
+            ? LauncherLanguageUtils.getYAPKeys()[7]
+            : LauncherLanguageUtils.getYAPKeys()[6]);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.signinButton, LauncherLanguageUtils.getYAPKeys()[8]);
   }
 
   private LayoutManager getGroupLayout() {
@@ -181,26 +196,27 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
   @Override
   public void actionPerformed(ActionEvent event) {
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
 
     Object source = event.getSource();
     if (Objects.equals(source, this.microsoftSigninButton)) {
       Arrays.stream(this.getComponents()).forEachOrdered(component -> component.setEnabled(false));
-      this.microsoftSigninButton.setText(bundle.getString("yap.microsoftSigninButton.signing_in"));
+      this.microsoftSigninButton.setText(bundle.getString(LauncherLanguageUtils.getYAPKeys()[1]));
 
       if (LauncherUtils.isOutdated()) {
         LauncherUtils.swapContainers(
-            this.getParent(), new LauncherNoNetworkPanel("lnnp.errorLabel.signin_outdated"));
+            this.getParent(), new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[2]));
         return;
       }
 
-      String microsoftProfileName = (String) LauncherConfig.lookup.get("microsoftProfileName");
-      String microsoftProfileId = (String) LauncherConfig.lookup.get("microsoftProfileId");
-      String microsoftAccessToken = (String) LauncherConfig.lookup.get("microsoftAccessToken");
-      boolean accessTokenMatched = LauncherUtils.jwtPattern.matcher(microsoftAccessToken).matches();
+      String microsoftProfileName = (String) LauncherConfig.get(6);
+      String microsoftProfileId = (String) LauncherConfig.get(5);
+      String microsoftAccessToken = (String) LauncherConfig.get(7);
+      boolean accessTokenMatched =
+          LauncherUtils.JWT_PATTERN.matcher(microsoftAccessToken).matches();
       if (!accessTokenMatched) {
-        MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.clientId);
+        MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.AZURE_CLIENT_ID);
         return;
       }
 
@@ -212,11 +228,11 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     }
     if (Objects.equals(source, this.signinButton)) {
       Arrays.stream(this.getComponents()).forEachOrdered(component -> component.setEnabled(false));
-      this.signinButton.setText(bundle.getString("yap.signinButton.signing_in"));
+      this.signinButton.setText(bundle.getString(LauncherLanguageUtils.getYAPKeys()[9]));
 
       if (LauncherUtils.isOutdated()) {
         LauncherUtils.swapContainers(
-            this.getParent(), new LauncherNoNetworkPanel("lnnp.errorLabel.signin_outdated"));
+            this.getParent(), new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[2]));
         return;
       }
 
@@ -224,17 +240,21 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
       String password = new String(this.passwordField.getPassword());
       boolean rememberPasswordChecked = this.rememberPasswordCheckBox.isSelected();
 
-      Object mojangUsername = LauncherConfig.lookup.get("mojangUsername");
-      Object mojangPassword = LauncherConfig.lookup.get("mojangPassword");
-      String mojangProfileName = (String) LauncherConfig.lookup.get("mojangProfileName");
-      String mojangProfileId = (String) LauncherConfig.lookup.get("mojangProfileId");
-      String mojangAccessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
-      String mojangClientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
+      Object mojangUsername = LauncherConfig.get(11);
+      Object mojangPassword = LauncherConfig.get(12);
+      String mojangProfileName = (String) LauncherConfig.get(15);
+      String mojangProfileId = (String) LauncherConfig.get(14);
+      String mojangAccessToken = (String) LauncherConfig.get(17);
+      String mojangClientToken = (String) LauncherConfig.get(18);
 
       boolean usernameChanged = Objects.equals(mojangUsername, username);
       boolean passwordChanged = Objects.equals(mojangPassword, password) && !password.isEmpty();
-      boolean accessTokenMatched = LauncherUtils.jwtPattern.matcher(mojangAccessToken).matches();
-      boolean clientTokenMatched = LauncherUtils.uuidPattern.matcher(mojangClientToken).matches();
+      boolean accessTokenMatched =
+          Objects.nonNull(mojangAccessToken)
+              && LauncherUtils.JWT_PATTERN.matcher(mojangAccessToken).matches();
+      boolean clientTokenMatched =
+          Objects.nonNull(mojangClientToken)
+              && LauncherUtils.UUID_PATTERN.matcher(mojangClientToken).matches();
       if ((!usernameChanged || !passwordChanged) || (!accessTokenMatched || !clientTokenMatched)) {
         YggdrasilAuthUtils.executeYggdrasilAuthWorker(
             username, password, mojangClientToken, rememberPasswordChecked);

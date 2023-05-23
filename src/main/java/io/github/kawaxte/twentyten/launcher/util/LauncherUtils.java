@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.util;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
@@ -28,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,8 +40,7 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,6 +57,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import lombok.Getter;
+import org.apache.hc.client5.http.fluent.Content;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,30 +67,32 @@ import org.json.JSONObject;
 
 public final class LauncherUtils {
 
+  public static final Pattern JWT_PATTERN;
+  public static final Pattern UUID_PATTERN;
+  public static final Path WORKING_DIRECTORY_PATH;
   private static final Logger LOGGER;
-  public static Pattern jwtPattern;
-  public static Pattern uuidPattern;
-  public static Path workingDirectoryPath;
-  public static Boolean outdated;
-  public static URL signupUrl;
-  public static URL releasesUrl;
+  @Getter private static Boolean outdated;
 
   static {
     LOGGER = LogManager.getLogger(LauncherUtils.class);
-
-    jwtPattern = Pattern.compile("^[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?$");
-    uuidPattern =
+    JWT_PATTERN = Pattern.compile("^[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+$");
+    UUID_PATTERN =
         Pattern.compile(
             "^[A-Fa-f0-9]{8}?"
                 + "[A-Fa-f0-9]{4}?"
                 + "[A-Fa-f0-9]{4}?"
                 + "[A-Fa-f0-9]{4}?"
-                + "[A-Fa-f0-9]{12}?$");
-    workingDirectoryPath = getWorkingDirectoryPath();
+                + "[A-Fa-f0-9]{12}$");
+    WORKING_DIRECTORY_PATH = getWorkingDirectoryPath();
     outdated = null;
+  }
 
+  private LauncherUtils() {}
+
+  public static URL[] getLinkLabelUrls() {
+    URL[] urls = new URL[2];
     try {
-      signupUrl =
+      urls[0] =
           new URL(
               new StringBuilder()
                   .append("https://signup.live.com/")
@@ -98,7 +103,7 @@ public final class LauncherUtils {
                   .append("&uaid=e6e4ffd0ad4943ab9bf740fb4a0416f9")
                   .append("&wa=wsignin1.0")
                   .toString());
-      releasesUrl =
+      urls[1] =
           new URL(
               new StringBuilder()
                   .append("https://api.github.com/")
@@ -107,15 +112,14 @@ public final class LauncherUtils {
                   .append("TwentyTenLauncher/")
                   .append("releases")
                   .toString());
-    } catch (IOException ioe) {
-      LOGGER.error("Cannot create URL(s)", ioe);
+    } catch (MalformedURLException murle) {
+      LOGGER.error("Cannot create URL(s)", murle);
     }
+    return urls;
   }
 
-  private LauncherUtils() {}
-
   public static String[] getProxyHostAndPort() {
-    String selectedVersion = (String) LauncherConfig.lookup.get("selectedVersion");
+    String selectedVersion = (String) LauncherConfig.get(4);
 
     String fileName = "versions.json";
     URL fileUrl = LauncherUtils.class.getClassLoader().getResource(fileName);
@@ -152,7 +156,7 @@ public final class LauncherUtils {
     } catch (IOException ioe) {
       LOGGER.error("Cannot read {}", fileUrl, ioe);
     }
-    return null;
+    return new String[] {null, null};
   }
 
   public static String getManifestAttribute(String key) {
@@ -178,19 +182,13 @@ public final class LauncherUtils {
     String userHome = System.getProperty("user.home", ".");
     String appData = System.getenv("APPDATA");
 
-    Map<EPlatform, Path> lookup =
-        Collections.unmodifiableMap(
-            new HashMap<EPlatform, Path>() {
-              {
-                put(EPlatform.LINUX, Paths.get(userHome, ".twentyten"));
-                put(
-                    EPlatform.MACOS,
-                    Paths.get(userHome, "Library", "Application Support", "twentyten"));
-                put(EPlatform.WINDOWS, Paths.get(appData, ".twentyten"));
-              }
-            });
+    Map<EPlatform, Path> directoryMap = new EnumMap<>(EPlatform.class);
+    directoryMap.put(EPlatform.LINUX, Paths.get(userHome, ".twentyten"));
+    directoryMap.put(
+        EPlatform.MACOS, Paths.get(userHome, "Library", "Application Support", "twentyten"));
+    directoryMap.put(EPlatform.WINDOWS, Paths.get(appData, ".twentyten"));
 
-    File workingDir = lookup.get(EPlatform.getOSName()).toFile();
+    File workingDir = directoryMap.get(EPlatform.getOSName()).toFile();
     if (!workingDir.exists() && !workingDir.mkdirs()) {
       LOGGER.warn("Could not create {}", workingDir.getAbsolutePath());
       return null;
@@ -205,25 +203,25 @@ public final class LauncherUtils {
             @Override
             protected Boolean doInBackground() {
               try {
-                String request =
-                    Request.get(releasesUrl.toURI())
+                Content content =
+                    Request.get(getLinkLabelUrls()[1].toURI())
                         .addHeader("accept", "application/vnd.github+json")
                         .addHeader("X-GitHub-Api-Version", "2022-11-28")
                         .execute()
-                        .returnContent()
-                        .asString(StandardCharsets.UTF_8);
-                JSONArray body = new JSONArray(request);
+                        .returnContent();
+                JSONArray body = new JSONArray(content.asString());
                 String tagName = body.getJSONObject(0).getString("tag_name");
                 String buildTime = getManifestAttribute("Build-Time");
                 return Objects.compare(buildTime, tagName, String::compareTo) < 0;
               } catch (UnknownHostException uhe) {
                 LauncherUtils.swapContainers(
-                    LauncherPanel.instance,
-                    new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", uhe.getMessage()));
+                    LauncherPanel.getInstance(),
+                    new LauncherNoNetworkPanel(
+                        LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
               } catch (IOException ioe) {
                 LOGGER.error("Cannot check for updates", ioe);
               } catch (URISyntaxException urise) {
-                LOGGER.error("Cannot convert {} to URI", releasesUrl, urise);
+                LOGGER.error("Cannot convert {} to URI", getLinkLabelUrls()[1], urise);
               }
               return false;
             }
