@@ -12,11 +12,13 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui.options;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.Window;
 import java.util.Objects;
@@ -25,32 +27,41 @@ import javax.swing.JDialog;
 public class OptionsDialog extends JDialog {
 
   public static final long serialVersionUID = 1L;
-  public static OptionsDialog instance;
+  private static OptionsDialog instance;
 
   public OptionsDialog(Window owner) {
     super(owner, ModalityType.MODELESS);
 
-    OptionsDialog.instance = this;
+    setInstance(this);
+
     this.setContentPane(new OptionsPanel());
 
-    this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     this.pack();
 
     this.setLocation(this.getOwner().getLocation());
     this.setResizable(false);
 
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateContainerKeyValues(
-        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
+  }
+
+  public static OptionsDialog getInstance() {
+    return instance;
+  }
+
+  private static void setInstance(OptionsDialog od) {
+    instance = od;
   }
 
   public void updateContainerKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateContainerKeyValue(bundle, this, "od.title");
+    LauncherUtils.updateContainerKeyValue(bundle, this, LauncherLanguageUtils.getODKeys()[0]);
   }
 
   @Override
   public String getTitle() {
-    return "od.title";
+    return LauncherLanguageUtils.getODKeys()[0];
   }
 }
