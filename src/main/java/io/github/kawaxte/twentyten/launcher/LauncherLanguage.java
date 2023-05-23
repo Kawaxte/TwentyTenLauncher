@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
@@ -24,25 +25,19 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.ResourceBundle;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public final class LauncherLanguage {
 
   private static final Logger LOGGER;
-
-  public static UTF8ResourceBundle bundle;
+  @Getter private static UTF8ResourceBundle bundle;
 
   static {
     LOGGER = LogManager.getLogger(LauncherLanguage.class);
-
-    if (Objects.isNull(bundle)) {
-      bundle = new UTF8ResourceBundle();
-    } else {
-      throw new IllegalStateException("bundle is already initialised");
-    }
   }
 
   private LauncherLanguage() {}
@@ -52,10 +47,10 @@ public final class LauncherLanguage {
         .map(
             code ->
                 (UTF8ResourceBundle)
-                    UTF8ResourceBundle.getBundle(
+                    ResourceBundle.getBundle(
                         "messages", Locale.forLanguageTag(code), new UTF8Control()))
         .orElseGet(
-            () -> (UTF8ResourceBundle) UTF8ResourceBundle.getBundle("messages", new UTF8Control()));
+            () -> (UTF8ResourceBundle) ResourceBundle.getBundle("messages", new UTF8Control()));
   }
 
   public static void loadLanguage(String baseName, String languageCode) {
@@ -70,9 +65,9 @@ public final class LauncherLanguage {
         new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       bundle = new UTF8ResourceBundle(br);
     } catch (IOException ioe) {
-      LOGGER.error("Cannot load", fileUrl, ioe);
+      LOGGER.error("Cannot load {}", fileUrl, ioe);
     } finally {
-      LOGGER.info("Loaded {}", fileUrl);
+      LOGGER.info("Loading {}", fileUrl);
     }
   }
 }
