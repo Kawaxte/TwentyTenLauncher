@@ -12,12 +12,14 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui.options;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.ui.custom.JGroupBox;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherOptionsUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.LayoutManager;
@@ -34,33 +36,41 @@ import lombok.Getter;
 public class LanguageGroupBox extends JGroupBox implements ActionListener {
 
   public static final long serialVersionUID = 1L;
-  public static LanguageGroupBox instance;
+  private static LanguageGroupBox instance;
   private final JLabel setLanguageLabel;
   @Getter private final JComboBox<String> languageComboBox;
 
-  {
-    this.setLanguageLabel = new JLabel("lgb.setLanguageLabel", SwingConstants.RIGHT);
-    this.languageComboBox = new JComboBox<>();
-  }
-
   public LanguageGroupBox() {
-    super("lgb.title", true);
+    super(LauncherLanguageUtils.getLGBKeys()[0], true);
 
-    LanguageGroupBox.instance = this;
+    setInstance(this);
+
+    this.setLanguageLabel = new JLabel(LauncherLanguageUtils.getLGBKeys()[1], SwingConstants.RIGHT);
+    this.languageComboBox = new JComboBox<>();
+
     this.setLayout(this.getGroupLayout());
 
     this.languageComboBox.addActionListener(this);
 
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
 
     LauncherOptionsUtils.updateLanguageComboBox(this);
   }
 
+  public static LanguageGroupBox getInstance() {
+    return instance;
+  }
+
+  private static void setInstance(LanguageGroupBox lgb) {
+    instance = lgb;
+  }
+
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(bundle, this.setLanguageLabel, "lgb.setLanguageLabel");
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.setLanguageLabel, LauncherLanguageUtils.getLGBKeys()[1]);
   }
 
   private LayoutManager getGroupLayout() {
@@ -85,10 +95,8 @@ public class LanguageGroupBox extends JGroupBox implements ActionListener {
     Object source = event.getSource();
     if (Objects.equals(source, this.languageComboBox)) {
       boolean selectedLanguageEqual =
-          Objects.equals(
-              LauncherConfig.lookup.get("selectedLanguage"),
-              this.languageComboBox.getSelectedItem());
-      OptionsPanel.instance.getSaveOptionsButton().setEnabled(!selectedLanguageEqual);
+          Objects.equals(LauncherConfig.get(0), this.languageComboBox.getSelectedItem());
+      OptionsPanel.getInstance().getSaveOptionsButton().setEnabled(!selectedLanguageEqual);
     }
   }
 }
