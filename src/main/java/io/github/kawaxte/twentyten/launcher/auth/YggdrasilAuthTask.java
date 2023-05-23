@@ -12,14 +12,17 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.auth;
 
 import io.github.kawaxte.twentyten.launcher.Launcher;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class YggdrasilAuthTask implements Runnable {
@@ -40,26 +43,27 @@ public class YggdrasilAuthTask implements Runnable {
     if (Objects.isNull(authenticate)) {
       return;
     }
-
-    String[] authenticateResponse = this.getAuthenticateResponse(authenticate);
-    if (Objects.isNull(authenticateResponse)) {
+    if (authenticate.has("error")) {
+      LauncherUtils.swapContainers(
+          LauncherPanel.getInstance(),
+          new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
       return;
     }
 
-    LauncherConfig.lookup.put("mojangAccessToken", authenticateResponse[0]);
+    String[] authenticateResponse = this.getAuthenticateResponse(authenticate);
+    LauncherConfig.set(17, authenticateResponse[0]);
 
     if (this.isAvailableProfilesEmpty(authenticate)) {
-      LauncherConfig.lookup.put("mojangProfileId", null);
-      LauncherConfig.lookup.put("mojangProfileName", null);
-      LauncherConfig.lookup.put("mojangProfileLegacy", false);
+      LauncherConfig.set(14, null);
+      LauncherConfig.set(15, null);
+      LauncherConfig.set(16, false);
       LauncherConfig.saveConfig();
 
       Launcher.launchMinecraft(null, authenticateResponse[0], null);
     } else {
-      LauncherConfig.lookup.put("mojangProfileId", authenticateResponse[1]);
-      LauncherConfig.lookup.put("mojangProfileName", authenticateResponse[2]);
-      LauncherConfig.lookup.put(
-          "mojangProfileLegacy", this.isLegacyInSelectedProfile(authenticate));
+      LauncherConfig.set(14, authenticateResponse[1]);
+      LauncherConfig.set(15, authenticateResponse[2]);
+      LauncherConfig.set(16, this.isLegacyInSelectedProfile(authenticate));
       LauncherConfig.saveConfig();
 
       Launcher.launchMinecraft(
@@ -73,16 +77,11 @@ public class YggdrasilAuthTask implements Runnable {
   }
 
   private boolean isAvailableProfilesEmpty(JSONObject object) {
-    return object.getJSONArray("availableProfiles").isEmpty();
+    JSONArray availableProfiles = object.getJSONArray("availableProfiles");
+    return object.has("availableProfiles") && !availableProfiles.isEmpty();
   }
 
   private String[] getAuthenticateResponse(JSONObject object) {
-    if (object.has("error")) {
-      LauncherUtils.swapContainers(
-          LauncherPanel.instance, new LauncherNoNetworkPanel("lnnp.errorLabel.signin"));
-      return null;
-    }
-
     String accessToken = object.getString("accessToken");
     JSONObject selectedProfile = object.getJSONObject("selectedProfile");
     String id = selectedProfile.getString("id");
