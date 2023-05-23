@@ -12,8 +12,10 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.util;
 
+import io.github.kawaxte.twentyten.exception.AuthenticationException;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth;
 import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker;
@@ -33,16 +35,16 @@ public final class YggdrasilAuthUtils {
       throw new IllegalArgumentException("clientToken cannot be empty");
     }
 
-    LauncherConfig.lookup.put("mojangUsername", username);
-    LauncherConfig.lookup.put("mojangPassword", rememberPasswordChecked ? password : "");
-    LauncherConfig.lookup.put("mojangRememberPasswordChecked", rememberPasswordChecked);
+    LauncherConfig.set(11, username);
+    LauncherConfig.set(12, rememberPasswordChecked ? password : "");
+    LauncherConfig.set(13, rememberPasswordChecked);
 
     new YggdrasilAuthWorker(username, password, clientToken).execute();
   }
 
   public static boolean isAccessTokenExpired() {
-    String accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
-    String clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
+    String accessToken = (String) LauncherConfig.get(17);
+    String clientToken = (String) LauncherConfig.get(18);
     if (Objects.isNull(accessToken) || Objects.isNull(clientToken)) {
       return false;
     }
@@ -58,19 +60,19 @@ public final class YggdrasilAuthUtils {
   }
 
   public static void refreshAccessToken() {
-    String accessToken = (String) LauncherConfig.lookup.get("mojangAccessToken");
-    String clientToken = (String) LauncherConfig.lookup.get("mojangClientToken");
+    String accessToken = (String) LauncherConfig.get(17);
+    String clientToken = (String) LauncherConfig.get(18);
 
     JSONObject refresh = YggdrasilAuth.refreshAccessToken(accessToken, clientToken);
     if (Objects.isNull(refresh)) {
       return;
     }
     if (refresh.has("error")) {
-      throw new RuntimeException("Cannot refresh access token");
+      throw new AuthenticationException("Cannot refresh access token");
     }
 
     String newAccessToken = refresh.getString("accessToken");
-    LauncherConfig.lookup.put("mojangAccessToken", newAccessToken);
+    LauncherConfig.set(17, newAccessToken);
     LauncherConfig.saveConfig();
   }
 }
