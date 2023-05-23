@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
@@ -21,6 +22,7 @@ import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.game.GameUpdater;
 import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.Color;
 import java.awt.Font;
@@ -36,28 +38,28 @@ import javax.swing.SwingConstants;
 
 public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListener {
 
-  public static LauncherNoNetworkPanel instance;
+  private static LauncherNoNetworkPanel instance;
   private final JLabel errorLabel;
   private final JLabel playOnlineLabel;
   private final JButton playOfflineButton;
   private final JButton retryButton;
   private final String errorMessage;
-  private final Object[] errorMessageArgs;
-
-  {
-    this.errorLabel = new JLabel((String) null, SwingConstants.CENTER);
-    this.playOnlineLabel = new JLabel("lnnp.playOnlineLabel", SwingConstants.LEFT);
-    this.playOfflineButton = new TransparentJButton("lnnp.playOfflineButton");
-    this.retryButton = new TransparentJButton("lnnp.retryButton");
-  }
+  private final transient Object[] errorMessageArgs;
 
   public LauncherNoNetworkPanel(String key, Object... args) {
     super(true);
 
-    this.setLayout(this.getGroupLayout());
+    setInstance(this);
 
     this.errorMessage = key;
     this.errorMessageArgs = args;
+    this.errorLabel = new JLabel((String) null, SwingConstants.CENTER);
+    this.playOnlineLabel = new JLabel(LauncherLanguageUtils.getLNPPKeys()[5], SwingConstants.LEFT);
+    this.playOfflineButton = new TransparentJButton(LauncherLanguageUtils.getLNPPKeys()[6]);
+    this.retryButton = new TransparentJButton(LauncherLanguageUtils.getLNPPKeys()[7]);
+
+    this.setLayout(this.getGroupLayout());
+
     this.errorLabel.setText(this.errorMessage);
     this.errorLabel.setFont(this.getFont().deriveFont(Font.ITALIC, 16F));
     this.errorLabel.setForeground(Color.RED.darker());
@@ -67,18 +69,29 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     this.playOfflineButton.addActionListener(this);
     this.retryButton.addActionListener(this);
 
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
+  }
+
+  public static LauncherNoNetworkPanel getInstance() {
+    return instance;
+  }
+
+  private static void setInstance(LauncherNoNetworkPanel lnnp) {
+    instance = lnnp;
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
     LauncherUtils.updateComponentKeyValue(
         bundle, this.errorLabel, this.errorMessage, this.errorMessageArgs);
-    LauncherUtils.updateComponentKeyValue(bundle, this.playOnlineLabel, "lnnp.playOnlineLabel");
-    LauncherUtils.updateComponentKeyValue(bundle, this.playOfflineButton, "lnnp.playOfflineButton");
-    LauncherUtils.updateComponentKeyValue(bundle, this.retryButton, "lnnp.retryButton");
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.playOnlineLabel, LauncherLanguageUtils.getLNPPKeys()[5]);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.playOfflineButton, LauncherLanguageUtils.getLNPPKeys()[6]);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.retryButton, LauncherLanguageUtils.getLNPPKeys()[7]);
   }
 
   private LayoutManager getGroupLayout() {
