@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.auth;
 
 import io.github.kawaxte.twentyten.launcher.Launcher;
@@ -19,6 +20,7 @@ import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
 import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
@@ -50,20 +52,21 @@ public class MicrosoftAuthTask implements Runnable {
     if (object.has("error")) {
       String error = object.getString("error");
       if (Objects.equals(error, "authorization_pending")) {
-        JProgressBar progressBar = MicrosoftAuthPanel.instance.getExpiresInProgressBar();
+        JProgressBar progressBar = MicrosoftAuthPanel.getInstance().getExpiresInProgressBar();
         progressBar.setValue(progressBar.getValue() - 1);
-        return null;
+        return new String[0];
       }
 
       LauncherUtils.swapContainers(
-          LauncherPanel.instance, new LauncherNoNetworkPanel("lnnp.errorLabel.signin"));
-      return null;
+          LauncherPanel.getInstance(),
+          new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+      return new String[0];
     }
 
-    MicrosoftAuthPanel.instance.getCopyCodeLabel().setVisible(false);
-    MicrosoftAuthPanel.instance.getUserCodeLabel().setVisible(false);
-    MicrosoftAuthPanel.instance.getExpiresInProgressBar().setIndeterminate(true);
-    MicrosoftAuthPanel.instance.getOpenBrowserButton().setVisible(false);
+    MicrosoftAuthPanel.getInstance().getCopyCodeLabel().setVisible(false);
+    MicrosoftAuthPanel.getInstance().getUserCodeLabel().setVisible(false);
+    MicrosoftAuthPanel.getInstance().getExpiresInProgressBar().setIndeterminate(true);
+    MicrosoftAuthPanel.getInstance().getOpenBrowserButton().setVisible(false);
 
     String accessToken = object.getString("access_token");
     String refreshToken = object.getString("refresh_token");
@@ -85,17 +88,18 @@ public class MicrosoftAuthTask implements Runnable {
       switch ((int) xerr) {
         case (int) 2148916233L:
           LauncherUtils.swapContainers(
-              LauncherPanel.instance,
-              new LauncherNoNetworkPanel("lnnp.errorLabel.signin_2148916233"));
+              LauncherPanel.getInstance(),
+              new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[3]));
           break;
         case (int) 2148916238L:
           LauncherUtils.swapContainers(
-              LauncherPanel.instance,
-              new LauncherNoNetworkPanel("lnnp.errorLabel.signin_2148916238"));
+              LauncherPanel.getInstance(),
+              new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[4]));
           break;
         default:
           LauncherUtils.swapContainers(
-              LauncherPanel.instance, new LauncherNoNetworkPanel("lnnp.errorLabel.signin"));
+              LauncherPanel.getInstance(),
+              new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
           break;
       }
 
@@ -117,7 +121,9 @@ public class MicrosoftAuthTask implements Runnable {
     if (!items.isEmpty()) {
       for (Object item : items) {
         String name = ((JSONObject) item).getString("name");
-        return Objects.equals(name, "game_minecraft");
+        if (Objects.equals(name, "game_minecraft")) {
+          return true;
+        }
       }
     }
     return false;
@@ -131,7 +137,7 @@ public class MicrosoftAuthTask implements Runnable {
 
   @Override
   public void run() {
-    if (!MicrosoftAuthPanel.instance.isShowing()) {
+    if (!MicrosoftAuthPanel.getInstance().isShowing()) {
       service.shutdown();
     }
 
@@ -141,7 +147,7 @@ public class MicrosoftAuthTask implements Runnable {
     }
 
     String[] tokenResponse = getTokenResponse(consumersToken);
-    if (Objects.isNull(tokenResponse)) {
+    if (tokenResponse.length == 0) {
       return;
     }
 
@@ -151,6 +157,9 @@ public class MicrosoftAuthTask implements Runnable {
     }
 
     String[] xblTokenResponse = getXBLTokenResponse(userAuthenticate);
+    if (xblTokenResponse.length == 0) {
+      return;
+    }
 
     JSONObject xstsAuthorize = MicrosoftAuth.acquireXSTSToken(xblTokenResponse[1]);
     if (Objects.isNull(xstsAuthorize)) {
@@ -158,6 +167,9 @@ public class MicrosoftAuthTask implements Runnable {
     }
 
     String xstsTokenResponse = getXSTSTokenResponse(xstsAuthorize);
+    if (Objects.isNull(xstsTokenResponse)) {
+      return;
+    }
 
     JSONObject authenticateLoginWithXbox =
         MicrosoftAuth.acquireAccessToken(xblTokenResponse[0], xstsTokenResponse);
@@ -166,9 +178,9 @@ public class MicrosoftAuthTask implements Runnable {
     }
 
     String[] accessTokenResponse = getAccessTokenResponse(authenticateLoginWithXbox);
-    LauncherConfig.lookup.put("microsoftAccessToken", accessTokenResponse[0]);
-    LauncherConfig.lookup.put("microsoftAccessTokenExpiresIn", accessTokenResponse[1]);
-    LauncherConfig.lookup.put("microsoftRefreshToken", tokenResponse[1]);
+    LauncherConfig.set(7, accessTokenResponse[0]);
+    LauncherConfig.set(8, accessTokenResponse[1]);
+    LauncherConfig.set(9, tokenResponse[1]);
 
     JSONObject entitlementsMcStore = MicrosoftAuth.checkEntitlementsMcStore(accessTokenResponse[0]);
     if (Objects.isNull(entitlementsMcStore)) {
@@ -177,8 +189,8 @@ public class MicrosoftAuthTask implements Runnable {
 
     boolean itemNameEqualToGameMinecraft = isItemNameEqualToGameMinecraft(entitlementsMcStore);
     if (!itemNameEqualToGameMinecraft) {
-      LauncherConfig.lookup.put("microsoftProfileId", null);
-      LauncherConfig.lookup.put("microsoftProfileName", null);
+      LauncherConfig.set(5, null);
+      LauncherConfig.set(6, null);
       LauncherConfig.saveConfig();
 
       Launcher.launchMinecraft(null, accessTokenResponse[0], null);
@@ -189,8 +201,8 @@ public class MicrosoftAuthTask implements Runnable {
       }
 
       String[] minecraftProfileResponse = getMinecraftProfileResponse(minecraftProfile);
-      LauncherConfig.lookup.put("microsoftProfileId", minecraftProfileResponse[0]);
-      LauncherConfig.lookup.put("microsoftProfileName", minecraftProfileResponse[1]);
+      LauncherConfig.set(5, minecraftProfileResponse[0]);
+      LauncherConfig.set(6, minecraftProfileResponse[1]);
       LauncherConfig.saveConfig();
 
       Launcher.launchMinecraft(
