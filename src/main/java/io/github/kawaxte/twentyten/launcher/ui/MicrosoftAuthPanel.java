@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
@@ -19,6 +20,7 @@ import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
 import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -41,7 +43,7 @@ import lombok.Getter;
 public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  public static MicrosoftAuthPanel instance;
+  private static MicrosoftAuthPanel instance;
   private final JLabel copyCodeLabel;
   private final JLabel userCodeLabel;
   private final JProgressBar expiresInProgressBar;
@@ -49,18 +51,19 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
   private final TransparentJButton cancelButton;
   private String verificationUri;
 
-  {
-    this.copyCodeLabel = new JLabel("map.copyCodeLabel", SwingConstants.CENTER);
-    this.userCodeLabel = new JLabel("", SwingConstants.CENTER);
-    this.expiresInProgressBar = new JProgressBar();
-    this.openBrowserButton = new TransparentJButton("map.openBrowserButton");
-    this.cancelButton = new TransparentJButton("map.cancelButton");
-  }
-
   public MicrosoftAuthPanel() {
     super(true);
 
-    MicrosoftAuthPanel.instance = this;
+    setInstance(this);
+
+    this.copyCodeLabel = new JLabel(LauncherLanguageUtils.getMAPKeys()[0], SwingConstants.CENTER);
+    this.userCodeLabel = new JLabel("", SwingConstants.CENTER);
+    this.expiresInProgressBar = new JProgressBar();
+    this.openBrowserButton = new TransparentJButton(LauncherLanguageUtils.getMAPKeys()[1]);
+    this.cancelButton = new TransparentJButton(LauncherLanguageUtils.getMAPKeys()[2]);
+
+    this.setLayout(this.getGroupLayout());
+
     this.userCodeLabel.setFont(this.userCodeLabel.getFont().deriveFont(Font.BOLD, 24f));
     this.userCodeLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -76,12 +79,10 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
     this.openBrowserButton.addActionListener(this);
     this.cancelButton.addActionListener(this);
 
-    this.setLayout(this.getGroupLayout());
-
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
   }
 
   public MicrosoftAuthPanel(String userCode, String verificationUri, String expiresIn) {
@@ -92,10 +93,21 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
     this.verificationUri = verificationUri;
   }
 
+  public static MicrosoftAuthPanel getInstance() {
+    return instance;
+  }
+
+  private static void setInstance(MicrosoftAuthPanel map) {
+    MicrosoftAuthPanel.instance = map;
+  }
+
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(bundle, this.copyCodeLabel, "map.copyCodeLabel");
-    LauncherUtils.updateComponentKeyValue(bundle, this.openBrowserButton, "map.openBrowserButton");
-    LauncherUtils.updateComponentKeyValue(bundle, this.cancelButton, "map.cancelButton");
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.copyCodeLabel, LauncherLanguageUtils.getMAPKeys()[0]);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.openBrowserButton, LauncherLanguageUtils.getMAPKeys()[1]);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.cancelButton, LauncherLanguageUtils.getMAPKeys()[2]);
   }
 
   private LayoutManager getGroupLayout() {
