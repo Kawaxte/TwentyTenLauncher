@@ -12,12 +12,14 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui.options;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.ui.custom.JGroupBox;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherOptionsUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.LayoutManager;
@@ -39,45 +41,52 @@ import lombok.Getter;
 public class VersionGroupBox extends JGroupBox implements ActionListener {
 
   public static final long serialVersionUID = 1L;
-  public static VersionGroupBox instance;
+  private static VersionGroupBox instance;
   private final JCheckBox showBetaVersionsCheckBox;
   private final JCheckBox showAlphaVersionsCheckBox;
   private final JCheckBox showInfdevVersionsCheckBox;
   private final JLabel useVersionLabel;
   @Getter private final JComboBox<String> versionComboBox;
 
-  {
-    this.showBetaVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
-    this.showAlphaVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
-    this.showInfdevVersionsCheckBox = new JCheckBox("vgb.showVersionsCheckBox");
-    this.useVersionLabel = new JLabel("vgb.useVersionLabel", SwingConstants.RIGHT);
-    this.versionComboBox = new JComboBox<>();
-  }
-
   public VersionGroupBox() {
-    super("vgb.title", true);
+    super(LauncherLanguageUtils.getVGBKeys()[0], true);
 
-    VersionGroupBox.instance = this;
+    setInstance(this);
+
+    this.showBetaVersionsCheckBox = new JCheckBox(LauncherLanguageUtils.getVGBKeys()[1]);
+    this.showAlphaVersionsCheckBox = new JCheckBox(LauncherLanguageUtils.getVGBKeys()[1]);
+    this.showInfdevVersionsCheckBox = new JCheckBox(LauncherLanguageUtils.getVGBKeys()[1]);
+    this.useVersionLabel = new JLabel(LauncherLanguageUtils.getVGBKeys()[2], SwingConstants.RIGHT);
+    this.versionComboBox = new JComboBox<>();
+
     this.setLayout(this.getGroupLayout());
 
     this.showBetaVersionsCheckBox.setSelected(
-        Boolean.parseBoolean(LauncherConfig.lookup.get("showBetaVersionsSelected").toString()));
+        Boolean.parseBoolean(LauncherConfig.get(1).toString()));
     this.showAlphaVersionsCheckBox.setSelected(
-        Boolean.parseBoolean(LauncherConfig.lookup.get("showAlphaVersionsSelected").toString()));
+        Boolean.parseBoolean(LauncherConfig.get(2).toString()));
     this.showInfdevVersionsCheckBox.setSelected(
-        Boolean.parseBoolean(LauncherConfig.lookup.get("showInfdevVersionsSelected").toString()));
+        Boolean.parseBoolean(LauncherConfig.get(3).toString()));
 
     this.showBetaVersionsCheckBox.addActionListener(this);
     this.showAlphaVersionsCheckBox.addActionListener(this);
     this.showInfdevVersionsCheckBox.addActionListener(this);
     this.versionComboBox.addActionListener(this);
 
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
 
     LauncherOptionsUtils.updateVersionComboBox(this);
+  }
+
+  public static VersionGroupBox getInstance() {
+    return instance;
+  }
+
+  public static void setInstance(VersionGroupBox vgb) {
+    VersionGroupBox.instance = vgb;
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
@@ -92,22 +101,23 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     LauncherUtils.updateComponentKeyValue(
         bundle,
         this.showBetaVersionsCheckBox,
-        "vgb.showVersionsCheckBox",
+        LauncherLanguageUtils.getVGBKeys()[1],
         versions.get(0),
         releaseDateRange.get(0));
     LauncherUtils.updateComponentKeyValue(
         bundle,
         this.showAlphaVersionsCheckBox,
-        "vgb.showVersionsCheckBox",
+        LauncherLanguageUtils.getVGBKeys()[1],
         versions.get(1),
         releaseDateRange.get(1));
     LauncherUtils.updateComponentKeyValue(
         bundle,
         this.showInfdevVersionsCheckBox,
-        "vgb.showVersionsCheckBox",
+        LauncherLanguageUtils.getVGBKeys()[1],
         versions.get(2),
         releaseDateRange.get(2));
-    LauncherUtils.updateComponentKeyValue(bundle, this.useVersionLabel, "vgb.useVersionLabel");
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.useVersionLabel, LauncherLanguageUtils.getVGBKeys()[2]);
   }
 
   private LayoutManager getGroupLayout() {
@@ -149,31 +159,28 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
         };
     for (JCheckBox checkBox : showVersionCheckBoxes) {
       if (Objects.equals(source, checkBox)) {
-        LauncherConfig.lookup.put(
-            "showBetaVersionsSelected", this.showBetaVersionsCheckBox.isSelected());
-        LauncherConfig.lookup.put(
-            "showAlphaVersionsSelected", this.showAlphaVersionsCheckBox.isSelected());
-        LauncherConfig.lookup.put(
-            "showInfdevVersionsSelected", this.showInfdevVersionsCheckBox.isSelected());
+        LauncherConfig.set(1, this.showBetaVersionsCheckBox.isSelected());
+        LauncherConfig.set(2, this.showAlphaVersionsCheckBox.isSelected());
+        LauncherConfig.set(3, this.showInfdevVersionsCheckBox.isSelected());
 
         boolean showVersionsSelected =
             Stream.of(
-                    "showBetaVersionsSelected",
-                    "showAlphaVersionsSelected",
-                    "showInfdevVersionsSelected")
-                .anyMatch(s -> (boolean) LauncherConfig.lookup.get(s));
-        OptionsPanel.instance.getSaveOptionsButton().setEnabled(showVersionsSelected);
+                    Boolean.parseBoolean(LauncherConfig.get(1).toString()),
+                    Boolean.parseBoolean(LauncherConfig.get(2).toString()),
+                    Boolean.parseBoolean(LauncherConfig.get(3).toString()))
+                .anyMatch(Boolean::booleanValue);
+        OptionsPanel.getInstance().getSaveOptionsButton().setEnabled(showVersionsSelected);
 
         LauncherOptionsUtils.updateVersionComboBox(this);
         break;
       }
     }
     if (Objects.equals(source, this.versionComboBox)) {
-      Object selectedVersion = LauncherConfig.lookup.get("selectedVersion");
+      Object selectedVersion = LauncherConfig.get(4);
       Object selectedItem = this.versionComboBox.getSelectedItem();
       boolean selectedVersionEqual = Objects.equals(selectedVersion, selectedItem);
 
-      OptionsPanel.instance.getSaveOptionsButton().setEnabled(!selectedVersionEqual);
+      OptionsPanel.getInstance().getSaveOptionsButton().setEnabled(!selectedVersionEqual);
     }
   }
 }
