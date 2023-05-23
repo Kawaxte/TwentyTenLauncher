@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher;
 
 import javax.swing.UIManager;
@@ -73,7 +74,7 @@ public enum ELookAndFeel {
           EPlatform.OS_NAME,
           ulafe);
     } finally {
-      LOGGER.info("Set look and feel to '{}'", UIManager.getLookAndFeel().getName());
+      LOGGER.info("Setting look and feel to '{}'", UIManager.getLookAndFeel().getName());
     }
   }
 }
