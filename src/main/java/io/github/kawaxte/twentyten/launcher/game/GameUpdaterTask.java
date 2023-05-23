@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.game;
 
 import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
@@ -27,22 +28,22 @@ public class GameUpdaterTask implements Runnable {
 
   @Override
   public void run() {
-    GameAppletWrapper.instance.setTaskState(EState.CHECK_CACHE.ordinal());
-    GameAppletWrapper.instance.setTaskStateMessage(EState.CHECK_CACHE.getMessage());
-    GameAppletWrapper.instance.setTaskProgressMessage(null);
-    GameAppletWrapper.instance.setTaskProgress(5);
+    GameAppletWrapper.getInstance().setTaskState(EState.CHECK_CACHE.ordinal());
+    GameAppletWrapper.getInstance().setTaskStateMessage(EState.CHECK_CACHE.getMessage());
+    GameAppletWrapper.getInstance().setTaskProgressMessage(null);
+    GameAppletWrapper.getInstance().setTaskProgress(5);
     if (!GameUpdater.isGameCached()) {
       GameUpdater.downloadPackages(urls);
       GameUpdater.extractDownloadedPackages();
     }
 
-    if (!GameAppletWrapper.instance.isUpdaterTaskErrored()) {
+    if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
       GameUpdater.updateClasspath();
 
-      GameAppletWrapper.instance.setTaskState(EState.DONE.ordinal());
-      GameAppletWrapper.instance.setTaskStateMessage(EState.DONE.getMessage());
-      GameAppletWrapper.instance.setTaskProgressMessage(null);
-      GameAppletWrapper.instance.setTaskProgress(95);
+      GameAppletWrapper.getInstance().setTaskState(EState.DONE.ordinal());
+      GameAppletWrapper.getInstance().setTaskStateMessage(EState.DONE.getMessage());
+      GameAppletWrapper.getInstance().setTaskProgressMessage(null);
+      GameAppletWrapper.getInstance().setTaskProgress(95);
     }
   }
 }
