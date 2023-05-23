@@ -12,13 +12,15 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui.options;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.workingDirectoryPath;
+import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.WORKING_DIRECTORY_PATH;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherOptionsUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.awt.LayoutManager;
@@ -30,32 +32,31 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.SwingConstants;
 import lombok.Getter;
 
 public class OptionsPanel extends JPanel implements ActionListener {
 
   public static final long serialVersionUID = 1L;
-  public static OptionsPanel instance;
+  private static OptionsPanel instance;
   private final LanguageGroupBox languageGroupBox;
   private final VersionGroupBox versionGroupBox;
   private final JLabel buildTimeLabel;
   private final JButton openFolderButton;
   @Getter private final JButton saveOptionsButton;
 
-  {
-    this.languageGroupBox = new LanguageGroupBox();
-    this.versionGroupBox = new VersionGroupBox();
-    this.buildTimeLabel =
-        new JLabel(LauncherUtils.getManifestAttribute("Build-Time"), SwingUtilities.CENTER);
-    this.openFolderButton = new JButton("op.openFolderButton");
-    this.saveOptionsButton = new JButton("op.saveOptionsButton");
-  }
-
   public OptionsPanel() {
     super(true);
 
-    OptionsPanel.instance = this;
+    setInstance(this);
+
+    this.languageGroupBox = new LanguageGroupBox();
+    this.versionGroupBox = new VersionGroupBox();
+    this.buildTimeLabel =
+        new JLabel(LauncherUtils.getManifestAttribute("Build-Time"), SwingConstants.CENTER);
+    this.openFolderButton = new JButton(LauncherLanguageUtils.getOPKeys()[2]);
+    this.saveOptionsButton = new JButton(LauncherLanguageUtils.getOPKeys()[3]);
+
     this.setLayout(this.getGroupLayout());
 
     this.buildTimeLabel.setEnabled(false);
@@ -64,21 +65,33 @@ public class OptionsPanel extends JPanel implements ActionListener {
     this.openFolderButton.addActionListener(this);
     this.saveOptionsButton.addActionListener(this);
 
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.updateComponentKeyValues(
-        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.bundle);
+        Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
+  }
+
+  public static OptionsPanel getInstance() {
+    return instance;
+  }
+
+  private static void setInstance(OptionsPanel op) {
+    instance = op;
   }
 
   public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
     LauncherUtils.updateComponentKeyValue(
         bundle,
         this.languageGroupBox,
-        this.languageGroupBox.setTitledBorder("op.languageGroupBox"));
+        this.languageGroupBox.setTitledBorder(LauncherLanguageUtils.getOPKeys()[1]));
     LauncherUtils.updateComponentKeyValue(
-        bundle, this.versionGroupBox, this.versionGroupBox.setTitledBorder("op.versionGroupBox"));
-    LauncherUtils.updateComponentKeyValue(bundle, this.openFolderButton, "op.openFolderButton");
-    LauncherUtils.updateComponentKeyValue(bundle, this.saveOptionsButton, "op.saveOptionsButton");
+        bundle,
+        this.versionGroupBox,
+        this.versionGroupBox.setTitledBorder(LauncherLanguageUtils.getOPKeys()[0]));
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.openFolderButton, LauncherLanguageUtils.getOPKeys()[2]);
+    LauncherUtils.updateComponentKeyValue(
+        bundle, this.saveOptionsButton, LauncherLanguageUtils.getOPKeys()[3]);
   }
 
   private LayoutManager getGroupLayout() {
@@ -121,7 +134,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (Objects.equals(source, this.openFolderButton)) {
-      LauncherUtils.openDesktop(workingDirectoryPath);
+      LauncherUtils.openDesktop(WORKING_DIRECTORY_PATH);
     }
     if (Objects.equals(source, this.saveOptionsButton)) {
       LauncherOptionsUtils.updateSelectedLanguage(this.languageGroupBox);
