@@ -11,15 +11,17 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 
 ## Features
 
-- Play different versions of Minecraft from the past; from February 2010 up to
+- [x] Sign in with your legacy Minecraft account or with a Mojang account without
+  migrating to a Microsoft account.
+    - _Accounts that do not own a copy of Minecraft (Java Edition) will only be able to play
+      offline._
+- [x] Play different versions of "Golden Age" Minecraft; from February 2010 up to
   September 2011.
-- Hear the classic sounds of Minecraft, like the scary cave sounds and the infamous hurt sound.
-- Join servers that still run older versions of Minecraft, and see your skin or cape (_if the
-  version
-  supports it_) in both singleplayer and multiplayer.
-- Use legacy mods just like you would in the past - just drag and drop `.class` files into the
-  client `.jar` file, provided that you have ModLoader installed first.
-- Change the language of the launcher without having to restart the application.
+- [x] Play Minecraft without an internet connection.
+    - _In order to play the game without an internet connection, you must have played the game
+      at least once while connected to the internet._
+- [x] Hear the classic sounds of Minecraft, like the scary cave sounds and the infamous hurt sound.
+- [x] Change the language of the launcher without having to restart the application.
 
 ---
 
