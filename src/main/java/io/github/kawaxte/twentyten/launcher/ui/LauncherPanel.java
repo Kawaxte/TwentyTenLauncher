@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui;
 
 import java.awt.AlphaComposite;
@@ -34,18 +35,27 @@ import javax.swing.JPanel;
 public class LauncherPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  public static LauncherPanel instance;
+  private static LauncherPanel instance;
 
   public LauncherPanel() {
     super(new GridBagLayout(), true);
 
-    LauncherPanel.instance = this;
+    setInstance(this);
+
     this.setBackground(Color.BLACK);
 
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.anchor = GridBagConstraints.CENTER;
     gbc.fill = GridBagConstraints.NONE;
     this.add(new YggdrasilAuthPanel(), gbc);
+  }
+
+  public static LauncherPanel getInstance() {
+    return instance;
+  }
+
+  private static void setInstance(LauncherPanel lp) {
+    instance = lp;
   }
 
   @Override
