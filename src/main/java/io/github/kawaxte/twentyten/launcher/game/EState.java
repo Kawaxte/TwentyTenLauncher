@@ -12,25 +12,27 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.game;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
 import io.github.kawaxte.twentyten.launcher.LauncherConfig;
 import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import lombok.Getter;
 
 public enum EState {
-  INITIALISE("es_enum.initialise"),
-  CHECK_CACHE("es_enum.checkCache"),
-  DOWNLOAD_PACKAGES("es_enum.downloadPackages"),
-  EXTRACT_PACKAGES("es_enum.extractPackages"),
-  UPDATE_CLASSPATH("es_enum.updateClasspath"),
-  DONE("es_enum.done");
+  INITIALISE(LauncherLanguageUtils.getESEnumKeys()[0]),
+  CHECK_CACHE(LauncherLanguageUtils.getESEnumKeys()[1]),
+  DOWNLOAD_PACKAGES(LauncherLanguageUtils.getESEnumKeys()[2]),
+  EXTRACT_PACKAGES(LauncherLanguageUtils.getESEnumKeys()[3]),
+  UPDATE_CLASSPATH(LauncherLanguageUtils.getESEnumKeys()[4]),
+  DONE(LauncherLanguageUtils.getESEnumKeys()[5]);
 
   @Getter private final String message;
 
   EState(String message) {
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.message = bundle.getString(message);
   }
