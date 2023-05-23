@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui;
 
 import java.awt.BorderLayout;
@@ -24,18 +25,20 @@ import javax.swing.JFrame;
 public class LauncherFrame extends JFrame {
 
   private static final long serialVersionUID = 1L;
-  public static LauncherFrame instance;
+  private static LauncherFrame instance;
 
   public LauncherFrame() {
     super();
 
-    LauncherFrame.instance = this;
+    setInstance(this);
+
     URL iconUrl =
         Optional.ofNullable(LauncherFrame.class.getClassLoader().getResource("favicon.png"))
             .orElseThrow(() -> new NullPointerException("iconUrl cannot be null"));
     this.setIconImage(this.getToolkit().getImage(iconUrl));
 
     this.setLayout(new BorderLayout());
+
     this.setContentPane(new LauncherPanel());
 
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,6 +49,14 @@ public class LauncherFrame extends JFrame {
 
     this.setLocationRelativeTo(null);
     this.setResizable(true);
+  }
+
+  public static LauncherFrame getInstance() {
+    return instance;
+  }
+
+  private static void setInstance(LauncherFrame lf) {
+    instance = lf;
   }
 
   @Override
