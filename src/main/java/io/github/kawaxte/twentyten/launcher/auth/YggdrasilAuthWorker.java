@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.auth;
 
 import java.util.concurrent.ExecutionException;
@@ -27,11 +28,7 @@ public class YggdrasilAuthWorker extends SwingWorker<Object, Void> {
   private final String username;
   private final String password;
   private final String clientToken;
-  private final Logger logger;
-
-  {
-    this.logger = LogManager.getLogger(this);
-  }
+  private final Logger logger = LogManager.getLogger(this);
 
   public YggdrasilAuthWorker(String username, String password, String clientToken) {
     this.username = username;
