@@ -12,10 +12,12 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.auth;
 
 import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -138,8 +140,8 @@ public final class MicrosoftAuth {
       Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
-            LauncherPanel.instance,
-            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+            LauncherPanel.getInstance(),
+            new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], cause.getMessage()));
         return null;
       }
 
@@ -180,8 +182,8 @@ public final class MicrosoftAuth {
       Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
-            LauncherPanel.instance,
-            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+            LauncherPanel.getInstance(),
+            new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], cause.getMessage()));
         return null;
       }
 
@@ -266,8 +268,8 @@ public final class MicrosoftAuth {
       Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
-            LauncherPanel.instance,
-            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+            LauncherPanel.getInstance(),
+            new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], cause.getMessage()));
         return null;
       }
 
@@ -312,8 +314,8 @@ public final class MicrosoftAuth {
       Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
-            LauncherPanel.instance,
-            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+            LauncherPanel.getInstance(),
+            new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], cause.getMessage()));
         return null;
       }
 
@@ -353,8 +355,8 @@ public final class MicrosoftAuth {
       Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
-            LauncherPanel.instance,
-            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+            LauncherPanel.getInstance(),
+            new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], cause.getMessage()));
         return null;
       }
 
@@ -390,8 +392,8 @@ public final class MicrosoftAuth {
       Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
-            LauncherPanel.instance,
-            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+            LauncherPanel.getInstance(),
+            new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], cause.getMessage()));
         return null;
       }
 
@@ -427,8 +429,8 @@ public final class MicrosoftAuth {
       Throwable cause = ee.getCause();
       if (cause instanceof UnknownHostException) {
         LauncherUtils.swapContainers(
-            LauncherPanel.instance,
-            new LauncherNoNetworkPanel("lnnp.errorLabel.signin_null", cause.getMessage()));
+            LauncherPanel.getInstance(),
+            new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], cause.getMessage()));
         return null;
       }
 
