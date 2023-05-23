@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher;
 
 import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
@@ -30,8 +31,8 @@ public class Launcher {
     LauncherConfig.loadConfig();
     LauncherLanguage.loadLanguage(
         "messages",
-        Objects.nonNull(LauncherConfig.lookup.get("selectedLanguage"))
-            ? (String) LauncherConfig.lookup.get("selectedLanguage")
+        Objects.nonNull(LauncherConfig.get(0))
+            ? (String) LauncherConfig.get(0)
             : ELanguage.USER_LANGUAGE);
 
     SwingUtilities.invokeLater(() -> new LauncherFrame().setVisible(true));
@@ -53,12 +54,12 @@ public class Launcher {
     GameAppletWrapper gaw = new GameAppletWrapper(username, sessionId);
     gaw.init();
 
-    LauncherFrame.instance.remove(LauncherPanel.instance);
-    LauncherFrame.instance.setContentPane(gaw);
-    LauncherFrame.instance.revalidate();
-    LauncherFrame.instance.repaint();
+    LauncherFrame.getInstance().remove(LauncherPanel.getInstance());
+    LauncherFrame.getInstance().setContentPane(gaw);
+    LauncherFrame.getInstance().revalidate();
+    LauncherFrame.getInstance().repaint();
 
     gaw.start();
-    LauncherFrame.instance.setTitle("Minecraft");
+    LauncherFrame.getInstance().setTitle("Minecraft");
   }
 }
