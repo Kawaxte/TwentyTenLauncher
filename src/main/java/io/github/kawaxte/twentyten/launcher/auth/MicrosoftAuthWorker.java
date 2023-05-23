@@ -12,10 +12,12 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.auth;
 
 import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
 import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -29,15 +31,11 @@ import org.apache.logging.log4j.Logger;
 
 public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
 
-  private final Logger logger;
+  private final Logger logger = LogManager.getLogger(this);
   private final String clientId;
   private final String deviceCode;
   private final int expiresIn;
   private final int interval;
-
-  {
-    this.logger = LogManager.getLogger(this);
-  }
 
   public MicrosoftAuthWorker(
       String clientId, String deviceCode, String expiresIn, String interval) {
@@ -68,7 +66,8 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
       this.logger.error("Interrupted while scheduling authentication task", ie);
     } catch (TimeoutException te) {
       LauncherUtils.swapContainers(
-          LauncherPanel.instance, new LauncherNoNetworkPanel("lnnp.errorLabel.signin"));
+          LauncherPanel.getInstance(),
+          new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
 
       this.logger.error("Timed out while scheduling authentication task", te);
     } finally {
