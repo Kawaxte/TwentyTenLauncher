@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 package io.github.kawaxte.twentyten.launcher.ui;
 
 import io.github.kawaxte.twentyten.UTF8ResourceBundle;
@@ -20,6 +21,7 @@ import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
 import io.github.kawaxte.twentyten.launcher.game.EState;
 import io.github.kawaxte.twentyten.launcher.game.GameUpdater;
 import io.github.kawaxte.twentyten.launcher.game.GameUpdaterWorker;
+import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
 import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
 import java.applet.Applet;
 import java.applet.AppletStub;
@@ -53,14 +55,14 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOGGER;
-  public static GameAppletWrapper instance;
+  private static GameAppletWrapper instance;
 
   static {
     LOGGER = LogManager.getLogger(GameAppletWrapper.class);
   }
 
   private final Map<String, String> parameters;
-  @Getter @Setter private ClassLoader mcAppletClassLoader;
+  @Getter @Setter private transient ClassLoader mcAppletClassLoader;
   @Getter @Setter private String taskStateMessage;
   @Getter private String taskProgressMessage;
   @Getter @Setter private int taskState;
@@ -70,16 +72,14 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
   private Applet minecraftApplet;
   private boolean active;
 
-  {
+  public GameAppletWrapper(String username, String sessionId) {
+    setInstance(this);
+
     this.parameters = new HashMap<>();
     this.taskState = EState.INITIALISE.ordinal();
     this.taskStateMessage = EState.INITIALISE.getMessage();
     this.taskProgressMessage = "";
     this.taskProgress = 0;
-  }
-
-  public GameAppletWrapper(String username, String sessionId) {
-    GameAppletWrapper.instance = this;
 
     if (Objects.isNull(username)) {
       username =
@@ -99,13 +99,21 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
   }
 
+  public static GameAppletWrapper getInstance() {
+    return instance;
+  }
+
+  private static void setInstance(GameAppletWrapper gaw) {
+    instance = gaw;
+  }
+
   public void setTaskProgressMessage(String message, Object... args) {
     if (Objects.isNull(message)) {
       this.taskProgressMessage = "";
       return;
     }
 
-    String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+    String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
     this.taskProgressMessage = MessageFormat.format(bundle.getString(message), args);
   }
@@ -201,13 +209,13 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
               });
       g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-      String selectedLanguage = (String) LauncherConfig.lookup.get("selectedLanguage");
+      String selectedLanguage = (String) LauncherConfig.get(0);
       UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
 
       String title =
           updaterTaskErrored
-              ? bundle.getString("gaw.updaterErrored")
-              : bundle.getString("gaw.updaterStarted");
+              ? bundle.getString(LauncherLanguageUtils.getGAWKeys()[1])
+              : bundle.getString(LauncherLanguageUtils.getGAWKeys()[0]);
       this.drawTitleString(title, appletWidth, appletHeight, g2dBuffered);
       this.drawStateString(taskStateMessage, appletWidth, appletHeight, g2dBuffered);
       this.drawProgressString(taskProgressMessage, appletWidth, appletHeight, g2dBuffered);
@@ -272,7 +280,12 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
   }
 
   @Override
-  public void appletResize(int width, int height) {}
+  public void appletResize(int width, int height) {
+    super.resize(width, height);
+    if (Objects.nonNull(this.minecraftApplet)) {
+      this.minecraftApplet.setSize(width, height);
+    }
+  }
 
   public void replace(Applet applet) {
     this.minecraftApplet = applet;
