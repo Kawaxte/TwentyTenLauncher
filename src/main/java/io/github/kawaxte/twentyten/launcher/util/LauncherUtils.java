@@ -40,6 +40,7 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
@@ -90,6 +91,23 @@ public final class LauncherUtils {
   }
 
   private LauncherUtils() {}
+
+  public static String decodeFromBase64(int index) {
+    byte[] bytes = (LauncherConfig.get(index).toString()).getBytes(StandardCharsets.UTF_8);
+    return bytes.length == 0 ? "" : new String(Base64.getDecoder().decode(bytes));
+  }
+
+  public static String encodeToBase64(String value) {
+    if (Objects.isNull(value)) {
+      throw new NullPointerException("value cannot be null");
+    }
+    if (value.isEmpty()) {
+      throw new IllegalArgumentException("value cannot be empty");
+    }
+
+    byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+    return bytes.length == 0 ? null : Base64.getEncoder().encodeToString(bytes);
+  }
 
   public static URL[] getLinkLabelUrls() {
     URL[] urls = new URL[2];
