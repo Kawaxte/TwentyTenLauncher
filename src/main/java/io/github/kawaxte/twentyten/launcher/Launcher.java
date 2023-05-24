@@ -48,6 +48,10 @@ public class Launcher {
   }
 
   public static void launchMinecraft(String username, String accessToken, String id) {
+    if (Objects.isNull(username)) {
+      username = String.format("Player%s", System.currentTimeMillis() % 1000L);
+    }
+
     String sessionId =
         new StringBuilder().append("token:").append(accessToken).append(":").append(id).toString();
 
