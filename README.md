@@ -14,7 +14,7 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 - [x] Sign in with your Legacy, Mojang, or Microsoft account.
     - _Mojang accounts are not required to migrate to Microsoft accounts._
     - _Accounts that do not own a copy of Minecraft (Java Edition) will only be able to play
-      without access to `online-mode=true` servers.
+      without access to `online-mode=true` servers._
 - [x] Play different versions of "Golden Age" Minecraft; from February 2010 up to
   September 2011.
 - [x] Play Minecraft without an internet connection.
