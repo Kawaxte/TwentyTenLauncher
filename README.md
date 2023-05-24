@@ -11,7 +11,7 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 
 ## Features
 
-- [x] Sign in with your legacy Minecraft account or with a Mojang account without
+- [x] Sign in with your Legacy or Mojang account without
   migrating to a Microsoft account.
     - _Accounts that do not own a copy of Minecraft (Java Edition) will only be able to play
       offline._
