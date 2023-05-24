@@ -75,6 +75,7 @@ public final class LauncherUtils {
 
   static {
     LOGGER = LogManager.getLogger(LauncherUtils.class);
+
     JWT_PATTERN = Pattern.compile("^[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+$");
     UUID_PATTERN =
         Pattern.compile(
@@ -83,6 +84,7 @@ public final class LauncherUtils {
                 + "[A-Fa-f0-9]{4}?"
                 + "[A-Fa-f0-9]{4}?"
                 + "[A-Fa-f0-9]{12}$");
+
     WORKING_DIRECTORY_PATH = getWorkingDirectoryPath();
     outdated = null;
   }
