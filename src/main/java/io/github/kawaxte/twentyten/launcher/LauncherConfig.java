@@ -91,7 +91,7 @@ public final class LauncherConfig {
   }
 
   public static void loadConfig() {
-    Path filePath = getFilePath(); // this is problematic for whatever reason
+    Path filePath = getFilePath();
     if (Objects.isNull(filePath)) {
       return;
     }
