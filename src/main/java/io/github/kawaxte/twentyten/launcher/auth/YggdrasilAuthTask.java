@@ -78,7 +78,7 @@ public class YggdrasilAuthTask implements Runnable {
 
   private boolean isAvailableProfilesEmpty(JSONObject object) {
     JSONArray availableProfiles = object.getJSONArray("availableProfiles");
-    return object.has("availableProfiles") && !availableProfiles.isEmpty();
+    return object.has("availableProfiles") && availableProfiles.isEmpty();
   }
 
   private String[] getAuthenticateResponse(JSONObject object) {
