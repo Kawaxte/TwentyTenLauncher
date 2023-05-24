@@ -36,7 +36,7 @@ public final class YggdrasilAuthUtils {
     }
 
     LauncherConfig.set(11, username);
-    LauncherConfig.set(12, rememberPasswordChecked ? password : "");
+    LauncherConfig.set(12, rememberPasswordChecked ? LauncherUtils.encodeToBase64(password) : "");
     LauncherConfig.set(13, rememberPasswordChecked);
 
     new YggdrasilAuthWorker(username, password, clientToken).execute();
