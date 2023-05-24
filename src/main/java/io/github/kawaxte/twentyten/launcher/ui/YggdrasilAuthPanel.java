@@ -82,7 +82,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     this.setLayout(this.getGroupLayout());
 
     Object mojangUsername = LauncherConfig.get(11);
-    Object mojangPassword = LauncherConfig.get(12);
+    Object mojangPassword = LauncherUtils.decodeFromBase64(12);
     Object mojangRememberPasswordChecked = LauncherConfig.get(13);
     if (Objects.nonNull(mojangUsername)) {
       this.usernameField.setText((String) mojangUsername);
@@ -241,7 +241,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
       boolean rememberPasswordChecked = this.rememberPasswordCheckBox.isSelected();
 
       Object mojangUsername = LauncherConfig.get(11);
-      Object mojangPassword = LauncherConfig.get(12);
+      Object mojangPassword = LauncherUtils.decodeFromBase64(12);
       String mojangProfileName = (String) LauncherConfig.get(15);
       String mojangProfileId = (String) LauncherConfig.get(14);
       String mojangAccessToken = (String) LauncherConfig.get(17);
