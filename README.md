@@ -28,8 +28,6 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 ## Contributing
 
 [![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/stargazers)
-[![GitHub Watchers](https://img.shields.io/github/watchers/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/watchers)
-[![GitHub Forks](https://img.shields.io/github/forks/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/forks)
 [![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/graphs/contributors)
 
 If you find this project useful or interesting, please consider giving it a ⭐. It's a
