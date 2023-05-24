@@ -18,7 +18,7 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 - [x] Play different versions of "Golden Age" Minecraft; from February 2010 up to
   September 2011.
 - [x] Play Minecraft without an internet connection.
-    - _In order to play the game without an internet connection, you must have played the game
+    - _In order to play without an internet connection, you must have played
       at least once while connected to the internet._
 - [x] Hear the classic sounds of Minecraft, like the scary cave sounds and the infamous hurt sound.
 - [x] Change the language of the launcher without having to restart the application.
