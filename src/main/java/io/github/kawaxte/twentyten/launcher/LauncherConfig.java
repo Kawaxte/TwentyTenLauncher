@@ -28,18 +28,20 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This final class is responsible for managing the launcher's configuration properties. The
- * configuration properties are stored in a properties file named "twentyten_{username}.properties"
- * in the working directory, where the username is the current system user's name.
+ * This class keeps a map of configuration properties with their keys and values. It includes
+ * methods for getting and setting property values by index, and for loading and saving the
+ * configuration to a properties file.
  *
- * <p>The configuration is loaded from the properties file when the launcher starts and is saved
- * back to the properties file whenever a configuration property changes.
+ * <p>The configuration file is named with a pattern 'twentyten_%username%.properties', where
+ * %username% is the current user's username. This file is located in the working directory of the
+ * launcher.
+ *
+ * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
  *
  * @author Kawaxte
  * @since 1.5.0923_03
@@ -77,21 +79,9 @@ public final class LauncherConfig {
   private LauncherConfig() {}
 
   /**
-   * Method to return the path to the properties file where the launcher's configuration is stored.
+   * Returns the path to the configuration file.
    *
-   * <p>The path is determined by the following steps:
-   *
-   * <ol>
-   *   <li>Get the current system user's name.
-   *   <li>Format the user name and launcher name into a file name.
-   *   <li>Resolve the file name against the working directory.
-   *   <li>Get the file from the path.
-   *   <li>If the file does not exist, create it.
-   *   <li>Return the path to the file.
-   * </ol>
-   *
-   * @return {@code null} if the file cannot be created, otherwise the Path to the file.
-   * @see Path#resolve(String)
+   * @return {@code null} if the file cannot be created, otherwise the path to the configuration
    */
   private static Path getFilePath() {
     String userName = System.getProperty("user.name");
@@ -107,71 +97,37 @@ public final class LauncherConfig {
     return null;
   }
 
-  /**
-   * Method to retrieve an array of keys for the properties map. The keys are retrieved from the
-   * properties map and stored in an Object array.
-   *
-   * <p>Each property is accessed via an index which corresponds to the order of the keys in the
-   * properties map. The initial configuration properties and their corresponding indexes are as
-   * follows:
-   *
-   * <ul>
-   *   <li>0: selectedLanguage (default: "en")
-   *   <li>1: showBetaVersionsSelected (default: true)
-   *   <li>2: showAlphaVersionsSelected (default: false)
-   *   <li>3: showInfdevVersionsSelected (default: false)
-   *   <li>4: selectedVersion (default: "b1.1_02")
-   *   <li>5: microsoftProfileId (default: null)
-   *   <li>6: microsoftProfileName (default: null)
-   *   <li>7: microsoftAccessToken (default: null)
-   *   <li>8: microsoftAccessTokenExpiresIn (default: 0L)
-   *   <li>9: microsoftRefreshToken (default: null)
-   *   <li>10: microsoftClientToken (default: randomly generated UUID without dashes)
-   *   <li>11: mojangUsername (default: null)
-   *   <li>12: mojangPassword (default: null)
-   *   <li>13: mojangRememberPasswordChecked (default: false)
-   *   <li>14: mojangProfileId (default: null)
-   *   <li>15: mojangProfileName (default: null)
-   *   <li>16: mojangProfileLegacy (default: false)
-   *   <li>17: mojangAccessToken (default: null)
-   *   <li>18: mojangClientToken (default: randomly generated UUID without dashes)
-   * </ul>
-   *
-   * @return An Object array containing the keys for the properties map.
-   * @see Map#keySet()
-   * @see Set#toArray()
-   */
   private static Object[] getKeys() {
     return PROPERTIES_MAP.keySet().toArray();
   }
 
   /**
-   * Method to get a property value from the properties map by its index.
+   * Returns the value of the property at the specified index.
    *
-   * @param index The index of the property to retrieve.
-   * @return The value of the property, or null if the property does not exist.
-   * @see Map#get(Object)
+   * @param index the index of the property in the ordered map
+   * @return the value of the property at the given index
    */
   public static Object get(int index) {
     return PROPERTIES_MAP.get(getKeys()[index].toString());
   }
 
   /**
-   * Method to set a property value in the properties map by its index.
+   * Sets the value of the property at the specified index.
    *
-   * @param index The index of the property to set.
-   * @param value The value to set for the property.
-   * @see Map#put(Object, Object)
+   * @param index the index of the property in the ordered map
+   * @param value the new value for the property
    */
   public static void set(int index, Object value) {
     PROPERTIES_MAP.put(getKeys()[index].toString(), value);
   }
 
   /**
-   * Method to load the launcher's configuration from the properties file. If the properties file
-   * does not exist, this method will create it and save the initial configuration to it.
+   * Loads the configuration from a properties file. If the file does not exist or is empty, saves
+   * the current configuration.
    *
-   * @see io.github.kawaxte.twentyten.LinkedProperties
+   * <p>If the file cannot be loaded, the configuration is not changed.
+   *
+   * @see #saveConfig()
    */
   public static void loadConfig() {
     Path filePath = getFilePath();
@@ -200,9 +156,9 @@ public final class LauncherConfig {
   }
 
   /**
-   * Method to save the launcher's configuration to the properties file.
+   * Saves the current configuration to a properties file.
    *
-   * @see io.github.kawaxte.twentyten.LinkedProperties
+   * <p>If the file cannot be saved, the configuration is not changed.
    */
   public static void saveConfig() {
     Path filePath = getFilePath();
