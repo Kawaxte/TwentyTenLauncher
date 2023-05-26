@@ -182,7 +182,7 @@ public final class MicrosoftAuth {
   }
 
   /**
-   * Acquires both the user's access token and refresh token using the device code previously
+   * Acquires both the user's access token and refresh token using the obtained device code.
    * received.
    *
    * <p>This method should be called after a successful call to {@link #acquireDeviceCode(String)}.
@@ -234,8 +234,7 @@ public final class MicrosoftAuth {
   }
 
   /**
-   * Refreshes the user's access token and refresh token using the refresh token previously
-   * received.
+   * Refreshes the user's access token and refresh token using a previously obtained refresh token.
    *
    * <p>Upon a successful refresh, the new access token and refresh token will be returned in the
    * response, which can then be used to re-obtain the Minecraft access token.
@@ -284,7 +283,7 @@ public final class MicrosoftAuth {
   }
 
   /**
-   * Acquires the user's Xbox Live token using the access token previously received.
+   * Acquires the user's Xbox Live token using an previously obtained access token.
    *
    * @param accessToken The access token previously obtained
    * @return A {@link org.json.JSONObject} containing the response from the server
@@ -337,7 +336,7 @@ public final class MicrosoftAuth {
   }
 
   /**
-   * Acquires the user's Xbox Live XSTS token using the Xbox Live token previously received.
+   * Acquires the user's Xbox Live XSTS token using the previously obtained Xbox Live token.
    *
    * @param token The Xbox Live token previously obtained
    * @return A {@link org.json.JSONObject} containing the response from the server
@@ -389,7 +388,7 @@ public final class MicrosoftAuth {
   }
 
   /**
-   * Acquires the user's Minecraft access token using the XSTS token previously received.
+   * Acquires the user's Minecraft access token using the previously obtained XSTS token.
    *
    * <p>The Minecraft access token will not only be used to construct a valid session ID, but also
    * to retrieve the user's profile, and to check if the user owns the game.
@@ -440,9 +439,9 @@ public final class MicrosoftAuth {
   }
 
   /**
-   * Checks if the user owns Minecraft (Java Edition) using the Minecraft access token previously
-   * received. If not, the user will only be able to play in an instance where their username is
-   * randomly generated in a "Player###" format, and they will not be able to join multiplayer
+   * Checks if the user owns Minecraft (Java Edition) using the previously obtained Minecraft access
+   * token. received. If not, the user will only be able to play in an instance where their username
+   * is randomly generated in a "Player###" format, and they will not be able to join multiplayer
    * servers that have {@code online-mode} enabled.
    *
    * @param accessToken The Minecraft access token previously obtained
@@ -486,7 +485,7 @@ public final class MicrosoftAuth {
   }
 
   /**
-   * Acquires the user's Minecraft profile using the Minecraft access token previously received.
+   * Acquires the user's Minecraft profile using the previously obtained Minecraft access token.
    *
    * <p>The Minecraft profile will be used to retrieve the user's profile information, such as their
    * username, UUID, skin, etc. The UUID will be used as one of the components to construct a valid
