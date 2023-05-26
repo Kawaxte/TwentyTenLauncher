@@ -35,6 +35,8 @@ import javax.swing.JPanel;
  * same way as the original code provided by Markus "Notch" Persson.
  *
  * @see javax.swing.JPanel
+ * @author Kawaxte
+ * @since 1.1.2323_01
  */
 public class CustomJPanel extends JPanel {
 
