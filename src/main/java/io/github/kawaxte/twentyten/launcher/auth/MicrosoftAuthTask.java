@@ -30,6 +30,21 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * This task performs the authentication process when run, sending the necessary credentials and
+ * handling the response. The response may indicate an error, a successful login without the
+ * Minecraft profile, or a successful login with the Minecraft profile.
+ *
+ * <p>Upon receiving a response, the task updates the {@link
+ * io.github.kawaxte.twentyten.launcher.LauncherConfig} with newly obtained propertoes and initiates
+ * the Minecraft launch process with the appropriate parameters based on the response.
+ *
+ * @see Runnable
+ * @author Kawaxte
+ * @since 1.5.0823_02
+ * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth
+ * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthWorker
+ */
 public class MicrosoftAuthTask implements Runnable {
 
   private static final Logger LOGGER;
@@ -42,12 +57,29 @@ public class MicrosoftAuthTask implements Runnable {
   private final String clientId;
   private final String deviceCode;
 
+  /**
+   * Constructs a new authentication task with the given parameters.
+   *
+   * @param service The executor service to use
+   * @param clientId The client ID of the Azure application to give permissions to
+   * @param deviceCode The device code to retrieve the access token with
+   */
   public MicrosoftAuthTask(ScheduledExecutorService service, String clientId, String deviceCode) {
     this.service = service;
     this.clientId = clientId;
     this.deviceCode = deviceCode;
   }
 
+  /**
+   * Returns the access token and refresh token as an array of strings.
+   *
+   * <p>This method also handles specific errors that may occur whilst attempting to retrieve the
+   * access token and refresh token. It also the only method to adjust the UI to show the progress
+   * of the polling request.
+   *
+   * @param object the JSON object containing the response from the polling request
+   * @return {@code accessToken} and {@code refreshToken} as an array of strings
+   */
   private static String[] getTokenResponse(JSONObject object) {
     if (object.has("error")) {
       String error = object.getString("error");
@@ -73,6 +105,12 @@ public class MicrosoftAuthTask implements Runnable {
     return new String[] {accessToken, refreshToken};
   }
 
+  /**
+   * Returns the user hash and XBL token as an array of strings.
+   *
+   * @param object the JSON object containing the response from the token request
+   * @return {@code uhs} and {@code token} as an array of strings
+   */
   public static String[] getXBLTokenResponse(JSONObject object) {
     JSONObject displayClaims = object.getJSONObject("DisplayClaims");
     JSONArray xui = displayClaims.getJSONArray("xui");
@@ -82,6 +120,15 @@ public class MicrosoftAuthTask implements Runnable {
     return new String[] {uhs, token};
   }
 
+  /**
+   * Returns the XSTS token as a string.
+   *
+   * <p>This method also handles specific errors that may occur whilst attempting to retrieve the
+   * XSTS token.
+   *
+   * @param object the JSON object containing the response from the XBL token request
+   * @return {@code token} as a string
+   */
   public static String getXSTSTokenResponse(JSONObject object) {
     if (object.has("XErr")) {
       long xerr = object.getLong("XErr");
@@ -109,6 +156,14 @@ public class MicrosoftAuthTask implements Runnable {
     return object.getString("Token");
   }
 
+  /**
+   * Returns the Minecraft access token and its expiry time as an array of strings.
+   *
+   * <p>The expiry time is converted to milliseconds and added to the current time.
+   *
+   * @param object the JSON object containing the response from the XSST token request
+   * @return {@code accessToken} and {@code expiresInMillis} as an array of strings
+   */
   public static String[] getAccessTokenResponse(JSONObject object) {
     String accessToken = object.getString("access_token");
     int expiresIn = object.getInt("expires_in");
@@ -116,6 +171,15 @@ public class MicrosoftAuthTask implements Runnable {
     return new String[] {accessToken, String.valueOf(expiresInMillis)};
   }
 
+  /**
+   * Checks if the given JSON object contains the "game_minecraft" item.
+   *
+   * <p>The "game_minecraft" item refers to Minecraft (Java Edition).
+   *
+   * @param object the JSON object to check for the game_minecraft item
+   * @return {@code true} if the JSON object contains the game_minecraft item, otherwise {@code
+   *     false}
+   */
   private static boolean isItemNameEqualToGameMinecraft(JSONObject object) {
     JSONArray items = object.getJSONArray("items");
     if (!items.isEmpty()) {
@@ -129,12 +193,33 @@ public class MicrosoftAuthTask implements Runnable {
     return false;
   }
 
+  /**
+   * Returns the Minecraft profile UUID and name as an array of strings.
+   *
+   * @param object the JSON object containing the response from the Minecraft profile request
+   * @return {@code id} and {@code name} as an array of strings
+   */
   private static String[] getMinecraftProfileResponse(JSONObject object) {
     String id = object.getString("id");
     String name = object.getString("name");
     return new String[] {id, name};
   }
 
+  /**
+   * This method performs the Microsoft authentication process using the supplied parameters. Upon
+   * receiving a response, it updates the launcher configuration with the new session information.
+   *
+   * <p>If an error is received or the account does not own Minecraft (Java Edition), it will launch
+   * the game with a generic player name. If the account does own Minecraft, it will launch the game
+   * with the authenticated user's profile.
+   *
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireToken(String, String)
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireXBLToken(String)
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireXSTSToken(String)
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireAccessToken(String, String)
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#checkEntitlementsMcStore(String)
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireMinecraftProfile(String)
+   */
   @Override
   public void run() {
     if (!MicrosoftAuthPanel.getInstance().isShowing()) {
