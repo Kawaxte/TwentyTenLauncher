@@ -24,29 +24,33 @@ import java.util.Objects;
 import javax.swing.SwingUtilities;
 
 /**
- * This is the main class of the launcher. It prepares all the necessary configurations to start the
- * game.
+ * The main entry point for the application.
  *
- * <p>The preparation includes the following steps:
+ * <p>This class is responsible for setting up the look and feel of the application, loading
+ * configuration and language preferences, displaying the main frame of the application, and
+ * handling the authentication tokens for both Microsoft and Mojang accounts.
  *
- * <ol>
- *   <li>Setting the system look and feel.
- *   <li>Loading the launcher configuration file from the working directory.
- *   <li>Loading the appropriate language resources based on the setting in the configuration file,
- *       or the system language if the configuration file is not found or the setting is invalid.
- *   <li>Showing the main window of the launcher.
- *   <li>Checking and refreshing the access tokens for Legacy, Mojang and Microsoft accounts if they
- *       are expired.
- * </ol>
- *
- * <p>The class also contains a method to launch Minecraft itself, taking a username, an access
- * token, and the UUID of the account as parameters.
+ * <p>It also provides a static method {@code launchMinecraft(...)} for launching the Minecraft
+ * applet within a JFrame with a specific username, access token and UUID.
  *
  * @author Kawaxte
  * @since 1.3.2823_02
  */
 public class Launcher {
 
+  /**
+   * This method performs the following operations:
+   *
+   * <ul>
+   *   <li>Sets the look and feel of the application.
+   *   <li>Loads the configuration and language preferences.
+   *   <li>Displays the main application frame.
+   *   <li>Refreshes the authentication tokens for Microsoft and Mojang accounts if they are
+   *       expired.
+   * </ul>
+   *
+   * @param args command-line arguments.
+   */
   public static void main(String... args) {
     ELookAndFeel.setLookAndFeel();
 
@@ -70,20 +74,21 @@ public class Launcher {
   }
 
   /**
-   * This method is used to launch Minecraft. It takes the username, access token, and UUID of the
-   * account as parameters. If the username is null, it generates a temporary username based on the
-   * current timestamp (e.g Player123).
+   * This method constructs a session ID from the provided parameters (excluding {@code username}),
+   * and initialises a new {@link io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper} with
+   * the constructed session ID. It then removes the current content pane of the {@link
+   * io.github.kawaxte.twentyten.launcher.ui.LauncherFrame} and sets the initialised {@link
+   * io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper} as the new content pane. Finally, it
+   * starts the game applet and changes the title of the {@link
+   * io.github.kawaxte.twentyten.launcher.ui.LauncherFrame} to "Minecraft".
    *
-   * <p>It then creates and initialises a {@link
-   * io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper} with the provided username and
-   * sessionId, removes the {@link io.github.kawaxte.twentyten.launcher.ui.LauncherPanel} from the
-   * {@link io.github.kawaxte.twentyten.launcher.ui.LauncherFrame}, sets the content pane of the
-   * LauncherFrame to the GameAppletWrapper, and starts the game.
+   * <p>If the username is {@code null} or empty, a randomly generated one in the format of
+   * "Player###" will be set.
    *
-   * @param username The username for the Minecraft account. If it is {@code null}, a temporary
-   *     username is generated.
-   * @param accessToken The access token for the Minecraft account.
-   * @param uuid The UUID associated with the Minecraft account.
+   * @param username the username of the player.
+   * @param accessToken the JWT containing various information about the player's account.
+   * @param uuid the UUID of the player's account.
+   * @see GameAppletWrapper#GameAppletWrapper(String, String)
    */
   public static void launchMinecraft(String username, String accessToken, String uuid) {
     if (Objects.isNull(username)) {
