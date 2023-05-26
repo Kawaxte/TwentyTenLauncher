@@ -23,19 +23,14 @@ import java.util.Locale;
 import java.util.Objects;
 
 /**
- * This enum represents the various platforms and system architectures that the application
- * supports.
+ * Enum representing the supported operating systems and architectures in the application.
  *
- * <p>Each enum constant represents an operating system (OS) like LINUX, MACOS, and WINDOWS, or a
- * system architecture like AARCH64, AMD64, and X86. The application uses this enum to identify the
- * user's OS and system architecture for tasks such as creating OS-specific folders or downloading
- * architecture-specific files.
+ * <p>The constants in this Enum correspond to operating systems (Linux, macOS, Windows) and
+ * processor architectures (x86, x86_64, ARM64). {@code names} is a list of identifying strings for
+ * each OS, and {@code arch} is an identifying string for each architecture.
  *
- * <p>The OS constants have associated lists of names that can be found in the system property
- * "os.name", and the architecture constants have an associated name that can be found in the system
- * property "os.arch".
- *
- * <p>This enum also provides utility methods to determine the current OS and system architecture.
+ * <p>The static variables {@code OS_NAME} and {@code OS_ARCH} capture the system properties for the
+ * running OS and architecture respectively.
  *
  * @author Kawaxte
  * @since 1.4.2823_06
@@ -66,9 +61,12 @@ public enum EPlatform {
   }
 
   /**
-   * Get the operating system name based on the system property "os.name".
+   * This method goes through the Enum values and finds the one whose names list contains a
+   * substring of the system's OS name. If it finds a match, it returns that platform; otherwise, it
+   * returns {@code null}.
    *
-   * @return {@code null} if the OS name is not found in the system property "os.name".
+   * @return The matching {@link EPlatform} for the operating system, or {@code null} if no match is
+   *     found.
    */
   public static EPlatform getOSName() {
     return Arrays.stream(values())
@@ -82,9 +80,12 @@ public enum EPlatform {
   }
 
   /**
-   * Get the system architecture based on the system property "os.arch".
+   * This method goes through the Enum values and finds the one whose {@code arch} string matches
+   * the system's architecture name. If it finds a match, it returns that platform; otherwise, it
+   * returns {@code null}.
    *
-   * @return {@code null} if the system architecture is not found in the system property "os.arch".
+   * @return The matching {@link EPlatform} for the system architecture, or {@code null} if no match
+   *     is found.
    */
   public static EPlatform getOSArch() {
     return Arrays.stream(values())
