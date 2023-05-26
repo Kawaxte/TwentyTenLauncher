@@ -53,9 +53,10 @@ public enum ELookAndFeel {
   /**
    * Sets the UI Manager's Look and Feel based on the operating system detected.
    *
-   * <p>If the Look and Feel cannot be set due to errors like ClassNotFoundException,
-   * InstantiationException, IllegalAccessException, or UnsupportedLookAndFeelException, error logs
-   * are recorded with the relevant information.
+   * @see EPlatform#isLinux()
+   * @see EPlatform#isMacOS()
+   * @see EPlatform#isWindows()
+   * @see javax.swing.UIManager#setLookAndFeel(String)
    */
   public static void setLookAndFeel() {
     try {
