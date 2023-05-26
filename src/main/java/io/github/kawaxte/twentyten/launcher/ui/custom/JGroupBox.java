@@ -27,6 +27,8 @@ import javax.swing.JPanel;
  * inside.
  *
  * @see javax.swing.JPanel
+ * @author Kawaxte
+ * @since 1.4.0923_02
  */
 public class JGroupBox extends JPanel {
 
