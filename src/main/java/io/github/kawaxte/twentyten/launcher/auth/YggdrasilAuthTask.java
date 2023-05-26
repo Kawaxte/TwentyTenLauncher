@@ -66,6 +66,9 @@ public class YggdrasilAuthTask implements Runnable {
    * <p>If an error is received or the account does not own Minecraft (Java Edition), it will launch
    * the game with a generic player name. If the account does own Minecraft, it will launch the game
    * with the authenticated user's profile.
+   *
+   * @see io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth#authenticate(String, String,
+   *     String)
    */
   @Override
   public void run() {
