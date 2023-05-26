@@ -48,6 +48,8 @@ import java.util.function.Function;
  *
  * @see java.util.Properties
  * @see java.util.LinkedHashMap
+ * @author Kawaxte
+ * @since 1.4.1023_03
  */
 public final class LinkedProperties extends Properties {
 

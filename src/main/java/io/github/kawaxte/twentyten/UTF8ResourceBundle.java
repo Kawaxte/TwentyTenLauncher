@@ -40,6 +40,8 @@ import java.util.ResourceBundle;
  *
  * @see java.util.ResourceBundle
  * @see java.util.ResourceBundle.Control
+ * @author Kawaxte
+ * @since 1.3.3023_04
  */
 public class UTF8ResourceBundle extends ResourceBundle {
 
