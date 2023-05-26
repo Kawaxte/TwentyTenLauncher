@@ -38,6 +38,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+/**
+ * This class provides a range of static methods to handle different stages of the OAuth2 flow,
+ * including acquiring and refreshing tokens, making API requests to Xbox Live and Minecraft
+ * services, and retrieving the user's Minecraft profile.
+ *
+ * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
+ *
+ * @author Kawaxte
+ * @since 1.5.0923_03
+ * @see <a
+ *     href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code">
+ *     OAuth 2.0 device authorization grant</a>
+ */
 public final class MicrosoftAuth {
 
   private static final Logger LOGGER;
@@ -48,6 +61,11 @@ public final class MicrosoftAuth {
 
   private MicrosoftAuth() {}
 
+  /**
+   * Initialises and returns URLs for Microsoft OAuth2 authentication process.
+   *
+   * @return Array of URLs necessary for the OAuth2 flow
+   */
   private static URL[] getYggdrasilAuthUrls() {
     URL[] urls = new URL[7];
     try {
@@ -110,6 +128,17 @@ public final class MicrosoftAuth {
     return urls;
   }
 
+  /**
+   * Acquires a device code that will be used to retrieve both the user's access token and refresh
+   * token.
+   *
+   * <p>This method is required to be polled every second until the user has entered the code on the
+   * provided URL. The polling process is handled by {@link
+   * io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthWorker}
+   *
+   * @param clientId The client ID of the Azure application requesting the device code
+   * @return A {@link org.json.JSONObject} containing the response from the server
+   */
   public static JSONObject acquireDeviceCode(String clientId) {
     Form body = Form.form();
     body.add("client_id", clientId);
@@ -152,6 +181,16 @@ public final class MicrosoftAuth {
     return null;
   }
 
+  /**
+   * Acquires both the user's access token and refresh token using the device code previously
+   * received.
+   *
+   * <p>This method should be called after a successful call to {@link #acquireDeviceCode(String)}.
+   *
+   * @param clientId The client ID of the Azure application requesting the access token.
+   * @param deviceCode The device code previously obtained
+   * @return A {@link org.json.JSONObject} containing the response from the server
+   */
   public static JSONObject acquireToken(String clientId, String deviceCode) {
     Form body = Form.form();
     body.add("client_id", clientId);
@@ -194,6 +233,17 @@ public final class MicrosoftAuth {
     return null;
   }
 
+  /**
+   * Refreshes the user's access token and refresh token using the refresh token previously
+   * received.
+   *
+   * <p>Upon a successful refresh, the new access token and refresh token will be returned in the
+   * response, which can then be used to re-obtain the Minecraft access token.
+   *
+   * @param clientId The client ID of the Azure application requesting the access token.
+   * @param refreshToken The refresh token previously obtained
+   * @return A {@link org.json.JSONObject} containing the response from the server
+   */
   public static JSONObject refreshToken(String clientId, String refreshToken) {
     Form body = Form.form();
     body.add("client_id", clientId);
@@ -233,6 +283,12 @@ public final class MicrosoftAuth {
     return null;
   }
 
+  /**
+   * Acquires the user's Xbox Live token using the access token previously received.
+   *
+   * @param accessToken The access token previously obtained
+   * @return A {@link org.json.JSONObject} containing the response from the server
+   */
   public static JSONObject acquireXBLToken(String accessToken) {
     JSONObject properties = new JSONObject();
     properties.put("AuthMethod", "RPS");
@@ -280,6 +336,12 @@ public final class MicrosoftAuth {
     return null;
   }
 
+  /**
+   * Acquires the user's Xbox Live XSTS token using the Xbox Live token previously received.
+   *
+   * @param token The Xbox Live token previously obtained
+   * @return A {@link org.json.JSONObject} containing the response from the server
+   */
   public static JSONObject acquireXSTSToken(String token) {
     JSONObject properties = new JSONObject();
     properties.put("SandboxId", "RETAIL");
@@ -326,6 +388,16 @@ public final class MicrosoftAuth {
     return null;
   }
 
+  /**
+   * Acquires the user's Minecraft access token using the XSTS token previously received.
+   *
+   * <p>The Minecraft access token will not only be used to construct a valid session ID, but also
+   * to retrieve the user's profile, and to check if the user owns the game.
+   *
+   * @param uhs The user hash
+   * @param token The XSTS token previously obtained
+   * @return A {@link org.json.JSONObject} containing the response from the server
+   */
   public static JSONObject acquireAccessToken(String uhs, String token) {
     JSONObject body = new JSONObject();
     body.put("identityToken", String.format("XBL3.0 x=%s;%s", uhs, token));
@@ -367,6 +439,15 @@ public final class MicrosoftAuth {
     return null;
   }
 
+  /**
+   * Checks if the user owns Minecraft (Java Edition) using the Minecraft access token previously
+   * received. If not, the user will only be able to play in an instance where their username is
+   * randomly generated in a "Player###" format, and they will not be able to join multiplayer
+   * servers that have {@code online-mode} enabled.
+   *
+   * @param accessToken The Minecraft access token previously obtained
+   * @return A {@link org.json.JSONObject} containing the response from the server
+   */
   public static JSONObject checkEntitlementsMcStore(String accessToken) {
     ExecutorService service = Executors.newSingleThreadExecutor();
     Future<String> future =
@@ -404,6 +485,16 @@ public final class MicrosoftAuth {
     return null;
   }
 
+  /**
+   * Acquires the user's Minecraft profile using the Minecraft access token previously received.
+   *
+   * <p>The Minecraft profile will be used to retrieve the user's profile information, such as their
+   * username, UUID, skin, etc. The UUID will be used as one of the components to construct a valid
+   * session ID.
+   *
+   * @param accessToken The Minecraft access token previously obtained
+   * @return A {@link org.json.JSONObject} containing the response from the server
+   */
   public static JSONObject acquireMinecraftProfile(String accessToken) {
     ExecutorService service = Executors.newSingleThreadExecutor();
     Future<String> future =
