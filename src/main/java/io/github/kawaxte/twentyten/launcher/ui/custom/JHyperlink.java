@@ -26,9 +26,8 @@ import javax.swing.JLabel;
  * hyperlink (underlined and in blue). It also changes the cursor to a hand cursor when the cursor
  * is over the label to mimic hyperlink behaviour.
  *
- * <p>The {@link javax.swing.JLabel#setText(String)} method is overridden to automatically underline
- * the provided text. The {@link javax.swing.JLabel#setForeground(Color)} method is overridden to
- * automatically set the text colour to blue.
+ * <p>The {@code setText(...)} method is overridden to automatically underline the provided text.
+ * The {@code setForeground(...)} method is overridden to automatically set the text colour to blue.
  *
  * @see javax.swing.JLabel
  * @author Kawaxte

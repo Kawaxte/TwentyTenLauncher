@@ -23,16 +23,16 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 
 /**
- * This class extends {@link javax.swing.JPanel} and overrides the {@link
- * javax.swing.JComponent#paintComponent(Graphics)} method to provide a specific style of graphics
- * to every new JPanel. This avoids the need to duplicate the paint override method for each panel.
+ * This class extends {@link javax.swing.JPanel} and overrides the {@code paintComponent...)} method
+ * to provide a specific style of graphics to every new JPanel. This avoids the need to duplicate
+ * the paint override method for each panel.
  *
  * <p>The graphics style provided by this class includes a layered rectangle design and is a refined
  * variant of the original code provided by Markus "Notch" Persson on Jun 29, 2010.
  *
- * <p>The {@link javax.swing.JComponent#getInsets()} method is also overridden to provide custom
- * insets (4, 18, 4, 18), which are used to provide a margin around the panel contents in the exact
- * same way as the original code provided by Markus "Notch" Persson.
+ * <p>The {@code getInsets()} method is also overridden to provide custom insets (4, 18, 4, 18),
+ * which are used to provide a margin around the panel contents in the exact same way as the
+ * original code provided by Markus "Notch" Persson.
  *
  * @see javax.swing.JPanel
  * @author Kawaxte

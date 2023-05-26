@@ -21,10 +21,10 @@ import javax.swing.JButton;
 import javax.swing.UIManager;
 
 /**
- * This class extends {@link javax.swing.JButton} and overrides the {@link
- * javax.swing.JComponent#isOpaque()} method to provide a tailored behaviour for button transparency
- * in certain Windows environments. Specifically, it provides support for Windows NT kernels between
- * version 5.1 and 6.1 when set to "Windows Classic" theme.
+ * This class extends {@link javax.swing.JButton} and overrides the {@code isOpaque()} method to
+ * provide a tailored behaviour for button transparency in certain Windows environments.
+ * Specifically, it provides support for Windows NT kernels between version 5.1 and 6.1 when set to
+ * "Windows Classic" theme.
  *
  * <p>In these specific environments, a standard opaque setting can cause the button's core drawn
  * elements to completely disappear. The overridden implementation in this class addresses this
