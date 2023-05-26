@@ -185,10 +185,10 @@ public final class MicrosoftAuth {
    * Acquires both the user's access token and refresh token using the obtained device code.
    * received.
    *
-   * <p>This method should be called after a successful call to {@link #acquireDeviceCode(String)}.
+   * <p>This method should be called after a successful call to {@code acquireDeviceCode(...)}.
    *
    * @param clientId The client ID of the Azure application requesting the access token.
-   * @param deviceCode The device code previously obtained
+   * @param deviceCode The device code received from {@code acquireDeviceCode(...)}
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject acquireToken(String clientId, String deviceCode) {
@@ -240,7 +240,7 @@ public final class MicrosoftAuth {
    * response, which can then be used to re-obtain the Minecraft access token.
    *
    * @param clientId The client ID of the Azure application requesting the access token.
-   * @param refreshToken The refresh token previously obtained
+   * @param refreshToken The refresh token of the user.
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject refreshToken(String clientId, String refreshToken) {
@@ -285,7 +285,7 @@ public final class MicrosoftAuth {
   /**
    * Acquires the user's Xbox Live token using an previously obtained access token.
    *
-   * @param accessToken The access token previously obtained
+   * @param accessToken The access token of the user.
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject acquireXBLToken(String accessToken) {
@@ -338,7 +338,7 @@ public final class MicrosoftAuth {
   /**
    * Acquires the user's Xbox Live XSTS token using the previously obtained Xbox Live token.
    *
-   * @param token The Xbox Live token previously obtained
+   * @param token The Xbox Live token of the user.
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject acquireXSTSToken(String token) {
@@ -394,7 +394,7 @@ public final class MicrosoftAuth {
    * to retrieve the user's profile, and to check if the user owns the game.
    *
    * @param uhs The user hash
-   * @param token The XSTS token previously obtained
+   * @param token The XSTS token of the user
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject acquireAccessToken(String uhs, String token) {
@@ -444,7 +444,7 @@ public final class MicrosoftAuth {
    * is randomly generated in a "Player###" format, and they will not be able to join multiplayer
    * servers that have {@code online-mode} enabled.
    *
-   * @param accessToken The Minecraft access token previously obtained
+   * @param accessToken The Minecraft access token of the user
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject checkEntitlementsMcStore(String accessToken) {
@@ -491,7 +491,7 @@ public final class MicrosoftAuth {
    * username, UUID, skin, etc. The UUID will be used as one of the components to construct a valid
    * session ID.
    *
-   * @param accessToken The Minecraft access token previously obtained
+   * @param accessToken The Minecraft access token of the user
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject acquireMinecraftProfile(String accessToken) {
