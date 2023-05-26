@@ -22,6 +22,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * This enum represents the various platforms and system architectures that the application
+ * supports.
+ *
+ * <p>Each enum constant represents an operating system (OS) like LINUX, MACOS, and WINDOWS, or a
+ * system architecture like AARCH64, AMD64, and X86. The application uses this enum to identify the
+ * user's OS and system architecture for tasks such as creating OS-specific folders or downloading
+ * architecture-specific files.
+ *
+ * <p>The OS constants have associated lists of names that can be found in the system property
+ * "os.name", and the architecture constants have an associated name that can be found in the system
+ * property "os.arch".
+ *
+ * <p>This enum also provides utility methods to determine the current OS and system architecture.
+ *
+ * @author Kawaxte
+ * @since 1.4.2823_06
+ */
 public enum EPlatform {
   LINUX(Arrays.asList("aix", "nix", "nux"), null),
   MACOS(Arrays.asList("darwin", "mac"), null),
@@ -47,6 +65,11 @@ public enum EPlatform {
     this.arch = arch;
   }
 
+  /**
+   * Get the operating system name based on the system property "os.name".
+   *
+   * @return {@code null} if the OS name is not found in the system property "os.name".
+   */
   public static EPlatform getOSName() {
     return Arrays.stream(values())
         .filter(
@@ -58,6 +81,11 @@ public enum EPlatform {
         .orElse(null);
   }
 
+  /**
+   * Get the system architecture based on the system property "os.arch".
+   *
+   * @return {@code null} if the system architecture is not found in the system property "os.arch".
+   */
   public static EPlatform getOSArch() {
     return Arrays.stream(values())
         .filter(platform -> Objects.equals(platform.arch, OS_ARCH))
