@@ -18,6 +18,16 @@ package io.github.kawaxte.twentyten.launcher.ui.custom;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+/**
+ * This class extends {@link javax.swing.JPanel} and provides a titled border to mimic the GroupBox
+ * functionality found in the System.Windows.Forms library in C#. It allows for the setting of a
+ * title when the group box is created and also provides a method to change this title.
+ *
+ * <p>The border is constructed with an empty margin on the outside and a titled border on the
+ * inside.
+ *
+ * @see javax.swing.JPanel
+ */
 public class JGroupBox extends JPanel {
 
   private static final long serialVersionUID = 1L;
@@ -28,6 +38,18 @@ public class JGroupBox extends JPanel {
     this.setTitledBorder(title);
   }
 
+  /**
+   * Sets a titled border to this {@link javax.swing.JPanel}.
+   *
+   * <p>A compound border is created with an empty border on the outside and a titled border on the
+   * inside. The title of the border is set to the passed in {@code title} parameter.
+   *
+   * @param title The title to set on the border.
+   * @return The set title.
+   * @see javax.swing.JComponent#setBorder(javax.swing.border.Border)
+   * @see javax.swing.BorderFactory#createCompoundBorder(javax.swing.border.Border,
+   *     javax.swing.border.Border)
+   */
   public String setTitledBorder(String title) {
     super.setBorder(
         BorderFactory.createCompoundBorder(
