@@ -22,6 +22,24 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import javax.swing.JPanel;
 
+/**
+ * Custom JPanel implementation that provides predefined graphic decorations and custom insets.
+ *
+ * <p>This class extends {@link javax.swing.JPanel} and overrides the {@link
+ * javax.swing.JComponent#paintComponent(Graphics)} method to provide a specific style of graphics
+ * to every new JPanel. This avoids the need to duplicate the paint override method for each panel.
+ *
+ * <p>The graphics style provided by this class includes a layered rectangle design and is a refined
+ * variant of the original code provided by Markus "Notch" Persson on Jun 29, 2010.
+ *
+ * <p>The {@link javax.swing.JComponent#getInsets()} method is also overridden to provide custom
+ * insets (4, 18, 4, 18), which are used to provide a margin around the panel contents in the exact
+ * same way as the original code provided by Markus "Notch" Persson.
+ *
+ * @see javax.swing.JPanel
+ * @see javax.swing.JComponent#paintComponent(Graphics)
+ * @see javax.swing.JComponent#getInsets()
+ */
 public class CustomJPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
@@ -35,6 +53,19 @@ public class CustomJPanel extends JPanel {
     return new Insets(4, 18, 4, 18);
   }
 
+  /**
+   * Creates a layered rectangle design using {@link java.awt.Graphics2D} drawing methods. The
+   * design consists of:
+   *
+   * <ul>
+   *   <li>An outer black rectangle with a stroke width of 2 pixels.
+   *   <li>An inner white rectangle with a stroke width of 1 pixel.
+   *   <li>A grey filled rectangle in the very centre.
+   * </ul>
+   *
+   * @param g The {@link java.awt.Graphics} object to protect.
+   * @see javax.swing.JComponent#paintComponent(Graphics)
+   */
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
