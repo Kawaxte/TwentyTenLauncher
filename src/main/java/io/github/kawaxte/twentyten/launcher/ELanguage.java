@@ -17,6 +17,34 @@ package io.github.kawaxte.twentyten.launcher;
 
 import lombok.Getter;
 
+/**
+ * This enum represents the various languages that are supported by the launcher. Each constant of
+ * this enum represents a language according to ISO 639-1 format.
+ *
+ * <p>Each language is represented by two parts:
+ *
+ * <ol>
+ *   <li>the constant name (e.g., EN for English), and
+ *   <li>the language's name in its own language (e.g., "English" for EN).
+ * </ol>
+ *
+ * This structure is designed to support the display of the language's name in a {@link
+ * javax.swing.JComboBox}, allowing users to select their preferred language based on its name
+ * rather than its ISO 639-1 code.
+ *
+ * <p>In addition to these constants, this enum also provides the {@code USER_LANGUAGE} field, which
+ * captures the system property for the user's current language.
+ *
+ * <p>To add a new language to the launcher:
+ *
+ * <ol>
+ *   <li>Add a new constant here using the ISO 639-1 format.
+ *   <li>Provide the name of the language as it is in the new language itself.
+ * </ol>
+ *
+ * @author Kawaxte
+ * @since 1.5.0923_03
+ */
 public enum ELanguage {
   BG("Български"),
   CS("Čeština"),
