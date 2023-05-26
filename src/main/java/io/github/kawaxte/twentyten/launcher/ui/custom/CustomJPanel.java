@@ -23,9 +23,7 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 
 /**
- * Custom JPanel implementation that provides predefined graphic decorations and custom insets.
- *
- * <p>This class extends {@link javax.swing.JPanel} and overrides the {@link
+ * This class extends {@link javax.swing.JPanel} and overrides the {@link
  * javax.swing.JComponent#paintComponent(Graphics)} method to provide a specific style of graphics
  * to every new JPanel. This avoids the need to duplicate the paint override method for each panel.
  *
@@ -37,8 +35,6 @@ import javax.swing.JPanel;
  * same way as the original code provided by Markus "Notch" Persson.
  *
  * @see javax.swing.JPanel
- * @see javax.swing.JComponent#paintComponent(Graphics)
- * @see javax.swing.JComponent#getInsets()
  */
 public class CustomJPanel extends JPanel {
 
