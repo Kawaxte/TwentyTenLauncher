@@ -21,6 +21,28 @@ import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * This enum represents the various Look and Feel settings that can be applied to the launcher's
+ * Swing UI, based on the user's operating system.
+ *
+ * <p>Each constant corresponds to a specific Look and Feel implementation provided by the Java
+ * Swing library. The Look and Feel is responsible for the appearance of the GUI and includes things
+ * like color schemes, layout designs, and user interaction settings.
+ *
+ * <p>The enum constants and their corresponding Look and Feel implementations are as follows:
+ *
+ * <ol>
+ *   <li>GTK: Look and Feel for Linux systems.
+ *   <li>AQUA: Look and Feel for MacOS.
+ *   <li>WINDOWS: Look and Feel for Windows.
+ * </ol>
+ *
+ * <p>The appropriate Look and Feel is set in the {@link #setLookAndFeel()} method, which checks the
+ * operating system of the user and applies the corresponding Look and Feel.
+ *
+ * @author Kawaxte
+ * @since 1.5.0923_03
+ */
 public enum ELookAndFeel {
   GTK("com.sun.java.swing.plaf.gtk.GTKLookAndFeel"),
   AQUA("com.apple.laf.AquaLookAndFeel"),
@@ -38,6 +60,11 @@ public enum ELookAndFeel {
     this.className = className;
   }
 
+  /**
+   * Sets the Look and Feel of the Swing UI based on the user's operating system. It does this by
+   * checking the operating system and applying the corresponding Look and Feel. If there is an
+   * issue with setting the Look and Feel, it logs the error and continues execution.
+   */
   public static void setLookAndFeel() {
     try {
       if (EPlatform.isLinux()) {
