@@ -29,6 +29,22 @@ import javax.swing.SwingWorker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * This class schedules a {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask} at a
+ * fixed rate. The task is responsible for polling the device code, which is part of the OAuth 2.0
+ * authorisation grant.
+ *
+ * <p>The polling process continues for a certain period of time (specified by 'expiresIn') or until
+ * it gets interrupted. If the process gets interrupted or encounters an exception, appropriate
+ * error messages are logged.
+ *
+ * @see javax.swing.SwingWorker
+ * @author Kawaxte
+ * @since 1.5.0823_02
+ * @see <a
+ *     href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code">
+ *     OAuth 2.0 device authorization grant</a>
+ */
 public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
 
   private final Logger logger = LogManager.getLogger(this);
@@ -37,6 +53,14 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
   private final int expiresIn;
   private final int interval;
 
+  /**
+   * Constructs a new MicrosoftAuthWorker.
+   *
+   * @param clientId the client ID of the Azure application
+   * @param deviceCode the device code
+   * @param expiresIn the period of time (in seconds) the worker is allowed to run
+   * @param interval the interval (in seconds) between each execution of the polling task
+   */
   public MicrosoftAuthWorker(
       String clientId, String deviceCode, String expiresIn, String interval) {
     this.clientId = clientId;
@@ -45,6 +69,17 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
     this.interval = Integer.parseInt(interval);
   }
 
+  /**
+   * Overrides the {@code doInBackground()} method.
+   *
+   * <p>This method schedules a new {@link
+   * io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask} at a fixed rate, with the task
+   * being responsible for polling the device code. The polling process is conducted in a separate
+   * thread, ensuring that it does not block the Swing Event Dispatch thread (EDT).
+   *
+   * @return the result of the {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask},
+   *     or {@code null} if an exception is encountered
+   */
   @Override
   protected Object doInBackground() {
     ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
