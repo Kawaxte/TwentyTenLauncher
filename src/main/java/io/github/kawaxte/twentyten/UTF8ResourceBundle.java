@@ -29,6 +29,18 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+/**
+ * This class extends {@link java.util.ResourceBundle} and provides the functionality to read and
+ * store properties from UTF-8 encoded properties files. It uses a HashMap as an underlying data
+ * structure to store properties, which makes the lookup operations efficient.
+ *
+ * <p>The associated inner class {@code UTF8Control} extends {@link
+ * java.util.ResourceBundle.Control} and is used to create a new UTF8ResourceBundle when requested
+ * by the ResourceBundle factory methods.
+ *
+ * @see java.util.ResourceBundle
+ * @see java.util.ResourceBundle.Control
+ */
 public class UTF8ResourceBundle extends ResourceBundle {
 
   private final Map<String, String> lookupMap;
@@ -72,6 +84,15 @@ public class UTF8ResourceBundle extends ResourceBundle {
     return Collections.enumeration(this.lookupMap.keySet());
   }
 
+  /**
+   * A custom ResourceBundle.Control implementation for creating UTF8ResourceBundle.
+   *
+   * <p>This class overrides the {@code newBundle(...)} method to create a UTF8ResourceBundle when
+   * requested by the ResourceBundle factory methods.
+   *
+   * @see java.util.ResourceBundle.Control
+   * @see java.util.ResourceBundle.Control#newBundle(String, Locale, String, ClassLoader, boolean)
+   */
   public static class UTF8Control extends Control {
 
     @Override
