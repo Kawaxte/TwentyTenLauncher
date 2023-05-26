@@ -60,6 +60,43 @@ public class YggdrasilAuthTask implements Runnable {
   }
 
   /**
+   * Returns whether the selected profile is a legacy profile.
+   *
+   * @param object the JSON object containing the response from the authentication request
+   * @return {@code true} if the selected profile is a legacy profile, {@code false} otherwise
+   */
+  private boolean isLegacyInSelectedProfile(JSONObject object) {
+    JSONObject selectedProfile = object.getJSONObject("selectedProfile");
+    return selectedProfile.has("legacy") && selectedProfile.getBoolean("legacy");
+  }
+
+  /**
+   * Returns whether the available profiles array is empty. This is to check if the account owns
+   * Minecraft (Java Edition).
+   *
+   * @param object the JSON object containing the response from the authentication request
+   * @return {@code true} if the available profiles array is empty, {@code false} otherwise
+   */
+  private boolean isAvailableProfilesEmpty(JSONObject object) {
+    JSONArray availableProfiles = object.getJSONArray("availableProfiles");
+    return object.has("availableProfiles") && availableProfiles.isEmpty();
+  }
+
+  /**
+   * Returns the authentication response as an array of strings.
+   *
+   * @param object the JSON object containing the response from the authentication request
+   * @return {@code accessToken}, {@code id}, and {@code name} as an array of strings
+   */
+  private String[] getAuthenticateResponse(JSONObject object) {
+    String accessToken = object.getString("accessToken");
+    JSONObject selectedProfile = object.getJSONObject("selectedProfile");
+    String id = selectedProfile.getString("id");
+    String name = selectedProfile.getString("name");
+    return new String[] {accessToken, id, name};
+  }
+
+  /**
    * This method performs the Yggdrasil authentication process using the supplied credentials. Upon
    * receiving a response, it updates the launcher configuration with the new session information.
    *
@@ -102,42 +139,5 @@ public class YggdrasilAuthTask implements Runnable {
       Launcher.launchMinecraft(
           authenticateResponse[2], authenticateResponse[0], authenticateResponse[1]);
     }
-  }
-
-  /**
-   * Returns whether the selected profile is a legacy profile.
-   *
-   * @param object the JSON object containing the response from the authentication request
-   * @return {@code true} if the selected profile is a legacy profile, {@code false} otherwise
-   */
-  private boolean isLegacyInSelectedProfile(JSONObject object) {
-    JSONObject selectedProfile = object.getJSONObject("selectedProfile");
-    return selectedProfile.has("legacy") && selectedProfile.getBoolean("legacy");
-  }
-
-  /**
-   * Returns whether the available profiles array is empty. This is to check if the account owns
-   * Minecraft (Java Edition).
-   *
-   * @param object the JSON object containing the response from the authentication request
-   * @return {@code true} if the available profiles array is empty, {@code false} otherwise
-   */
-  private boolean isAvailableProfilesEmpty(JSONObject object) {
-    JSONArray availableProfiles = object.getJSONArray("availableProfiles");
-    return object.has("availableProfiles") && availableProfiles.isEmpty();
-  }
-
-  /**
-   * Returns the authentication response as an array of strings.
-   *
-   * @param object the JSON object containing the response from the authentication request
-   * @return {@code accessToken}, {@code id}, and {@code name} as an array of strings
-   */
-  private String[] getAuthenticateResponse(JSONObject object) {
-    String accessToken = object.getString("accessToken");
-    JSONObject selectedProfile = object.getJSONObject("selectedProfile");
-    String id = selectedProfile.getString("id");
-    String name = selectedProfile.getString("name");
-    return new String[] {accessToken, id, name};
   }
 }
