@@ -18,30 +18,29 @@ package io.github.kawaxte.twentyten.launcher;
 import lombok.Getter;
 
 /**
- * This enum represents the various languages that are supported by the launcher. Each constant of
- * this enum represents a language according to ISO 639-1 format.
+ * Enum representing supported languages within the application.
  *
- * <p>Each language is represented by two parts:
+ * <p>The constants in this Enum are based on the ISO 639-1 language codes. The field {@code
+ * languageName} is the name of the language written in that language itself. For example, 'EN'
+ * stands for English language and is represented as "English" in {@code languageName}.
  *
- * <ol>
- *   <li>the constant name (e.g., EN for English), and
- *   <li>the language's name in its own language (e.g., "English" for EN).
- * </ol>
+ * <p>The languages in this Enum are used in a {@link javax.swing.JComboBox} to display the list of
+ * supported languages to the user.
  *
- * This structure is designed to support the display of the language's name in a {@link
- * javax.swing.JComboBox}, allowing users to select their preferred language based on its name
- * rather than its ISO 639-1 code.
+ * <p>The system property "user.language" is used to set a default language. The USER_LANGUAGE
+ * variable holds this value.
  *
- * <p>In addition to these constants, this enum also provides the {@code USER_LANGUAGE} field, which
- * captures the system property for the user's current language.
- *
- * <p>To add a new language to the launcher:
+ * <h3>How to add new languages:</h3>
  *
  * <ol>
- *   <li>Add a new constant here using the ISO 639-1 format.
- *   <li>Provide the name of the language as it is in the new language itself.
+ *   <li>Add a new constant in this Enum that follows the ISO 639-1 language code.
+ *   <li>Provide the localised name of the language as a string.
+ *   <li>Add a new properties file to the resource bundle with the naming convention as follows:
+ *       "messages_%languageCode%". Here, %languageCode% is the lowercase version of the Enum
+ *       constant you just added.
  * </ol>
  *
+ * @see <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">List of ISO 639-1 codes</a>
  * @author Kawaxte
  * @since 1.5.0923_03
  */
