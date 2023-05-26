@@ -25,12 +25,28 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * This final class is responsible for managing the launcher's language settings. The language
+ * settings are stored in a resource bundle file named "{baseName}_{languageCode}.properties", where
+ * the baseName is "messages" and the languageCode is a two-letter ISO 639-1 language code.
+ *
+ * <p>When the launcher starts, the appropriate language file is loaded into a UTF8ResourceBundle,
+ * which allows the launcher to display messages in the user's selected language. If no language
+ * code is provided, the default language file (i.e., "messages.properties") is loaded.
+ *
+ * <p>This class also provides a static method for retrieving the current language bundle, which can
+ * be used by other classes to access localized messages.
+ *
+ * @author Kawaxte
+ * @since 1.5.0923_03
+ */
 public final class LauncherLanguage {
 
   private static final Logger LOGGER;
@@ -42,6 +58,17 @@ public final class LauncherLanguage {
 
   private LauncherLanguage() {}
 
+  /**
+   * Method to return a UTF8ResourceBundle for the provided language code.
+   *
+   * @param languageCode The two-letter ISO 639-1 code of the desired language.
+   * @return A default UTF8ResourceBundle if the language code is {@code null} or empty, otherwise
+   *     the UTF8ResourceBundle for the provided language code.
+   * @see <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">List of ISO 639-1
+   *     codes</a>
+   * @see ResourceBundle#getBundle(String, Locale, ResourceBundle.Control)
+   * @see Locale#forLanguageTag(String)
+   */
   public static UTF8ResourceBundle getUTF8Bundle(String languageCode) {
     return Optional.ofNullable(languageCode)
         .map(
@@ -53,6 +80,19 @@ public final class LauncherLanguage {
             () -> (UTF8ResourceBundle) ResourceBundle.getBundle("messages", new UTF8Control()));
   }
 
+  /**
+   * Method to load a language file into the UTF8ResourceBundle. If the file cannot be loaded, an
+   * error is logged and the application continues to run.
+   *
+   * <p>Example: {@code LauncherLanguage.loadLanguage("messages", "en");} will load the
+   * "messages_en.properties" file, which contains the English language messages.
+   *
+   * @param baseName The base name of the language file (without the language code or file
+   *     extension).
+   * @param languageCode The two-letter ISO 639-1 code of the desired language.
+   * @see <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">List of ISO 639-1
+   *     codes</a>
+   */
   public static void loadLanguage(String baseName, String languageCode) {
     String fileName = String.format("%s_%s.properties", baseName, languageCode);
     URL fileUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
@@ -67,7 +107,9 @@ public final class LauncherLanguage {
     } catch (IOException ioe) {
       LOGGER.error("Cannot load {}", fileUrl, ioe);
     } finally {
-      LOGGER.info("Loading {}", fileUrl);
+      if (Objects.nonNull(fileUrl) && Objects.nonNull(bundle)) {
+        LOGGER.info("Loading {}", fileUrl);
+      }
     }
   }
 }
