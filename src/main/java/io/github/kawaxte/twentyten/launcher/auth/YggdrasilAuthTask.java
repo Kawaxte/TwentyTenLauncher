@@ -47,7 +47,7 @@ public class YggdrasilAuthTask implements Runnable {
   private final String clientToken;
 
   /**
-   * Constructs a new authentication task with the provided username, password, and client token.
+   * Constructs a new authentication task with the give parameters.
    *
    * @param username the username of the Legacy account, or the email address of the Mojang account
    * @param password the password of the account
