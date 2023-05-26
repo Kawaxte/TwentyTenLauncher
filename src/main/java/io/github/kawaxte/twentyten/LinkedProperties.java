@@ -35,6 +35,20 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * This class extends {@link java.util.Properties} and overrides all the methods to provide
+ * functionality based on a {@link java.util.LinkedHashMap} instead of a {@link
+ * java.util.Hashtable}, the default underlying data structure for {@link java.util.Properties}.
+ * This ensures that properties maintain their order, as opposed to the arbitrary order provided by
+ * a {@link java.util.Hashtable}.
+ *
+ * <p>In addition to supporting all standard {@link java.util.Properties} methods, this class also
+ * supports the methods of {@link java.util.LinkedHashMap}, providing additional flexibility and
+ * control over the properties.
+ *
+ * @see java.util.Properties
+ * @see java.util.LinkedHashMap
+ */
 public final class LinkedProperties extends Properties {
 
   private static final long serialVersionUID = 1L;
@@ -275,7 +289,7 @@ public final class LinkedProperties extends Properties {
 
   @Override
   public synchronized boolean equals(Object o) {
-    return this.linkedMap.equals(o);
+    return this == o || o instanceof LinkedProperties && this.linkedMap.equals(o);
   }
 
   @Override
