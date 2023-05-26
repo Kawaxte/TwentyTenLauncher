@@ -70,15 +70,13 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
   }
 
   /**
-   * Overrides the {@code doInBackground()} method.
-   *
-   * <p>This method schedules a new {@link
-   * io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask} at a fixed rate, with the task
-   * being responsible for polling the device code. The polling process is conducted in a separate
-   * thread, ensuring that it does not block the Swing Event Dispatch thread (EDT).
+   * This method schedules a new {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask}
+   * at a fixed rate, with the task being responsible for polling the device code. The polling
+   * process is conducted in a separate thread, ensuring that it does not block the Swing Event
+   * Dispatch thread (EDT).
    *
    * @return the result of the {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask},
-   *     or {@code null} if an exception is encountered
+   *     or {@code null} if an error occurred
    */
   @Override
   protected Object doInBackground() {
