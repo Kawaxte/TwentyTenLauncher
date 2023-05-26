@@ -44,7 +44,7 @@ public class TransparentJButton extends JButton {
    * This method has been overridden to provide custom behaviour in certain Windows environments
    * where the standard opaque setting causes the button's core drawn elements to disappear. This
    * particularly affects users who have their theme set to "Windows Classic" on Windows NT kernels
-   * between version 5.0 and 6.1.
+   * between version 5.1 and 6.1.
    *
    * @return {@code true} if the {@link javax.swing.JButton} should be opaque, {@code false}
    *     otherwise.
