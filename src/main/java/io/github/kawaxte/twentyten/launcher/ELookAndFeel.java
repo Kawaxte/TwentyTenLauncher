@@ -15,6 +15,7 @@
 
 package io.github.kawaxte.twentyten.launcher;
 
+import java.util.Objects;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import lombok.Getter;
@@ -22,24 +23,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This enum represents the various Look and Feel settings that can be applied to the launcher's
- * Swing UI, based on the user's operating system.
+ * Enum representing the supported Look and Feel (LaF) options in the application.
  *
- * <p>Each constant corresponds to a specific Look and Feel implementation provided by the Java
- * Swing library. The Look and Feel is responsible for the appearance of the GUI and includes things
- * like color schemes, layout designs, and user interaction settings.
+ * <p>The constants in this Enum correspond to various LaF options that are used according to the
+ * operating system where the application is running. The field {@code className} holds the fully
+ * qualified class name for each Look and Feel option.
  *
- * <p>The enum constants and their corresponding Look and Feel implementations are as follows:
+ * <p>This Enum also includes a static method {@code setLookAndFeel()}, which sets the UI Manager's
+ * Look and Feel based on the operating system detected.
  *
- * <ol>
- *   <li>GTK: Look and Feel for Linux systems.
- *   <li>AQUA: Look and Feel for MacOS.
- *   <li>WINDOWS: Look and Feel for Windows.
- * </ol>
+ * <p>If the Look and Feel cannot be set due to errors like ClassNotFoundException,
+ * InstantiationException, IllegalAccessException, or UnsupportedLookAndFeelException, error logs
+ * are recorded with the relevant information.
  *
- * <p>The appropriate Look and Feel is set in the {@link #setLookAndFeel()} method, which checks the
- * operating system of the user and applies the corresponding Look and Feel.
- *
+ * @see javax.swing.UIManager#setLookAndFeel(String)
  * @author Kawaxte
  * @since 1.5.0923_03
  */
@@ -60,11 +57,6 @@ public enum ELookAndFeel {
     this.className = className;
   }
 
-  /**
-   * Sets the Look and Feel of the Swing UI based on the user's operating system. It does this by
-   * checking the operating system and applying the corresponding Look and Feel. If there is an
-   * issue with setting the Look and Feel, it logs the error and continues execution.
-   */
   public static void setLookAndFeel() {
     try {
       if (EPlatform.isLinux()) {
@@ -101,7 +93,9 @@ public enum ELookAndFeel {
           EPlatform.OS_NAME,
           ulafe);
     } finally {
-      LOGGER.info("Setting look and feel to '{}'", UIManager.getLookAndFeel().getName());
+      if (Objects.nonNull(UIManager.getLookAndFeel())) {
+        LOGGER.info("Setting look and feel to '{}'", UIManager.getLookAndFeel().getName());
+      }
     }
   }
 }
