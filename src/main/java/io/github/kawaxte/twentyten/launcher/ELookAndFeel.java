@@ -29,13 +29,6 @@ import org.apache.logging.log4j.Logger;
  * operating system where the application is running. The field {@code className} holds the fully
  * qualified class name for each Look and Feel option.
  *
- * <p>This Enum also includes a static method {@code setLookAndFeel()}, which sets the UI Manager's
- * Look and Feel based on the operating system detected.
- *
- * <p>If the Look and Feel cannot be set due to errors like ClassNotFoundException,
- * InstantiationException, IllegalAccessException, or UnsupportedLookAndFeelException, error logs
- * are recorded with the relevant information.
- *
  * @see javax.swing.UIManager#setLookAndFeel(String)
  * @author Kawaxte
  * @since 1.5.0923_03
@@ -57,6 +50,13 @@ public enum ELookAndFeel {
     this.className = className;
   }
 
+  /**
+   * Sets the UI Manager's Look and Feel based on the operating system detected.
+   *
+   * <p>If the Look and Feel cannot be set due to errors like ClassNotFoundException,
+   * InstantiationException, IllegalAccessException, or UnsupportedLookAndFeelException, error logs
+   * are recorded with the relevant information.
+   */
   public static void setLookAndFeel() {
     try {
       if (EPlatform.isLinux()) {
