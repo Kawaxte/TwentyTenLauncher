@@ -19,6 +19,21 @@ import java.awt.Color;
 import java.awt.Cursor;
 import javax.swing.JLabel;
 
+/**
+ * A custom JLabel implementation to mimic the appearance and behaviour of a hyperlink.
+ *
+ * <p>This class extends {@link javax.swing.JLabel} and automatically formats its text to resemble a
+ * hyperlink (underlined and in blue). It also changes the cursor to a hand cursor when the cursor
+ * is over the label to mimic hyperlink behaviour.
+ *
+ * <p>The {@link javax.swing.JLabel#setText(String)} method is overridden to automatically underline
+ * the provided text. The {@link javax.swing.JLabel#setForeground(Color)} method is overridden to
+ * automatically set the text colour to blue.
+ *
+ * @see javax.swing.JLabel
+ * @author Kawaxte
+ * @since 1.4.1223_05
+ */
 public class JHyperlink extends JLabel {
 
   public JHyperlink(String text, int horizontalAlignment) {
@@ -27,11 +42,22 @@ public class JHyperlink extends JLabel {
     this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
   }
 
+  /**
+   * Sets the text of this JLabel, automatically underlining it to mimic a hyperlink.
+   *
+   * @param text The text to set on this JLabel.
+   */
   @Override
   public void setText(String text) {
     super.setText(String.format("<html><u>%s</u></html>", text));
   }
 
+  /**
+   * Sets the foreground colour of this JLabel to blue, mimicking hyperlink behaviour.
+   *
+   * @param fg The intended foreground colour. This parameter is ignored and the colour is set to
+   *     blue.
+   */
   @Override
   public void setForeground(Color fg) {
     super.setForeground(Color.BLUE);
