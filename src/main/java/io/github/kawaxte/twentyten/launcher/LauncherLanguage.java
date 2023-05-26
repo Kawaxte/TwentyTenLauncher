@@ -33,16 +33,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This final class is responsible for managing the launcher's language settings. The language
- * settings are stored in a resource bundle file named "{baseName}_{languageCode}.properties", where
- * the baseName is "messages" and the languageCode is a two-letter ISO 639-1 language code.
+ * This class provides methods for getting a {@link io.github.kawaxte.twentyten.UTF8ResourceBundle}
+ * for a specific language code, and loading language resources from a given base name and language
+ * code in ISO 639-1 format.
  *
- * <p>When the launcher starts, the appropriate language file is loaded into a UTF8ResourceBundle,
- * which allows the launcher to display messages in the user's selected language. If no language
- * code is provided, the default language file (i.e., "messages.properties") is loaded.
- *
- * <p>This class also provides a static method for retrieving the current language bundle, which can
- * be used by other classes to access localized messages.
+ * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
  *
  * @author Kawaxte
  * @since 1.5.0923_03
@@ -59,15 +54,17 @@ public final class LauncherLanguage {
   private LauncherLanguage() {}
 
   /**
-   * Method to return a UTF8ResourceBundle for the provided language code.
+   * Returns a {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} for the provided language
+   * code. If the language code is {@code null}, a {@link
+   * io.github.kawaxte.twentyten.UTF8ResourceBundle} for the default locale is returned.
    *
-   * @param languageCode The two-letter ISO 639-1 code of the desired language.
-   * @return A default UTF8ResourceBundle if the language code is {@code null} or empty, otherwise
-   *     the UTF8ResourceBundle for the provided language code.
+   * @param languageCode the ISO 639-1 language code for which to get the resource bundle
+   * @return the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} for the given language code,
+   *     or for the default locale if the language code is {@code null}
+   * @see ResourceBundle#getBundle(String, Locale)
+   * @see Locale#forLanguageTag(String)
    * @see <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">List of ISO 639-1
    *     codes</a>
-   * @see ResourceBundle#getBundle(String, Locale, ResourceBundle.Control)
-   * @see Locale#forLanguageTag(String)
    */
   public static UTF8ResourceBundle getUTF8Bundle(String languageCode) {
     return Optional.ofNullable(languageCode)
@@ -81,15 +78,15 @@ public final class LauncherLanguage {
   }
 
   /**
-   * Method to load a language file into the UTF8ResourceBundle. If the file cannot be loaded, an
-   * error is logged and the application continues to run.
+   * Loads a language resource file for a given base name and language code. The file is read as
+   * UTF-8, and is expected to be a properties file.
    *
-   * <p>Example: {@code LauncherLanguage.loadLanguage("messages", "en");} will load the
-   * "messages_en.properties" file, which contains the English language messages.
+   * <p>The resource file is located in the classpath and is named in the format:
+   * baseName_languageCode.properties
    *
-   * @param baseName The base name of the language file (without the language code or file
-   *     extension).
-   * @param languageCode The two-letter ISO 639-1 code of the desired language.
+   * @param baseName the base name of the resource file to load
+   * @param languageCode the language code of the resource file to load
+   * @throws NullPointerException if the resource file cannot be found
    * @see <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">List of ISO 639-1
    *     codes</a>
    */
