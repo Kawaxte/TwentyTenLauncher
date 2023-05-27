@@ -69,7 +69,7 @@ public class OptionsDialog extends JDialog {
   }
 
   /**
-   * Returns the current instance of the OptionsDialog.
+   * Returns the current instance of OptionsDialog.
    *
    * @return the instance of OptionsDialog
    */
@@ -78,7 +78,7 @@ public class OptionsDialog extends JDialog {
   }
 
   /**
-   * Sets the current instance of the OptionsDialog.
+   * Sets the current instance of OptionsDialog.
    *
    * @param od the instance of OptionsDialog to be set
    */
@@ -92,8 +92,8 @@ public class OptionsDialog extends JDialog {
    * <p>The title is set according to the provided {@link
    * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
    *
-   * @param bundle a {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} object containing the
-   *     text resources to be used for the title
+   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
+   *     localised keys and values in the resource bundle
    */
   public void updateContainerTitles(UTF8ResourceBundle bundle) {
     LauncherUtils.setContainerTitle(bundle, this, LauncherLanguageUtils.getODKeys()[0]);
