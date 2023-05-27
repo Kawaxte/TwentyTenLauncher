@@ -48,6 +48,16 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Utility class for handling everything within (or related to) {@link io.github.kawaxte.twentyten
+ * .launcher.ui.options.OptionsDialog}.
+ *
+ * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
+ *
+ * @see io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog
+ * @author Kawaxte
+ * @since 1.5.0923_03
+ */
 public final class LauncherOptionsUtils {
 
   private static final Logger LOGGER;
@@ -60,6 +70,16 @@ public final class LauncherOptionsUtils {
 
   private LauncherOptionsUtils() {}
 
+  /**
+   * Updates the language combo box in the specified {@link
+   * io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox}.
+   *
+   * <p>It populates the {@link javax.swing.JComboBox} with available languages and sets the
+   * currently selected language from the configuration file as the selected item.
+   *
+   * @param lgb the {@link io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox} that
+   *     contains the {@link javax.swing.JComboBox} to be updated
+   */
   public static void updateLanguageComboBox(LanguageGroupBox lgb) {
     languageMap = new HashMap<>();
 
@@ -82,6 +102,17 @@ public final class LauncherOptionsUtils {
     lgb.getLanguageComboBox().setModel(defaultComboBoxModel);
   }
 
+  /**
+   * Updates the version combo box in the specified {@link
+   * io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox}.
+   *
+   * <p>It populates the {@link javax.swing.JComboBox} with available versions retrieved from a JSON
+   * resource file and sets the currently selected version from the configuration file as the
+   * selected item.
+   *
+   * @param vgb the {@link io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox} that
+   *     contains the {@link javax.swing.JComboBox} to be updated
+   */
   public static void updateVersionComboBox(VersionGroupBox vgb) {
     versionMap = new HashMap<>();
 
@@ -149,6 +180,16 @@ public final class LauncherOptionsUtils {
     vgb.getVersionComboBox().setModel(defaultComboBoxModel);
   }
 
+  /**
+   * Updates the selected version in the configuration, based on the selected item in the {@link
+   * javax.swing.JComboBox} of the specified {@link
+   * io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox}.
+   *
+   * <p>If the selected version has changed, it saves the updated configuration.
+   *
+   * @param vgb the {@link io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox} that
+   *     contains the {@link javax.swing.JComboBox} to be updated
+   */
   public static void updateSelectedVersion(VersionGroupBox vgb) {
     String selectedItem = (String) vgb.getVersionComboBox().getSelectedItem();
     selectedItem = versionMap.get(selectedItem);
@@ -161,6 +202,14 @@ public final class LauncherOptionsUtils {
     }
   }
 
+  /**
+   * Updates the selected language in the configuration, based on the selected item in the {@link
+   * javax.swing.JComboBox} of the specified {@link
+   * io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox}.
+   *
+   * @param lgb the {@link io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox} that
+   *     contains the {@link javax.swing.JComboBox} to be updated
+   */
   public static void updateSelectedLanguage(LanguageGroupBox lgb) {
     String selectedItem = (String) lgb.getLanguageComboBox().getSelectedItem();
     selectedItem = languageMap.get(selectedItem);
@@ -193,6 +242,16 @@ public final class LauncherOptionsUtils {
     }
   }
 
+  /**
+   * Helper method for comparing two version IDs lexicographically.
+   *
+   * <p>This method is used for sorting versions when updating the {@link javax.swing.JComboBox}
+   *
+   * @param v1 the first {@code versionId} value from the .JSON file
+   * @param v2 the second {@code versionId} value from the .JSON file
+   * @return a negative integer, zero, or a positive integer as the first {@code versionId} is less
+   *     than, equal to, or greater than the second {@code versionId}
+   */
   private static int compareVersionIds(String v1, String v2) {
     String[] v1Split = v1.replaceAll("[^\\d._]", "").split("[._]");
     String[] v2Split = v2.replaceAll("[^\\d._]", "").split("[._]");
