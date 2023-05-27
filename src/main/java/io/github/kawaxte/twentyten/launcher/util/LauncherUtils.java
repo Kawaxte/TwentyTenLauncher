@@ -67,7 +67,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Utility class used for various purposes, usually related to the launcher.
+ * Utility class used for various purposes related to the inner workings of the launcher.
  *
  * @author Kawaxte
  * @since 1.3.2823_02
