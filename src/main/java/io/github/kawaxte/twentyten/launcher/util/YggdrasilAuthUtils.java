@@ -82,9 +82,7 @@ public final class YggdrasilAuthUtils {
   }
 
   /**
-   * Refreshes the expired access token.
-   *
-   * <p>It also sets and writes the new access token to the configuration file.
+   * Refreshes the expired access token and saves it to the configuration file.
    *
    * @throws AuthenticationException if the access token cannot be refreshed
    * @see io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth#refreshAccessToken(String, String)
