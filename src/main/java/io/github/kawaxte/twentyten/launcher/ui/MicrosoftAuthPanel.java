@@ -194,9 +194,10 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
    * <p>When processing {@link #openBrowserButton}, the user code is copied to the clipboard and the
    * default browser is opened with the verification URI.
    *
-   * <p>When processing {@link #cancelButton}, the {@link LauncherPanel} is swapped in place of the
-   * current panel. Since cancellation will make the panel 'technically' invisible, Microsoft
-   * authentication processes will be terminated.
+   * <p>When processing {@link #cancelButton}, the {@link
+   * io.github.kawaxte.twentyten.launcher.ui.LauncherPanel} is swapped in place of the current
+   * panel. Since cancellation will make the panel 'technically' invisible, Microsoft authentication
+   * processes will be terminated.
    *
    * @param event the action event to be processed
    */
