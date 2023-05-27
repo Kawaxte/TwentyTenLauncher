@@ -35,6 +35,15 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import lombok.Getter;
 
+/**
+ * Class representing the {@link javax.swing.JPanel} that contains various interactive components
+ * for the user to personalise the launcher with.
+ *
+ * <p>It also handles any action that the user may perform on the components.
+ *
+ * @author Kawaxte
+ * @since 1.4.0923_02
+ */
 public class OptionsPanel extends JPanel implements ActionListener {
 
   public static final long serialVersionUID = 1L;
@@ -45,6 +54,16 @@ public class OptionsPanel extends JPanel implements ActionListener {
   private final JButton openFolderButton;
   @Getter private final JButton saveOptionsButton;
 
+  /**
+   * Constructor for OptionsPanel.
+   *
+   * <p>Initialises the components and sets the layout. Also, adds the action listeners to the some
+   * of the components that require it and sets the component texts according to the currently
+   * selected language.
+   *
+   * @see #setLayout(LayoutManager)
+   * @see #updateComponentTexts(UTF8ResourceBundle)
+   */
   public OptionsPanel() {
     super(true);
 
@@ -71,14 +90,33 @@ public class OptionsPanel extends JPanel implements ActionListener {
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
   }
 
+  /**
+   * Returns the current instance of OptionsPanel.
+   *
+   * @return the instance of OptionsPanel
+   */
   public static OptionsPanel getInstance() {
     return instance;
   }
 
+  /**
+   * Sets the current instance of OptionsPanel.
+   *
+   * @param op the instance of OptionsPanel
+   */
   private static void setInstance(OptionsPanel op) {
     instance = op;
   }
 
+  /**
+   * Updates the texts of the components.
+   *
+   * <p>The texts are set according to the provided {@link
+   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   *
+   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
+   *     localised keys and values in the resource bundle
+   */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     LauncherUtils.setComponentText(
         bundle,
@@ -94,6 +132,12 @@ public class OptionsPanel extends JPanel implements ActionListener {
         bundle, this.saveOptionsButton, LauncherLanguageUtils.getOPKeys()[3]);
   }
 
+  /**
+   * Creates and returns the {@link javax.swing.GroupLayout} used to layout the components in the
+   * panel.
+   *
+   * @return the layout of the panel
+   */
   private LayoutManager getGroupLayout() {
     GroupLayout gl = new GroupLayout(this);
     gl.setAutoCreateContainerGaps(true);
@@ -130,6 +174,15 @@ public class OptionsPanel extends JPanel implements ActionListener {
     return gl;
   }
 
+  /**
+   * Handles the actions performed on the buttons in the panel.
+   *
+   * <p>When the 'openFolderButton' is clicked, the working directory of the launcher is opened in
+   * the system file explorer. When the 'saveOptionsButton' is clicked, the selected language and
+   * version are updated, and the save button is disabled.
+   *
+   * @param event the action event to be processed
+   */
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
