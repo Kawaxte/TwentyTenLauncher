@@ -66,6 +66,12 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Utility class used for various purposes, usually related to the launcher.
+ *
+ * @author Kawaxte
+ * @since 1.3.2823_02
+ */
 public final class LauncherUtils {
 
   public static final Pattern JWT_PATTERN;
@@ -92,11 +98,23 @@ public final class LauncherUtils {
 
   private LauncherUtils() {}
 
+  /**
+   * Decodes a value from Base64.
+   *
+   * @param index the index of the value to decode
+   * @return the decoded value if the length is not 0, otherwise {@code null}
+   */
   public static String decodeFromBase64(int index) {
     byte[] bytes = (LauncherConfig.get(index).toString()).getBytes(StandardCharsets.UTF_8);
     return bytes.length == 0 ? "" : new String(Base64.getDecoder().decode(bytes));
   }
 
+  /**
+   * Encodes a value to Base64 as long as the value is not null or empty.
+   *
+   * @param value the value to encode
+   * @return the encoded value if the length is not 0, otherwise {@code null}
+   */
   public static String encodeToBase64(String value) {
     if (Objects.isNull(value)) {
       throw new NullPointerException("value cannot be null");
@@ -106,9 +124,14 @@ public final class LauncherUtils {
     }
 
     byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
-    return bytes.length == 0 ? null : Base64.getEncoder().encodeToString(bytes);
+    return bytes.length == 0 ? "" : Base64.getEncoder().encodeToString(bytes);
   }
 
+  /**
+   * Gets the URLs to either the Microsoft account sign-up page or the GitHub releases page.
+   *
+   * @return the URLs to either pages as an array
+   */
   public static URL[] getLinkLabelUrls() {
     URL[] urls = new URL[2];
     try {
@@ -138,6 +161,12 @@ public final class LauncherUtils {
     return urls;
   }
 
+  /**
+   * Retrieves the Betacraft proxy host and proxy port used for fixing skins and sounds on legacy
+   * versions of Minecraft.
+   *
+   * @return the Betacraft proxy host and proxy port as an array of strings
+   */
   public static String[] getProxyHostAndPort() {
     String selectedVersion = (String) LauncherConfig.get(4);
 
@@ -179,6 +208,15 @@ public final class LauncherUtils {
     return new String[] {null, null};
   }
 
+  /**
+   * Retrieves the "Build-Time" attribute from the MANIFEST.MF file within the launcher's .JAR file.
+   *
+   * <p>The "Build-Time" attribute contains the current version of the launcher generated in pom.xml
+   * during the Maven build process.
+   *
+   * @param key the attribute key
+   * @return the attribute value
+   */
   public static String getManifestAttribute(String key) {
     URL fileUrl =
         Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
@@ -198,6 +236,15 @@ public final class LauncherUtils {
     return null;
   }
 
+  /**
+   * Returns the working directory path of the launcher based on platform.
+   *
+   * <p>To make it easier to understand, this is the equivalent to Microsoft's ".minecraft"
+   * directory.
+   *
+   * @return the working directory path
+   * @see <a href="https://minecraft.gamepedia.com/.minecraft">.minecraft</a>
+   */
   public static Path getWorkingDirectoryPath() {
     String userHome = System.getProperty("user.home", ".");
     String appData = System.getenv("APPDATA");
@@ -216,6 +263,23 @@ public final class LauncherUtils {
     return workingDir.toPath();
   }
 
+  /**
+   * Checks if the current version of the launcher is outdated.
+   *
+   * <p>It checks the current version of the launcher against the latest release on GitHub. The
+   * version itself uses a custom format, which is as follows:
+   *
+   * <p>{@code 1.mm.ddyy} where {@code 1} is the major version that increments every new year,
+   * {@code mm} is the month without leading zeros, {@code dd} is the day with leading zeros, and
+   * {@code yy} is the year with leading zeros.
+   *
+   * <p>If we're working with a development build, the version will append {@code _##} at the end,
+   * which is a value with a range of {@code 01-99} that increments every time a new pre-release
+   * build is published on GitHub. and will reset whenever the month increments.
+   *
+   * @return {@code true} if the current version of the launcher is outdated, {@code false}
+   * @see <a href="https://github.com/Kawaxte/TwentyTenLauncher/releases/latest">Latest Release</a>
+   */
   public static boolean isOutdated() {
     if (Objects.isNull(outdated)) {
       SwingWorker<Boolean, Void> worker =
@@ -265,6 +329,16 @@ public final class LauncherUtils {
     return outdated;
   }
 
+  /**
+   * Swaps the specified containers, removing all components from the first container and adding the
+   * second container to it.
+   *
+   * <p>If this method is called from the Event Dispatch thread (EDT), it will be executed
+   * immediately. Otherwise, it will be executed in the Event Dispatch thread (EDT).
+   *
+   * @param c1 the first container
+   * @param c2 the second container
+   */
   public static void swapContainers(Container c1, Container c2) {
     if (SwingUtilities.isEventDispatchThread()) {
       c1.removeAll();
@@ -282,7 +356,18 @@ public final class LauncherUtils {
     }
   }
 
-  public static void updateContainerKeyValue(
+  /**
+   * Sets the title of the specified container with the specified key and arguments.
+   *
+   * <p>This is used to dynamically update the title of containers that are not updated by the
+   * {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} when the locale is changed.
+   *
+   * @param bundle the resource bundle to use
+   * @param c the container to update
+   * @param key the key to use
+   * @param args the arguments to use
+   */
+  public static void setContainerTitle(
       UTF8ResourceBundle bundle, Container c, String key, Object... args) {
     if (c instanceof JFrame) {
       JFrame frame = (JFrame) c;
@@ -294,7 +379,18 @@ public final class LauncherUtils {
     }
   }
 
-  public static void updateComponentKeyValue(
+  /**
+   * Updates the text of the specified component with the specified key and arguments.
+   *
+   * <p>This is used to dynamically update the text of components that are not updated by the {@link
+   * io.github.kawaxte.twentyten.UTF8ResourceBundle} when the locale is changed.
+   *
+   * @param bundle the resource bundle to use
+   * @param c the component to update
+   * @param key the key to use
+   * @param args the arguments to use
+   */
+  public static void setComponentText(
       UTF8ResourceBundle bundle, JComponent c, String key, Object... args) {
     if (c instanceof AbstractButton) {
       AbstractButton button = (AbstractButton) c;
@@ -310,6 +406,11 @@ public final class LauncherUtils {
     }
   }
 
+  /**
+   * Opens the default browser to the specified URL as long as it is supported.
+   *
+   * @param url the URL to open in the system browser
+   */
   public static void openBrowser(String url) {
     try {
       if (Desktop.isDesktopSupported()) {
@@ -322,6 +423,11 @@ public final class LauncherUtils {
     }
   }
 
+  /**
+   * Opens the default browser to the specified URL as long as it is supported.
+   *
+   * @param p the path to open in the system browser
+   */
   public static void openDesktop(Path p) {
     try {
       if (Desktop.isDesktopSupported()) {
