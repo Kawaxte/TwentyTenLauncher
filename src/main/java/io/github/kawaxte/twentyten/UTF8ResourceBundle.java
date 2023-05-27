@@ -30,9 +30,9 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
- * This class extends {@link java.util.ResourceBundle} and provides the functionality to read and
- * store properties from UTF-8 encoded properties files. It uses a HashMap as an underlying data
- * structure to store properties, which makes the lookup operations efficient.
+ * Class extending {@link java.util.ResourceBundle} and provides the functionality to read and store
+ * properties from UTF-8 encoded properties files. It uses a HashMap as an underlying data structure
+ * to store properties, which makes the lookup operations efficient.
  *
  * <p>The associated inner class {@code UTF8Control} extends {@link
  * java.util.ResourceBundle.Control} and is used to create a new UTF8ResourceBundle when requested

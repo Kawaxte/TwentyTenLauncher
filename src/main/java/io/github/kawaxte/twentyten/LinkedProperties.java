@@ -36,7 +36,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * This class extends {@link java.util.Properties} and overrides all the methods to provide
+ * Class extending {@link java.util.Properties} and overrides all the methods to provide
  * functionality based on a {@link java.util.LinkedHashMap} instead of a {@link
  * java.util.Hashtable}, the default underlying data structure for {@link java.util.Properties}.
  * This ensures that properties maintain their order, as opposed to the arbitrary order provided by

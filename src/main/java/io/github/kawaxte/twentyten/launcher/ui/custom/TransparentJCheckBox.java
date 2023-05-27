@@ -18,7 +18,7 @@ package io.github.kawaxte.twentyten.launcher.ui.custom;
 import javax.swing.JCheckBox;
 
 /**
- * This class extends {@link javax.swing.JCheckBox} and overrides the {@code isOpaque()} method to
+ * Class extending {@link javax.swing.JCheckBox} and overrides the {@code isOpaque()} method to
  * provide transparency for the component.
  *
  * @see javax.swing.JCheckBox

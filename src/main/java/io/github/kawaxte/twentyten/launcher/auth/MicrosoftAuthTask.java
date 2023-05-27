@@ -206,8 +206,8 @@ public class MicrosoftAuthTask implements Runnable {
   }
 
   /**
-   * This method performs the Microsoft authentication process using the supplied parameters. Upon
-   * receiving a response, it updates the launcher configuration with the new session information.
+   * Performs the Microsoft authentication process using the supplied parameters. Upon receiving a
+   * response, it updates the launcher configuration with the new session information.
    *
    * <p>If an error is received or the account does not own Minecraft (Java Edition), it will launch
    * the game with a generic player name. If the account does own Minecraft, it will launch the game

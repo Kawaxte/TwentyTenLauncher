@@ -24,11 +24,9 @@ import java.util.Objects;
 import javax.swing.SwingUtilities;
 
 /**
- * The main entry point for the application.
- *
- * <p>This class is responsible for setting up the look and feel of the application, loading
- * configuration and language preferences, displaying the main frame of the application, and
- * handling the authentication tokens for both Microsoft and Mojang accounts.
+ * Class esponsible for setting up the look and feel of the application, loading configuration and
+ * language preferences, displaying the main frame of the application, and handling the
+ * authentication tokens for both Microsoft and Mojang accounts.
  *
  * <p>It also provides a static method {@code launchMinecraft(...)} for launching the Minecraft
  * applet within a JFrame with a specific username, access token and UUID.
@@ -39,7 +37,7 @@ import javax.swing.SwingUtilities;
 public class Launcher {
 
   /**
-   * This method performs the following operations:
+   * Performs the following operations:
    *
    * <ul>
    *   <li>Sets the look and feel of the application.
@@ -74,9 +72,9 @@ public class Launcher {
   }
 
   /**
-   * This method constructs a session ID from the provided parameters (excluding {@code username}),
-   * and initialises a new {@link io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper} with
-   * the constructed session ID. It then removes the current content pane of the {@link
+   * Constructs a session ID from the provided parameters (excluding {@code username}), and
+   * initialises a new {@link io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper} with the
+   * constructed session ID. It then removes the current content pane of the {@link
    * io.github.kawaxte.twentyten.launcher.ui.LauncherFrame} and sets the initialised {@link
    * io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper} as the new content pane. Finally, it
    * starts the game applet and changes the title of the {@link

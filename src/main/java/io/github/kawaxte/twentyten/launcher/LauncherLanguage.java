@@ -33,9 +33,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This class provides methods for getting a {@link io.github.kawaxte.twentyten.UTF8ResourceBundle}
- * for a specific language code, and loading language resources from a given base name and language
- * code in ISO 639-1 format.
+ * Class providing methods for getting a {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} for
+ * a specific language code, and loading language resources from a given base name and language code
+ * in ISO 639-1 format.
  *
  * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
  *

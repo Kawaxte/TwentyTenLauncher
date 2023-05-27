@@ -33,9 +33,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This class keeps a map of configuration properties with their keys and values. It includes
- * methods for getting and setting property values by index, and for loading and saving the
- * configuration to a properties file.
+ * Class keeping a map of configuration properties with their keys and values. It includes methods
+ * for getting and setting property values by index, and for loading and saving the configuration to
+ * a properties file.
  *
  * <p>The configuration file is named with a pattern 'twentyten_%username%.properties', where
  * %username% is the current user's username. This file is located in the working directory of the

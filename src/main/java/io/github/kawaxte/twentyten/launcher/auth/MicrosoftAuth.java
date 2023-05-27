@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 /**
- * This class provides a range of static methods to handle different stages of the OAuth2 flow,
+ * Class providing a range of static methods to handle different stages of the OAuth2 flow,
  * including acquiring and refreshing tokens, making API requests to Xbox Live and Minecraft
  * services, and retrieving the user's Minecraft profile.
  *

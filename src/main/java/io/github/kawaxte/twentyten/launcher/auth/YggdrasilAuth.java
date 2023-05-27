@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 /**
- * This class provides a range of static methods to authenticate with Mojang (Yggdrasil) API.
+ * Class providing a range of static methods to authenticate with Mojang (Yggdrasil) API.
  *
  * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
  *

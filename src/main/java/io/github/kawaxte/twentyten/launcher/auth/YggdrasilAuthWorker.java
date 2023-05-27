@@ -38,7 +38,7 @@ public class YggdrasilAuthWorker extends SwingWorker<Object, Void> {
   private final Logger logger = LogManager.getLogger(this);
 
   /**
-   * Constructs a new YggdrasilAuthWorker.
+   * Constructs a new YggdrasilAuthWorker with the specified parameters.
    *
    * @param username the username of the Legacy account, or the email address of the Mojang account
    * @param password the password of the account
@@ -51,8 +51,8 @@ public class YggdrasilAuthWorker extends SwingWorker<Object, Void> {
   }
 
   /**
-   * This method submits a {@link io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthTask} to
-   * the {@link java.util.concurrent.ExecutorService} and returns the result.
+   * Submits a {@link io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthTask} to the {@link
+   * java.util.concurrent.ExecutorService} and returns the result.
    *
    * @return the result of the {@link io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthTask}
    *     or {@code null} if an error occurred

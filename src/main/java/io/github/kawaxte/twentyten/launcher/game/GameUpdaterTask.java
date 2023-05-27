@@ -19,7 +19,7 @@ import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
 import java.net.URL;
 
 /**
- * This task performs the update process when run, downloading the necessary files and handling the
+ * Task performing the update process when run, downloading the necessary files and handling the
  * response. The response may indicate an error, a successful download without the Minecraft
  * profile, or a successful download with the Minecraft profile.
  *
@@ -36,7 +36,7 @@ public class GameUpdaterTask implements Runnable {
   private final URL[] urls;
 
   /**
-   * Constructs a new update task with the given parameter.
+   * Constructs a new update task with the specified URLs.
    *
    * @param urls the URLs to download the files from
    */

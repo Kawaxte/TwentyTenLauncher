@@ -20,9 +20,7 @@ import java.awt.Cursor;
 import javax.swing.JLabel;
 
 /**
- * A custom JLabel implementation to mimic the appearance and behaviour of a hyperlink.
- *
- * <p>This class extends {@link javax.swing.JLabel} and automatically formats its text to resemble a
+ * Class extending {@link javax.swing.JLabel} and automatically formats its text to resemble a
  * hyperlink (underlined and in blue). It also changes the cursor to a hand cursor when the cursor
  * is over the label to mimic hyperlink behaviour.
  *

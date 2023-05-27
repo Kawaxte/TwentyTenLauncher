@@ -54,7 +54,7 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
   private final int interval;
 
   /**
-   * Constructs a new MicrosoftAuthWorker.
+   * Constructs a new MicrosoftAuthWorker with the specified parameters.
    *
    * @param clientId the client ID of the Azure application
    * @param deviceCode the device code
@@ -70,10 +70,10 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
   }
 
   /**
-   * This method schedules a new {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask}
-   * at a fixed rate, with the task being responsible for polling the device code. The polling
-   * process is conducted in a separate thread, ensuring that it does not block the Swing Event
-   * Dispatch thread (EDT).
+   * Schedules a new {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask} at a fixed
+   * rate, with the task being responsible for polling the device code. The polling process is
+   * conducted in a separate thread, ensuring that it does not block the Swing Event Dispatch thread
+   * (EDT).
    *
    * @return the result of the {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask},
    *     or {@code null} if an error occurred

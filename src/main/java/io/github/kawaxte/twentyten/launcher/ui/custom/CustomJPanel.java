@@ -23,9 +23,9 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 
 /**
- * This class extends {@link javax.swing.JPanel} and overrides the {@code paintComponent...)} method
- * to provide a specific style of graphics to every new JPanel. This avoids the need to duplicate
- * the paint override method for each panel.
+ * Class extending {@link javax.swing.JPanel} and overrides the {@code paintComponent...)} method to
+ * provide a specific style of graphics to every new JPanel. This avoids the need to duplicate the
+ * paint override method for each panel.
  *
  * <p>The graphics style provided by this class includes a layered rectangle design and is a refined
  * variant of the original code provided by Markus "Notch" Persson on Jun 29, 2010.

@@ -26,7 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * This task performs the authentication process when run, sending the necessary credentials and
+ * Task performing the authentication process when run, sending the necessary credentials and
  * handling the response. The response may indicate an error, a successful login without the
  * Minecraft profile, or a successful login with the Minecraft profile.
  *

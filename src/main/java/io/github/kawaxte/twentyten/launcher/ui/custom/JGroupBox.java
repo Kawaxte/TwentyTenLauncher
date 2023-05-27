@@ -19,7 +19,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 /**
- * This class extends {@link javax.swing.JPanel} and provides a titled border to mimic the GroupBox
+ * Class extending {@link javax.swing.JPanel} and provides a titled border to mimic the GroupBox
  * functionality found in the System.Windows.Forms library in C#. It allows for the setting of a
  * title when the group box is created and also provides a method to change this title.
  *

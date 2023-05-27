@@ -46,6 +46,11 @@ public enum EState {
 
   @Getter private final String message;
 
+  /**
+   * Constructs a new EState with the specified key.
+   *
+   * @param key the key to obtain the message from in the resource bundle
+   */
   EState(String key) {
     String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
