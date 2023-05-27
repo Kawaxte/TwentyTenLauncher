@@ -39,6 +39,14 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import lombok.Getter;
 
+/**
+ * Class representing the {@link javax.swing.JPanel} that contains various interactive components.
+ *
+ * <p>It also handles any action that the user may perform on the components.
+ *
+ * @author Kawaxte
+ * @since 1.4.1123_04
+ */
 @Getter
 public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
 
@@ -51,6 +59,19 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
   private final TransparentJButton cancelButton;
   private String verificationUri;
 
+  /**
+   * Constructor for MicrosoftAuthPanel.
+   *
+   * <p>Initialises the components and sets the layout. Also, adds the action listeners to the some
+   * of the components that require it and sets the component texts according to the currently
+   * selected language.
+   *
+   * <p>Also, {@link #userCodeLabel}'s font is set to bold and size 24, and the cursor is set to
+   * resemble a hand cursor.
+   *
+   * @see #setLayout(LayoutManager)
+   * @see #updateComponentTexts(UTF8ResourceBundle)
+   */
   public MicrosoftAuthPanel() {
     super(true);
 
@@ -85,6 +106,14 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
   }
 
+  /**
+   * Constructor for MicrosoftAuthPanel that sets values for {@link #userCodeLabel}, {@link
+   * #expiresInProgressBar} and {@link #verificationUri}.
+   *
+   * @param userCode the user code
+   * @param verificationUri the verification URI
+   * @param expiresIn the time in seconds for which the user code is valid for
+   */
   public MicrosoftAuthPanel(String userCode, String verificationUri, String expiresIn) {
     this();
     this.userCodeLabel.setText(userCode);
@@ -101,6 +130,15 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
     MicrosoftAuthPanel.instance = map;
   }
 
+  /**
+   * Updates the texts of the components.
+   *
+   * <p>The texts are set according to the provided {@link
+   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   *
+   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
+   *     localised keys and values in the resource bundle
+   */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     LauncherUtils.setComponentText(
         bundle, this.copyCodeLabel, LauncherLanguageUtils.getMAPKeys()[0]);
@@ -110,6 +148,12 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
         bundle, this.cancelButton, LauncherLanguageUtils.getMAPKeys()[2]);
   }
 
+  /**
+   * Creates and returns the {@link javax.swing.GroupLayout} used to layout the components in the
+   * panel.
+   *
+   * @return the layout of the panel
+   */
   private LayoutManager getGroupLayout() {
     int width = 0;
 
@@ -144,6 +188,18 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
     return gl;
   }
 
+  /**
+   * Handles the actions performed on {@link #openBrowserButton} and {@link #cancelButton}.
+   *
+   * <p>When processing {@link #openBrowserButton}, the user code is copied to the clipboard and the
+   * default browser is opened with the verification URI.
+   *
+   * <p>When processing {@link #cancelButton}, the {@link LauncherPanel} is swapped in place of the
+   * current panel. Since cancellation will make the panel 'technically' invisible, Microsoft
+   * authentication processes will be terminated.
+   *
+   * @param event the action event to be processed
+   */
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
