@@ -28,6 +28,12 @@ import javax.swing.SwingWorker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Class scheduling a {@link io.github.kawaxte.twentyten.launcher.game.GameUpdaterTask}.
+ *
+ * @see javax.swing.SwingWorker
+ * @since 1.5.1223_05
+ */
 public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
 
   private static final Logger LOGGER;
@@ -38,6 +44,11 @@ public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
 
   private final URL[] urls;
 
+  /**
+   * Constructs a new GameUpdaterWorker with the specified URLs.
+   *
+   * @param urls the URLs to download the files from
+   */
   public GameUpdaterWorker(URL[] urls) {
     this.urls = urls;
   }
