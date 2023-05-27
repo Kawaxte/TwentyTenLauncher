@@ -36,7 +36,7 @@ import org.json.JSONObject;
  * Minecraft profile, or a successful login with the Minecraft profile.
  *
  * <p>Upon receiving a response, the task updates the {@link
- * io.github.kawaxte.twentyten.launcher.LauncherConfig} with newly obtained propertoes and initiates
+ * io.github.kawaxte.twentyten.launcher.LauncherConfig} with newly obtained properties and initiates
  * the Minecraft launch process with the appropriate parameters based on the response.
  *
  * @see Runnable

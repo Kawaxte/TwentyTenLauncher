@@ -31,7 +31,7 @@ import org.json.JSONObject;
  * Minecraft profile, or a successful login with the Minecraft profile.
  *
  * <p>Upon receiving a response, the task updates the {@link
- * io.github.kawaxte.twentyten.launcher.LauncherConfig} with newly obtained propertoes and initiates
+ * io.github.kawaxte.twentyten.launcher.LauncherConfig} with newly obtained properties and initiates
  * the Minecraft launch process with the appropriate parameters based on the response.
  *
  * @see Runnable
@@ -97,8 +97,8 @@ public class YggdrasilAuthTask implements Runnable {
   }
 
   /**
-   * This method performs the Yggdrasil authentication process using the supplied credentials. Upon
-   * receiving a response, it updates the launcher configuration with the new session information.
+   * Performs the Yggdrasil authentication process using the supplied credentials. Upon receiving a
+   * response, it updates the launcher configuration with the new session information.
    *
    * <p>If an error is received or the account does not own Minecraft (Java Edition), it will launch
    * the game with a generic player name. If the account does own Minecraft, it will launch the game
