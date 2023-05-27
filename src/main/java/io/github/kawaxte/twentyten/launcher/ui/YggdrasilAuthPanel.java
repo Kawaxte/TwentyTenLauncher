@@ -44,6 +44,14 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+/**
+ * Class representing the {@link javax.swing.JPanel} that contains various interactive components.
+ *
+ * <p>It also handles any action that the user may perform on the components.
+ *
+ * @author Kawaxte
+ * @since 1.5.0623_01
+ */
 public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
@@ -58,6 +66,20 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   private final JHyperlink linkLabel;
   private final TransparentJButton signinButton;
 
+  /**
+   * Constructor for YggdrasilAuthPanel.
+   *
+   * <p>Initialises the components and sets the layout. Also, adds the action listeners to the some
+   * of the components that require it and sets the component texts according to the currently
+   * selected language.
+   *
+   * <p>It also handles the click event for the {@link #linkLabel} component, which opens the
+   * browser and navigates to the link specified in {@link
+   * io.github.kawaxte.twentyten.launcher.util.LauncherUtils#getLinkLabelUrls()}.
+   *
+   * @see #setLayout(LayoutManager)
+   * @see #updateComponentTexts(UTF8ResourceBundle)
+   */
   public YggdrasilAuthPanel() {
     super(true);
 
@@ -120,6 +142,15 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     YggdrasilAuthPanel.instance = yap;
   }
 
+  /**
+   * Updates the texts of the components.
+   *
+   * <p>The texts are set according to the provided {@link
+   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   *
+   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
+   *     localised keys and values in the resource bundle
+   */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     LauncherUtils.setComponentText(
         bundle, this.microsoftSigninButton, LauncherLanguageUtils.getYAPKeys()[0]);
@@ -142,6 +173,12 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         bundle, this.signinButton, LauncherLanguageUtils.getYAPKeys()[8]);
   }
 
+  /**
+   * Creates and returns the {@link javax.swing.GroupLayout} used to layout the components in the
+   * panel.
+   *
+   * @return the layout of the panel
+   */
   private LayoutManager getGroupLayout() {
     GroupLayout gl = new GroupLayout(this);
     gl.setAutoCreateContainerGaps(true);
@@ -192,6 +229,37 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     return gl;
   }
 
+  /**
+   * Handles the actions performed on {@link #microsoftSigninButton}, {@link #optionsButton}, and
+   * {@link #signinButton}.
+   *
+   * <p>Currently, the following components are handled:
+   *
+   * <ul>
+   *   <li>{@link #microsoftSigninButton}
+   *   <li>{@link #optionsButton}
+   *   <li>{@link #signinButton}
+   * </ul>
+   *
+   * <p>When processing either {@link #microsoftSigninButton} or {@link #signinButton}, the
+   * following actions are performed:
+   *
+   * <ol>
+   *   <li>Disable all components in the panel
+   *   <li>Set the text of the button to "Signing in..."
+   *   <li>Check if the launcher is outdated
+   *   <li>If the launcher is outdated, swap the panel with a {@link
+   *       io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel}
+   *   <li>Otherwise, check if the username and password fields are empty
+   *   <li>If the username and password fields are empty, swap the panel with a {@link
+   *       io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel} and display an error
+   *       message, otherwise continue
+   * </ol>
+   *
+   * <p>If everything goes flawlessly, Minecraft will be launched right after checking for updates.
+   *
+   * @param event the action event to be processed
+   */
   @Override
   public void actionPerformed(ActionEvent event) {
     String selectedLanguage = (String) LauncherConfig.get(0);
