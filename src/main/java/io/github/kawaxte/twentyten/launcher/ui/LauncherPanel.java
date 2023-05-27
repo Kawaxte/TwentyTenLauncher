@@ -25,6 +25,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.LayoutManager;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -32,11 +33,32 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import javax.swing.JPanel;
 
+/**
+ * Class representing the {@link javax.swing.JPanel} that contains various interactive components,
+ * and is the core panel for the {@link javax.swing.JFrame}.
+ *
+ * <p>It also handles any action that the user may perform on the components.
+ *
+ * @author Kawaxte
+ * @since 1.3.2923_03
+ */
 public class LauncherPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
   private static LauncherPanel instance;
 
+  /**
+   * Constructor for LauncherPanel.
+   *
+   * <p>Initialises the components and sets the layout. Also, adds the action listeners to the some
+   * of the components that require it.
+   *
+   * <p>Also, adds the {@link io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel} to the
+   * current panel.
+   *
+   * @see #setLayout(LayoutManager)
+   * @see #add(java.awt.Component, Object)
+   */
   public LauncherPanel() {
     super(new GridBagLayout(), true);
 
@@ -58,6 +80,15 @@ public class LauncherPanel extends JPanel {
     instance = lp;
   }
 
+  /**
+   * Draws a 32x32 grid of the background image, and then draws the title string the same way Markus
+   * "Notch" Persson did in the original Minecraft Launcher.
+   *
+   * <p>Instead of mainly using standard multiplication and division, this method uses bitwise
+   * operations to achieve the same result, which is miles faster than the former.
+   *
+   * @param g the <code>Graphics</code> object to draw with
+   */
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
@@ -79,6 +110,7 @@ public class LauncherPanel extends JPanel {
             panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
     Graphics2D g2dBuffered = bufferedImage.createGraphics();
     g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f));
+
     try {
       int gridWidth = (panelWidth + bgImageWidth) >> 5;
       int gridHeight = (panelHeight + bgImageheight) >> 5;
@@ -100,6 +132,14 @@ public class LauncherPanel extends JPanel {
     g2d.drawImage(bufferedImage, 0, 0, panelWidth, panelHeight, this);
   }
 
+  /**
+   * Draws the title string in the center of the panel.
+   *
+   * @param s the string to draw
+   * @param width the width of the panel
+   * @param height the height of the panel
+   * @param g2d the <code>Graphics2D</code> object to draw with
+   */
   private void drawTitleString(String s, int width, int height, Graphics2D g2d) {
     g2d.setFont(this.getFont().deriveFont(Font.BOLD, 20f));
     g2d.setColor(Color.LIGHT_GRAY);
