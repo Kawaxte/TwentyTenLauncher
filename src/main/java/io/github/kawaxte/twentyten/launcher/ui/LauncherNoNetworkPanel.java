@@ -36,6 +36,14 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+/**
+ * Class representing the {@link javax.swing.JPanel} that contains various interactive components.
+ *
+ * <p>It also handles any action that the user may perform on the components.
+ *
+ * @author Kawaxte
+ * @since 1.4.1023_03
+ */
 public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListener {
 
   private static LauncherNoNetworkPanel instance;
@@ -46,6 +54,16 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
   private final String errorMessage;
   private final transient Object[] errorMessageArgs;
 
+  /**
+   * Constructor for LauncherNoNetworkPanel.
+   *
+   * <p>Initialises the components and sets the layout. Also, adds the action listeners to the some
+   * of the components that require it and sets the component texts according to the currently
+   * selected language.
+   *
+   * @see #setLayout(LayoutManager)
+   * @see #updateComponentTexts(UTF8ResourceBundle)
+   */
   public LauncherNoNetworkPanel(String key, Object... args) {
     super(true);
 
@@ -83,6 +101,15 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     instance = lnnp;
   }
 
+  /**
+   * Updates the texts of the components.
+   *
+   * <p>The texts are set according to the provided {@link
+   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   *
+   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
+   *     localised keys and values in the resource bundle
+   */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     LauncherUtils.setComponentText(
         bundle, this.errorLabel, this.errorMessage, this.errorMessageArgs);
@@ -94,6 +121,12 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
         bundle, this.retryButton, LauncherLanguageUtils.getLNPPKeys()[7]);
   }
 
+  /**
+   * Creates and returns the {@link javax.swing.GroupLayout} used to layout the components in the
+   * panel.
+   *
+   * @return the layout of the panel
+   */
   private LayoutManager getGroupLayout() {
     int width = 0;
 
@@ -127,6 +160,21 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     return gl;
   }
 
+  /**
+   * Handles the actions performed on {@link #playOfflineButton} and {@link #retryButton}.
+   *
+   * <p>When processing {@link #playOfflineButton}, an 'offline' Minecraft session is launched. This
+   * will only be possible if the game is cached. If the game is not cached, the button will be
+   * disabled, and {@link #playOnlineLabel} will be shown to the user to indicate that they need to
+   * play with an internet connection to download the game first before they can play offline later.
+   *
+   * <p>When processing {@link #retryButton}, the {@link
+   * io.github.kawaxte.twentyten.launcher.ui.LauncherPanel} is swapped with a new {@link
+   * io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel}, so that the user can try to
+   * authenticate again.
+   *
+   * @param event the action event to be processed
+   */
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
