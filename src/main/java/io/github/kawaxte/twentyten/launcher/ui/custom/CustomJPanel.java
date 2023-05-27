@@ -61,7 +61,7 @@ public class CustomJPanel extends JPanel {
    *   <li>A grey filled rectangle in the very centre.
    * </ul>
    *
-   * @param g The {@link java.awt.Graphics} object to protect.
+   * @param g The {@link java.awt.Graphics} object to protect
    * @see javax.swing.JComponent#paintComponent(Graphics)
    */
   @Override

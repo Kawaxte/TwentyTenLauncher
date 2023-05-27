@@ -42,7 +42,7 @@ public class JHyperlink extends JLabel {
   /**
    * Sets the text of this JLabel, automatically underlining it to mimic a hyperlink.
    *
-   * @param text The text to set on this JLabel.
+   * @param text The text to set on this JLabel
    */
   @Override
   public void setText(String text) {
@@ -52,8 +52,7 @@ public class JHyperlink extends JLabel {
   /**
    * Sets the foreground colour of this JLabel to blue, mimicking hyperlink behaviour.
    *
-   * @param fg The intended foreground colour. This parameter is ignored and the colour is set to
-   *     blue.
+   * @param fg The intended foreground colour (ignored and set to blue)
    */
   @Override
   public void setForeground(Color fg) {

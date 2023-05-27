@@ -46,8 +46,8 @@ public class JGroupBox extends JPanel {
    * <p>A compound border is created with an empty border on the outside and a titled border on the
    * inside. The title of the border is set to the passed in {@code title} parameter.
    *
-   * @param title The title to set on the border.
-   * @return The set title.
+   * @param title The title to set on the border
+   * @return The set title
    * @see javax.swing.JComponent#setBorder(javax.swing.border.Border)
    * @see javax.swing.BorderFactory#createCompoundBorder(javax.swing.border.Border,
    *     javax.swing.border.Border)

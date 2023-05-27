@@ -62,11 +62,10 @@ public enum EPlatform {
 
   /**
    * This method goes through the Enum values and finds the one whose names list contains a
-   * substring of the system's OS name. If it finds a match, it returns that platform; otherwise, it
-   * returns {@code null}.
+   * substring of the system's OS name.
    *
    * @return The matching {@link EPlatform} for the operating system, or {@code null} if no match is
-   *     found.
+   *     found
    */
   public static EPlatform getOSName() {
     return Arrays.stream(values())
@@ -81,11 +80,10 @@ public enum EPlatform {
 
   /**
    * This method goes through the Enum values and finds the one whose {@code arch} string matches
-   * the system's architecture name. If it finds a match, it returns that platform; otherwise, it
-   * returns {@code null}.
+   * the system's architecture name.
    *
    * @return The matching {@link EPlatform} for the system architecture, or {@code null} if no match
-   *     is found.
+   *     is found
    */
   public static EPlatform getOSArch() {
     return Arrays.stream(values())

@@ -47,7 +47,7 @@ public class Launcher {
    *       expired.
    * </ul>
    *
-   * @param args command-line arguments.
+   * @param args command-line arguments
    */
   public static void main(String... args) {
     ELookAndFeel.setLookAndFeel();
@@ -83,9 +83,9 @@ public class Launcher {
    * <p>If the username is {@code null} or empty, a randomly generated one in the format of
    * "Player###" will be set.
    *
-   * @param username the username of the player.
-   * @param accessToken the JWT containing various information about the player's account.
-   * @param uuid the UUID of the player's account.
+   * @param username username of the account (or email address if Mojang account)
+   * @param accessToken the JWT containing various information about the Minecraft profile
+   * @param uuid the UUID of the account's Minecraft profile
    * @see GameAppletWrapper#GameAppletWrapper(String, String)
    */
   public static void launchMinecraft(String username, String accessToken, String uuid) {

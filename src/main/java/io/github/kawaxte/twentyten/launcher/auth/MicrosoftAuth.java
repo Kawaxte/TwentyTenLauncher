@@ -187,7 +187,7 @@ public final class MicrosoftAuth {
    *
    * <p>This method should be called after a successful call to {@code acquireDeviceCode(...)}.
    *
-   * @param clientId The client ID of the Azure application requesting the access token.
+   * @param clientId The client ID of the Azure application requesting the access token
    * @param deviceCode The device code received from {@code acquireDeviceCode(...)}
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
@@ -239,8 +239,8 @@ public final class MicrosoftAuth {
    * <p>Upon a successful refresh, the new access token and refresh token will be returned in the
    * response, which can then be used to re-obtain the Minecraft access token.
    *
-   * @param clientId The client ID of the Azure application requesting the access token.
-   * @param refreshToken The refresh token of the user.
+   * @param clientId The client ID of the Azure application requesting the access token
+   * @param refreshToken The refresh token of the user
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject refreshToken(String clientId, String refreshToken) {
@@ -285,7 +285,7 @@ public final class MicrosoftAuth {
   /**
    * Acquires the user's Xbox Live token using an previously obtained access token.
    *
-   * @param accessToken The access token of the user.
+   * @param accessToken The access token of the user
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject acquireXBLToken(String accessToken) {
@@ -338,7 +338,7 @@ public final class MicrosoftAuth {
   /**
    * Acquires the user's Xbox Live XSTS token using the previously obtained Xbox Live token.
    *
-   * @param token The Xbox Live token of the user.
+   * @param token The Xbox Live token of the user
    * @return A {@link org.json.JSONObject} containing the response from the server
    */
   public static JSONObject acquireXSTSToken(String token) {

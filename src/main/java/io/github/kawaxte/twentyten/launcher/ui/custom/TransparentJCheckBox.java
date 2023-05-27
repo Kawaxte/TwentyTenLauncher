@@ -35,7 +35,7 @@ public class TransparentJCheckBox extends JCheckBox {
    * This method has been overridden to provide transparency for the {@link javax.swing.JCheckBox}.
    * This is achieved by returning {@code false} for the opaque setting.
    *
-   * @return {@code false} to indicate that the {@link javax.swing.JCheckBox} should be transparent.
+   * @return {@code false} to indicate that the {@link javax.swing.JCheckBox} should be transparent
    */
   @Override
   public boolean isOpaque() {
