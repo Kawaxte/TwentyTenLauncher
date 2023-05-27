@@ -60,6 +60,12 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Class responsible for updating Minecraft.
+ *
+ * <p>It checks if the necessary files exist, downloads any missing files, and updates the
+ * classpath. If the files are already cached, it will not download them again.
+ */
 public final class GameUpdater {
 
   private static final Logger LOGGER;
@@ -91,19 +97,55 @@ public final class GameUpdater {
 
   private GameUpdater() {}
 
+  /**
+   * Checks if the game is cached by verifying the existence of necessary files.
+   *
+   * @return {@code true} if all the necessary files exist, {@code false} otherwise
+   */
   public static boolean isGameCached() {
     return isLWJGLJarExistent() && isLWJGLNativeExistent() && isClientJarExistent();
   }
 
+  /**
+   * Checks if all the necessary LWJGL2 .JAR files exist in the ./bin/ directory.
+   *
+   * <p>The necessary LWJGL2 .JAR files are:
+   *
+   * <ul>
+   *   <li>lwjgl.jar
+   *   <li>lwjgl_util.jar
+   *   <li>jinput.jar
+   *   <li>jutils.jar
+   * </ul>
+   *
+   * @return {@code true} if all the necessary LWJGL2 .JAR files exist, {@code false} otherwise
+   */
   private static boolean isLWJGLJarExistent() {
     List<String> lwjglJars = getListOfLWJGLJars();
     return lwjglJars.stream()
         .allMatch(lwjglJar -> Files.exists(BIN_DIRECTORY_PATH.resolve(lwjglJar)));
   }
 
+  /**
+   * Checks if the necessary LWJGL2 native files exist in the ./bin/natives/ directory.
+   *
+   * <p>The necessary LWJGL2 native files depend on platform:
+   *
+   * <ul>
+   *   <li>Linux (32-bit): liblwjgl.so, libopenal.so, libopenal.so
+   *   <li>Linux: liblwjgl64.so, liblwjgl64.so, libopenal64.so
+   *   <li>macOS: liblwjgl.jnilib, libjinput-osx.jnilib, openal.dylib
+   *   <li>Windows (32-bit): lwjgl.dll, jinput-dx8.dll, jinput-raw.dll, jintput-wintab.dll,
+   *       OpenAL32.dll
+   *   <li>Windows: lwjgl64.dll, jinput-dx8_64.dll, jinput-raw_64.dll, jintput-wintab.dll,
+   *       OpenAL64.dll
+   * </ul>
+   *
+   * @return {@code true} if the necessary LWJGL2 native files exist, {@code false} otherwise
+   */
   private static boolean isLWJGLNativeExistent() {
     List<String> lwjglNatives =
-        Optional.of(getListLWJGLNatives())
+        Optional.of(getListOfLWJGLNatives())
             .orElseThrow(() -> new NullPointerException("lwjglNatives cannot be null"));
     return lwjglNatives.stream()
         .findFirst()
@@ -111,17 +153,32 @@ public final class GameUpdater {
         .isPresent();
   }
 
+  /**
+   * Checks if the Minecraft client .JAR file exists in the ./versions/%version%/ directory.
+   *
+   * @return {@code true} if the client .JAR file exists, {@code false} otherwise
+   */
   private static boolean isClientJarExistent() {
     String selectedVersion = (String) LauncherConfig.get(4);
     String clientJar = new StringBuilder().append(selectedVersion).append(".jar").toString();
     return Files.exists(VERSION_DIRECTORY_PATH.resolve(clientJar));
   }
 
+  /**
+   * Fetches the required URLs for LWJGL2.
+   *
+   * @return an ArrayList of required URLs for LWJGL2
+   */
   private static List<String> getListOfLWJGLJars() {
     return Arrays.asList("jinput.jar", "jutils.jar", "lwjgl.jar", "lwjgl_util.jar");
   }
 
-  private static List<String> getListLWJGLNatives() {
+  /**
+   * Fetches the required native files for LWJGL2 based on platform and architecture.
+   *
+   * @return an ArrayList of required native files for LWJGL2
+   */
+  private static List<String> getListOfLWJGLNatives() {
     if (EPlatform.isLinux()) {
       return EPlatform.isAARCH64() || EPlatform.isAMD64()
           ? Arrays.asList("libjinput-linux64.so", "liblwjgl64.so", "libopenal64.so")
@@ -146,6 +203,11 @@ public final class GameUpdater {
     return new ArrayList<>();
   }
 
+  /**
+   * Fetches the required URLs for the Minecraft client based on the available versions.
+   *
+   * @return an array of required URLs for the Minecraft client
+   */
   private static URL[] getClientUrls() {
     URL[] urls = new URL[3];
     try {
@@ -191,6 +253,11 @@ public final class GameUpdater {
     return urls;
   }
 
+  /**
+   * Fetches the required URLs for LWJGL2 files based on platform and architecture.
+   *
+   * @return a URL for the LWJGL2 files
+   */
   private static URL getLWJGLUrls() {
     try {
       if (EPlatform.isAARCH64()) {
@@ -238,6 +305,11 @@ public final class GameUpdater {
     return null;
   }
 
+  /**
+   * Fetches the required URLs for all the required files.
+   *
+   * @return an array of required URLs for all the required files for Minecraft to run
+   */
   public static URL[] getUrls() {
     String selectedVersion = (String) LauncherConfig.get(4);
     String clientJar = selectedVersion + ".jar";
@@ -289,6 +361,18 @@ public final class GameUpdater {
     return Arrays.stream(urls).filter(Objects::nonNull).toArray(URL[]::new);
   }
 
+  /**
+   * Downloads the required files after checking if they exist.
+   *
+   * <p>It first downloads the files to the temporary directory and then moves them to their
+   * respective locations in the working directory once all the files have been downloaded.
+   *
+   * <p>Additionally, the total download size is calculated and the progress is updated accordingly.
+   *
+   * @param urls the required URLs for all the required files for Minecraft to run
+   * @see #download(Path, AtomicInteger, int, URL)
+   * @see #calculateTotalDownloadSize(URL[])
+   */
   public static void downloadPackages(URL[] urls) {
     if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
       GameAppletWrapper.getInstance().setTaskState(EState.DOWNLOAD_PACKAGES.ordinal());
@@ -306,12 +390,18 @@ public final class GameUpdater {
       return;
     }
 
-    for (URL url : urls) {
-      download(javaIoTmpDirPath, currentDownloadSize, totalDownloadSize, url);
-    }
+    Arrays.stream(urls)
+        .forEachOrdered(
+            url -> download(javaIoTmpDirPath, currentDownloadSize, totalDownloadSize, url));
     move(javaIoTmpDirPath);
   }
 
+  /**
+   * Calculates the total download size of all the required files.
+   *
+   * @param urls the required URLs for all the required files for Minecraft to run
+   * @return the total download size of all the required files
+   */
   private static int calculateTotalDownloadSize(URL[] urls) {
     int size = 0;
 
@@ -361,6 +451,14 @@ public final class GameUpdater {
     return size;
   }
 
+  /**
+   * Performs the download of the required files.
+   *
+   * @param p the path to the temporary directory
+   * @param current the current download size
+   * @param total the total download size
+   * @param url the URL of the required file
+   */
   private static void download(Path p, AtomicInteger current, int total, URL url) {
     try {
       Content content = Request.get(url.toURI()).execute().returnContent();
@@ -401,6 +499,11 @@ public final class GameUpdater {
     }
   }
 
+  /**
+   * Moves the downloaded files to their respective locations in the working directory.
+   *
+   * @param p the path to the temporary directory
+   */
   private static void move(Path p) {
     String selectedVersion = (String) LauncherConfig.get(4);
     String clientJar = String.format("%s.jar", selectedVersion);
@@ -440,6 +543,12 @@ public final class GameUpdater {
     jarFiles.forEach(move);
   }
 
+  /**
+   * Extracts the downloaded native package.
+   *
+   * @see #extract(AtomicInteger, int, File)
+   * @see #calculateTotalExtractSize(File[])
+   */
   public static void extractDownloadedPackages() {
     if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
       GameAppletWrapper.getInstance().setTaskState(EState.EXTRACT_PACKAGES.ordinal());
@@ -462,9 +571,15 @@ public final class GameUpdater {
       return;
     }
 
-    Arrays.stream(zipFiles).forEach(f -> extract(currentExtractSize, totalExtractSize, f));
+    Arrays.stream(zipFiles).forEachOrdered(f -> extract(currentExtractSize, totalExtractSize, f));
   }
 
+  /**
+   * Calculates the total size of files to be extracted.
+   *
+   * @param files the files to calculate the size of
+   * @return the total size of the files to be extracted
+   */
   private static int calculateTotalExtractSize(File[] files) {
     long size = 0;
 
@@ -490,6 +605,13 @@ public final class GameUpdater {
     return (int) size;
   }
 
+  /**
+   * Performs the extraction of the native package.
+   *
+   * @param current the current size of the extracted files
+   * @param total the total size of the files to be extracted
+   * @param file the file to extract
+   */
   private static void extract(AtomicInteger current, int total, File file) {
     try (FileInputStream fis = new FileInputStream(file);
         BufferedInputStream bis = new BufferedInputStream(fis);
@@ -547,6 +669,10 @@ public final class GameUpdater {
     }
   }
 
+  /**
+   * Updates the classpath to take into account the downloaded jars, then loads the native libraries
+   * to their respective JVM arguments.
+   */
   public static void updateClasspath() {
     if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
       GameAppletWrapper.getInstance().setTaskState(EState.UPDATE_CLASSPATH.ordinal());
@@ -594,6 +720,11 @@ public final class GameUpdater {
     }
   }
 
+  /**
+   * Displays an error message if an error occurs during the update process.
+   *
+   * @param message the error message to display
+   */
   private static void displayErrorMessage(String message) {
     GameAppletWrapper.getInstance().setUpdaterTaskErrored(true);
 
