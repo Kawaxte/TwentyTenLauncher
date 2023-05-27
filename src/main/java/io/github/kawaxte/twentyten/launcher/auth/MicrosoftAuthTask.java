@@ -71,6 +71,33 @@ public class MicrosoftAuthTask implements Runnable {
   }
 
   /**
+   * Returns the user code, device code, verification URI, expires-in, and interval as an array of
+   * strings.
+   *
+   * <p>Each obtained parameter has its use case as follows:
+   *
+   * <ul>
+   *   <li>{@code userCode} is the code that the user must enter on the verification URI
+   *   <li>{@code deviceCode} is the code that the device must send to the Azure application
+   *   <li>{@code verificationUri} is the URI that the user must visit to enter the user code
+   *   <li>{@code expiresIn} is the number of seconds until the device code expires
+   *   <li>{@code interval} is the number of seconds to wait before polling for the access token
+   * </ul>
+   *
+   * @param object the JSON object containing the response from the device code request
+   * @return {@code userCode}, {@code deviceCode}, {@code verificationUri}, {@code expiresIn}, and
+   *     {@code interval} as an array of strings
+   */
+  public static String[] getDeviceCodeResponse(JSONObject object) {
+    String userCode = object.getString("user_code");
+    String deviceCode = object.getString("device_code");
+    String verificationUri = object.getString("verification_uri");
+    String expiresIn = String.valueOf(object.getInt("expires_in"));
+    String interval = String.valueOf(object.getInt("interval"));
+    return new String[] {userCode, deviceCode, verificationUri, expiresIn, interval};
+  }
+
+  /**
    * Returns the access token and refresh token as an array of strings.
    *
    * <p>This method also handles specific errors that may occur whilst attempting to retrieve the
@@ -100,6 +127,18 @@ public class MicrosoftAuthTask implements Runnable {
     MicrosoftAuthPanel.getInstance().getExpiresInProgressBar().setIndeterminate(true);
     MicrosoftAuthPanel.getInstance().getOpenBrowserButton().setVisible(false);
 
+    String accessToken = object.getString("access_token");
+    String refreshToken = object.getString("refresh_token");
+    return new String[] {accessToken, refreshToken};
+  }
+
+  /**
+   * Returns the access token and refresh token as an array of strings.
+   *
+   * @param object the JSON object containing the response from the token request
+   * @return {@code accessToken} and {@code refreshToken} as an array of strings
+   */
+  public static String[] getRefreshTokenResponse(JSONObject object) {
     String accessToken = object.getString("access_token");
     String refreshToken = object.getString("refresh_token");
     return new String[] {accessToken, refreshToken};
