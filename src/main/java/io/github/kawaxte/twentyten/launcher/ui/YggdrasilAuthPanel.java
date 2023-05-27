@@ -233,14 +233,6 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
    * Handles the actions performed on {@link #microsoftSigninButton}, {@link #optionsButton}, and
    * {@link #signinButton}.
    *
-   * <p>Currently, the following components are handled:
-   *
-   * <ul>
-   *   <li>{@link #microsoftSigninButton}
-   *   <li>{@link #optionsButton}
-   *   <li>{@link #signinButton}
-   * </ul>
-   *
    * <p>When processing either {@link #microsoftSigninButton} or {@link #signinButton}, the
    * following actions are performed:
    *
