@@ -18,14 +18,47 @@ package io.github.kawaxte.twentyten.launcher.game;
 import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
 import java.net.URL;
 
+/**
+ * This task performs the update process when run, downloading the necessary files and handling the
+ * response. The response may indicate an error, a successful download without the Minecraft
+ * profile, or a successful download with the Minecraft profile.
+ *
+ * <p>Upon receiving a response, the task downloads the necessary files and initiates the Minecraft
+ * launch process with the appropriate parameters based on the response. If there are no files to be
+ * downloaded, the task will skip the download process and proceed to the launch process.
+ *
+ * @see Runnable
+ * @author Kawaxte
+ * @since 1.5.1223_05
+ */
 public class GameUpdaterTask implements Runnable {
 
   private final URL[] urls;
 
+  /**
+   * Constructs a new update task with the given parameter.
+   *
+   * @param urls the URLs to download the files from
+   */
   public GameUpdaterTask(URL[] urls) {
     this.urls = urls;
   }
 
+  /**
+   * Performs the update process, downloading the necessary files and handling the response.
+   *
+   * <p>When initialising, the state will be set to {@link EState#CHECK_CACHE} and the progress of
+   * the task will be set to 5%. If the game is not cached, the task will download the necessary
+   * files, move them to their respective locations, extract any archives and update the classpath.
+   * If the game is cached, the task will skip the download process and proceed to the launch.
+   *
+   * <p>If no error occurs, the classpath is updated (just in case), the state will be set to {@link
+   * EState#DONE} and the progress of the task will be set to 95%.
+   *
+   * @see GameUpdater#downloadPackages(URL[])
+   * @see GameUpdater#extractDownloadedPackages()
+   * @see GameUpdater#updateClasspath()
+   */
   @Override
   public void run() {
     GameAppletWrapper.getInstance().setTaskState(EState.CHECK_CACHE.ordinal());
