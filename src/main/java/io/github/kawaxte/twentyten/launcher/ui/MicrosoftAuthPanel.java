@@ -81,7 +81,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
 
     String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
-    this.updateComponentKeyValues(
+    this.updateComponentTexts(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
   }
 
@@ -101,12 +101,12 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
     MicrosoftAuthPanel.instance = map;
   }
 
-  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(
+  public void updateComponentTexts(UTF8ResourceBundle bundle) {
+    LauncherUtils.setComponentText(
         bundle, this.copyCodeLabel, LauncherLanguageUtils.getMAPKeys()[0]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.openBrowserButton, LauncherLanguageUtils.getMAPKeys()[1]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.cancelButton, LauncherLanguageUtils.getMAPKeys()[2]);
   }
 

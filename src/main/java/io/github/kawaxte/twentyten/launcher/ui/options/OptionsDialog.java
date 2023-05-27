@@ -44,7 +44,7 @@ public class OptionsDialog extends JDialog {
 
     String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
-    this.updateContainerKeyValues(
+    this.updateContainerTitles(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
   }
 
@@ -56,8 +56,8 @@ public class OptionsDialog extends JDialog {
     instance = od;
   }
 
-  public void updateContainerKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateContainerKeyValue(bundle, this, LauncherLanguageUtils.getODKeys()[0]);
+  public void updateContainerTitles(UTF8ResourceBundle bundle) {
+    LauncherUtils.setContainerTitle(bundle, this, LauncherLanguageUtils.getODKeys()[0]);
   }
 
   @Override

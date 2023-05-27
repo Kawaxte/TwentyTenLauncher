@@ -82,14 +82,12 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     this.setLayout(this.getGroupLayout());
 
     Object mojangUsername = LauncherConfig.get(11);
-    Object mojangPassword = LauncherUtils.decodeFromBase64(12);
+    String mojangPassword = LauncherUtils.decodeFromBase64(12);
     Object mojangRememberPasswordChecked = LauncherConfig.get(13);
     if (Objects.nonNull(mojangUsername)) {
       this.usernameField.setText((String) mojangUsername);
     }
-    if (Objects.nonNull(mojangPassword)) {
-      this.passwordField.setText((String) mojangPassword);
-    }
+    this.passwordField.setText(mojangPassword);
     this.rememberPasswordCheckBox.setSelected(
         Boolean.parseBoolean(mojangRememberPasswordChecked.toString()));
 
@@ -110,7 +108,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
 
     String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
-    this.updateComponentKeyValues(
+    this.updateComponentTexts(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
   }
 
@@ -122,25 +120,25 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
     YggdrasilAuthPanel.instance = yap;
   }
 
-  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(
+  public void updateComponentTexts(UTF8ResourceBundle bundle) {
+    LauncherUtils.setComponentText(
         bundle, this.microsoftSigninButton, LauncherLanguageUtils.getYAPKeys()[0]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.usernameLabel, LauncherLanguageUtils.getYAPKeys()[2]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.passwordLabel, LauncherLanguageUtils.getYAPKeys()[3]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.optionsButton, LauncherLanguageUtils.getYAPKeys()[4]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.rememberPasswordCheckBox, LauncherLanguageUtils.getYAPKeys()[5]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle,
         this.linkLabel,
         Objects.nonNull(LauncherUtils.getOutdated())
                 && Boolean.TRUE.equals(LauncherUtils.getOutdated())
             ? LauncherLanguageUtils.getYAPKeys()[7]
             : LauncherLanguageUtils.getYAPKeys()[6]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.signinButton, LauncherLanguageUtils.getYAPKeys()[8]);
   }
 

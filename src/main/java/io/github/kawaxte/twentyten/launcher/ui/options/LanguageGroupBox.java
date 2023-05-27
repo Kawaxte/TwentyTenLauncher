@@ -54,7 +54,7 @@ public class LanguageGroupBox extends JGroupBox implements ActionListener {
 
     String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
-    this.updateComponentKeyValues(
+    this.updateComponentTexts(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
 
     LauncherOptionsUtils.updateLanguageComboBox(this);
@@ -68,8 +68,8 @@ public class LanguageGroupBox extends JGroupBox implements ActionListener {
     instance = lgb;
   }
 
-  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(
+  public void updateComponentTexts(UTF8ResourceBundle bundle) {
+    LauncherUtils.setComponentText(
         bundle, this.setLanguageLabel, LauncherLanguageUtils.getLGBKeys()[1]);
   }
 

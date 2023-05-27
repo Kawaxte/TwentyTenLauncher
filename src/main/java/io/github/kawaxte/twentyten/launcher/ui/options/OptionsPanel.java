@@ -67,7 +67,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
 
     String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
-    this.updateComponentKeyValues(
+    this.updateComponentTexts(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
   }
 
@@ -79,18 +79,18 @@ public class OptionsPanel extends JPanel implements ActionListener {
     instance = op;
   }
 
-  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(
+  public void updateComponentTexts(UTF8ResourceBundle bundle) {
+    LauncherUtils.setComponentText(
         bundle,
         this.languageGroupBox,
         this.languageGroupBox.setTitledBorder(LauncherLanguageUtils.getOPKeys()[1]));
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle,
         this.versionGroupBox,
         this.versionGroupBox.setTitledBorder(LauncherLanguageUtils.getOPKeys()[0]));
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.openFolderButton, LauncherLanguageUtils.getOPKeys()[2]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.saveOptionsButton, LauncherLanguageUtils.getOPKeys()[3]);
   }
 

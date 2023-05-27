@@ -177,15 +177,15 @@ public final class LauncherOptionsUtils {
           () -> {
             UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(finalSelectedItem);
             if (Objects.nonNull(bundle)) {
-              LanguageGroupBox.getInstance().updateComponentKeyValues(bundle);
-              OptionsDialog.getInstance().updateContainerKeyValues(bundle);
-              OptionsPanel.getInstance().updateComponentKeyValues(bundle);
-              VersionGroupBox.getInstance().updateComponentKeyValues(bundle);
+              LanguageGroupBox.getInstance().updateComponentTexts(bundle);
+              OptionsDialog.getInstance().updateContainerTitles(bundle);
+              OptionsPanel.getInstance().updateComponentTexts(bundle);
+              VersionGroupBox.getInstance().updateComponentTexts(bundle);
 
               if (Objects.nonNull(MicrosoftAuthPanel.getInstance())) {
-                MicrosoftAuthPanel.getInstance().updateComponentKeyValues(bundle);
+                MicrosoftAuthPanel.getInstance().updateComponentTexts(bundle);
               }
-              YggdrasilAuthPanel.getInstance().updateComponentKeyValues(bundle);
+              YggdrasilAuthPanel.getInstance().updateComponentTexts(bundle);
             }
 
             OptionsDialog.getInstance().pack();

@@ -71,7 +71,7 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
 
     String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
-    this.updateComponentKeyValues(
+    this.updateComponentTexts(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
   }
 
@@ -83,14 +83,14 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     instance = lnnp;
   }
 
-  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
-    LauncherUtils.updateComponentKeyValue(
+  public void updateComponentTexts(UTF8ResourceBundle bundle) {
+    LauncherUtils.setComponentText(
         bundle, this.errorLabel, this.errorMessage, this.errorMessageArgs);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.playOnlineLabel, LauncherLanguageUtils.getLNPPKeys()[5]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.playOfflineButton, LauncherLanguageUtils.getLNPPKeys()[6]);
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.retryButton, LauncherLanguageUtils.getLNPPKeys()[7]);
   }
 

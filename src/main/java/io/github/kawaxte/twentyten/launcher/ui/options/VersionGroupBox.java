@@ -75,7 +75,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
 
     String selectedLanguage = (String) LauncherConfig.get(0);
     UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
-    this.updateComponentKeyValues(
+    this.updateComponentTexts(
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
 
     LauncherOptionsUtils.updateVersionComboBox(this);
@@ -89,7 +89,7 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     VersionGroupBox.instance = vgb;
   }
 
-  public void updateComponentKeyValues(UTF8ResourceBundle bundle) {
+  public void updateComponentTexts(UTF8ResourceBundle bundle) {
     List<String> versions = Collections.unmodifiableList(Arrays.asList("Beta", "Alpha", "Infdev"));
     List<String> releaseDateRange =
         Collections.unmodifiableList(
@@ -98,25 +98,25 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
                 "2010-06-30 -> 2010-12-03",
                 "2010-02-27 -> 2010-06-30"));
 
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle,
         this.showBetaVersionsCheckBox,
         LauncherLanguageUtils.getVGBKeys()[1],
         versions.get(0),
         releaseDateRange.get(0));
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle,
         this.showAlphaVersionsCheckBox,
         LauncherLanguageUtils.getVGBKeys()[1],
         versions.get(1),
         releaseDateRange.get(1));
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle,
         this.showInfdevVersionsCheckBox,
         LauncherLanguageUtils.getVGBKeys()[1],
         versions.get(2),
         releaseDateRange.get(2));
-    LauncherUtils.updateComponentKeyValue(
+    LauncherUtils.setComponentText(
         bundle, this.useVersionLabel, LauncherLanguageUtils.getVGBKeys()[2]);
   }
 
