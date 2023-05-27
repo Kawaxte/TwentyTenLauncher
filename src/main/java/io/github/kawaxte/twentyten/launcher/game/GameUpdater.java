@@ -67,6 +67,9 @@ import org.apache.logging.log4j.Logger;
  * classpath. If the files are already cached, it will not download them again.
  *
  * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
+ *
+ * @author Kawaxte
+ * @since 1.5.1223_05
  */
 public final class GameUpdater {
 
