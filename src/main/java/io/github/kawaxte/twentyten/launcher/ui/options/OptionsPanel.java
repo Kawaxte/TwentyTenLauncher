@@ -90,20 +90,10 @@ public class OptionsPanel extends JPanel implements ActionListener {
         Objects.nonNull(selectedLanguage) ? bundle : LauncherLanguage.getBundle());
   }
 
-  /**
-   * Returns the current instance of OptionsPanel.
-   *
-   * @return the instance of OptionsPanel
-   */
   public static OptionsPanel getInstance() {
     return instance;
   }
 
-  /**
-   * Sets the current instance of OptionsPanel.
-   *
-   * @param op the instance of OptionsPanel
-   */
   private static void setInstance(OptionsPanel op) {
     instance = op;
   }
@@ -175,11 +165,13 @@ public class OptionsPanel extends JPanel implements ActionListener {
   }
 
   /**
-   * Handles the actions performed on the buttons in the panel.
+   * Handles the actions performed on {@link #openFolderButton} and {@link #saveOptionsButton}.
    *
-   * <p>When the 'openFolderButton' is clicked, the working directory of the launcher is opened in
-   * the system file explorer. When the 'saveOptionsButton' is clicked, the selected language and
-   * version are updated, and the save button is disabled.
+   * <p>When the {@link #openFolderButton} is clicked, the working directory of the launcher is
+   * opened in the system file explorer.
+   *
+   * <p>When the {@link #saveOptionsButton} is clicked, the selected language and version are
+   * updated, and the save button is disabled.
    *
    * @param event the action event to be processed
    */
