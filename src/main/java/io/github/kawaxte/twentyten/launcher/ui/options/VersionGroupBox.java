@@ -38,6 +38,13 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import lombok.Getter;
 
+/**
+ * Class representing a C#-esque group box for selecting various versions of Minecraft to launch.
+ *
+ * @author Kawaxte
+ * @since 1.4.0923_02
+ * @see io.github.kawaxte.twentyten.launcher.ui.custom.JGroupBox
+ */
 public class VersionGroupBox extends JGroupBox implements ActionListener {
 
   public static final long serialVersionUID = 1L;
@@ -48,6 +55,19 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
   private final JLabel useVersionLabel;
   @Getter private final JComboBox<String> versionComboBox;
 
+  /**
+   * Constructor for LanguageGroupBox.
+   *
+   * <p>Initialises the components and sets the layout. Also, adds the action listeners to the some
+   * of the components that require it and sets the component texts according to the currently
+   * selected language.
+   *
+   * <p>It also sets the selected item of the {@link javax.swing.JComboBox} to the currently
+   * selected version.
+   *
+   * @see #setLayout(LayoutManager)
+   * @see #updateComponentTexts(UTF8ResourceBundle)
+   */
   public VersionGroupBox() {
     super(LauncherLanguageUtils.getVGBKeys()[0], true);
 
@@ -89,6 +109,15 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     VersionGroupBox.instance = vgb;
   }
 
+  /**
+   * Updates the texts of the components.
+   *
+   * <p>The texts are set according to the provided {@link
+   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   *
+   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
+   *     localised keys and values in the resource bundle
+   */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     List<String> versions = Collections.unmodifiableList(Arrays.asList("Beta", "Alpha", "Infdev"));
     List<String> releaseDateRange =
@@ -120,6 +149,12 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
         bundle, this.useVersionLabel, LauncherLanguageUtils.getVGBKeys()[2]);
   }
 
+  /**
+   * Creates and returns the {@link javax.swing.GroupLayout} used to layout the components in the
+   * panel.
+   *
+   * @return the layout of the panel
+   */
   private LayoutManager getGroupLayout() {
     GroupLayout gl = new GroupLayout(this);
     gl.setAutoCreateContainerGaps(true);
@@ -147,6 +182,17 @@ public class VersionGroupBox extends JGroupBox implements ActionListener {
     return gl;
   }
 
+  /**
+   * Handles the actions performed on {@link #showBetaVersionsCheckBox}, {@link
+   * #showAlphaVersionsCheckBox}, {@link #showInfdevVersionsCheckBox} and {@link #versionComboBox}.
+   *
+   * <p>It sets the status of {@code saveOptionsButton} based on which of the configuration values
+   * for the version checkboxes match with the currently selected {@link javax.swing.JComboBox}, and
+   * does the same on whether or not the selected version item in {@link #versionComboBox} is the
+   * same as the selected version in configuration file.
+   *
+   * @param event the action event to be processed
+   */
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
