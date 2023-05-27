@@ -65,6 +65,8 @@ import org.apache.logging.log4j.Logger;
  *
  * <p>It checks if the necessary files exist, downloads any missing files, and updates the
  * classpath. If the files are already cached, it will not download them again.
+ *
+ * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
  */
 public final class GameUpdater {
 

@@ -46,6 +46,8 @@ import java.util.function.Function;
  * supports the methods of {@link java.util.LinkedHashMap}, providing additional flexibility and
  * control over the properties.
  *
+ * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
+ *
  * @see java.util.Properties
  * @see java.util.LinkedHashMap
  * @author Kawaxte

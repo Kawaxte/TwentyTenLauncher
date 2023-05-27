@@ -25,6 +25,8 @@ import org.json.JSONObject;
 /**
  * Utility class for handling Mojang (Yggdrasil) authentication.
  *
+ * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
+ *
  * @author Kawaxte
  * @since 1.5.0623_01
  */

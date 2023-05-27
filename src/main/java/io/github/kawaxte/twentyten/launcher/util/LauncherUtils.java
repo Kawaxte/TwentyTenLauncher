@@ -69,6 +69,8 @@ import org.json.JSONObject;
 /**
  * Utility class used for various purposes related to the inner workings of the launcher.
  *
+ * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
+ *
  * @author Kawaxte
  * @since 1.3.2823_02
  */

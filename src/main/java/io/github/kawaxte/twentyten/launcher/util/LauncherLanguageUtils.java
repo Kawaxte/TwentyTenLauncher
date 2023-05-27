@@ -3,6 +3,8 @@ package io.github.kawaxte.twentyten.launcher.util;
 /**
  * Utility class for retrieving keys from the language resource bundles.
  *
+ * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
+ *
  * @author Kawaxte
  * @since 1.5.0623_01
  */
