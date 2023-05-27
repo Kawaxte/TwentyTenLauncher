@@ -24,6 +24,12 @@ import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
 import java.util.Objects;
 import org.json.JSONObject;
 
+/**
+ * Utility class for handling Microsoft authentication.
+ *
+ * @author Kawaxte
+ * @since 1.5.0823_02
+ */
 public final class MicrosoftAuthUtils {
 
   public static final String AZURE_CLIENT_ID;
@@ -34,6 +40,16 @@ public final class MicrosoftAuthUtils {
 
   private MicrosoftAuthUtils() {}
 
+  /**
+   * Executes the Microsoft authentication worker as long as the given {@code clientId} is not
+   * {@code null} or empty.
+   *
+   * <p>It also swaps the containers ({@link javax.swing.JPanel}s) from {@link
+   * io.github.kawaxte.twentyten.launcher.ui.LauncherPanel} to {@link
+   * io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel}.
+   *
+   * @param clientId the client ID of the Azure application required for authentication
+   */
   public static void executeMicrosoftAuthWorker(String clientId) {
     if (Objects.isNull(clientId)) {
       throw new NullPointerException("clientId cannot be null");
@@ -46,7 +62,7 @@ public final class MicrosoftAuthUtils {
     if (Objects.isNull(consumersDeviceCode)) {
       return;
     }
-    String[] deviceCodeResponse = getDeviceCodeResponse(consumersDeviceCode);
+    String[] deviceCodeResponse = MicrosoftAuthTask.getDeviceCodeResponse(consumersDeviceCode);
 
     LauncherUtils.swapContainers(
         LauncherPanel.getInstance(),
@@ -58,6 +74,16 @@ public final class MicrosoftAuthUtils {
         .execute();
   }
 
+  /**
+   * Checks if the access token is expired as long as the refresh token is not {@code null} or
+   * empty.
+   *
+   * <p>It checks the current time in seconds and compares it to the expiration time of the access
+   * token.
+   *
+   * @return {@code true} if the difference between the current time and the expiration time is less
+   *     than or equal to 900 seconds (15 minutes), {@code false} otherwise
+   */
   public static boolean isAccessTokenExpired() {
     String refreshToken = (String) LauncherConfig.get(9);
     if (Objects.isNull(refreshToken)) {
@@ -74,6 +100,15 @@ public final class MicrosoftAuthUtils {
     return expiresIn <= 900;
   }
 
+  /**
+   * Refreshes the access token and saves the new access token, refresh token, and expiration time
+   * to the configuration file.
+   *
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#refreshToken(String, String)
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireXBLToken(String)
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireXSTSToken(String)
+   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireAccessToken(String, String)
+   */
   public static void refreshAccessToken() {
     String refreshToken = (String) LauncherConfig.get(9);
 
@@ -81,7 +116,7 @@ public final class MicrosoftAuthUtils {
     if (Objects.isNull(consumersToken)) {
       return;
     }
-    String[] tokenResponse = getRefreshTokenResponse(consumersToken);
+    String[] tokenResponse = MicrosoftAuthTask.getRefreshTokenResponse(consumersToken);
 
     JSONObject userAuthenticate = MicrosoftAuth.acquireXBLToken(tokenResponse[0]);
     if (Objects.isNull(userAuthenticate)) {
@@ -107,20 +142,5 @@ public final class MicrosoftAuthUtils {
     LauncherConfig.set(8, accessTokenResponse[1]);
     LauncherConfig.set(9, tokenResponse[1]);
     LauncherConfig.saveConfig();
-  }
-
-  private static String[] getRefreshTokenResponse(JSONObject object) {
-    String accessToken = object.getString("access_token");
-    String refreshToken = object.getString("refresh_token");
-    return new String[] {accessToken, refreshToken};
-  }
-
-  private static String[] getDeviceCodeResponse(JSONObject object) {
-    String userCode = object.getString("user_code");
-    String deviceCode = object.getString("device_code");
-    String verificationUri = object.getString("verification_uri");
-    String expiresIn = String.valueOf(object.getInt("expires_in"));
-    String interval = String.valueOf(object.getInt("interval"));
-    return new String[] {userCode, deviceCode, verificationUri, expiresIn, interval};
   }
 }
