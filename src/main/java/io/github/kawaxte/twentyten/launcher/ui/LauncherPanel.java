@@ -34,10 +34,8 @@ import java.util.stream.IntStream;
 import javax.swing.JPanel;
 
 /**
- * Class representing the {@link javax.swing.JPanel} that contains various interactive components,
- * and is the core panel for the {@link javax.swing.JFrame}.
- *
- * <p>It also handles any action that the user may perform on the components.
+ * Class representing the {@link javax.swing.JPanel} is the core panel for a {@link
+ * javax.swing.JFrame}.
  *
  * @author Kawaxte
  * @since 1.3.2923_03
