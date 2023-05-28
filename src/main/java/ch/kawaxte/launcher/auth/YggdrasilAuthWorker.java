@@ -13,18 +13,18 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.auth;
+package ch.kawaxte.launcher.auth;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import javax.swing.SwingWorker;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * This class schedules a {@link io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthTask}.
+ * This class schedules a {@link YggdrasilAuthTask}.
  *
  * @see javax.swing.SwingWorker
  * @author Kawaxte
@@ -35,7 +35,7 @@ public class YggdrasilAuthWorker extends SwingWorker<Object, Void> {
   private final String username;
   private final String password;
   private final String clientToken;
-  private final Logger logger = LogManager.getLogger(this);
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   /**
    * Constructs a new YggdrasilAuthWorker with the specified parameters.
@@ -51,11 +51,10 @@ public class YggdrasilAuthWorker extends SwingWorker<Object, Void> {
   }
 
   /**
-   * Submits a {@link io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthTask} to the {@link
-   * java.util.concurrent.ExecutorService} and returns the result.
+   * Submits a {@link YggdrasilAuthTask} to the {@link java.util.concurrent.ExecutorService} and
+   * returns the result.
    *
-   * @return the result of the {@link io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthTask}
-   *     or {@code null} if an error occurred
+   * @return the result of the {@link YggdrasilAuthTask} or {@code null} if an error occurred
    */
   @Override
   protected Object doInBackground() {
