@@ -13,11 +13,11 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher;
+package ch.kawaxte.launcher;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.UTF8ResourceBundle.UTF8Control;
-import io.github.kawaxte.twentyten.launcher.util.LauncherOptionsUtils;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle.UTF8Control;
+import ch.kawaxte.launcher.util.LauncherOptionsUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,13 +29,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import lombok.Getter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Class providing methods for getting a {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} for
- * a specific language code, and loading language resources from a given base name and language code
- * in ISO 639-1 format.
+ * Class providing methods for getting a {@link UTF8ResourceBundle} for a specific language code,
+ * and loading language resources from a given base name and language code in ISO 639-1 format.
  *
  * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
  *
@@ -48,19 +47,18 @@ public final class LauncherLanguage {
   @Getter private static UTF8ResourceBundle bundle;
 
   static {
-    LOGGER = LogManager.getLogger(LauncherLanguage.class);
+    LOGGER = LoggerFactory.getLogger(LauncherLanguage.class);
   }
 
   private LauncherLanguage() {}
 
   /**
-   * Returns a {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} for the provided language
-   * code. If the language code is {@code null}, a {@link
-   * io.github.kawaxte.twentyten.UTF8ResourceBundle} for the default locale is returned.
+   * Returns a {@link UTF8ResourceBundle} for the provided language code. If the language code is
+   * {@code null}, a {@link UTF8ResourceBundle} for the default locale is returned.
    *
    * @param languageCode the ISO 639-1 language code for which to get the resource bundle
-   * @return the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} for the given language code,
-   *     or for the default locale if the language code is {@code null}
+   * @return the {@link UTF8ResourceBundle} for the given language code, or for the default locale
+   *     if the language code is {@code null}
    * @see ResourceBundle#getBundle(String, Locale)
    * @see Locale#forLanguageTag(String)
    * @see <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">List of ISO 639-1
@@ -104,7 +102,7 @@ public final class LauncherLanguage {
     } catch (IOException ioe) {
       LOGGER.error("Cannot load {}", fileUrl, ioe);
     } finally {
-      if (Objects.nonNull(fileUrl) && Objects.nonNull(bundle)) {
+      if (Objects.nonNull(fileUrl)) {
         LOGGER.info("Loading {}", fileUrl);
       }
     }
