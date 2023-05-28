@@ -13,16 +13,16 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui.options;
+package ch.kawaxte.launcher.ui.options;
 
-import static io.github.kawaxte.twentyten.launcher.util.LauncherUtils.WORKING_DIRECTORY_PATH;
+import static ch.kawaxte.launcher.util.LauncherUtils.WORKING_DIRECTORY_PATH;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherOptionsUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.LauncherLanguage;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherOptionsUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -101,11 +101,10 @@ public class OptionsPanel extends JPanel implements ActionListener {
   /**
    * Updates the texts of the components.
    *
-   * <p>The texts are set according to the provided {@link
-   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   * <p>The texts are set according to the provided {@link UTF8ResourceBundle}.
    *
-   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
-   *     localised keys and values in the resource bundle
+   * @param bundle the {@link UTF8ResourceBundle} containing the localised keys and values in the
+   *     resource bundle
    */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     LauncherUtils.setComponentText(
