@@ -13,14 +13,20 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.util;
+package ch.kawaxte.launcher.util;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.EPlatform;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.ui.custom.JGroupBox;
+import ch.kawaxte.launcher.EPlatform;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.impl.swing.JGroupBox;
+import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
+import ch.kawaxte.launcher.ui.LauncherPanel;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -59,12 +65,10 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import lombok.Getter;
-import org.apache.hc.client5.http.fluent.Content;
-import org.apache.hc.client5.http.fluent.Request;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class used for various purposes related to the inner workings of the launcher.
@@ -83,7 +87,7 @@ public final class LauncherUtils {
   @Getter private static Boolean outdated;
 
   static {
-    LOGGER = LogManager.getLogger(LauncherUtils.class);
+    LOGGER = LoggerFactory.getLogger(LauncherUtils.class);
 
     JWT_PATTERN = Pattern.compile("^[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+?" + "\\.[A-Za-z0-9-_]+$");
     UUID_PATTERN =
@@ -107,6 +111,10 @@ public final class LauncherUtils {
    * @return the decoded value if the length is not 0, otherwise {@code null}
    */
   public static String decodeFromBase64(int index) {
+    if (Objects.isNull(LauncherConfig.get(index))) {
+      return null;
+    }
+
     byte[] bytes = (LauncherConfig.get(index).toString()).getBytes(StandardCharsets.UTF_8);
     return bytes.length == 0 ? "" : new String(Base64.getDecoder().decode(bytes));
   }
@@ -134,7 +142,7 @@ public final class LauncherUtils {
    *
    * @return the URLs to either pages as an array
    */
-  public static URL[] getLinkLabelUrls() {
+  public static URL[] getUrls() {
     URL[] urls = new URL[2];
     try {
       urls[0] =
@@ -288,15 +296,20 @@ public final class LauncherUtils {
           new SwingWorker<Boolean, Void>() {
             @Override
             protected Boolean doInBackground() {
+              HttpTransport transport = new NetHttpTransport();
+
+              HttpRequestFactory factory = transport.createRequestFactory();
               try {
-                Content content =
-                    Request.get(getLinkLabelUrls()[1].toURI())
-                        .addHeader("accept", "application/vnd.github+json")
-                        .addHeader("X-GitHub-Api-Version", "2022-11-28")
-                        .execute()
-                        .returnContent();
-                JSONArray body = new JSONArray(content.asString());
-                String tagName = body.getJSONObject(0).getString("tag_name");
+                HttpRequest request =
+                    factory.buildGetRequest(
+                        new GenericUrl(getUrls()[1].toURI())
+                            .set("accept", "application/vnd.github+json")
+                            .set("X-GitHub-Api-Version", "2022-11-28"));
+                HttpResponse response = request.execute();
+
+                String body = response.parseAsString();
+                JSONArray array = new JSONArray(body);
+                String tagName = array.getJSONObject(0).getString("tag_name");
                 String buildTime = getManifestAttribute("Build-Time");
                 return Objects.compare(buildTime, tagName, String::compareTo) < 0;
               } catch (UnknownHostException uhe) {
@@ -307,7 +320,7 @@ public final class LauncherUtils {
               } catch (IOException ioe) {
                 LOGGER.error("Cannot check for updates", ioe);
               } catch (URISyntaxException urise) {
-                LOGGER.error("Cannot convert {} to URI", getLinkLabelUrls()[1], urise);
+                LOGGER.error("Cannot convert {} to URI", getUrls()[1], urise);
               }
               return false;
             }
@@ -362,7 +375,7 @@ public final class LauncherUtils {
    * Sets the title of the specified container with the specified key and arguments.
    *
    * <p>This is used to dynamically update the title of containers that are not updated by the
-   * {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} when the locale is changed.
+   * {@link UTF8ResourceBundle} when the locale is changed.
    *
    * @param bundle the resource bundle to use
    * @param c the container to update
@@ -385,7 +398,7 @@ public final class LauncherUtils {
    * Updates the text of the specified component with the specified key and arguments.
    *
    * <p>This is used to dynamically update the text of components that are not updated by the {@link
-   * io.github.kawaxte.twentyten.UTF8ResourceBundle} when the locale is changed.
+   * UTF8ResourceBundle} when the locale is changed.
    *
    * @param bundle the resource bundle to use
    * @param c the component to update
