@@ -13,21 +13,21 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui;
+package ch.kawaxte.launcher.ui;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.Launcher;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
-import io.github.kawaxte.twentyten.launcher.ui.custom.JHyperlink;
-import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
-import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJCheckBox;
-import io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
-import io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils;
-import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
+import ch.kawaxte.launcher.Launcher;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.LauncherLanguage;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.impl.swing.CustomJPanel;
+import ch.kawaxte.launcher.impl.swing.JHyperlink;
+import ch.kawaxte.launcher.impl.swing.TransparentJButton;
+import ch.kawaxte.launcher.impl.swing.TransparentJCheckBox;
+import ch.kawaxte.launcher.ui.options.OptionsDialog;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.util.MicrosoftAuthUtils;
+import ch.kawaxte.launcher.util.YggdrasilAuthUtils;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -74,8 +74,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
    * selected language.
    *
    * <p>It also handles the click event for the {@link #linkLabel} component, which opens the
-   * browser and navigates to the link specified in {@link
-   * io.github.kawaxte.twentyten.launcher.util.LauncherUtils#getLinkLabelUrls()}.
+   * browser and navigates to the link specified in {@link LauncherUtils#getUrls()}.
    *
    * @see #setLayout(LayoutManager)
    * @see #updateComponentTexts(UTF8ResourceBundle)
@@ -122,8 +121,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
             LauncherUtils.openBrowser(
                 Objects.nonNull(LauncherUtils.getOutdated())
                         && Boolean.TRUE.equals(LauncherUtils.getOutdated())
-                    ? String.valueOf(LauncherUtils.getLinkLabelUrls()[1])
-                    : String.valueOf(LauncherUtils.getLinkLabelUrls()[0]));
+                    ? String.valueOf(LauncherUtils.getUrls()[1])
+                    : String.valueOf(LauncherUtils.getUrls()[0]));
           }
         });
     this.signinButton.addActionListener(this);
@@ -145,11 +144,10 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
   /**
    * Updates the texts of the components.
    *
-   * <p>The texts are set according to the provided {@link
-   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   * <p>The texts are set according to the provided {@link UTF8ResourceBundle}.
    *
-   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
-   *     localised keys and values in the resource bundle
+   * @param bundle the {@link UTF8ResourceBundle} containing the localised keys and values in the
+   *     resource bundle
    */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     LauncherUtils.setComponentText(
@@ -240,12 +238,10 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
    *   <li>Disable all components in the panel
    *   <li>Set the text of the button to "Signing in..."
    *   <li>Check if the launcher is outdated
-   *   <li>If the launcher is outdated, swap the panel with a {@link
-   *       io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel}
+   *   <li>If the launcher is outdated, swap the panel with a {@link LauncherNoNetworkPanel}
    *   <li>Otherwise, check if the username and password fields are empty
    *   <li>If the username and password fields are empty, swap the panel with a {@link
-   *       io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel} and display an error
-   *       message, otherwise continue
+   *       LauncherNoNetworkPanel} and display an error message, otherwise continue
    * </ol>
    *
    * <p>If everything goes flawlessly, Minecraft will be launched right after checking for updates.
@@ -272,7 +268,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
       String microsoftProfileId = (String) LauncherConfig.get(5);
       String microsoftAccessToken = (String) LauncherConfig.get(7);
       boolean accessTokenMatched =
-          LauncherUtils.JWT_PATTERN.matcher(microsoftAccessToken).matches();
+          Objects.nonNull(microsoftAccessToken)
+              && LauncherUtils.JWT_PATTERN.matcher(microsoftAccessToken).matches();
       if (!accessTokenMatched) {
         MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.AZURE_CLIENT_ID);
         return;
