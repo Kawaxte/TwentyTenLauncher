@@ -13,17 +13,16 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.game;
+package ch.kawaxte.launcher.minecraft;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.LauncherLanguage;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
 import lombok.Getter;
 
 /**
- * Enum representing the various stages of Minecraft updates in the {@link
- * io.github.kawaxte.twentyten.launcher.game.GameUpdater} class.
+ * Enum representing the various stages of Minecraft updates in the {@link MinecraftUpdate} class.
  *
  * <p>The constants in this Enum correspond to different states in the updating process, such as
  * initialising, checking the cache, downloading and extracting packages, updating the classpath,
