@@ -1,5 +1,5 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: GitHub Discussions
+  - name: TwentyTen Launcher Support
     url: https://github.com/Kawaxte/TwentyTenLauncher/discussions
-    about: Please discuss with us on GitHub Discussions before opening an issue.
+    about: Please ask and answer questions here.

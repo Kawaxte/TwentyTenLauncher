@@ -1,0 +1,53 @@
+name: Feature request
+description: |
+  Template for submitting a features that would benefit users of TwentyTen Launcher.
+title: "[Feature]:"
+labels: [ feature ]
+assignees:
+  - Kawaxte
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting a feature request, please check that your idea hasn't already been suggested by searching [issues](https://github.com/Kawaxte/TwentyTenLauncher/issues) or
+        [pull requests](https://github.com/Kawaxte/TwentyTenLauncher/pulls).
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Description of Feature
+      description: |
+        A clear and concise description of what the feature is.
+      placeholder: |
+        I would like to be able to change the background image of the launcher.
+    validations:
+      required: true
+  - type: textarea
+    id: feature-implementation
+    attributes:
+      label: Implementation of Feature
+      description: |
+        A clear and concise description of how you would like the feature to be implemented.
+      placeholder: |
+        I would like to be able to change the background image of the launcher by clicking on the "Change Background" button in the "Launcher Options" window.
+    validations:
+      required: true
+  - type: textarea
+    id: feature-reason
+    attributes:
+      label: Reason for Feature
+      description: |
+        A clear and concise description of why you would like this feature to be implemented.
+      placeholder: |
+        I would like to be able to change the background image of the launcher because I don't like the default background image.
+    validations:
+      required: true
+  - type: textarea
+    id: feature-alternatives
+    attributes:
+      label: Alternatives to Feature
+      description: |
+        A clear and concise description of any alternative solutions or features you've considered.
+      placeholder: |
+        I initially thought that I could change the background image of the launcher by editing the "dirt.png" file within the executable, but that wasn't very convenient.
+    validations:
+      required: true

@@ -1,0 +1,73 @@
+name: Bug report
+description: |
+  Template for reporting bugs encountered while using TwentyTen Launcher.
+title: "[Bug]:"
+labels: [ bug ]
+assignees:
+  - Kawaxte
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting a bug report, please check that your issue hasn't already been reported by searching [issues](https://github.com/Kawaxte/TwentyTenLauncher/issues).
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: |
+        What operating system(s) are you using?
+      options:
+        - Linux
+        - macOS
+        - Windows
+  - type: textarea
+    id: version
+    attributes:
+      label: Version of TwentyTen Launcher
+      description: |
+        What version of TwentyTen Launcher were you using when you encountered this bug?
+      placeholder: |
+        1.5.2823_06
+    validations:
+      required: true
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Description of Bug
+      description: |
+        A clear and concise description of what the bug is.
+      placeholder: |
+        When I click on the "Sign in" button, nothing happens.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: |
+        A clear and concise description of what you expected to happen.
+      placeholder: |
+        I expected to be signing in to my Mojang account when I clicked on the "Sign in" button.
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        Steps to reproduce the behavior of the bug:
+      placeholder: |
+        1. Open "twentyten-launcher.jar"
+        2. Click on the "Sign in" button
+    validations:
+      required: true
+  - type: textarea
+    id: suspected-cause
+    attributes:
+      label: Suspected Cause
+      description: |
+        If you have any idea what might be causing this bug, please describe it here.
+      placeholder: |
+        I think this bug is caused by the launcher not being able to connect to the Mojang API.
+    validations:
+      required: false
