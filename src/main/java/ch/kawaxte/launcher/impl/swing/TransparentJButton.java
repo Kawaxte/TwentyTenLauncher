@@ -13,7 +13,7 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui.custom;
+package ch.kawaxte.launcher.impl.swing;
 
 import java.awt.Toolkit;
 import java.util.Objects;
@@ -26,7 +26,7 @@ import javax.swing.UIManager;
  * Specifically, it provides support for Windows NT kernels between version 5.1 and 6.1 when set to
  * "Windows Classic" theme.
  *
- * <p>In these specific environments, a standard opaque setting can cause the button's core drawn
+ * <p>In these specific environments, a standard opaque setting can cause the button's impl drawn
  * elements to completely disappear. The overridden implementation in this class addresses this
  * issue, ensuring the button is displayed as expected.
  *
@@ -42,7 +42,7 @@ public class TransparentJButton extends JButton {
 
   /**
    * This method has been overridden to provide custom behaviour in certain Windows environments
-   * where the standard opaque setting causes the button's core drawn elements to disappear. This
+   * where the standard opaque setting causes the button's impl drawn elements to disappear. This
    * particularly affects users who have their theme set to "Windows Classic" on Windows NT kernels
    * between version 5.1 and 6.1.
    *
