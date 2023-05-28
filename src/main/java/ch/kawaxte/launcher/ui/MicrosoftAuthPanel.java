@@ -13,15 +13,15 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui;
+package ch.kawaxte.launcher.ui;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
-import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.LauncherLanguage;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.impl.swing.CustomJPanel;
+import ch.kawaxte.launcher.impl.swing.TransparentJButton;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.LayoutManager;
@@ -133,11 +133,10 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
   /**
    * Updates the texts of the components.
    *
-   * <p>The texts are set according to the provided {@link
-   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   * <p>The texts are set according to the provided {@link UTF8ResourceBundle}.
    *
-   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
-   *     localised keys and values in the resource bundle
+   * @param bundle the {@link UTF8ResourceBundle} containing the localised keys and values in the
+   *     resource bundle
    */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     LauncherUtils.setComponentText(
@@ -194,10 +193,9 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
    * <p>When processing {@link #openBrowserButton}, the user code is copied to the clipboard and the
    * default browser is opened with the verification URI.
    *
-   * <p>When processing {@link #cancelButton}, the {@link
-   * io.github.kawaxte.twentyten.launcher.ui.LauncherPanel} is swapped in place of the current
-   * panel. Since cancellation will make the panel 'technically' invisible, Microsoft authentication
-   * processes will be terminated.
+   * <p>When processing {@link #cancelButton}, the {@link LauncherPanel} is swapped in place of the
+   * current panel. Since cancellation will make the panel 'technically' invisible, Microsoft
+   * authentication processes will be terminated.
    *
    * @param event the action event to be processed
    */
