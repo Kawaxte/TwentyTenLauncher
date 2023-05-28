@@ -13,56 +13,56 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.game;
+package ch.kawaxte.launcher.minecraft;
 
-import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
+import ch.kawaxte.launcher.ui.MinecraftAppletWrapper;
+import com.google.api.client.http.GenericUrl;
 import java.applet.Applet;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import javax.swing.SwingWorker;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Class scheduling a {@link io.github.kawaxte.twentyten.launcher.game.GameUpdaterTask}.
+ * Class scheduling a {@link MinecraftUpdateTask}.
  *
  * @see javax.swing.SwingWorker
  * @since 1.5.1223_05
  */
-public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
+public class MinecraftUpdateWorker extends SwingWorker<Applet, Void> {
 
   private static final Logger LOGGER;
 
   static {
-    LOGGER = LogManager.getLogger(GameUpdaterWorker.class);
+    LOGGER = LoggerFactory.getLogger(MinecraftUpdateWorker.class);
   }
 
-  private final URL[] urls;
+  private final GenericUrl[] urls;
 
   /**
    * Constructs a new GameUpdaterWorker with the specified URLs.
    *
    * @param urls the URLs to download the files from
    */
-  public GameUpdaterWorker(URL[] urls) {
+  public MinecraftUpdateWorker(GenericUrl[] urls) {
     this.urls = urls;
   }
 
   @Override
   protected Applet doInBackground() {
     ExecutorService service = Executors.newSingleThreadExecutor();
-    Future<?> future = service.submit(new GameUpdaterTask(urls));
+    Future<?> future = service.submit(new MinecraftUpdateTask(urls));
     try {
       future.get();
 
-      if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
+      if (!MinecraftAppletWrapper.getInstance().isUpdaterTaskErrored()) {
         return (Applet)
-            GameAppletWrapper.getInstance()
+            MinecraftAppletWrapper.getInstance()
                 .getMcAppletClassLoader()
                 .loadClass("net.minecraft.client.MinecraftApplet")
                 .getDeclaredConstructor()
@@ -95,7 +95,7 @@ public class GameUpdaterWorker extends SwingWorker<Applet, Void> {
     try {
       Applet applet = this.get();
       if (Objects.nonNull(applet)) {
-        GameAppletWrapper.getInstance().replace(applet);
+        MinecraftAppletWrapper.getInstance().replace(applet);
       }
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
