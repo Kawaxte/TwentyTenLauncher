@@ -13,14 +13,15 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher;
+package ch.kawaxte.launcher;
 
-import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherFrame;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.util.MicrosoftAuthUtils;
-import io.github.kawaxte.twentyten.launcher.util.YggdrasilAuthUtils;
+import ch.kawaxte.launcher.ui.LauncherFrame;
+import ch.kawaxte.launcher.ui.LauncherPanel;
+import ch.kawaxte.launcher.ui.MinecraftAppletWrapper;
+import ch.kawaxte.launcher.util.MicrosoftAuthUtils;
+import ch.kawaxte.launcher.util.YggdrasilAuthUtils;
 import java.util.Objects;
+import java.util.UUID;
 import javax.swing.SwingUtilities;
 
 /**
@@ -28,8 +29,8 @@ import javax.swing.SwingUtilities;
  * language preferences, displaying the main frame of the application, and handling the
  * authentication tokens for both Microsoft and Mojang accounts.
  *
- * <p>It also provides a static method {@code launchMinecraft(...)} for launching the Minecraft
- * applet within a JFrame with a specific username, access token and UUID.
+ * <p>It also provides a static method {@link #launchMinecraft(String, String, String)} for
+ * launching the Minecraft applet within a JFrame with a specific username, access token and UUID.
  *
  * @author Kawaxte
  * @since 1.3.2823_02
@@ -50,6 +51,9 @@ public class Launcher {
    * @param args command-line arguments
    */
   public static void main(String... args) {
+    System.setProperty("org.slf4j.simpleLogger.logFile", "System.out");
+    System.setProperty("org.slf4j.simpleLogger.levelInBrackets", String.valueOf(true));
+
     ELookAndFeel.setLookAndFeel();
 
     LauncherConfig.loadConfig();
@@ -73,12 +77,10 @@ public class Launcher {
 
   /**
    * Constructs a session ID from the provided parameters (excluding {@code username}), and
-   * initialises a new {@link io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper} with the
-   * constructed session ID. It then removes the current content pane of the {@link
-   * io.github.kawaxte.twentyten.launcher.ui.LauncherFrame} and sets the initialised {@link
-   * io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper} as the new content pane. Finally, it
-   * starts the game applet and changes the title of the {@link
-   * io.github.kawaxte.twentyten.launcher.ui.LauncherFrame} to "Minecraft".
+   * initialises a new {@link MinecraftAppletWrapper} with the constructed session ID. It then
+   * removes the current content pane of the {@link LauncherFrame} and sets the initialised {@link
+   * MinecraftAppletWrapper} as the new content pane. Finally, it starts the minecraft applet and
+   * changes the title of the {@link LauncherFrame} to "Minecraft".
    *
    * <p>If the username is {@code null} or empty, a randomly generated one in the format of
    * "Player###" will be set.
@@ -86,11 +88,14 @@ public class Launcher {
    * @param username username of the account (or email address if Mojang account)
    * @param accessToken the JWT containing various information about the Minecraft profile
    * @param uuid the UUID of the account's Minecraft profile
-   * @see GameAppletWrapper#GameAppletWrapper(String, String)
+   * @see MinecraftAppletWrapper#MinecraftAppletWrapper(String, String)
    */
   public static void launchMinecraft(String username, String accessToken, String uuid) {
     if (Objects.isNull(username)) {
       username = String.format("Player%s", System.currentTimeMillis() % 1000L);
+    }
+    if (Objects.isNull(uuid)) {
+      uuid = UUID.nameUUIDFromBytes(username.getBytes()).toString();
     }
 
     String sessionId =
@@ -101,15 +106,15 @@ public class Launcher {
             .append(uuid)
             .toString();
 
-    GameAppletWrapper gaw = new GameAppletWrapper(username, sessionId);
-    gaw.init();
+    MinecraftAppletWrapper maw = new MinecraftAppletWrapper(username, sessionId);
+    maw.init();
 
     LauncherFrame.getInstance().remove(LauncherPanel.getInstance());
-    LauncherFrame.getInstance().setContentPane(gaw);
+    LauncherFrame.getInstance().setContentPane(maw);
     LauncherFrame.getInstance().revalidate();
     LauncherFrame.getInstance().repaint();
 
-    gaw.start();
+    maw.start();
     LauncherFrame.getInstance().setTitle("Minecraft");
   }
 }
