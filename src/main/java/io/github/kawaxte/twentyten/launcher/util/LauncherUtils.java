@@ -154,7 +154,7 @@ public final class LauncherUtils {
                   .append("https://api.github.com/")
                   .append("repos/")
                   .append("Kawaxte/")
-                  .append("TwentyTenLauncher/")
+                  .append("twentyten-launcher/")
                   .append("releases")
                   .toString());
     } catch (MalformedURLException murle) {
@@ -280,7 +280,7 @@ public final class LauncherUtils {
    * build is published on GitHub. and will reset whenever the month increments.
    *
    * @return {@code true} if the current version of the launcher is outdated, {@code false}
-   * @see <a href="https://github.com/Kawaxte/TwentyTenLauncher/releases/latest">Latest Release</a>
+   * @see <a href="https://github.com/Kawaxte/twentyten-launcher/releases/latest">Latest Release</a>
    */
   public static boolean isOutdated() {
     if (Objects.isNull(outdated)) {
