@@ -18,7 +18,7 @@ package ch.kawaxte.launcher.ui;
 import ch.kawaxte.launcher.LauncherConfig;
 import ch.kawaxte.launcher.LauncherLanguage;
 import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
-import ch.kawaxte.launcher.impl.swing.CustomJPanel;
+import ch.kawaxte.launcher.impl.swing.NotchJPanel;
 import ch.kawaxte.launcher.impl.swing.TransparentJButton;
 import ch.kawaxte.launcher.util.LauncherLanguageUtils;
 import ch.kawaxte.launcher.util.LauncherUtils;
@@ -48,7 +48,7 @@ import lombok.Getter;
  * @since 1.4.1123_04
  */
 @Getter
-public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
+public class MicrosoftAuthPanel extends NotchJPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
   private static MicrosoftAuthPanel instance;

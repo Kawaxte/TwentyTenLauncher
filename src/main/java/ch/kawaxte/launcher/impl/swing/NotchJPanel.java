@@ -38,11 +38,11 @@ import javax.swing.JPanel;
  * @author Kawaxte
  * @since 1.1.2323_01
  */
-public class CustomJPanel extends JPanel {
+public class NotchJPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  public CustomJPanel(boolean isDoubleBuffered) {
+  public NotchJPanel(boolean isDoubleBuffered) {
     super(isDoubleBuffered);
   }
 
