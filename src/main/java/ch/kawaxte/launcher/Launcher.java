@@ -20,6 +20,7 @@ import ch.kawaxte.launcher.ui.LauncherPanel;
 import ch.kawaxte.launcher.ui.MinecraftAppletWrapper;
 import ch.kawaxte.launcher.util.MicrosoftAuthUtils;
 import ch.kawaxte.launcher.util.YggdrasilAuthUtils;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
 import javax.swing.SwingUtilities;
@@ -95,7 +96,7 @@ public class Launcher {
       username = String.format("Player%s", System.currentTimeMillis() % 1000L);
     }
     if (Objects.isNull(uuid)) {
-      uuid = UUID.nameUUIDFromBytes(username.getBytes()).toString();
+      uuid = UUID.nameUUIDFromBytes(username.getBytes(StandardCharsets.UTF_8)).toString();
     }
 
     String sessionId =
