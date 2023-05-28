@@ -13,10 +13,10 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.game;
+package ch.kawaxte.launcher.minecraft;
 
-import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
-import java.net.URL;
+import ch.kawaxte.launcher.ui.MinecraftAppletWrapper;
+import com.google.api.client.http.GenericUrl;
 
 /**
  * Task performing the update process when run, downloading the necessary files and handling the
@@ -31,16 +31,16 @@ import java.net.URL;
  * @author Kawaxte
  * @since 1.5.1223_05
  */
-public class GameUpdaterTask implements Runnable {
+public class MinecraftUpdateTask implements Runnable {
 
-  private final URL[] urls;
+  private final GenericUrl[] urls;
 
   /**
    * Constructs a new update task with the specified URLs.
    *
    * @param urls the URLs to download the files from
    */
-  public GameUpdaterTask(URL[] urls) {
+  public MinecraftUpdateTask(GenericUrl[] urls) {
     this.urls = urls;
   }
 
@@ -48,35 +48,36 @@ public class GameUpdaterTask implements Runnable {
    * Performs the update process, downloading the necessary files and handling the response.
    *
    * <p>When initialising, the state will be set to {@link EState#CHECK_CACHE} and the progress of
-   * the task will be set to 5%. If the game is not cached, the task will download the necessary
-   * files, move them to their respective locations, extract any archives and update the classpath.
-   * If the game is cached, the task will skip the download process and proceed to the launch.
+   * the task will be set to 5%. If the minecraft is not cached, the task will download the
+   * necessary files, move them to their respective locations, extract any archives and update the
+   * classpath. If the minecraft is cached, the task will skip the download process and proceed to
+   * the launch.
    *
    * <p>If no error occurs, the classpath is updated (just in case), the state will be set to {@link
    * EState#DONE} and the progress of the task will be set to 95%.
    *
-   * @see GameUpdater#downloadPackages(URL[])
-   * @see GameUpdater#extractDownloadedPackages()
-   * @see GameUpdater#updateClasspath()
+   * @see MinecraftUpdate#downloadPackages(GenericUrl[])
+   * @see MinecraftUpdate#extractDownloadedPackages()
+   * @see MinecraftUpdate#updateClasspath()
    */
   @Override
   public void run() {
-    GameAppletWrapper.getInstance().setTaskState(EState.CHECK_CACHE.ordinal());
-    GameAppletWrapper.getInstance().setTaskStateMessage(EState.CHECK_CACHE.getMessage());
-    GameAppletWrapper.getInstance().setTaskProgressMessage(null);
-    GameAppletWrapper.getInstance().setTaskProgress(5);
-    if (!GameUpdater.isGameCached()) {
-      GameUpdater.downloadPackages(urls);
-      GameUpdater.extractDownloadedPackages();
+    MinecraftAppletWrapper.getInstance().setTaskState(EState.CHECK_CACHE.ordinal());
+    MinecraftAppletWrapper.getInstance().setTaskStateMessage(EState.CHECK_CACHE.getMessage());
+    MinecraftAppletWrapper.getInstance().setTaskProgressMessage(null);
+    MinecraftAppletWrapper.getInstance().setTaskProgress(5);
+    if (!MinecraftUpdate.isGameCached()) {
+      MinecraftUpdate.downloadPackages(urls);
+      MinecraftUpdate.extractDownloadedPackages();
     }
 
-    if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
-      GameUpdater.updateClasspath();
+    if (!MinecraftAppletWrapper.getInstance().isUpdaterTaskErrored()) {
+      MinecraftUpdate.updateClasspath();
 
-      GameAppletWrapper.getInstance().setTaskState(EState.DONE.ordinal());
-      GameAppletWrapper.getInstance().setTaskStateMessage(EState.DONE.getMessage());
-      GameAppletWrapper.getInstance().setTaskProgressMessage(null);
-      GameAppletWrapper.getInstance().setTaskProgress(95);
+      MinecraftAppletWrapper.getInstance().setTaskState(EState.DONE.ordinal());
+      MinecraftAppletWrapper.getInstance().setTaskStateMessage(EState.DONE.getMessage());
+      MinecraftAppletWrapper.getInstance().setTaskProgressMessage(null);
+      MinecraftAppletWrapper.getInstance().setTaskProgress(95);
     }
   }
 }
