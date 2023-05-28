@@ -13,44 +13,44 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.auth;
+package ch.kawaxte.launcher.auth;
 
-import io.github.kawaxte.twentyten.launcher.Launcher;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.Launcher;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
+import ch.kawaxte.launcher.ui.LauncherPanel;
+import ch.kawaxte.launcher.ui.MicrosoftAuthPanel;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.swing.JProgressBar;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This task performs the authentication process when run, sending the necessary credentials and
  * handling the response. The response may indicate an error, a successful login without the
  * Minecraft profile, or a successful login with the Minecraft profile.
  *
- * <p>Upon receiving a response, the task updates the {@link
- * io.github.kawaxte.twentyten.launcher.LauncherConfig} with newly obtained properties and initiates
- * the Minecraft launch process with the appropriate parameters based on the response.
+ * <p>Upon receiving a response, the task updates the {@link LauncherConfig} with newly obtained
+ * properties and initiates the Minecraft launch process with the appropriate parameters based on
+ * the response.
  *
  * @see Runnable
  * @author Kawaxte
  * @since 1.5.0823_02
- * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth
- * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthWorker
+ * @see MicrosoftAuth
+ * @see MicrosoftAuthWorker
  */
 public class MicrosoftAuthTask implements Runnable {
 
   private static final Logger LOGGER;
 
   static {
-    LOGGER = LogManager.getLogger(MicrosoftAuthTask.class);
+    LOGGER = LoggerFactory.getLogger(MicrosoftAuthTask.class);
   }
 
   private final ScheduledExecutorService service;
@@ -189,7 +189,7 @@ public class MicrosoftAuthTask implements Runnable {
           break;
       }
 
-      LOGGER.error(object);
+      LOGGER.error("{}", xerr);
       return null;
     }
     return object.getString("Token");
@@ -249,15 +249,15 @@ public class MicrosoftAuthTask implements Runnable {
    * response, it updates the launcher configuration with the new session information.
    *
    * <p>If an error is received or the account does not own Minecraft (Java Edition), it will launch
-   * the game with a generic player name. If the account does own Minecraft, it will launch the game
-   * with the authenticated user's profile.
+   * the minecraft with a generic player name. If the account does own Minecraft, it will launch the
+   * minecraft with the authenticated user's profile.
    *
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireToken(String, String)
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireXBLToken(String)
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireXSTSToken(String)
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireAccessToken(String, String)
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#checkEntitlementsMcStore(String)
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireMinecraftProfile(String)
+   * @see MicrosoftAuth#acquireToken(String, String)
+   * @see MicrosoftAuth#acquireXBLToken(String)
+   * @see MicrosoftAuth#acquireXSTSToken(String)
+   * @see MicrosoftAuth#acquireAccessToken(String, String)
+   * @see MicrosoftAuth#checkEntitlementsMcStore(String)
+   * @see MicrosoftAuth#acquireMinecraftProfile(String)
    */
   @Override
   public void run() {
@@ -332,7 +332,6 @@ public class MicrosoftAuthTask implements Runnable {
       Launcher.launchMinecraft(
           minecraftProfileResponse[1], accessTokenResponse[0], minecraftProfileResponse[0]);
     }
-
     service.shutdown();
   }
 }
