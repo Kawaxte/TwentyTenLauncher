@@ -1,8 +1,9 @@
 # TwentyTen Launcher
 
-[![GitHub Latest](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases/latest)
-[![GitHub Pre-Release](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases)
+[![GitHub Release (Latest)](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases/latest)
+[![GitHub Release (Pre-release)](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases)
 
+[![Github Build](https://img.shields.io/github/actions/workflow/status/Kawaxte/TwentytenLauncher/maven.yml?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/actions/workflows/maven.yml)
 ![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?sort=semver&logo=github&style=for-the-badge)
 
 This repository contains an application that lets you play older versions of Minecraft. It's named
