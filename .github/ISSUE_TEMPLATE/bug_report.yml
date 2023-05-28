@@ -10,14 +10,16 @@ body:
     attributes:
       value: |
         Before submitting a bug report, please check that your issue hasn't already been reported by searching [issues](https://github.com/Kawaxte/TwentyTenLauncher/issues).
-  - type: textarea
+  - type: dropdown
     id: platform
     attributes:
-      label: Operating System
+      label: Platform
       description: |
         What operating system(s) are you using?
-      placeholder: |
-        Windows 11 Home 22H2
+      options:
+        - Linux
+        - macOS
+        - Windows
   - type: textarea
     id: version
     attributes:
