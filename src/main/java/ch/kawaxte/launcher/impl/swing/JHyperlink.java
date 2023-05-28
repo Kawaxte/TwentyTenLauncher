@@ -13,7 +13,7 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui.custom;
+package ch.kawaxte.launcher.impl.swing;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -24,8 +24,8 @@ import javax.swing.JLabel;
  * hyperlink (underlined and in blue). It also changes the cursor to a hand cursor when the cursor
  * is over the label to mimic hyperlink behaviour.
  *
- * <p>The {@code setText(...)} method is overridden to automatically underline the provided text.
- * The {@code setForeground(...)} method is overridden to automatically set the text colour to blue.
+ * <p>{@link #setText(String)} is overridden to automatically underline the provided text. {@link
+ * #setForeground(Color)} is overridden to automatically set the text colour to blue.
  *
  * @see javax.swing.JLabel
  * @author Kawaxte
