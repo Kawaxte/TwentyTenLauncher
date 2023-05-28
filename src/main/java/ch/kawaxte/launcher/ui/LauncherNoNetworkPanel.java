@@ -13,17 +13,17 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui;
+package ch.kawaxte.launcher.ui;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.Launcher;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.game.GameUpdater;
-import io.github.kawaxte.twentyten.launcher.ui.custom.CustomJPanel;
-import io.github.kawaxte.twentyten.launcher.ui.custom.TransparentJButton;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.Launcher;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.LauncherLanguage;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.impl.swing.CustomJPanel;
+import ch.kawaxte.launcher.impl.swing.TransparentJButton;
+import ch.kawaxte.launcher.minecraft.MinecraftUpdate;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.LayoutManager;
@@ -81,8 +81,8 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
     this.errorLabel.setText(this.errorMessage);
     this.errorLabel.setFont(this.getFont().deriveFont(Font.ITALIC, 16F));
     this.errorLabel.setForeground(Color.RED.darker());
-    this.playOfflineButton.setEnabled(GameUpdater.isGameCached());
-    this.playOnlineLabel.setVisible(!GameUpdater.isGameCached());
+    this.playOfflineButton.setEnabled(MinecraftUpdate.isGameCached());
+    this.playOnlineLabel.setVisible(!MinecraftUpdate.isGameCached());
 
     this.playOfflineButton.addActionListener(this);
     this.retryButton.addActionListener(this);
@@ -104,11 +104,10 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
   /**
    * Updates the texts of the components.
    *
-   * <p>The texts are set according to the provided {@link
-   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   * <p>The texts are set according to the provided {@link UTF8ResourceBundle}.
    *
-   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
-   *     localised keys and values in the resource bundle
+   * @param bundle the {@link UTF8ResourceBundle} containing the localised keys and values in the
+   *     resource bundle
    */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     LauncherUtils.setComponentText(
@@ -164,14 +163,13 @@ public class LauncherNoNetworkPanel extends CustomJPanel implements ActionListen
    * Handles the actions performed on {@link #playOfflineButton} and {@link #retryButton}.
    *
    * <p>When processing {@link #playOfflineButton}, an 'offline' Minecraft session is launched. This
-   * will only be possible if the game is cached. If the game is not cached, the button will be
-   * disabled, and {@link #playOnlineLabel} will be shown to the user to indicate that they need to
-   * play with an internet connection to download the game first before they can play offline later.
+   * will only be possible if the minecraft is cached. If the minecraft is not cached, the button
+   * will be disabled, and {@link #playOnlineLabel} will be shown to the user to indicate that they
+   * need to play with an internet connection to download the minecraft first before they can play
+   * offline later.
    *
-   * <p>When processing {@link #retryButton}, the {@link
-   * io.github.kawaxte.twentyten.launcher.ui.LauncherPanel} is swapped with a new {@link
-   * io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel}, so that the user can try to
-   * authenticate again.
+   * <p>When processing {@link #retryButton}, the {@link LauncherPanel} is swapped with a new {@link
+   * YggdrasilAuthPanel}, so that the user can try to authenticate again.
    *
    * @param event the action event to be processed
    */
