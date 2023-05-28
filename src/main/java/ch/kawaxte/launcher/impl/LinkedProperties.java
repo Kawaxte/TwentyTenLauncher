@@ -13,7 +13,7 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten;
+package ch.kawaxte.launcher.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -214,21 +214,21 @@ public final class LinkedProperties extends Properties {
   @Override
   public Set<Object> keySet() {
     synchronized (this) {
-      return this.linkedMap.keySet();
+      return Objects.isNull(this.linkedMap) ? Collections.emptySet() : this.linkedMap.keySet();
     }
   }
 
   @Override
   public Set<Map.Entry<Object, Object>> entrySet() {
     synchronized (this) {
-      return this.linkedMap.entrySet();
+      return Objects.isNull(this.linkedMap) ? Collections.emptySet() : this.linkedMap.entrySet();
     }
   }
 
   @Override
   public Collection<Object> values() {
     synchronized (this) {
-      return this.linkedMap.values();
+      return Objects.isNull(this.linkedMap) ? Collections.emptySet() : this.linkedMap.values();
     }
   }
 
