@@ -13,18 +13,18 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.util;
+package ch.kawaxte.launcher.util;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.ELanguage;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
-import io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel;
-import io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox;
-import io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog;
-import io.github.kawaxte.twentyten.launcher.ui.options.OptionsPanel;
-import io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox;
+import ch.kawaxte.launcher.ELanguage;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.LauncherLanguage;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.ui.MicrosoftAuthPanel;
+import ch.kawaxte.launcher.ui.YggdrasilAuthPanel;
+import ch.kawaxte.launcher.ui.options.LanguageGroupBox;
+import ch.kawaxte.launcher.ui.options.OptionsDialog;
+import ch.kawaxte.launcher.ui.options.OptionsPanel;
+import ch.kawaxte.launcher.ui.options.VersionGroupBox;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,18 +43,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingUtilities;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for handling everything within (or related to) {@link io.github.kawaxte.twentyten
- * .launcher.ui.options.OptionsDialog}.
+ * Utility class for handling everything within (or related to) {@link OptionsDialog}.
  *
  * <p>Note that this class is a singleton, and thus cannot be instantiated directly.
  *
- * @see io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog
+ * @see OptionsDialog
  * @author Kawaxte
  * @since 1.5.0923_03
  */
@@ -65,20 +64,19 @@ public final class LauncherOptionsUtils {
   private static Map<String, String> languageMap;
 
   static {
-    LOGGER = LogManager.getLogger(LauncherOptionsUtils.class);
+    LOGGER = LoggerFactory.getLogger(LauncherOptionsUtils.class);
   }
 
   private LauncherOptionsUtils() {}
 
   /**
-   * Updates the language combo box in the specified {@link
-   * io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox}.
+   * Updates the language combo box in the specified {@link LanguageGroupBox}.
    *
    * <p>It populates the {@link javax.swing.JComboBox} with available languages and sets the
    * currently selected language from the configuration file as the selected item.
    *
-   * @param lgb the {@link io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox} that
-   *     contains the {@link javax.swing.JComboBox} to be updated
+   * @param lgb the {@link LanguageGroupBox} that contains the {@link javax.swing.JComboBox} to be
+   *     updated
    */
   public static void updateLanguageComboBox(LanguageGroupBox lgb) {
     languageMap = new HashMap<>();
@@ -103,15 +101,14 @@ public final class LauncherOptionsUtils {
   }
 
   /**
-   * Updates the version combo box in the specified {@link
-   * io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox}.
+   * Updates the version combo box in the specified {@link VersionGroupBox}.
    *
    * <p>It populates the {@link javax.swing.JComboBox} with available versions retrieved from a JSON
    * resource file and sets the currently selected version from the configuration file as the
    * selected item.
    *
-   * @param vgb the {@link io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox} that
-   *     contains the {@link javax.swing.JComboBox} to be updated
+   * @param vgb the {@link VersionGroupBox} that contains the {@link javax.swing.JComboBox} to be
+   *     updated
    */
   public static void updateVersionComboBox(VersionGroupBox vgb) {
     versionMap = new HashMap<>();
@@ -167,8 +164,6 @@ public final class LauncherOptionsUtils {
           });
     } catch (IOException ioe) {
       LOGGER.error("Cannot read {}", fileUrl, ioe);
-    } finally {
-      LOGGER.info("Reading {}", fileUrl);
     }
 
     Object selectedVersion = LauncherConfig.get(4);
@@ -182,13 +177,12 @@ public final class LauncherOptionsUtils {
 
   /**
    * Updates the selected version in the configuration, based on the selected item in the {@link
-   * javax.swing.JComboBox} of the specified {@link
-   * io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox}.
+   * javax.swing.JComboBox} of the specified {@link VersionGroupBox}.
    *
    * <p>If the selected version has changed, it saves the updated configuration.
    *
-   * @param vgb the {@link io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox} that
-   *     contains the {@link javax.swing.JComboBox} to be updated
+   * @param vgb the {@link VersionGroupBox} that contains the {@link javax.swing.JComboBox} to be
+   *     updated
    */
   public static void updateSelectedVersion(VersionGroupBox vgb) {
     String selectedItem = (String) vgb.getVersionComboBox().getSelectedItem();
@@ -204,11 +198,10 @@ public final class LauncherOptionsUtils {
 
   /**
    * Updates the selected language in the configuration, based on the selected item in the {@link
-   * javax.swing.JComboBox} of the specified {@link
-   * io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox}.
+   * javax.swing.JComboBox} of the specified {@link LanguageGroupBox}.
    *
-   * @param lgb the {@link io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox} that
-   *     contains the {@link javax.swing.JComboBox} to be updated
+   * @param lgb the {@link LanguageGroupBox} that contains the {@link javax.swing.JComboBox} to be
+   *     updated
    */
   public static void updateSelectedLanguage(LanguageGroupBox lgb) {
     String selectedItem = (String) lgb.getLanguageComboBox().getSelectedItem();
