@@ -13,10 +13,10 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher;
+package ch.kawaxte.launcher;
 
-import io.github.kawaxte.twentyten.LinkedProperties;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.impl.LinkedProperties;
+import ch.kawaxte.launcher.util.LauncherUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,15 +29,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class keeping a map of configuration properties with their keys and values. It includes methods
  * for getting and setting property values by index, and for loading and saving the configuration to
  * a properties file.
  *
- * <p>The configuration file is named with a pattern 'twentyten_%username%.properties', where
+ * <p>The configuration file is named with a pattern 'launcher_%username%.properties', where
  * %username% is the current user's username. This file is located in the working directory of the
  * launcher.
  *
@@ -52,7 +52,7 @@ public final class LauncherConfig {
   private static final Map<String, Object> PROPERTIES_MAP;
 
   static {
-    LOGGER = LogManager.getLogger(LauncherConfig.class);
+    LOGGER = LoggerFactory.getLogger(LauncherConfig.class);
 
     PROPERTIES_MAP = new LinkedHashMap<>();
     PROPERTIES_MAP.put("selectedLanguage", "en");
@@ -85,7 +85,7 @@ public final class LauncherConfig {
    */
   private static Path getFilePath() {
     String userName = System.getProperty("user.name");
-    String fileName = String.format("%s_%s.properties", "twentyten", userName);
+    String fileName = String.format("%s_%s.properties", "launcher", userName);
 
     Path filePath = LauncherUtils.WORKING_DIRECTORY_PATH.resolve(fileName);
     File file = filePath.toFile();
