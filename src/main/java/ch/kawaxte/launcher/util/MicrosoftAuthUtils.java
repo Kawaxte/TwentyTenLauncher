@@ -13,14 +13,14 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.util;
+package ch.kawaxte.launcher.util;
 
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth;
-import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask;
-import io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthWorker;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.auth.MicrosoftAuth;
+import ch.kawaxte.launcher.auth.MicrosoftAuthTask;
+import ch.kawaxte.launcher.auth.MicrosoftAuthWorker;
+import ch.kawaxte.launcher.ui.LauncherPanel;
+import ch.kawaxte.launcher.ui.MicrosoftAuthPanel;
 import java.util.Objects;
 import org.json.JSONObject;
 
@@ -46,9 +46,7 @@ public final class MicrosoftAuthUtils {
    * Executes the Microsoft authentication worker as long as the given {@code clientId} is not
    * {@code null} or empty.
    *
-   * <p>It also swaps the containers ({@link javax.swing.JPanel}s) from {@link
-   * io.github.kawaxte.twentyten.launcher.ui.LauncherPanel} to {@link
-   * io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel}.
+   * <p>It also swaps the containers from {@link LauncherPanel} to {@link MicrosoftAuthPanel}.
    *
    * @param clientId the client ID of the Azure application required for authentication
    */
@@ -106,10 +104,10 @@ public final class MicrosoftAuthUtils {
    * Refreshes the access token and saves the new access token, refresh token, and expiration time
    * to the configuration file.
    *
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#refreshToken(String, String)
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireXBLToken(String)
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireXSTSToken(String)
-   * @see io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuth#acquireAccessToken(String, String)
+   * @see MicrosoftAuth#refreshToken(String, String)
+   * @see MicrosoftAuth#acquireXBLToken(String)
+   * @see MicrosoftAuth#acquireXSTSToken(String)
+   * @see MicrosoftAuth#acquireAccessToken(String, String)
    */
   public static void refreshAccessToken() {
     String refreshToken = (String) LauncherConfig.get(9);
