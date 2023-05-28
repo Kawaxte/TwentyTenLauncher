@@ -1,7 +1,10 @@
 name: Bug report
 description: |
   Report a bug encountered while using TwentyTen Launcher.
-title: "Bug"
+title: "[Bug]:"
+labels: [ bug ]
+assignees:
+  - Kawaxte
 body:
   - type: markdown
     attributes:
