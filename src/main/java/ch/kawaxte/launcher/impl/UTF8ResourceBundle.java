@@ -13,7 +13,7 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten;
+package ch.kawaxte.launcher.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import javax.annotation.Nonnull;
 
 /**
  * Class extending {@link java.util.ResourceBundle} and provides the functionality to read and store
@@ -77,7 +78,7 @@ public class UTF8ResourceBundle extends ResourceBundle {
   }
 
   @Override
-  protected Object handleGetObject(String key) {
+  protected Object handleGetObject(@Nonnull String key) {
     return this.lookupMap.get(key);
   }
 
@@ -89,8 +90,8 @@ public class UTF8ResourceBundle extends ResourceBundle {
   /**
    * A custom ResourceBundle.Control implementation for creating UTF8ResourceBundle.
    *
-   * <p>This class overrides the {@code newBundle(...)} method to create a UTF8ResourceBundle when
-   * requested by the ResourceBundle factory methods.
+   * <p>This class overrides {@link #newBundle(String, Locale, String, ClassLoader, boolean)} to
+   * create a UTF8ResourceBundle when requested by the ResourceBundle factory methods.
    *
    * @see java.util.ResourceBundle.Control
    * @see java.util.ResourceBundle.Control#newBundle(String, Locale, String, ClassLoader, boolean)
