@@ -13,15 +13,22 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.game;
+package ch.kawaxte.launcher.minecraft;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.EPlatform;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.EPlatform;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.LauncherLanguage;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.ui.MinecraftAppletWrapper;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +36,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -43,22 +49,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import org.apache.hc.client5.http.fluent.Content;
-import org.apache.hc.client5.http.fluent.Request;
-import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class responsible for updating Minecraft.
@@ -71,7 +67,7 @@ import org.apache.logging.log4j.Logger;
  * @author Kawaxte
  * @since 1.5.1223_05
  */
-public final class GameUpdater {
+public final class MinecraftUpdate {
 
   private static final Logger LOGGER;
   private static final Path BIN_DIRECTORY_PATH;
@@ -80,7 +76,7 @@ public final class GameUpdater {
   private static final Path VERSIONS_DIRECTORY_PATH;
 
   static {
-    LOGGER = LogManager.getLogger(GameUpdater.class);
+    LOGGER = LoggerFactory.getLogger(MinecraftUpdate.class);
 
     BIN_DIRECTORY_PATH = LauncherUtils.WORKING_DIRECTORY_PATH.resolve("bin");
     NATIVES_DIRECTORY_PATH = BIN_DIRECTORY_PATH.resolve("natives");
@@ -100,10 +96,10 @@ public final class GameUpdater {
     }
   }
 
-  private GameUpdater() {}
+  private MinecraftUpdate() {}
 
   /**
-   * Checks if the game is cached by verifying the existence of necessary files.
+   * Checks if the minecraft is cached by verifying the existence of necessary files.
    *
    * @return {@code true} if all the necessary files exist, {@code false} otherwise
    */
@@ -213,48 +209,44 @@ public final class GameUpdater {
    *
    * @return an array of required URLs for the Minecraft client
    */
-  private static URL[] getClientUrls() {
-    URL[] urls = new URL[3];
-    try {
-      urls[0] =
-          new URL(
-              new StringBuilder()
-                  .append("https://github.com/")
-                  .append("Kawaxte/")
-                  .append("twentyten-launcher/")
-                  .append("raw/")
-                  .append("nightly/")
-                  .append("bin/")
-                  .append("client/")
-                  .append("legacy_beta/")
-                  .toString());
-      urls[1] =
-          new URL(
-              new StringBuilder()
-                  .append("https://github.com/")
-                  .append("Kawaxte/")
-                  .append("twentyten-launcher/")
-                  .append("raw/")
-                  .append("nightly/")
-                  .append("bin/")
-                  .append("client/")
-                  .append("legacy_alpha/")
-                  .toString());
-      urls[2] =
-          new URL(
-              new StringBuilder()
-                  .append("https://github.com/")
-                  .append("Kawaxte/")
-                  .append("twentyten-launcher/")
-                  .append("raw/")
-                  .append("nightly/")
-                  .append("bin/")
-                  .append("client/")
-                  .append("legacy_infdev/")
-                  .toString());
-    } catch (MalformedURLException murle) {
-      LOGGER.error("Cannot create URL for Minecraft client(s)", murle);
-    }
+  private static GenericUrl[] getClientUrls() {
+    GenericUrl[] urls = new GenericUrl[3];
+    urls[0] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://github.com/")
+                .append("Kawaxte/")
+                .append("twentyten-launcher/")
+                .append("raw/")
+                .append("nightly/")
+                .append("bin/")
+                .append("client/")
+                .append("legacy_beta/")
+                .toString());
+    urls[1] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://github.com/")
+                .append("Kawaxte/")
+                .append("twentyten-launcher/")
+                .append("raw/")
+                .append("nightly/")
+                .append("bin/")
+                .append("client/")
+                .append("legacy_alpha/")
+                .toString());
+    urls[2] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://github.com/")
+                .append("Kawaxte/")
+                .append("twentyten-launcher/")
+                .append("raw/")
+                .append("nightly/")
+                .append("bin/")
+                .append("client/")
+                .append("legacy_infdev/")
+                .toString());
     return urls;
   }
 
@@ -263,51 +255,47 @@ public final class GameUpdater {
    *
    * @return a URL for the LWJGL2 files
    */
-  private static URL getLWJGLUrls() {
-    try {
-      if (EPlatform.isAARCH64()) {
-        return new URL(
-            new StringBuilder()
-                .append("https://github.com/")
-                .append("Kawaxte/")
-                .append("twentyten-launcher/")
-                .append("raw/")
-                .append("nightly/")
-                .append("bin/")
-                .append("lwjgl/")
-                .append("aarch64/")
-                .toString());
-      }
-      if (EPlatform.isAMD64()) {
-        return new URL(
-            new StringBuilder()
-                .append("https://github.com/")
-                .append("Kawaxte/")
-                .append("twentyten-launcher/")
-                .append("raw/")
-                .append("nightly/")
-                .append("bin/")
-                .append("lwjgl/")
-                .append("amd64/")
-                .toString());
-      }
-      if (EPlatform.isX86()) {
-        return new URL(
-            new StringBuilder()
-                .append("https://github.com/")
-                .append("Kawaxte/")
-                .append("twentyten-launcher/")
-                .append("raw/")
-                .append("nightly/")
-                .append("bin/")
-                .append("lwjgl/")
-                .append("x86/")
-                .toString());
-      }
-    } catch (MalformedURLException murle) {
-      LOGGER.error("Cannot create URL for LWJGL", murle);
+  private static GenericUrl getLWJGLUrls() {
+    if (EPlatform.isAARCH64()) {
+      return new GenericUrl(
+          new StringBuilder()
+              .append("https://github.com/")
+              .append("Kawaxte/")
+              .append("twentyten-launcher/")
+              .append("raw/")
+              .append("nightly/")
+              .append("bin/")
+              .append("lwjgl/")
+              .append("aarch64/")
+              .toString());
     }
-    return null;
+    if (EPlatform.isAMD64()) {
+      return new GenericUrl(
+          new StringBuilder()
+              .append("https://github.com/")
+              .append("Kawaxte/")
+              .append("twentyten-launcher/")
+              .append("raw/")
+              .append("nightly/")
+              .append("bin/")
+              .append("lwjgl/")
+              .append("amd64/")
+              .toString());
+    }
+    if (EPlatform.isX86()) {
+      return new GenericUrl(
+          new StringBuilder()
+              .append("https://github.com/")
+              .append("Kawaxte/")
+              .append("twentyten-launcher/")
+              .append("raw/")
+              .append("nightly/")
+              .append("bin/")
+              .append("lwjgl/")
+              .append("x86/")
+              .toString());
+    }
+    return new GenericUrl("");
   }
 
   /**
@@ -315,55 +303,75 @@ public final class GameUpdater {
    *
    * @return an array of required URLs for all the required files for Minecraft to run
    */
-  public static URL[] getUrls() {
+  public static GenericUrl[] getGenericUrls() {
     String selectedVersion = (String) LauncherConfig.get(4);
-    String clientJar = selectedVersion + ".jar";
+    String clientJar = String.format("%s.jar", selectedVersion);
     String[] lwjglNativesZips = {"natives-linux.zip", "natives-macosx.zip", "natives-windows.zip"};
-    URL[] clientUrls = getClientUrls();
-    URL lwjglUrls = getLWJGLUrls();
-    URL[] urls = new URL[6];
+
+    GenericUrl[] clientUrls = getClientUrls();
+    GenericUrl lwjglUrls = getLWJGLUrls();
+    GenericUrl[] urls = new GenericUrl[6];
+    GenericUrl clientUrl = getClientUrlByPrefix(selectedVersion, clientUrls);
 
     try {
-      URL clientUrl = null;
-      if (selectedVersion.startsWith("b")) {
-        clientUrl = clientUrls[0];
-      }
-      if (selectedVersion.startsWith("a")) {
-        clientUrl = clientUrls[1];
-      }
-      if (selectedVersion.startsWith("i")) {
-        clientUrl = clientUrls[2];
-      }
-
       if (!isLWJGLJarExistent()) {
         for (int i = 0; i < getListOfLWJGLJars().size(); i++) {
-          urls[i] = new URL(lwjglUrls, getListOfLWJGLJars().get(i));
+          urls[i] = new GenericUrl(new URL(lwjglUrls.toURL(), getListOfLWJGLJars().get(i)));
         }
       }
-
       if (!isLWJGLNativeExistent()) {
-        String lwjglNativesZip = null;
-        if (EPlatform.isLinux()) {
-          lwjglNativesZip = lwjglNativesZips[0];
-        }
-        if (EPlatform.isMacOS()) {
-          lwjglNativesZip = lwjglNativesZips[1];
-        }
-        if (EPlatform.isWindows()) {
-          lwjglNativesZip = lwjglNativesZips[2];
-        }
+        String lwjglNativesZip = getLwjglNativeZipByPlatform(lwjglNativesZips);
 
-        Objects.requireNonNull(lwjglNativesZip, "lwjglNativesZip cannot be null");
-        urls[4] = new URL(lwjglUrls, lwjglNativesZip);
+        if (Objects.nonNull(lwjglNativesZip)) {
+          urls[4] = new GenericUrl(new URL(lwjglUrls.toURL(), lwjglNativesZip));
+        }
       }
-
-      if (!isClientJarExistent()) {
-        urls[5] = new URL(clientUrl, clientJar);
+      if (!isClientJarExistent() && (Objects.nonNull(clientUrl))) {
+        urls[5] = new GenericUrl(new URL(clientUrl.toURL(), clientJar));
       }
     } catch (MalformedURLException murle) {
-      LOGGER.error("Cannot create URL(s)", murle);
+      LOGGER.error("Cannot create generic URL(s)", murle);
     }
-    return Arrays.stream(urls).filter(Objects::nonNull).toArray(URL[]::new);
+    return Arrays.stream(urls).filter(Objects::nonNull).toArray(GenericUrl[]::new);
+  }
+
+  /**
+   * Parses the version ID and returns the correct URL for the client.
+   *
+   * @param versionId the `selectedVersion` value from the config
+   * @param urls the array of URLs
+   * @return the correct URL for the client
+   */
+  private static GenericUrl getClientUrlByPrefix(String versionId, GenericUrl[] urls) {
+    if (versionId.startsWith("b")) {
+      return urls[0];
+    }
+    if (versionId.startsWith("a")) {
+      return urls[1];
+    }
+    if (versionId.startsWith("i")) {
+      return urls[2];
+    }
+    return new GenericUrl("");
+  }
+
+  /**
+   * Returns the correct LWJGL native ZIP file based on the platform.
+   *
+   * @param zips the array of ZIP files
+   * @return the correct LWJGL native ZIP file
+   */
+  private static String getLwjglNativeZipByPlatform(String[] zips) {
+    if (EPlatform.isLinux()) {
+      return zips[0];
+    }
+    if (EPlatform.isMacOS()) {
+      return zips[1];
+    }
+    if (EPlatform.isWindows()) {
+      return zips[2];
+    }
+    return null;
   }
 
   /**
@@ -375,15 +383,16 @@ public final class GameUpdater {
    * <p>Additionally, the total download size is calculated and the progress is updated accordingly.
    *
    * @param urls the required URLs for all the required files for Minecraft to run
-   * @see #download(Path, AtomicInteger, int, URL)
-   * @see #calculateTotalDownloadSize(URL[])
+   * @see #download(Path, AtomicInteger, int, GenericUrl)
+   * @see #calculateTotalDownloadSize(GenericUrl[])
    */
-  public static void downloadPackages(URL[] urls) {
-    if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
-      GameAppletWrapper.getInstance().setTaskState(EState.DOWNLOAD_PACKAGES.ordinal());
-      GameAppletWrapper.getInstance().setTaskStateMessage(EState.DOWNLOAD_PACKAGES.getMessage());
-      GameAppletWrapper.getInstance().setTaskProgressMessage(null);
-      GameAppletWrapper.getInstance().setTaskProgress(10);
+  public static void downloadPackages(GenericUrl[] urls) {
+    if (!MinecraftAppletWrapper.getInstance().isUpdaterTaskErrored()) {
+      MinecraftAppletWrapper.getInstance().setTaskState(EState.DOWNLOAD_PACKAGES.ordinal());
+      MinecraftAppletWrapper.getInstance()
+          .setTaskStateMessage(EState.DOWNLOAD_PACKAGES.getMessage());
+      MinecraftAppletWrapper.getInstance().setTaskProgressMessage(null);
+      MinecraftAppletWrapper.getInstance().setTaskProgress(10);
     }
 
     String javaIoTmpdir = System.getProperty("java.io.tmpdir");
@@ -407,53 +416,31 @@ public final class GameUpdater {
    * @param urls the required URLs for all the required files for Minecraft to run
    * @return the total download size of all the required files
    */
-  private static int calculateTotalDownloadSize(URL[] urls) {
-    int size = 0;
+  private static int calculateTotalDownloadSize(GenericUrl[] urls) {
+    HttpTransport transport = new NetHttpTransport();
 
-    ExecutorService service = Executors.newFixedThreadPool(urls.length);
-    ArrayList<Future<Integer>> futures =
-        Arrays.stream(urls)
-            .map(
-                url ->
-                    service.submit(
-                        () -> {
-                          try {
-                            HttpResponse request =
-                                Request.head(url.toURI()).execute().returnResponse();
-                            Header contentLength =
-                                request.getFirstHeader(HttpHeaders.CONTENT_LENGTH);
-                            return Integer.parseInt(contentLength.getValue());
-                          } catch (NumberFormatException nfe) {
-                            displayErrorMessage(nfe.getMessage());
+    HttpRequestFactory factory = transport.createRequestFactory();
 
-                            LOGGER.error("Cannot parse content size for {}", url, nfe);
-                          } catch (IOException ioe) {
-                            displayErrorMessage(ioe.getMessage());
-
-                            LOGGER.error("Cannot calculate content size for {}", url, ioe);
-                          } catch (URISyntaxException urise) {
-                            displayErrorMessage(urise.getMessage());
-
-                            LOGGER.error("Cannot parse {} as URI", url, urise);
-                          }
-                          return 0;
-                        }))
-            .collect(Collectors.toCollection(ArrayList::new));
-
-    for (Future<Integer> future : futures) {
+    long size = 0L;
+    for (GenericUrl url : urls) {
       try {
-        size += future.get();
-      } catch (InterruptedException ie) {
-        Thread.currentThread().interrupt();
+        HttpRequest request = factory.buildHeadRequest(url);
+        HttpResponse response = request.execute();
 
-        LOGGER.error("Interrupted while calculating content size", ie);
-      } catch (ExecutionException ee) {
-        LOGGER.error("Error while calculating content size", ee);
-      } finally {
-        service.shutdown();
+        HttpHeaders headers = response.getHeaders();
+        long contentLength = headers.getContentLength();
+        size += contentLength;
+      } catch (NumberFormatException nfe) {
+        displayErrorMessage(nfe.getMessage());
+
+        LOGGER.error("Cannot parse size for {}", url, nfe);
+      } catch (IOException ioe) {
+        displayErrorMessage(ioe.getMessage());
+
+        LOGGER.error("Cannot calculate size for {}", url, ioe);
       }
     }
-    return size;
+    return (int) size;
   }
 
   /**
@@ -464,15 +451,19 @@ public final class GameUpdater {
    * @param total the total download size
    * @param url the URL of the required file
    */
-  private static void download(Path p, AtomicInteger current, int total, URL url) {
+  private static void download(Path p, AtomicInteger current, int total, GenericUrl url) {
+    HttpTransport transport = new NetHttpTransport();
+
+    HttpRequestFactory factory = transport.createRequestFactory();
     try {
-      Content content = Request.get(url.toURI()).execute().returnContent();
+      HttpRequest request = factory.buildGetRequest(url);
+      HttpResponse response = request.execute();
 
       int fileNameIndex = url.toString().lastIndexOf("/") + 1;
       String fileName = url.toString().substring(fileNameIndex);
       File file = p.resolve(fileName).toFile();
 
-      try (BufferedInputStream bis = new BufferedInputStream(content.asStream());
+      try (BufferedInputStream bis = new BufferedInputStream(response.getContent());
           FileOutputStream fos = new FileOutputStream(file)) {
         byte[] buffer = new byte[65536];
         int read;
@@ -483,10 +474,10 @@ public final class GameUpdater {
 
           int downloadProgress = (current.get() * 100) / total;
           int progress = 10 + ((current.get() * 45) / total);
-          GameAppletWrapper.getInstance()
+          MinecraftAppletWrapper.getInstance()
               .setTaskProgressMessage(
                   LauncherLanguageUtils.getGAWKeys()[3], fileName, downloadProgress);
-          GameAppletWrapper.getInstance().setTaskProgress(progress);
+          MinecraftAppletWrapper.getInstance().setTaskProgress(progress);
         }
       }
     } catch (FileNotFoundException fnfe) {
@@ -497,10 +488,6 @@ public final class GameUpdater {
       displayErrorMessage(ioe.getMessage());
 
       LOGGER.error("Cannot download {}", url, ioe);
-    } catch (URISyntaxException urise) {
-      displayErrorMessage(urise.getMessage());
-
-      LOGGER.error("Cannot parse {} as URI", url, urise);
     }
   }
 
@@ -555,11 +542,12 @@ public final class GameUpdater {
    * @see #calculateTotalExtractSize(File[])
    */
   public static void extractDownloadedPackages() {
-    if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
-      GameAppletWrapper.getInstance().setTaskState(EState.EXTRACT_PACKAGES.ordinal());
-      GameAppletWrapper.getInstance().setTaskStateMessage(EState.EXTRACT_PACKAGES.getMessage());
-      GameAppletWrapper.getInstance().setTaskProgressMessage(null);
-      GameAppletWrapper.getInstance().setTaskProgress(55);
+    if (!MinecraftAppletWrapper.getInstance().isUpdaterTaskErrored()) {
+      MinecraftAppletWrapper.getInstance().setTaskState(EState.EXTRACT_PACKAGES.ordinal());
+      MinecraftAppletWrapper.getInstance()
+          .setTaskStateMessage(EState.EXTRACT_PACKAGES.getMessage());
+      MinecraftAppletWrapper.getInstance().setTaskProgressMessage(null);
+      MinecraftAppletWrapper.getInstance().setTaskProgress(55);
     }
 
     File[] zipFiles =
@@ -586,7 +574,7 @@ public final class GameUpdater {
    * @return the total size of the files to be extracted
    */
   private static int calculateTotalExtractSize(File[] files) {
-    long size = 0;
+    long size = 0L;
 
     for (File file : files) {
       try (FileInputStream fis = new FileInputStream(file);
@@ -646,10 +634,10 @@ public final class GameUpdater {
 
             int extractProgress = (current.get() * 100) / total;
             int progress = 55 + ((current.get() * 30) / total);
-            GameAppletWrapper.getInstance()
+            MinecraftAppletWrapper.getInstance()
                 .setTaskProgressMessage(
                     LauncherLanguageUtils.getGAWKeys()[3], name, extractProgress);
-            GameAppletWrapper.getInstance().setTaskProgress(progress);
+            MinecraftAppletWrapper.getInstance().setTaskProgress(progress);
           }
         }
       }
@@ -679,11 +667,12 @@ public final class GameUpdater {
    * to their respective JVM arguments.
    */
   public static void updateClasspath() {
-    if (!GameAppletWrapper.getInstance().isUpdaterTaskErrored()) {
-      GameAppletWrapper.getInstance().setTaskState(EState.UPDATE_CLASSPATH.ordinal());
-      GameAppletWrapper.getInstance().setTaskStateMessage(EState.UPDATE_CLASSPATH.getMessage());
-      GameAppletWrapper.getInstance().setTaskProgressMessage(null);
-      GameAppletWrapper.getInstance().setTaskProgress(90);
+    if (!MinecraftAppletWrapper.getInstance().isUpdaterTaskErrored()) {
+      MinecraftAppletWrapper.getInstance().setTaskState(EState.UPDATE_CLASSPATH.ordinal());
+      MinecraftAppletWrapper.getInstance()
+          .setTaskStateMessage(EState.UPDATE_CLASSPATH.getMessage());
+      MinecraftAppletWrapper.getInstance().setTaskProgressMessage(null);
+      MinecraftAppletWrapper.getInstance().setTaskProgress(90);
     }
 
     File[] jarFiles = BIN_DIRECTORY_PATH.toFile().listFiles((dir, name) -> name.endsWith(".jar"));
@@ -705,7 +694,7 @@ public final class GameUpdater {
         LOGGER.error("Cannot convert {} to URL", jarUrls, murle);
       }
 
-      GameAppletWrapper.getInstance()
+      MinecraftAppletWrapper.getInstance()
           .setMcAppletClassLoader(
               AccessController.doPrivileged(
                   (PrivilegedAction<URLClassLoader>)
@@ -731,15 +720,15 @@ public final class GameUpdater {
    * @param message the error message to display
    */
   private static void displayErrorMessage(String message) {
-    GameAppletWrapper.getInstance().setUpdaterTaskErrored(true);
+    MinecraftAppletWrapper.getInstance().setUpdaterTaskErrored(true);
 
     UTF8ResourceBundle bundle = LauncherLanguage.getBundle();
 
-    int state = GameAppletWrapper.getInstance().getTaskState();
+    int state = MinecraftAppletWrapper.getInstance().getTaskState();
     String fatalErrorMessage =
         MessageFormat.format(
             bundle.getString(LauncherLanguageUtils.getGAWKeys()[2]), state, message);
-    GameAppletWrapper.getInstance().setTaskStateMessage(fatalErrorMessage);
-    GameAppletWrapper.getInstance().setTaskProgressMessage(null);
+    MinecraftAppletWrapper.getInstance().setTaskStateMessage(fatalErrorMessage);
+    MinecraftAppletWrapper.getInstance().setTaskProgressMessage(null);
   }
 }
