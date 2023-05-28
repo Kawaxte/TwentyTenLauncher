@@ -13,12 +13,12 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.util;
+package ch.kawaxte.launcher.util;
 
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth;
-import io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker;
-import io.github.kawaxte.twentyten.launcher.exception.AuthenticationException;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.auth.YggdrasilAuth;
+import ch.kawaxte.launcher.auth.YggdrasilAuthWorker;
+import ch.kawaxte.launcher.impl.exception.AuthenticationException;
 import java.util.Objects;
 import org.json.JSONObject;
 
@@ -66,8 +66,7 @@ public final class YggdrasilAuthUtils {
    * not {@code null} or empty.
    *
    * @return {@code true} if the access token is expired, {@code false} otherwise
-   * @see io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth#validateAccessToken(String,
-   *     String)
+   * @see YggdrasilAuth#validateAccessToken(String, String)
    */
   public static boolean isAccessTokenExpired() {
     String accessToken = (String) LauncherConfig.get(17);
@@ -87,7 +86,7 @@ public final class YggdrasilAuthUtils {
    * Refreshes the expired access token and saves it to the configuration file.
    *
    * @throws AuthenticationException if the access token cannot be refreshed
-   * @see io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth#refreshAccessToken(String, String)
+   * @see YggdrasilAuth#refreshAccessToken(String, String)
    */
   public static void refreshAccessToken() {
     String accessToken = (String) LauncherConfig.get(17);
