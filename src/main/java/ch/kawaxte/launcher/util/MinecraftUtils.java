@@ -22,16 +22,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,64 +50,25 @@ public final class MinecraftUtils {
    * @return {@code null} if the file cannot be created, otherwise the path to the log
    */
   private static Path getFilePath(String username) {
+    long currentTime = System.currentTimeMillis();
+
     String selectedVersion = (String) LauncherConfig.get(4);
-    String now = LocalDateTime.now(ZoneId.systemDefault()).toString();
-    String formattedNow = now.replaceAll("\\D", "").substring(0, 8);
+    selectedVersion = selectedVersion.replaceAll("[._]", "");
+
     String fileName = String.format("%s_%s.log", selectedVersion, username);
-    String timestampedFileName =
-        String.format("%s_%s_%d.log", selectedVersion, username, System.currentTimeMillis());
+    String formattedFileName =
+        String.format("%s_%s_%s.log", selectedVersion, username, currentTime);
 
     Path filePath = LOGS_DIRECTORY_PATH.resolve(fileName);
     File file = filePath.toFile();
     if (file.exists() && file.length() > 0) {
-      Path timestampedFilePath = LOGS_DIRECTORY_PATH.resolve(timestampedFileName);
-      if (!file.renameTo(timestampedFilePath.toFile())) {
-        LOGGER.error("Cannot rename log to '{}'", timestampedFilePath);
+      Path formattedFilePath = LOGS_DIRECTORY_PATH.resolve(formattedFileName);
+      if (!file.renameTo(formattedFilePath.toFile())) {
+        LOGGER.warn("Could not rename log to '{}'", formattedFilePath);
         return filePath;
       }
-
-      archiveLogs(selectedVersion, formattedNow);
     }
     return filePath;
-  }
-
-  /**
-   * Archives all log files for the specified version in a .ZIP file.
-   *
-   * @param versionId the {@code selectedVersion} key from the config
-   * @param now the current date
-   */
-  private static void archiveLogs(String versionId, String now) {
-    String logFilePattern = String.format("%s_.*\\.log", versionId);
-
-    Path zipPath = LOGS_DIRECTORY_PATH.resolve(String.format("%s_%s.zip", versionId, now));
-    try (ZipOutputStream zos =
-        new ZipOutputStream(
-            Files.newOutputStream(zipPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
-      List<Path> filePath;
-      try (Stream<Path> logs =
-          Files.list(LOGS_DIRECTORY_PATH)
-              .filter(
-                  path -> {
-                    String fileName = path.getFileName().toString();
-                    String zipFileName = zipPath.getFileName().toString();
-                    return !Objects.equals(fileName, zipFileName)
-                        && Pattern.matches(logFilePattern, fileName);
-                  })) {
-        filePath = logs.collect(Collectors.toList());
-      }
-
-      for (Path p : filePath) {
-        ZipEntry zipEntry = new ZipEntry(p.getFileName().toString());
-        zos.putNextEntry(zipEntry);
-        Files.copy(p, zos);
-
-        zos.closeEntry();
-        Files.delete(p);
-      }
-    } catch (IOException ioe) {
-      LOGGER.error("Cannot archive logs", ioe);
-    }
   }
 
   /**
