@@ -254,7 +254,7 @@ public final class LauncherOptionsUtils {
     for (int i = 0; i < vSplitLength; i++) {
       int v1SplitValue = i < v1SplitLength ? Integer.parseInt(v1Split[i]) : 0;
       int v2SplitValue = i < v2SplitLength ? Integer.parseInt(v2Split[i]) : 0;
-      if (!Objects.equals(v1SplitValue, v2SplitValue)) {
+      if (v1SplitValue != v2SplitValue) {
         return Integer.compare(v1SplitValue, v2SplitValue);
       }
     }
