@@ -48,6 +48,6 @@ body:
       description: |
         A clear and concise description of any alternative solutions or features you've considered.
       placeholder: |
-        I initially thought that I could change the background image of the launcher by editing the "background.png" file in the "assets" folder, but that wasn't very convenient.
+        I initially thought that I could change the background image of the launcher by editing the "dirt.png" file within the executable, but that wasn't very convenient.
     validations:
       required: true
