@@ -13,7 +13,7 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui;
+package ch.kawaxte.launcher.ui;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 import javax.swing.JPanel;
 
 /**
- * Class representing the {@link javax.swing.JPanel} is the core panel for a {@link
+ * Class representing the {@link javax.swing.JPanel} is the impl panel for a {@link
  * javax.swing.JFrame}.
  *
  * @author Kawaxte
@@ -51,8 +51,7 @@ public class LauncherPanel extends JPanel {
    * <p>Initialises the components and sets the layout. Also, adds the action listeners to the some
    * of the components that require it.
    *
-   * <p>Also, adds the {@link io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel} to the
-   * current panel.
+   * <p>Also, adds the {@link YggdrasilAuthPanel} to the current panel.
    *
    * @see #setLayout(LayoutManager)
    * @see #add(java.awt.Component, Object)
