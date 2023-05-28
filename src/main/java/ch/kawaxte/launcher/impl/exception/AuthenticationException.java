@@ -1,4 +1,4 @@
-package io.github.kawaxte.twentyten.launcher.exception;
+package ch.kawaxte.launcher.impl.exception;
 
 public class AuthenticationException extends RuntimeException {
 

@@ -13,7 +13,7 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher;
+package ch.kawaxte.launcher;
 
 import lombok.Getter;
 

@@ -13,7 +13,7 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui.custom;
+package ch.kawaxte.launcher.impl.swing;
 
 import javax.swing.JCheckBox;
 

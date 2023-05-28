@@ -13,14 +13,14 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher;
+package ch.kawaxte.launcher;
 
 import java.util.Objects;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import lombok.Getter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Enum representing the supported Look and Feel (LaF) options in the application.
@@ -41,7 +41,7 @@ public enum ELookAndFeel {
   private static final Logger LOGGER;
 
   static {
-    LOGGER = LogManager.getLogger(ELookAndFeel.class);
+    LOGGER = LoggerFactory.getLogger(ELookAndFeel.class);
   }
 
   @Getter private final String className;
