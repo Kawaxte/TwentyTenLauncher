@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
@@ -145,10 +144,8 @@ public final class MinecraftUpdate {
    * @return {@code true} if the necessary LWJGL2 native files exist, {@code false} otherwise
    */
   private static boolean isLWJGLNativeExistent() {
-    List<String> lwjglNatives =
-        Optional.of(getListOfLWJGLNatives())
-            .orElseThrow(() -> new NullPointerException("lwjglNatives cannot be null"));
-    return lwjglNatives.stream()
+    List<String> listOfLWJGLNatives = getListOfLWJGLNatives();
+    return listOfLWJGLNatives.stream()
         .findFirst()
         .filter(lwjglNative -> Files.exists(NATIVES_DIRECTORY_PATH.resolve(lwjglNative)))
         .isPresent();
