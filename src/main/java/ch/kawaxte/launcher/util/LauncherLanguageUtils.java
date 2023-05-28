@@ -1,4 +1,14 @@
-package io.github.kawaxte.twentyten.launcher.util;
+package ch.kawaxte.launcher.util;
+
+import ch.kawaxte.launcher.minecraft.EState;
+import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
+import ch.kawaxte.launcher.ui.MicrosoftAuthPanel;
+import ch.kawaxte.launcher.ui.MinecraftAppletWrapper;
+import ch.kawaxte.launcher.ui.YggdrasilAuthPanel;
+import ch.kawaxte.launcher.ui.options.LanguageGroupBox;
+import ch.kawaxte.launcher.ui.options.OptionsDialog;
+import ch.kawaxte.launcher.ui.options.OptionsPanel;
+import ch.kawaxte.launcher.ui.options.VersionGroupBox;
 
 /**
  * Utility class for retrieving keys from the language resource bundles.
@@ -13,10 +23,10 @@ public final class LauncherLanguageUtils {
   private LauncherLanguageUtils() {}
 
   /**
-   * Returns an array of keys for {@link io.github.kawaxte.twentyten.launcher.game.EState}
+   * Returns an array of keys for {@link EState}
    *
    * @return an array of keys from the language resource bundle
-   * @see io.github.kawaxte.twentyten.launcher.game.EState
+   * @see EState
    */
   public static String[] getESEnumKeys() {
     return new String[] {
@@ -30,22 +40,20 @@ public final class LauncherLanguageUtils {
   }
 
   /**
-   * Returns an array of keys for {@link
-   * io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox}
+   * Returns an array of keys for {@link LanguageGroupBox}
    *
    * @return an array of keys from the language resource bundle
-   * @see io.github.kawaxte.twentyten.launcher.ui.options.LanguageGroupBox
+   * @see LanguageGroupBox
    */
   public static String[] getLGBKeys() {
     return new String[] {"lgb.title", "lgb.setLanguageLabel"};
   }
 
   /**
-   * Returns an array of keys for {@link
-   * io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel}
+   * Returns an array of keys for {@link LauncherNoNetworkPanel}
    *
    * @return an array of keys from the language resource bundle
-   * @see io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel
+   * @see LauncherNoNetworkPanel
    */
   public static String[] getLNPPKeys() {
     return new String[] {
@@ -61,47 +69,45 @@ public final class LauncherLanguageUtils {
   }
 
   /**
-   * Returns an array of keys for {@link io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper}
+   * Returns an array of keys for {@link MinecraftAppletWrapper}
    *
    * @return an array of keys from the language resource bundle
-   * @see io.github.kawaxte.twentyten.launcher.ui.GameAppletWrapper
+   * @see MinecraftAppletWrapper
    */
   public static String[] getGAWKeys() {
     return new String[] {
-      "gaw.updaterStarted",
-      "gaw.updaterErrored",
-      "gaw.taskStateMessage.error",
-      "gaw.taskProgressMessage"
+      "maw.updaterStarted",
+      "maw.updaterErrored",
+      "maw.taskStateMessage.error",
+      "maw.taskProgressMessage"
     };
   }
 
   /**
-   * Returns an array of keys for {@link io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel}
+   * Returns an array of keys for {@link MicrosoftAuthPanel}
    *
    * @return an array of keys from the language resource bundle
-   * @see io.github.kawaxte.twentyten.launcher.ui.MicrosoftAuthPanel
+   * @see MicrosoftAuthPanel
    */
   public static String[] getMAPKeys() {
     return new String[] {"map.copyCodeLabel", "map.openBrowserButton", "map.cancelButton"};
   }
 
   /**
-   * Returns an array of keys for {@link
-   * io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog}
+   * Returns an array of keys for {@link OptionsDialog}
    *
    * @return an array of keys from the language resource bundle
-   * @see io.github.kawaxte.twentyten.launcher.ui.options.OptionsDialog
+   * @see OptionsDialog
    */
   public static String[] getODKeys() {
     return new String[] {"od.title"};
   }
 
   /**
-   * Returns an array of keys for {@link
-   * io.github.kawaxte.twentyten.launcher.ui.options.OptionsPanel}
+   * Returns an array of keys for {@link OptionsPanel}
    *
    * @return an array of keys from the language resource bundle
-   * @see io.github.kawaxte.twentyten.launcher.ui.options.OptionsPanel
+   * @see OptionsPanel
    */
   public static String[] getOPKeys() {
     return new String[] {
@@ -110,21 +116,20 @@ public final class LauncherLanguageUtils {
   }
 
   /**
-   * Returns an array of keys for {@link
-   * io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox}
+   * Returns an array of keys for {@link VersionGroupBox}
    *
    * @return an array of keys from the language resource bundle
-   * @see io.github.kawaxte.twentyten.launcher.ui.options.VersionGroupBox
+   * @see VersionGroupBox
    */
   public static String[] getVGBKeys() {
     return new String[] {"vgb.title", "vgb.showVersionsCheckBox", "vgb.useVersionLabel"};
   }
 
   /**
-   * Returns an array of keys for {@link io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel}
+   * Returns an array of keys for {@link YggdrasilAuthPanel}
    *
    * @return an array of keys from the language resource bundle
-   * @see io.github.kawaxte.twentyten.launcher.ui.YggdrasilAuthPanel
+   * @see YggdrasilAuthPanel
    */
   public static String[] getYAPKeys() {
     return new String[] {
