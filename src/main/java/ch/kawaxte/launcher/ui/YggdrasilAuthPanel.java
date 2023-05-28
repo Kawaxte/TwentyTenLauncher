@@ -19,8 +19,8 @@ import ch.kawaxte.launcher.Launcher;
 import ch.kawaxte.launcher.LauncherConfig;
 import ch.kawaxte.launcher.LauncherLanguage;
 import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
-import ch.kawaxte.launcher.impl.swing.CustomJPanel;
 import ch.kawaxte.launcher.impl.swing.JHyperlink;
+import ch.kawaxte.launcher.impl.swing.NotchJPanel;
 import ch.kawaxte.launcher.impl.swing.TransparentJButton;
 import ch.kawaxte.launcher.impl.swing.TransparentJCheckBox;
 import ch.kawaxte.launcher.ui.options.OptionsDialog;
@@ -52,7 +52,7 @@ import javax.swing.SwingUtilities;
  * @author Kawaxte
  * @since 1.5.0623_01
  */
-public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
+public class YggdrasilAuthPanel extends NotchJPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
   private static YggdrasilAuthPanel instance;
