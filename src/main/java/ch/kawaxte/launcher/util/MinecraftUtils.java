@@ -103,9 +103,18 @@ public final class MinecraftUtils {
             private String addToFilter(String x) {
               String settingUser = "Setting user: ";
               if (x.startsWith(settingUser)) {
-                String[] split = x.split(", ");
-                if (split.length == 2) {
-                  return new StringBuilder().append(split[0]).append(", <sessionId>").toString();
+                String[] split = x.split(",");
+                String[] tokenSplit = split[1].split(":");
+                if (tokenSplit.length == 3) {
+                  String accessToken = tokenSplit[1];
+                  String profileId = tokenSplit[2];
+                  return new StringBuilder()
+                      .append(split[0])
+                      .append(", token:")
+                      .append(accessToken, 0, 0)
+                      .append("<accessToken>:")
+                      .append(profileId)
+                      .toString();
                 }
               }
               return x;
