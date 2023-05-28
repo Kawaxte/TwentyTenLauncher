@@ -3,8 +3,8 @@
 [![GitHub Release (Latest)](https://img.shields.io/github/v/release/Kawaxte/twentyten-launcher?sort=date&logo=github&label=latest&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/releases/latest)
 [![GitHub Release (Pre-release)](https://img.shields.io/github/v/release/Kawaxte/twentyten-launcher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/releases)
 
-![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/twentyten-launcher/total?sort=semver&logo=github&style=for-the-badge)
 [![Github Build](https://img.shields.io/github/actions/workflow/status/Kawaxte/twentyten-launcher/maven.yml?logo=github&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/actions/workflows/maven.yml)
+![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/twentyten-launcher/total?sort=semver&logo=github&style=for-the-badge)
 
 This repository contains an application that lets you play older versions of Minecraft. It's named
 after the year the original Minecraft Launcher was released, and is
