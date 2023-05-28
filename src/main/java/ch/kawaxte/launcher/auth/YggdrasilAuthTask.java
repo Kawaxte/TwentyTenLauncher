@@ -13,14 +13,14 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.auth;
+package ch.kawaxte.launcher.auth;
 
-import io.github.kawaxte.twentyten.launcher.Launcher;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.Launcher;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
+import ch.kawaxte.launcher.ui.LauncherPanel;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
 import java.util.Objects;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,15 +30,15 @@ import org.json.JSONObject;
  * handling the response. The response may indicate an error, a successful login without the
  * Minecraft profile, or a successful login with the Minecraft profile.
  *
- * <p>Upon receiving a response, the task updates the {@link
- * io.github.kawaxte.twentyten.launcher.LauncherConfig} with newly obtained properties and initiates
- * the Minecraft launch process with the appropriate parameters based on the response.
+ * <p>Upon receiving a response, the task updates the {@link LauncherConfig} with newly obtained
+ * properties and initiates the Minecraft launch process with the appropriate parameters based on
+ * the response.
  *
  * @see Runnable
  * @author Kawaxte
  * @since 1.5.0923_03
- * @see io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth
- * @see io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuthWorker
+ * @see YggdrasilAuth
+ * @see YggdrasilAuthWorker
  */
 public class YggdrasilAuthTask implements Runnable {
 
@@ -101,11 +101,10 @@ public class YggdrasilAuthTask implements Runnable {
    * response, it updates the launcher configuration with the new session information.
    *
    * <p>If an error is received or the account does not own Minecraft (Java Edition), it will launch
-   * the game with a generic player name. If the account does own Minecraft, it will launch the game
-   * with the authenticated user's profile.
+   * the minecraft with a generic player name. If the account does own Minecraft, it will launch the
+   * minecraft with the authenticated user's profile.
    *
-   * @see io.github.kawaxte.twentyten.launcher.auth.YggdrasilAuth#authenticate(String, String,
-   *     String)
+   * @see YggdrasilAuth#authenticate(String, String, String)
    */
   @Override
   public void run() {
