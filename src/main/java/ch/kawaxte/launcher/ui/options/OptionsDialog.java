@@ -13,13 +13,13 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui.options;
+package ch.kawaxte.launcher.ui.options;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.LauncherLanguage;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
 import java.awt.Window;
 import java.util.Objects;
 import javax.swing.JDialog;
@@ -31,7 +31,7 @@ import javax.swing.JDialog;
  * launcher's configuration.
  *
  * @see javax.swing.JDialog
- * @see io.github.kawaxte.twentyten.launcher.ui.options.OptionsPanel
+ * @see OptionsPanel
  * @author Kawaxte
  * @since 1.4.0923_02
  */
@@ -89,11 +89,10 @@ public class OptionsDialog extends JDialog {
   /**
    * Updates the title of the dialog.
    *
-   * <p>The title is set according to the provided {@link
-   * io.github.kawaxte.twentyten.UTF8ResourceBundle}.
+   * <p>The title is set according to the provided {@link UTF8ResourceBundle}.
    *
-   * @param bundle the {@link io.github.kawaxte.twentyten.UTF8ResourceBundle} containing the
-   *     localised keys and values in the resource bundle
+   * @param bundle the {@link UTF8ResourceBundle} containing the localised keys and values in the
+   *     resource bundle
    */
   public void updateContainerTitles(UTF8ResourceBundle bundle) {
     LauncherUtils.setContainerTitle(bundle, this, LauncherLanguageUtils.getODKeys()[0]);
@@ -102,8 +101,7 @@ public class OptionsDialog extends JDialog {
   /**
    * Returns the title of this dialog window.
    *
-   * <p>The title is fetched from the {@link
-   * io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils} based on a predefined key.
+   * <p>The title is fetched from the {@link LauncherLanguageUtils} based on a predefined key.
    *
    * @return a string representing the title of this dialog window
    */
