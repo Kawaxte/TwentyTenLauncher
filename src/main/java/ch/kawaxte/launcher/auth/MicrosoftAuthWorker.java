@@ -13,12 +13,12 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.auth;
+package ch.kawaxte.launcher.auth;
 
-import io.github.kawaxte.twentyten.launcher.ui.LauncherNoNetworkPanel;
-import io.github.kawaxte.twentyten.launcher.ui.LauncherPanel;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
+import ch.kawaxte.launcher.ui.LauncherPanel;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -26,13 +26,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.swing.SwingWorker;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * This class schedules a {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask} at a
- * fixed rate. The task is responsible for polling the device code, which is part of the OAuth 2.0
- * authorisation grant.
+ * This class schedules a {@link MicrosoftAuthTask} at a fixed rate. The task is responsible for
+ * polling the device code, which is part of the OAuth 2.0 authorisation grant.
  *
  * <p>The polling process continues for a certain period of time (specified by 'expiresIn') or until
  * it gets interrupted. If the process gets interrupted or encounters an exception, appropriate
@@ -47,7 +46,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
 
-  private final Logger logger = LogManager.getLogger(this);
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final String clientId;
   private final String deviceCode;
   private final int expiresIn;
@@ -70,13 +69,11 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
   }
 
   /**
-   * Schedules a new {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask} at a fixed
-   * rate, with the task being responsible for polling the device code. The polling process is
-   * conducted in a separate thread, ensuring that it does not block the Swing Event Dispatch thread
-   * (EDT).
+   * Schedules a new {@link MicrosoftAuthTask} at a fixed rate, with the task being responsible for
+   * polling the device code. The polling process is conducted in a separate thread, ensuring that
+   * it does not block the Swing Event Dispatch thread (EDT).
    *
-   * @return the result of the {@link io.github.kawaxte.twentyten.launcher.auth.MicrosoftAuthTask},
-   *     or {@code null} if an error occurred
+   * @return the result of the {@link MicrosoftAuthTask}, or {@code null} if an error occurred
    */
   @Override
   protected Object doInBackground() {
@@ -102,7 +99,7 @@ public class MicrosoftAuthWorker extends SwingWorker<Object, Void> {
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
 
-      this.logger.error("Timed out while scheduling authentication task", te);
+      this.logger.error("Timeout while scheduling authentication task", te);
     } finally {
       service.shutdown();
     }
