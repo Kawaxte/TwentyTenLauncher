@@ -13,16 +13,17 @@
  * program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.kawaxte.twentyten.launcher.ui;
+package ch.kawaxte.launcher.ui;
 
-import io.github.kawaxte.twentyten.UTF8ResourceBundle;
-import io.github.kawaxte.twentyten.launcher.LauncherConfig;
-import io.github.kawaxte.twentyten.launcher.LauncherLanguage;
-import io.github.kawaxte.twentyten.launcher.game.EState;
-import io.github.kawaxte.twentyten.launcher.game.GameUpdater;
-import io.github.kawaxte.twentyten.launcher.game.GameUpdaterWorker;
-import io.github.kawaxte.twentyten.launcher.util.LauncherLanguageUtils;
-import io.github.kawaxte.twentyten.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.LauncherConfig;
+import ch.kawaxte.launcher.LauncherLanguage;
+import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
+import ch.kawaxte.launcher.minecraft.EState;
+import ch.kawaxte.launcher.minecraft.MinecraftUpdate;
+import ch.kawaxte.launcher.minecraft.MinecraftUpdateWorker;
+import ch.kawaxte.launcher.util.LauncherLanguageUtils;
+import ch.kawaxte.launcher.util.LauncherUtils;
+import ch.kawaxte.launcher.util.MinecraftUtils;
 import java.applet.Applet;
 import java.applet.AppletStub;
 import java.awt.AlphaComposite;
@@ -48,17 +49,17 @@ import javax.swing.JApplet;
 import javax.swing.Timer;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class GameAppletWrapper extends JApplet implements AppletStub {
+public class MinecraftAppletWrapper extends JApplet implements AppletStub {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOGGER;
-  private static GameAppletWrapper instance;
+  private static MinecraftAppletWrapper instance;
 
   static {
-    LOGGER = LogManager.getLogger(GameAppletWrapper.class);
+    LOGGER = LoggerFactory.getLogger(MinecraftAppletWrapper.class);
   }
 
   private final Map<String, String> parameters;
@@ -72,22 +73,14 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
   private Applet minecraftApplet;
   private boolean active;
 
-  public GameAppletWrapper(String username, String sessionId) {
+  public MinecraftAppletWrapper(String username, String sessionId) {
     setInstance(this);
 
     this.parameters = new HashMap<>();
     this.taskState = EState.INITIALISE.ordinal();
     this.taskStateMessage = EState.INITIALISE.getMessage();
-    this.taskProgressMessage = "";
+    this.taskProgressMessage = null;
     this.taskProgress = 0;
-
-    if (Objects.isNull(username)) {
-      username =
-          new StringBuilder()
-              .append("Player")
-              .append(System.currentTimeMillis() % 1000L)
-              .toString();
-    }
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
 
@@ -95,14 +88,16 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
     System.setProperty("http.proxyHost", hostAndPort[0]);
     System.setProperty("http.proxyPort", hostAndPort[1]);
     System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
+
+    MinecraftUtils.reassignOutputStream(username);
   }
 
-  public static GameAppletWrapper getInstance() {
+  public static MinecraftAppletWrapper getInstance() {
     return instance;
   }
 
-  private static void setInstance(GameAppletWrapper gaw) {
-    instance = gaw;
+  private static void setInstance(MinecraftAppletWrapper maw) {
+    instance = maw;
   }
 
   public void setTaskProgressMessage(String message, Object... args) {
@@ -142,7 +137,7 @@ public class GameAppletWrapper extends JApplet implements AppletStub {
       return;
     }
 
-    new GameUpdaterWorker(GameUpdater.getUrls()).execute();
+    new MinecraftUpdateWorker(MinecraftUpdate.getGenericUrls()).execute();
     new Timer(
             10,
             event -> {
