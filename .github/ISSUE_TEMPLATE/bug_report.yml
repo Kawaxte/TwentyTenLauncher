@@ -1,6 +1,6 @@
 name: Bug report
 description: |
-  Report a bug encountered while using TwentyTen Launcher.
+  Template for reporting bugs encountered while using TwentyTen Launcher.
 title: "[Bug]:"
 labels: [ bug ]
 assignees:
@@ -10,27 +10,22 @@ body:
     attributes:
       value: |
         Before submitting a bug report, please check that your issue hasn't already been reported by searching [issues](https://github.com/Kawaxte/TwentyTenLauncher/issues).
-  - type: dropdown
-    id: launcher-platform
-    attributes:
-      label: Platform
-      description: |
-        What platform are you using TwentyTen Launcher on?
-      multiple: true
-      options:
-        - Linux
-        - macOS
-        - Windows
-    validations:
-      required: true
   - type: textarea
-    id: launcher-version
+    id: platform
     attributes:
-      label: Launcher Version
+      label: Operating System
+      description: |
+        What operating system(s) are you using?
+      placeholder: |
+        Windows 11 Home 22H2
+  - type: textarea
+    id: version
+    attributes:
+      label: Version of TwentyTen Launcher
       description: |
         What version of TwentyTen Launcher were you using when you encountered this bug?
       placeholder: |
-        e.g. "1.5.2823"
+        1.5.2823_06
     validations:
       required: true
   - type: textarea
@@ -40,7 +35,7 @@ body:
       description: |
         A clear and concise description of what the bug is.
       placeholder: |
-        e.g. "When I click on the "Sign in" button, nothing happens."
+        When I click on the "Sign in" button, nothing happens.
     validations:
       required: true
   - type: textarea
@@ -50,7 +45,7 @@ body:
       description: |
         A clear and concise description of what you expected to happen.
       placeholder: |
-        e.g. "I expected to be signing in to my Mojang account when I clicked on the "Sign in" button."
+        I expected to be signing in to my Mojang account when I clicked on the "Sign in" button.
     validations:
       required: true
   - type: textarea
@@ -60,7 +55,8 @@ body:
       description: |
         Steps to reproduce the behavior of the bug:
       placeholder: |
-        e.g "1. Open the launcher. 2. Click on the "Sign in" button."
+        1. Open "twentyten-launcher.jar"
+        2. Click on the "Sign in" button
     validations:
       required: true
   - type: textarea
@@ -70,6 +66,6 @@ body:
       description: |
         If you have any idea what might be causing this bug, please describe it here.
       placeholder: |
-        e.g. "I think this bug is caused by the launcher not being able to connect to the Mojang API."
+        I think this bug is caused by the launcher not being able to connect to the Mojang API.
     validations:
       required: false
