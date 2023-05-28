@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2023 Kawaxte
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License as published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
+ * program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package ch.kawaxte.launcher.util;
 
 import ch.kawaxte.launcher.LauncherConfig;
@@ -20,6 +35,12 @@ import java.util.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Utility class for handling everything related to Minecraft.
+ *
+ * @author Kawaxte
+ * @since 1.5.2823_06
+ */
 public final class MinecraftUtils {
 
   private static final Logger LOGGER;
@@ -33,6 +54,11 @@ public final class MinecraftUtils {
 
   private MinecraftUtils() {}
 
+  /**
+   * Returns the path to the log file for the specified username.
+   *
+   * @return {@code null} if the file cannot be created, otherwise the path to the log
+   */
   private static Path getFilePath(String username) {
     String selectedVersion = (String) LauncherConfig.get(4);
     String now = LocalDateTime.now(ZoneId.systemDefault()).toString();
@@ -55,6 +81,12 @@ public final class MinecraftUtils {
     return filePath;
   }
 
+  /**
+   * Archives all log files for the specified version in a .ZIP file.
+   *
+   * @param versionId the {@code selectedVersion} key from the config
+   * @param now the current date
+   */
   private static void archiveLogs(String versionId, String now) {
     String logFilePattern = String.format("%s_.*\\.log", versionId);
 
@@ -88,6 +120,15 @@ public final class MinecraftUtils {
     }
   }
 
+  /**
+   * Reassigns the {@link System#out} and {@link System#err} streams to a file in the {@code logs}
+   * directory.
+   *
+   * <p>Additonally, it filters out the {@code sessionid} parameter from the {@code Setting user: }
+   * line that is printed to the console by one of the classes within the client executable.
+   *
+   * @param username the {@code username} parameter from MinecraftApplet
+   */
   public static void reassignOutputStream(String username) {
     Path filePath = getFilePath(username);
     try {
