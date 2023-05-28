@@ -1,0 +1,53 @@
+name: Feature request
+description: |
+  Suggest an idea for TwentyTen Launcher.
+title: "[Feature]:"
+labels: [ feature ]
+assignees:
+  - Kawaxte
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting a feature request, please check that your idea hasn't already been suggested by searching [issues](https://github.com/Kawaxte/TwentyTenLauncher/issues) or
+        [pull requests](https://github.com/Kawaxte/TwentyTenLauncher/pulls).
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Description of Feature
+      description: |
+        A clear and concise description of what the feature is.
+      placeholder: |
+        e.g. "I would like to be able to change the background image of the launcher."
+    validations:
+      required: true
+  - type: textarea
+    id: feature-implementation
+    attributes:
+      label: Implementation of Feature
+      description: |
+        A clear and concise description of how you would like the feature to be implemented.
+      placeholder: |
+        e.g. "I would like to be able to change the background image of the launcher by clicking on the "Change Background" button in the "Settings" menu."
+    validations:
+      required: true
+  - type: textarea
+    id: feature-reason
+    attributes:
+      label: Reason for Feature
+      description: |
+        A clear and concise description of why you would like this feature to be implemented.
+      placeholder: |
+        e.g. "I would like to be able to change the background image of the launcher because I don't like the default background image."
+    validations:
+      required: true
+  - type: textarea
+    id: feature-alternatives
+    attributes:
+      label: Alternatives to Feature
+      description: |
+        A clear and concise description of any alternative solutions or features you've considered.
+      placeholder: |
+        e.g. "I initially thought that I could change the background image of the launcher by editing the "background.png" file in the "assets" folder, but that wasn't very convenient."
+    validations:
+      required: true
