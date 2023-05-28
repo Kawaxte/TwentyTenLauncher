@@ -293,7 +293,7 @@ public final class LinkedProperties extends Properties {
 
   @Override
   public synchronized boolean equals(Object o) {
-    return this == o || o instanceof LinkedProperties && this.linkedMap.equals(o);
+    return o instanceof LinkedProperties && Objects.equals(this.linkedMap, o);
   }
 
   @Override
