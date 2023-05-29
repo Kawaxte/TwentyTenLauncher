@@ -17,7 +17,6 @@ package ch.kawaxte.launcher;
 
 import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
 import ch.kawaxte.launcher.impl.UTF8ResourceBundle.UTF8Control;
-import ch.kawaxte.launcher.util.LauncherOptionsUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,14 +92,13 @@ public final class LauncherLanguage {
     Objects.requireNonNull(languageCode, "languageCode cannot be null");
 
     String fileName = String.format("%s_%s.properties", baseName, languageCode);
-    URL fileUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
+    URL fileUrl = LauncherLanguage.class.getClassLoader().getResource(fileName);
 
-    try (InputStream is =
-            LauncherOptionsUtils.class.getClassLoader().getResourceAsStream(fileName);
-        BufferedReader br =
-            new BufferedReader(
-                new InputStreamReader(
-                    Objects.requireNonNull(is, "is cannot be null"), StandardCharsets.UTF_8))) {
+    InputStream is =
+        Optional.ofNullable(LauncherLanguage.class.getClassLoader().getResourceAsStream(fileName))
+            .orElseThrow(() -> new NullPointerException("is cannot be null"));
+    try (BufferedReader br =
+        new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       bundle = new UTF8ResourceBundle(br);
     } catch (IOException ioe) {
       LOGGER.error("Cannot load {}: {}", fileUrl, ioe.getMessage());
