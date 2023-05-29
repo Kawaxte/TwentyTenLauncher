@@ -15,7 +15,6 @@
 
 package ch.kawaxte.launcher;
 
-import java.util.Objects;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import lombok.Getter;
@@ -77,10 +76,6 @@ public enum ELookAndFeel {
       LOGGER.error("Cannot access {} on '{}'", iae.getMessage(), EPlatform.OS_NAME, iae);
     } catch (UnsupportedLookAndFeelException ulafe) {
       LOGGER.error("{} unsupported on '{}'", ulafe.getMessage(), EPlatform.OS_NAME, ulafe);
-    } finally {
-      if (Objects.nonNull(UIManager.getLookAndFeel())) {
-        LOGGER.info("Setting look and feel to '{}'", UIManager.getLookAndFeel().getName());
-      }
     }
   }
 }
