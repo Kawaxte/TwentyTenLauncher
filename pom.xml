@@ -2,7 +2,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>twentyten-launcher</artifactId>
+  <artifactId>mmx-launcher</artifactId>
 
   <build>
     <finalName>${project.artifactId}</finalName>
@@ -101,7 +101,7 @@
   </dependencies>
 
   <description>Resurrection of Minecraft Launcher from 2010</description>
-  <groupId>io.github.kawaxte</groupId>
+  <groupId>ch.kawaxte</groupId>
   <inceptionYear>2022</inceptionYear>
   <modelVersion>4.0.0</modelVersion>
   <name>${project.groupId}:${project.artifactId}</name>
