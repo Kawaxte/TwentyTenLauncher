@@ -688,7 +688,7 @@ public final class MinecraftUpdate {
       } catch (MalformedURLException murle) {
         displayErrorMessage(murle.getMessage());
 
-        LOGGER.error("Cannot convert {} to URL", jarUrls, murle);
+        LOGGER.error("Cannot parse {} as URL", jarUrls, murle);
       }
 
       MinecraftAppletWrapper.getInstance()
