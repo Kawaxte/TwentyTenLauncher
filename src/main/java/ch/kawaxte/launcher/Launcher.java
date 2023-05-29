@@ -89,11 +89,14 @@ public class Launcher {
    * @see MinecraftAppletWrapper#MinecraftAppletWrapper(String, String)
    */
   public static void launchMinecraft(String username, String accessToken, String uuid) {
-    if (Objects.isNull(username)) {
+    if (Objects.isNull(username) || username.isEmpty()) {
       username = String.format("Player%s", System.currentTimeMillis() % 1000L);
     }
-    if (Objects.isNull(uuid)) {
-      uuid = UUID.nameUUIDFromBytes(username.getBytes(StandardCharsets.UTF_8)).toString();
+    if (Objects.isNull(uuid) || uuid.isEmpty()) {
+      uuid =
+          UUID.nameUUIDFromBytes(username.getBytes(StandardCharsets.UTF_8))
+              .toString()
+              .replace("-", "");
     }
 
     String sessionId =
