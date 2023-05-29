@@ -126,9 +126,7 @@ public final class LauncherUtils {
    * @return the encoded value if the length is not 0, otherwise {@code null}
    */
   public static String encodeToBase64(String value) {
-    if (Objects.isNull(value)) {
-      throw new NullPointerException("value cannot be null");
-    }
+    Objects.requireNonNull(value, "value cannot be null");
     if (value.isEmpty()) {
       throw new IllegalArgumentException("value cannot be empty");
     }
