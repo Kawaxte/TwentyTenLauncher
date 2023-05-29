@@ -52,9 +52,6 @@ public class Launcher {
    * @param args command-line arguments
    */
   public static void main(String... args) {
-    System.setProperty("org.slf4j.simpleLogger.logFile", "System.out");
-    System.setProperty("org.slf4j.simpleLogger.levelInBrackets", String.valueOf(true));
-
     ELookAndFeel.setLookAndFeel();
 
     LauncherConfig.loadConfig();
