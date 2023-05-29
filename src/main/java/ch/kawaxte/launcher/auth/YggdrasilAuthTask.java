@@ -86,10 +86,13 @@ public class YggdrasilAuthTask implements Runnable {
    */
   private String[] getAuthenticateResponse(JSONObject object) {
     String accessToken = object.getString("accessToken");
-    JSONObject selectedProfile = object.getJSONObject("selectedProfile");
-    String id = selectedProfile.getString("id");
-    String name = selectedProfile.getString("name");
-    return new String[] {accessToken, id, name};
+    if (object.has("selectedProfile")) {
+      JSONObject selectedProfile = object.getJSONObject("selectedProfile");
+      String id = selectedProfile.getString("id");
+      String name = selectedProfile.getString("name");
+      return new String[] {accessToken, id, name};
+    }
+    return new String[] {accessToken, null, null};
   }
 
   /**
