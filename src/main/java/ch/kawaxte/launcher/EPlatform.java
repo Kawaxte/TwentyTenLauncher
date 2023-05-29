@@ -64,9 +64,6 @@ public enum EPlatform {
    * This method goes through the Enum values and finds the one whose names list contains a
    * substring of the system's OS name.
    *
-   * <p>It uses a dual for-loop to iterate through the Enum values and their names list because it's
-   * marginally faster than using a stream.
-   *
    * @return The matching {@link EPlatform} for the operating system, or {@code null} if no match is
    *     found
    */
@@ -85,9 +82,6 @@ public enum EPlatform {
   /**
    * This method goes through the Enum values and finds the one whose {@code arch} string matches
    * the system's architecture name.
-   *
-   * <p>It uses a for-loop to iterate through the Enum values because it's marginally faster than
-   * using a stream.
    *
    * @return The matching {@link EPlatform} for the system architecture, or {@code null} if no match
    *     is found
