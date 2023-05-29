@@ -295,7 +295,7 @@ public final class MicrosoftAuth {
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
       return null;
     } catch (IOException ioe) {
-      LOGGER.error("Cannot  acquire XSTS token", ioe);
+      LOGGER.error("Cannot acquire XSTS token", ioe);
     }
     return null;
   }
