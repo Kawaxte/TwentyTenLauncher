@@ -89,22 +89,21 @@ public final class LauncherLanguage {
    *     codes</a>
    */
   public static void loadLanguage(String baseName, String languageCode) {
+    Objects.requireNonNull(baseName, "baseName cannot be null");
+    Objects.requireNonNull(languageCode, "languageCode cannot be null");
+
     String fileName = String.format("%s_%s.properties", baseName, languageCode);
     URL fileUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
 
-    InputStream is =
-        Optional.ofNullable(
-                LauncherOptionsUtils.class.getClassLoader().getResourceAsStream(fileName))
-            .orElseThrow(() -> new NullPointerException("is cannot be null"));
-    try (BufferedReader br =
-        new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+    try (InputStream is =
+            LauncherOptionsUtils.class.getClassLoader().getResourceAsStream(fileName);
+        BufferedReader br =
+            new BufferedReader(
+                new InputStreamReader(
+                    Objects.requireNonNull(is, "is cannot be null"), StandardCharsets.UTF_8))) {
       bundle = new UTF8ResourceBundle(br);
     } catch (IOException ioe) {
-      LOGGER.error("Cannot load {}", fileUrl, ioe);
-    } finally {
-      if (Objects.nonNull(fileUrl)) {
-        LOGGER.info("Loading {}", fileUrl);
-      }
+      LOGGER.error("Cannot load {}: {}", fileUrl, ioe.getMessage());
     }
   }
 }
