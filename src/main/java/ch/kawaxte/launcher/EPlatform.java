@@ -64,32 +64,41 @@ public enum EPlatform {
    * This method goes through the Enum values and finds the one whose names list contains a
    * substring of the system's OS name.
    *
+   * <p>It uses a dual for-loop to iterate through the Enum values and their names list because it's
+   * marginally faster than using a stream.
+   *
    * @return The matching {@link EPlatform} for the operating system, or {@code null} if no match is
    *     found
    */
   public static EPlatform getOSName() {
-    return Arrays.stream(values())
-        .filter(
-            platform ->
-                Objects.nonNull(platform.names)
-                    && platform.names.stream()
-                        .anyMatch(name -> OS_NAME.toLowerCase(Locale.ROOT).contains(name)))
-        .findFirst()
-        .orElse(null);
+    String osNameLowerCase = OS_NAME.toLowerCase(Locale.ROOT);
+    for (EPlatform platform : values()) {
+      for (String name : platform.names) {
+        if (osNameLowerCase.contains(name)) {
+          return platform;
+        }
+      }
+    }
+    return null;
   }
 
   /**
    * This method goes through the Enum values and finds the one whose {@code arch} string matches
    * the system's architecture name.
    *
+   * <p>It uses a for-loop to iterate through the Enum values because it's marginally faster than
+   * using a stream.
+   *
    * @return The matching {@link EPlatform} for the system architecture, or {@code null} if no match
    *     is found
    */
   public static EPlatform getOSArch() {
-    return Arrays.stream(values())
-        .filter(platform -> Objects.equals(platform.arch, OS_ARCH))
-        .findFirst()
-        .orElse(null);
+    for (EPlatform platform : values()) {
+      if (Objects.equals(platform.arch, OS_ARCH)) {
+        return platform;
+      }
+    }
+    return null;
   }
 
   public static boolean isWindows() {
