@@ -101,7 +101,7 @@ public final class LauncherLanguage {
         new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       bundle = new UTF8ResourceBundle(br);
     } catch (IOException ioe) {
-      LOGGER.error("Cannot load {}: {}", fileUrl, ioe.getMessage());
+      LOGGER.error("Cannot load {}", fileUrl, ioe);
     }
   }
 }
