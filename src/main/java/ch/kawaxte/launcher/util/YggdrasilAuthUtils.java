@@ -66,7 +66,7 @@ public final class YggdrasilAuthUtils {
    * not {@code null} or empty.
    *
    * @return {@code true} if the access token is expired, {@code false} otherwise
-   * @see YggdrasilAuth#validateAccessToken(String, String)
+   * @see YggdrasilAuth#validate(String, String)
    */
   public static boolean isAccessTokenExpired() {
     String accessToken = (String) LauncherConfig.get(17);
@@ -78,7 +78,7 @@ public final class YggdrasilAuthUtils {
       return false;
     }
 
-    JSONObject validate = YggdrasilAuth.validateAccessToken(accessToken, clientToken);
+    JSONObject validate = YggdrasilAuth.validate(accessToken, clientToken);
     return !Objects.isNull(validate) && validate.has("error");
   }
 
@@ -86,13 +86,13 @@ public final class YggdrasilAuthUtils {
    * Refreshes the expired access token and saves it to the configuration file.
    *
    * @throws AuthenticationException if the access token cannot be refreshed
-   * @see YggdrasilAuth#refreshAccessToken(String, String)
+   * @see YggdrasilAuth#refresh(String, String)
    */
   public static void refreshAccessToken() {
     String accessToken = (String) LauncherConfig.get(17);
     String clientToken = (String) LauncherConfig.get(18);
 
-    JSONObject refresh = YggdrasilAuth.refreshAccessToken(accessToken, clientToken);
+    JSONObject refresh = YggdrasilAuth.refresh(accessToken, clientToken);
     if (Objects.isNull(refresh)) {
       return;
     }
