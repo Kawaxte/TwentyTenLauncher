@@ -118,6 +118,8 @@ public final class YggdrasilAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+
+      LOGGER.error("Cannot authenticate with Mojang", ioe);
     }
     return null;
   }
@@ -187,7 +189,6 @@ public final class YggdrasilAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
-      return null;
     } catch (IOException ioe) {
       LOGGER.error("Cannot refresh access token", ioe);
     }
