@@ -17,10 +17,6 @@ package ch.kawaxte.launcher.auth;
 
 import ch.kawaxte.launcher.Launcher;
 import ch.kawaxte.launcher.LauncherConfig;
-import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
-import ch.kawaxte.launcher.ui.LauncherPanel;
-import ch.kawaxte.launcher.util.LauncherLanguageUtils;
-import ch.kawaxte.launcher.util.LauncherUtils;
 import java.util.Objects;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -110,12 +106,6 @@ public class YggdrasilAuthTask implements Runnable {
   public void run() {
     JSONObject authenticate = YggdrasilAuth.authenticate(username, password, clientToken);
     if (Objects.isNull(authenticate)) {
-      return;
-    }
-    if (authenticate.has("error")) {
-      LauncherUtils.swapContainers(
-          LauncherPanel.getInstance(),
-          new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
       return;
     }
 
