@@ -430,9 +430,9 @@ public final class LauncherUtils {
         Desktop.getDesktop().browse(new URI(url));
       }
     } catch (IOException ioe) {
-      LauncherUtils.LOGGER.error("Cannot browse {}", url, ioe);
+      LOGGER.error("Cannot browse {}", url, ioe);
     } catch (URISyntaxException urise) {
-      LauncherUtils.LOGGER.error("Cannot convert {} to URI", url, urise);
+      LOGGER.error("Cannot parse {} as URI", url, urise);
     }
   }
 
@@ -447,7 +447,7 @@ public final class LauncherUtils {
         Desktop.getDesktop().open(p.toFile());
       }
     } catch (IOException ioe) {
-      LauncherUtils.LOGGER.error("Cannot open {}", p, ioe);
+      LOGGER.error("Cannot open {}", p, ioe);
     }
   }
 }
