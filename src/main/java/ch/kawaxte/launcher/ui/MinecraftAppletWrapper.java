@@ -79,7 +79,7 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
     this.parameters = new HashMap<>();
     this.taskState = EState.INITIALISE.ordinal();
     this.taskStateMessage = EState.INITIALISE.getMessage();
-    this.taskProgressMessage = null;
+    this.taskProgressMessage = "";
     this.taskProgress = 0;
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
