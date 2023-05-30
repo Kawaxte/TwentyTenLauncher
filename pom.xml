@@ -36,11 +36,7 @@
             <filter>
               <artifact>*:*</artifact>
               <excludes>
-                <exclude>META-INF/maven/**</exclude>
-                <exclude>META-INF/MANIFEST.MF</exclude>
-                <exclude>META-INF/DEPENDENCIES</exclude>
-                <exclude>META-INF/LICENSE</exclude>
-                <exclude>META-INF/NOTICE</exclude>
+                <exclude>META-INF/**</exclude>
               </excludes>
             </filter>
           </filters>
@@ -112,8 +108,8 @@
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.major>1</version.major>
-    <version.minor>06</version.minor>
+    <version.patch>06</version.patch>
   </properties>
 
-  <version>${version.major}.${maven.build.timestamp}</version>
+  <version>${version.major}.${maven.build.timestamp}_{version.patch}</version>
 </project>
