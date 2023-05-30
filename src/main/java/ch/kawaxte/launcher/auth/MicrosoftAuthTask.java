@@ -122,10 +122,10 @@ public class MicrosoftAuthTask implements Runnable {
       return new String[0];
     }
 
-    MicrosoftAuthPanel.getInstance().getCopyCodeLabel().setVisible(false);
+    MicrosoftAuthPanel.getInstance().getEnterCodeInBrowserLabel().setVisible(false);
     MicrosoftAuthPanel.getInstance().getUserCodeLabel().setVisible(false);
     MicrosoftAuthPanel.getInstance().getExpiresInProgressBar().setIndeterminate(true);
-    MicrosoftAuthPanel.getInstance().getOpenBrowserButton().setVisible(false);
+    MicrosoftAuthPanel.getInstance().getOpenInBrowserButton().setVisible(false);
 
     String accessToken = object.getString("access_token");
     String refreshToken = object.getString("refresh_token");
