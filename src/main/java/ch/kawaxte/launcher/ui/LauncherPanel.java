@@ -29,6 +29,7 @@ import java.awt.LayoutManager;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import javax.swing.JPanel;
@@ -44,6 +45,8 @@ public class LauncherPanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
   private static LauncherPanel instance;
+  private final transient Image lightDirtBgImg;
+  private transient BufferedImage bImg;
 
   /**
    * Constructor for LauncherPanel.
@@ -60,6 +63,12 @@ public class LauncherPanel extends JPanel {
     super(new GridBagLayout(), true);
 
     setInstance(this);
+
+    URL lightDirtBgImgUrl =
+        Optional.ofNullable(
+                this.getClass().getClassLoader().getResource("light_dirt_background.png"))
+            .orElseThrow(() -> new NullPointerException("lightDirtBgImgUrl cannot be null"));
+    this.lightDirtBgImg = this.getToolkit().getImage(lightDirtBgImgUrl);
 
     this.setBackground(Color.BLACK);
 
@@ -90,43 +99,50 @@ public class LauncherPanel extends JPanel {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    URL bgImageUrl =
-        Optional.ofNullable(this.getClass().getClassLoader().getResource("dirt.png"))
-            .orElseThrow(() -> new NullPointerException("bgImageUrl cannot be null"));
-    Image bgImage = this.getToolkit().getImage(bgImageUrl);
-    int bgImageWidth = bgImage.getWidth(this) << 1;
-    int bgImageheight = bgImage.getHeight(this) << 1;
     int panelWidth = this.getWidth();
     int panelHeight = this.getHeight();
+    int lightDirtBgImgWidth = this.lightDirtBgImg.getWidth(this) << 1;
+    int lightDirtBgImgHeight = this.lightDirtBgImg.getHeight(this) << 1;
 
     Graphics2D g2d = (Graphics2D) g;
-    GraphicsConfiguration deviceConfiguration = g2d.getDeviceConfiguration();
+    GraphicsConfiguration configuration = g2d.getDeviceConfiguration();
 
-    BufferedImage bufferedImage =
-        deviceConfiguration.createCompatibleImage(
-            panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
-    Graphics2D g2dBuffered = bufferedImage.createGraphics();
-    g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f));
+    if (Objects.isNull(this.bImg)
+        || (!Objects.equals(this.bImg.getWidth(this), panelWidth)
+            || !Objects.equals(this.bImg.getHeight(this), panelHeight))) {
+      this.bImg =
+          configuration.createCompatibleImage(
+              panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
+    }
+
+    Graphics2D g2dBuffered = this.bImg.createGraphics();
+    g2dBuffered.setComposite(AlphaComposite.Clear);
+    g2dBuffered.fillRect(0, 0, panelWidth, panelHeight);
+    g2dBuffered.setComposite(AlphaComposite.SrcOver);
 
     try {
-      int gridWidth = (panelWidth + bgImageWidth) >> 5;
-      int gridHeight = (panelHeight + bgImageheight) >> 5;
+      int gridWidth = (panelWidth + lightDirtBgImgWidth) >> 5;
+      int gridHeight = (panelHeight + lightDirtBgImgHeight) >> 5;
       IntStream.range(0, (gridWidth * gridHeight))
-          .parallel()
           .forEach(
               i -> {
                 int gridX = (i % gridWidth) << 5;
                 int gridY = (i / gridWidth) << 5;
-                g2dBuffered.drawImage(bgImage, gridX, gridY, bgImageWidth, bgImageheight, this);
+                g2dBuffered.drawImage(
+                    this.lightDirtBgImg,
+                    gridX,
+                    gridY,
+                    lightDirtBgImgWidth,
+                    lightDirtBgImgHeight,
+                    this);
               });
-      g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
       this.drawTitleString("TwentyTen Launcher", panelWidth, panelHeight, g2dBuffered);
     } finally {
       g2dBuffered.dispose();
     }
 
-    g2d.drawImage(bufferedImage, 0, 0, panelWidth, panelHeight, this);
+    g2d.drawImage(bImg, 0, 0, panelWidth, panelHeight, this);
   }
 
   /**
