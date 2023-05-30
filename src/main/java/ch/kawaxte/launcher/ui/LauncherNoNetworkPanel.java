@@ -19,7 +19,7 @@ import ch.kawaxte.launcher.Launcher;
 import ch.kawaxte.launcher.LauncherConfig;
 import ch.kawaxte.launcher.LauncherLanguage;
 import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
-import ch.kawaxte.launcher.impl.swing.NotchJPanel;
+import ch.kawaxte.launcher.impl.swing.JNotchPanel;
 import ch.kawaxte.launcher.impl.swing.TransparentJButton;
 import ch.kawaxte.launcher.minecraft.MinecraftUpdate;
 import ch.kawaxte.launcher.util.LauncherLanguageUtils;
@@ -44,7 +44,7 @@ import javax.swing.SwingConstants;
  * @author Kawaxte
  * @since 1.4.1023_03
  */
-public class LauncherNoNetworkPanel extends NotchJPanel implements ActionListener {
+public class LauncherNoNetworkPanel extends JNotchPanel implements ActionListener {
 
   private static LauncherNoNetworkPanel instance;
   private final JLabel errorLabel;
