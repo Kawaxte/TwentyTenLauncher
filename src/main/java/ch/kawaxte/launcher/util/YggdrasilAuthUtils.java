@@ -18,9 +18,7 @@ package ch.kawaxte.launcher.util;
 import ch.kawaxte.launcher.LauncherConfig;
 import ch.kawaxte.launcher.auth.YggdrasilAuth;
 import ch.kawaxte.launcher.auth.YggdrasilAuthWorker;
-import ch.kawaxte.launcher.impl.exception.AuthenticationException;
 import java.util.Objects;
-import org.json.JSONObject;
 
 /**
  * Utility class for handling Mojang (Yggdrasil) authentication.
@@ -65,43 +63,18 @@ public final class YggdrasilAuthUtils {
    * Checks if the access token is expired as long as both the access token and the client token are
    * not {@code null} or empty.
    *
-   * @return {@code true} if the access token is expired, {@code false} otherwise
    * @see YggdrasilAuth#validate(String, String)
    */
-  public static boolean isAccessTokenExpired() {
+  public static void isAccessTokenExpired() {
     String accessToken = (String) LauncherConfig.get(17);
     String clientToken = (String) LauncherConfig.get(18);
     if (Objects.isNull(accessToken) || Objects.isNull(clientToken)) {
-      return false;
-    }
-    if (accessToken.isEmpty() || clientToken.isEmpty()) {
-      return false;
-    }
-
-    JSONObject validate = YggdrasilAuth.validate(accessToken, clientToken);
-    return !Objects.isNull(validate) && validate.has("error");
-  }
-
-  /**
-   * Refreshes the expired access token and saves it to the configuration file.
-   *
-   * @throws AuthenticationException if the access token cannot be refreshed
-   * @see YggdrasilAuth#refresh(String, String)
-   */
-  public static void refreshAccessToken() {
-    String accessToken = (String) LauncherConfig.get(17);
-    String clientToken = (String) LauncherConfig.get(18);
-
-    JSONObject refresh = YggdrasilAuth.refresh(accessToken, clientToken);
-    if (Objects.isNull(refresh)) {
       return;
     }
-    if (refresh.has("error")) {
-      throw new AuthenticationException("Cannot refresh access token");
+    if (accessToken.isEmpty() || clientToken.isEmpty()) {
+      return;
     }
 
-    String newAccessToken = refresh.getString("accessToken");
-    LauncherConfig.set(17, newAccessToken);
-    LauncherConfig.saveConfig();
+    YggdrasilAuth.validate(accessToken, clientToken);
   }
 }
