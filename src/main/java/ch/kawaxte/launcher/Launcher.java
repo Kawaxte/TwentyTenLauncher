@@ -64,10 +64,7 @@ public class Launcher {
     SwingUtilities.invokeLater(() -> new LauncherFrame().setVisible(true));
 
     boolean microsoftAccessTokenExpired = MicrosoftAuthUtils.isAccessTokenExpired();
-    boolean mojangAccessTokenExpired = YggdrasilAuthUtils.isAccessTokenExpired();
-    if (mojangAccessTokenExpired) {
-      YggdrasilAuthUtils.refreshAccessToken();
-    }
+    YggdrasilAuthUtils.isAccessTokenExpired();
     if (microsoftAccessTokenExpired) {
       MicrosoftAuthUtils.refreshAccessToken();
     }
