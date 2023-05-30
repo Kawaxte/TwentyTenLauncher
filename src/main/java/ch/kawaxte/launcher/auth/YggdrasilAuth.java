@@ -15,6 +15,7 @@
 
 package ch.kawaxte.launcher.auth;
 
+import ch.kawaxte.launcher.LauncherConfig;
 import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
 import ch.kawaxte.launcher.ui.LauncherPanel;
 import ch.kawaxte.launcher.util.LauncherLanguageUtils;
@@ -30,6 +31,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,7 +156,14 @@ public final class YggdrasilAuth {
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
     } catch (IOException ioe) {
-      LOGGER.error("Cannot validate access token", ioe);
+      JSONObject refresh = refresh(accessToken, clientToken);
+      if (Objects.isNull(refresh)) {
+        return null;
+      }
+
+      String newAccessToken = refresh.getString("accessToken");
+      LauncherConfig.set(17, newAccessToken);
+      LauncherConfig.saveConfig();
     }
     return null;
   }
