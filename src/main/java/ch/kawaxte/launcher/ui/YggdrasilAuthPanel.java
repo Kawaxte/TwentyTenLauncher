@@ -74,7 +74,7 @@ public class YggdrasilAuthPanel extends NotchJPanel implements ActionListener {
    * selected language.
    *
    * <p>It also handles the click event for the {@link #linkLabel} component, which opens the
-   * browser and navigates to the link specified in {@link LauncherUtils#getUrls()}.
+   * browser and navigates to the link specified in {@link LauncherUtils#getGenericUrls()}.
    *
    * @see #setLayout(LayoutManager)
    * @see #updateComponentTexts(UTF8ResourceBundle)
@@ -121,8 +121,8 @@ public class YggdrasilAuthPanel extends NotchJPanel implements ActionListener {
             LauncherUtils.openBrowser(
                 Objects.nonNull(LauncherUtils.getOutdated())
                         && Boolean.TRUE.equals(LauncherUtils.getOutdated())
-                    ? String.valueOf(LauncherUtils.getUrls()[1])
-                    : String.valueOf(LauncherUtils.getUrls()[0]));
+                    ? String.valueOf(LauncherUtils.getGenericUrls()[2])
+                    : String.valueOf(LauncherUtils.getGenericUrls()[0]));
           }
         });
     this.signinButton.addActionListener(this);
