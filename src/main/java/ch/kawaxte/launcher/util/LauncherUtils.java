@@ -35,7 +35,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -44,8 +43,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Base64;
 import java.util.EnumMap;
 import java.util.Map;
@@ -140,32 +137,37 @@ public final class LauncherUtils {
    *
    * @return the URLs to either pages as an array
    */
-  public static URL[] getUrls() {
-    URL[] urls = new URL[2];
-    try {
-      urls[0] =
-          new URL(
-              new StringBuilder()
-                  .append("https://signup.live.com/")
-                  .append("signup")
-                  .append("?client_id=000000004420578E")
-                  .append("&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d")
-                  .append("&lic=1")
-                  .append("&uaid=e6e4ffd0ad4943ab9bf740fb4a0416f9")
-                  .append("&wa=wsignin1.0")
-                  .toString());
-      urls[1] =
-          new URL(
-              new StringBuilder()
-                  .append("https://api.github.com/")
-                  .append("repos/")
-                  .append("Kawaxte/")
-                  .append("TwentyTenLauncher/")
-                  .append("releases")
-                  .toString());
-    } catch (MalformedURLException murle) {
-      LOGGER.error("Cannot create URL(s)", murle);
-    }
+  public static GenericUrl[] getGenericUrls() {
+    GenericUrl[] urls = new GenericUrl[3];
+    urls[0] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://signup.live.com/")
+                .append("signup")
+                .append("?client_id=000000004420578E")
+                .append("&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d")
+                .append("&lic=1")
+                .append("&uaid=e6e4ffd0ad4943ab9bf740fb4a0416f9")
+                .append("&wa=wsignin1.0")
+                .toString());
+    urls[1] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://api.github.com/")
+                .append("repos/")
+                .append("Kawaxte/")
+                .append("TwentyTenLauncher/")
+                .append("releases")
+                .toString());
+    urls[2] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://github.com/")
+                .append("Kawaxte/")
+                .append("TwentyTenLauncher/")
+                .append("releases/")
+                .append("latest")
+                .toString());
     return urls;
   }
 
@@ -234,10 +236,9 @@ public final class LauncherUtils {
       Attributes attributes = manifest.getMainAttributes();
       return attributes.getValue(key);
     } catch (FileNotFoundException fnfe) {
-      Instant now = Instant.now();
-      return new SimpleDateFormat("1.M.ddyy").format(now.toEpochMilli());
+      return "1.99.9999_99"; // Placeholder for when running in IDE
     } catch (IOException ioe) {
-      LOGGER.error("Cannot retrieve '{}' from {}", key, fileUrl, ioe);
+      LOGGER.error("Cannot retrieve {} from {}", key, fileUrl, ioe);
     } catch (URISyntaxException urise) {
       LOGGER.error("Cannot parse {} as URI", fileUrl, urise);
     }
@@ -300,7 +301,7 @@ public final class LauncherUtils {
               try {
                 HttpRequest request =
                     factory.buildGetRequest(
-                        new GenericUrl(getUrls()[1].toURI())
+                        getGenericUrls()[1]
                             .set("accept", "application/vnd.github+json")
                             .set("X-GitHub-Api-Version", "2022-11-28"));
                 HttpResponse response = request.execute();
@@ -317,8 +318,6 @@ public final class LauncherUtils {
                         LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
               } catch (IOException ioe) {
                 LOGGER.error("Cannot check for updates", ioe);
-              } catch (URISyntaxException urise) {
-                LOGGER.error("Cannot convert {} to URI", getUrls()[1], urise);
               }
               return false;
             }
