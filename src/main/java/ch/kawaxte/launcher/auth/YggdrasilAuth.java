@@ -116,10 +116,12 @@ public final class YggdrasilAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      LauncherUtils.setNotPremium(false);
     } catch (IOException ioe) {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+      LauncherUtils.setNotPremium(true);
 
       LOGGER.error("Cannot authenticate with Mojang", ioe);
     }
@@ -151,10 +153,6 @@ public final class YggdrasilAuth {
       return response.parseAsString().isEmpty()
           ? new JSONObject()
           : new JSONObject(response.parseAsString());
-    } catch (UnknownHostException uhe) {
-      LauncherUtils.swapContainers(
-          LauncherPanel.getInstance(),
-          new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
     } catch (IOException ioe) {
       JSONObject refresh = refresh(accessToken, clientToken);
       if (Objects.isNull(refresh)) {
@@ -195,9 +193,7 @@ public final class YggdrasilAuth {
       HttpResponse response = request.execute();
       return new JSONObject(response.parseAsString());
     } catch (UnknownHostException uhe) {
-      LauncherUtils.swapContainers(
-          LauncherPanel.getInstance(),
-          new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      return null; // Why would we want to refresh without internet connection?
     } catch (IOException ioe) {
       LOGGER.error("Cannot refresh access token", ioe);
     }
