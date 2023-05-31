@@ -62,6 +62,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -81,6 +82,7 @@ public final class LauncherUtils {
   public static final Pattern UUID_PATTERN;
   public static final Path WORKING_DIRECTORY_PATH;
   private static final Logger LOGGER;
+  @Getter @Setter private static boolean notPremium;
   @Getter private static Boolean outdated;
 
   static {
@@ -96,6 +98,7 @@ public final class LauncherUtils {
                 + "[A-Fa-f0-9]{12}$");
 
     WORKING_DIRECTORY_PATH = getWorkingDirectoryPath();
+    notPremium = false;
     outdated = null;
   }
 
@@ -190,15 +193,15 @@ public final class LauncherUtils {
         new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       JSONObject json = new JSONObject(br.lines().collect(Collectors.joining()));
 
-      JSONArray versionArray = null;
-      if (selectedVersion.startsWith("b")) {
-        versionArray = json.getJSONArray("legacy_beta");
-      }
-      if (selectedVersion.startsWith("a")) {
-        versionArray = json.getJSONArray("legacy_alpha");
-      }
+      JSONArray versionArray;
       if (selectedVersion.startsWith("inf")) {
         versionArray = json.getJSONArray("legacy_infdev");
+      } else if (selectedVersion.startsWith("a")) {
+        versionArray = json.getJSONArray("legacy_alpha");
+      } else if (selectedVersion.startsWith("b")) {
+        versionArray = json.getJSONArray("legacy_beta");
+      } else {
+        versionArray = json.getJSONArray("legacy_release");
       }
 
       if (Objects.nonNull(versionArray)) {
