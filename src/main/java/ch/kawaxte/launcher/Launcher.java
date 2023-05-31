@@ -30,7 +30,7 @@ import javax.swing.SwingUtilities;
  * language preferences, displaying the main frame of the application, and handling the
  * authentication tokens for both Microsoft and Mojang accounts.
  *
- * <p>It also provides a static method {@link #launchMinecraft(String, String, String)} for
+ * <p>It also provides a static method {@link #launchMinecraft(String, String, String, boolean)} for
  * launching the Minecraft applet within a JFrame with a specific username, access token and UUID.
  *
  * @author Kawaxte
@@ -82,15 +82,17 @@ public class Launcher {
    *
    * @param username username of the account (or email address if Mojang account)
    * @param accessToken the JWT containing various information about the Minecraft profile
-   * @param uuid the UUID of the account's Minecraft profile
-   * @see MinecraftAppletWrapper#MinecraftAppletWrapper(String, String)
+   * @param profileId the UUID of the account's Minecraft profile
+   * @param demo whether the account owns Minecraft or not
+   * @see MinecraftAppletWrapper#MinecraftAppletWrapper(String, String, boolean)
    */
-  public static void launchMinecraft(String username, String accessToken, String uuid) {
+  public static void launchMinecraft(
+      String username, String accessToken, String profileId, boolean demo) {
     if (Objects.isNull(username) || username.isEmpty()) {
       username = String.format("Player%s", System.currentTimeMillis() % 1000L);
     }
-    if (Objects.isNull(uuid) || uuid.isEmpty()) {
-      uuid =
+    if (Objects.isNull(profileId) || profileId.isEmpty()) {
+      profileId =
           UUID.nameUUIDFromBytes(username.getBytes(StandardCharsets.UTF_8))
               .toString()
               .replace("-", "");
@@ -101,10 +103,10 @@ public class Launcher {
             .append("token:")
             .append(accessToken)
             .append(":")
-            .append(uuid)
+            .append(profileId)
             .toString();
 
-    MinecraftAppletWrapper maw = new MinecraftAppletWrapper(username, sessionId);
+    MinecraftAppletWrapper maw = new MinecraftAppletWrapper(username, sessionId, demo);
     maw.init();
 
     LauncherFrame.getInstance().remove(LauncherPanel.getInstance());
