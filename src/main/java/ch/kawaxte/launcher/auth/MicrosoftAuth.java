@@ -150,10 +150,12 @@ public final class MicrosoftAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      LauncherUtils.setNotPremium(false);
     } catch (IOException ioe) {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+      LauncherUtils.setNotPremium(true);
 
       LOGGER.error("Cannot acquire device code", ioe);
     }
@@ -188,6 +190,7 @@ public final class MicrosoftAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      LauncherUtils.setNotPremium(false);
     } catch (IOException ioe) {
       String message = ioe.getMessage();
       message = message.substring(message.indexOf("\n") + 1);
@@ -204,6 +207,7 @@ public final class MicrosoftAuth {
             LauncherUtils.swapContainers(
                 LauncherPanel.getInstance(),
                 new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+            LauncherUtils.setNotPremium(true);
 
             LOGGER.error("Cannot acquire token", ioe);
             break;
@@ -241,10 +245,12 @@ public final class MicrosoftAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      LauncherUtils.setNotPremium(false);
     } catch (IOException ioe) {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+      LauncherUtils.setNotPremium(true);
 
       LOGGER.error("Cannot refresh access token", ioe);
     }
@@ -281,10 +287,12 @@ public final class MicrosoftAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      LauncherUtils.setNotPremium(false);
     } catch (IOException ioe) {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+      LauncherUtils.setNotPremium(true);
 
       LOGGER.error("Cannot acquire Xbox Live token", ioe);
     }
@@ -320,10 +328,12 @@ public final class MicrosoftAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      LauncherUtils.setNotPremium(false);
     } catch (IOException ioe) {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+      LauncherUtils.setNotPremium(true);
 
       LOGGER.error("Cannot acquire XSTS token", ioe);
     }
@@ -358,10 +368,12 @@ public final class MicrosoftAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      LauncherUtils.setNotPremium(false);
     } catch (IOException ioe) {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+      LauncherUtils.setNotPremium(true);
 
       LOGGER.error("Cannot acquire Minecraft access token", ioe);
     }
@@ -391,10 +403,12 @@ public final class MicrosoftAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      LauncherUtils.setNotPremium(false);
     } catch (IOException ioe) {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+      LauncherUtils.setNotPremium(true);
 
       LOGGER.error("Cannot check Minecraft Store entitlements", ioe);
     }
@@ -425,10 +439,12 @@ public final class MicrosoftAuth {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
+      LauncherUtils.setNotPremium(false);
     } catch (IOException ioe) {
       LauncherUtils.swapContainers(
           LauncherPanel.getInstance(),
           new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+      LauncherUtils.setNotPremium(true);
 
       LOGGER.error("Cannot acquire Minecraft profile", ioe);
     }
