@@ -177,7 +177,7 @@ public class LauncherNoNetworkPanel extends JNotchPanel implements ActionListene
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (Objects.equals(source, this.playOfflineButton)) {
-      Launcher.launchMinecraft(null, null, null);
+      Launcher.launchMinecraft(null, null, null, LauncherUtils.isNotPremium());
     }
     if (Objects.equals(source, this.retryButton)) {
       LauncherUtils.swapContainers(this.getParent(), new YggdrasilAuthPanel());
