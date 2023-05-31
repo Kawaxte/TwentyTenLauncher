@@ -1,4 +1,108 @@
 {
+  "legacy_release": [
+    {
+      "versionId": "1.0.0",
+      "versionName": "Release 1.0.0",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.1",
+      "versionName": "Release 1.1",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.2.1",
+      "versionName": "Release 1.2.1",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.2.2",
+      "versionName": "Release 1.2.2",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.2.3",
+      "versionName": "Release 1.2.3",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.2.4",
+      "versionName": "Release 1.2.4",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.2.5",
+      "versionName": "Release 1.2.5",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.3.1",
+      "versionName": "Release 1.3.1",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.3.2",
+      "versionName": "Release 1.3.2",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.4.2",
+      "versionName": "Release 1.4.2",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.4.4",
+      "versionName": "Release 1.4.4",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.4.5",
+      "versionName": "Release 1.4.5",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.4.6",
+      "versionName": "Release 1.4.6",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.4.7",
+      "versionName": "Release 1.4.7",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.5",
+      "versionName": "Release 1.5",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.5.1",
+      "versionName": "Release 1.5.1",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    },
+    {
+      "versionId": "1.5.2",
+      "versionName": "Release 1.5.2",
+      "bcProxyHost": "betacraft.uk",
+      "bcProxyPort": "11707"
+    }
+  ],
   "legacy_beta": [
     {
       "versionId": "b1.0",
