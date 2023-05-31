@@ -98,7 +98,7 @@ public final class MinecraftUpdate {
   private MinecraftUpdate() {}
 
   /**
-   * Checks if the minecraft is cached by verifying the existence of necessary files.
+   * Checks if Minecraft is cached by verifying the existence of necessary files.
    *
    * @return {@code true} if all the necessary files exist, {@code false} otherwise
    */
@@ -207,7 +207,7 @@ public final class MinecraftUpdate {
    * @return an array of required URLs for the Minecraft client
    */
   private static GenericUrl[] getClientUrls() {
-    GenericUrl[] urls = new GenericUrl[3];
+    GenericUrl[] urls = new GenericUrl[4];
     urls[0] =
         new GenericUrl(
             new StringBuilder()
@@ -218,7 +218,7 @@ public final class MinecraftUpdate {
                 .append("nightly/")
                 .append("bin/")
                 .append("client/")
-                .append("legacy_beta/")
+                .append("legacy_release/")
                 .toString());
     urls[1] =
         new GenericUrl(
@@ -230,9 +230,21 @@ public final class MinecraftUpdate {
                 .append("nightly/")
                 .append("bin/")
                 .append("client/")
-                .append("legacy_alpha/")
+                .append("legacy_beta/")
                 .toString());
     urls[2] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://github.com/")
+                .append("Kawaxte/")
+                .append("TwentyTenLauncher/")
+                .append("raw/")
+                .append("nightly/")
+                .append("bin/")
+                .append("client/")
+                .append("legacy_alpha/")
+                .toString());
+    urls[3] =
         new GenericUrl(
             new StringBuilder()
                 .append("https://github.com/")
@@ -340,16 +352,16 @@ public final class MinecraftUpdate {
    * @return the correct URL for the client
    */
   private static GenericUrl getClientUrlByPrefix(String versionId, GenericUrl[] urls) {
-    if (versionId.startsWith("b")) {
-      return urls[0];
+    if (versionId.startsWith("i")) {
+      return urls[3];
     }
     if (versionId.startsWith("a")) {
-      return urls[1];
-    }
-    if (versionId.startsWith("i")) {
       return urls[2];
     }
-    return new GenericUrl("");
+    if (versionId.startsWith("b")) {
+      return urls[1];
+    }
+    return urls[0];
   }
 
   /**
