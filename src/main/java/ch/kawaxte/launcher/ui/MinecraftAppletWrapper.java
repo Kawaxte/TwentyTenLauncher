@@ -75,7 +75,7 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
   private Applet minecraftApplet;
   private boolean active;
 
-  public MinecraftAppletWrapper(String username, String sessionId) {
+  public MinecraftAppletWrapper(String username, String sessionId, boolean demo) {
     setInstance(this);
 
     URL lightDirtBgImgUrl =
@@ -84,17 +84,24 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
             .orElseThrow(() -> new NullPointerException("lightDirtBgImgUrl cannot be null"));
 
     this.parameters = new HashMap<>();
+    this.parameters.put("username", username);
+    this.parameters.put("sessionid", sessionId);
+
+    String selectedVersion = (String) LauncherConfig.get(4);
+    if (IntStream.rangeClosed(3, 5)
+        .anyMatch(i -> selectedVersion.contains(String.format("1.%d.", i)))) {
+      this.parameters.put("demo", String.valueOf(demo));
+    }
+
     this.lightDirtBgImg = this.getToolkit().getImage(lightDirtBgImgUrl);
     this.taskState = EState.INITIALISE.ordinal();
     this.taskStateMessage = EState.INITIALISE.getMessage();
     this.taskProgressMessage = "";
     this.taskProgress = 0;
-    this.parameters.put("username", username);
-    this.parameters.put("sessionid", sessionId);
 
-    String[] hostAndPort = LauncherUtils.getProxyHostAndPort();
-    System.setProperty("http.proxyHost", hostAndPort[0]);
-    System.setProperty("http.proxyPort", hostAndPort[1]);
+    String[] proxies = LauncherUtils.getProxyHostAndPort();
+    System.setProperty("http.proxyHost", proxies[0]);
+    System.setProperty("http.proxyPort", proxies[1]);
     System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
 
     MinecraftUtils.reassignOutputStream(username);
