@@ -125,10 +125,32 @@ public final class LauncherOptionsUtils {
     try (BufferedReader br =
         new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       JSONObject json = new JSONObject(br.lines().collect(Collectors.joining()));
-      List<String> types =
+      List<String> oldLegacy =
           Collections.unmodifiableList(
               Arrays.asList("legacy_beta", "legacy_alpha", "legacy_infdev"));
-      types.forEach(
+      List<String> legacy = Collections.singletonList("legacy_release");
+      legacy.forEach(
+          version -> {
+            JSONArray versionArray = json.getJSONArray(version);
+            IntStream.range(0, versionArray.length())
+                .mapToObj(versionArray::getJSONObject)
+                .sorted(
+                    (o1, o2) -> {
+                      String v1 = o1.getString("versionId");
+                      String v2 = o2.getString("versionId");
+                      return -compareVersionIds(v1, v2);
+                    })
+                .collect(Collectors.toList())
+                .forEach(
+                    o -> {
+                      String versionId = o.getString("versionId");
+                      String versionName = o.getString("versionName");
+
+                      versionMap.put(versionName, versionId);
+                      defaultComboBoxModel.addElement(versionName);
+                    });
+          });
+      oldLegacy.forEach(
           version -> {
             JSONArray versionArray = json.getJSONArray(version);
             IntStream.range(0, versionArray.length())
@@ -144,13 +166,13 @@ public final class LauncherOptionsUtils {
                     o -> {
                       boolean showBetaVersionsSelected =
                           Boolean.parseBoolean(LauncherConfig.get(1).toString())
-                              && Objects.equals(version, types.get(0));
+                              && Objects.equals(version, oldLegacy.get(0));
                       boolean showAlphaVersionsSelected =
                           Boolean.parseBoolean(LauncherConfig.get(2).toString())
-                              && Objects.equals(version, types.get(1));
+                              && Objects.equals(version, oldLegacy.get(1));
                       boolean showInfdevVersionsSelected =
                           Boolean.parseBoolean(LauncherConfig.get(3).toString())
-                              && Objects.equals(version, types.get(2));
+                              && Objects.equals(version, oldLegacy.get(2));
                       if (showBetaVersionsSelected
                           || showAlphaVersionsSelected
                           || showInfdevVersionsSelected) {
