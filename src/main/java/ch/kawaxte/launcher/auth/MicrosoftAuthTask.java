@@ -317,7 +317,7 @@ public class MicrosoftAuthTask implements Runnable {
       LauncherConfig.set(6, null);
       LauncherConfig.saveConfig();
 
-      Launcher.launchMinecraft(null, accessTokenResponse[0], null);
+      Launcher.launchMinecraft(null, accessTokenResponse[0], null, true);
     } else {
       JSONObject minecraftProfile = MicrosoftAuth.acquireMinecraftProfile(accessTokenResponse[0]);
       if (Objects.isNull(minecraftProfile)) {
@@ -330,7 +330,7 @@ public class MicrosoftAuthTask implements Runnable {
       LauncherConfig.saveConfig();
 
       Launcher.launchMinecraft(
-          minecraftProfileResponse[1], accessTokenResponse[0], minecraftProfileResponse[0]);
+          minecraftProfileResponse[1], accessTokenResponse[0], minecraftProfileResponse[0], false);
     }
     service.shutdown();
   }

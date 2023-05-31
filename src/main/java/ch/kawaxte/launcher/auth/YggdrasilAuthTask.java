@@ -121,7 +121,7 @@ public class YggdrasilAuthTask implements Runnable {
       LauncherConfig.set(16, false);
       LauncherConfig.saveConfig();
 
-      Launcher.launchMinecraft(null, authenticateResponse[0], null);
+      Launcher.launchMinecraft(null, authenticateResponse[0], null, true);
     } else {
       LauncherConfig.set(14, authenticateResponse[1]);
       LauncherConfig.set(15, authenticateResponse[2]);
@@ -129,7 +129,7 @@ public class YggdrasilAuthTask implements Runnable {
       LauncherConfig.saveConfig();
 
       Launcher.launchMinecraft(
-          authenticateResponse[2], authenticateResponse[0], authenticateResponse[1]);
+          authenticateResponse[2], authenticateResponse[0], authenticateResponse[1], false);
     }
   }
 }
