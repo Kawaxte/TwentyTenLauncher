@@ -183,7 +183,7 @@ public final class LauncherUtils {
   public static String[] getProxyHostAndPort() {
     String selectedVersion = (String) LauncherConfig.get(4);
 
-    String fileName = "versions.json";
+    String fileName = "assets/versions.json";
     URL fileUrl = LauncherUtils.class.getClassLoader().getResource(fileName);
 
     InputStream is =
