@@ -31,7 +31,6 @@ import java.awt.Container;
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,9 +48,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.swing.AbstractButton;
@@ -222,33 +218,6 @@ public final class LauncherUtils {
   }
 
   /**
-   * Retrieves the "Build-Time" attribute from the MANIFEST.MF file within the launcher's .JAR file.
-   *
-   * <p>The "Build-Time" attribute contains the current version of the launcher generated in pom.xml
-   * during the Maven build process.
-   *
-   * @param key the attribute key
-   * @return the attribute value
-   */
-  public static String getManifestAttribute(String key) {
-    URL fileUrl =
-        Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
-            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
-    try (JarFile file = new JarFile(new File(fileUrl.toURI()))) {
-      Manifest manifest = file.getManifest();
-      Attributes attributes = manifest.getMainAttributes();
-      return attributes.getValue(key);
-    } catch (FileNotFoundException fnfe) {
-      return "1.99.9999_99"; // Placeholder for when running in IDE
-    } catch (IOException ioe) {
-      LOGGER.error("Cannot retrieve {} from {}", key, fileUrl, ioe);
-    } catch (URISyntaxException urise) {
-      LOGGER.error("Cannot parse {} as URI", fileUrl, urise);
-    }
-    return null;
-  }
-
-  /**
    * Returns the working directory path of the launcher based on platform.
    *
    * <p>To make it easier to understand, this is the equivalent to Microsoft's ".minecraft"
@@ -312,8 +281,8 @@ public final class LauncherUtils {
                 String body = response.parseAsString();
                 JSONArray array = new JSONArray(body);
                 String tagName = array.getJSONObject(0).getString("tag_name");
-                String buildTime = getManifestAttribute("Build-Time");
-                return Objects.compare(buildTime, tagName, String::compareTo) < 0;
+                String implVersion = this.getClass().getPackage().getImplementationVersion();
+                return Objects.compare(implVersion, tagName, String::compareTo) < 0;
               } catch (UnknownHostException uhe) {
                 LauncherUtils.swapContainers(
                     LauncherPanel.getInstance(),
