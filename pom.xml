@@ -36,13 +36,22 @@
             <filter>
               <artifact>*:*</artifact>
               <excludes>
-                <exclude>META-INF/**</exclude>
+                <exclude>META-INF/maven/**</exclude>
+                <exclude>META-INF/NOTICE.txt</exclude>
+                <exclude>META-INF/LICENSE.txt</exclude>
+                <exclude>META-INF/MANIFEST.MF</exclude>
+                <exclude>META-INF/DEPENDENCIES</exclude>
+                <exclude>META-INF/LICENSE</exclude>
+                <exclude>META-INF/NOTICE</exclude>
+                <exclude>META-INF/versions/9/module-info.class</exclude>
               </excludes>
             </filter>
           </filters>
           <minimizeJar>true</minimizeJar>
           <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
           <transformers>
+            <transformer
+              implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
             <transformer
               implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
               <mainClass>ch.kawaxte.launcher.Launcher</mainClass>
