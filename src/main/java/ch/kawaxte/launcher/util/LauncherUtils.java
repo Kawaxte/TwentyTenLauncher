@@ -282,6 +282,9 @@ public final class LauncherUtils {
                 JSONArray array = new JSONArray(body);
                 String tagName = array.getJSONObject(0).getString("tag_name");
                 String implVersion = this.getClass().getPackage().getImplementationVersion();
+                if (Objects.isNull(implVersion)) {
+                  implVersion = "1.99.9999_99"; // This can be used for testing purposes
+                }
                 return Objects.compare(implVersion, tagName, String::compareTo) < 0;
               } catch (UnknownHostException uhe) {
                 LauncherUtils.swapContainers(
