@@ -2,10 +2,10 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>mmx-launcher</artifactId>
+  <artifactId>launcher</artifactId>
 
   <build>
-    <finalName>${project.artifactId}</finalName>
+    <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
@@ -14,9 +14,6 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
-            <manifestEntries>
-              <Build-Time>${project.version}</Build-Time>
-            </manifestEntries>
           </archive>
         </configuration>
         <groupId>org.apache.maven.plugins</groupId>
