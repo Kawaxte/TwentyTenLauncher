@@ -33,7 +33,8 @@ public class LauncherFrame extends JFrame {
     setInstance(this);
 
     URL iconUrl =
-        Optional.ofNullable(LauncherFrame.class.getClassLoader().getResource("assets/favicon.png"))
+        Optional.ofNullable(
+                LauncherFrame.class.getClassLoader().getResource("assets/favicon-32x32.png"))
             .orElseThrow(() -> new NullPointerException("iconUrl cannot be null"));
     this.setIconImage(this.getToolkit().getImage(iconUrl));
 

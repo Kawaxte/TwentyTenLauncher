@@ -80,9 +80,7 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
 
     URL lightDirtBgImgUrl =
         Optional.ofNullable(
-                this.getClass()
-                    .getClassLoader()
-                    .getResource("assets/gui/light_dirt_background.png"))
+                this.getClass().getClassLoader().getResource("assets/ui/light_dirt_background.png"))
             .orElseThrow(() -> new NullPointerException("lightDirtBgImgUrl cannot be null"));
 
     this.parameters = new HashMap<>();
