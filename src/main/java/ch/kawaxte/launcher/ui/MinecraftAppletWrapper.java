@@ -318,6 +318,7 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
     this.active = true;
     applet.start();
 
+    this.revalidate();
     this.repaint();
   }
 }
