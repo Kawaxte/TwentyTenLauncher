@@ -17,6 +17,7 @@ package ch.kawaxte.launcher.auth;
 
 import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
 import ch.kawaxte.launcher.ui.LauncherPanel;
+import ch.kawaxte.launcher.ui.MicrosoftAuthPanel;
 import ch.kawaxte.launcher.util.LauncherLanguageUtils;
 import ch.kawaxte.launcher.util.LauncherUtils;
 import com.google.api.client.http.ByteArrayContent;
@@ -32,6 +33,7 @@ import com.google.api.client.util.GenericData;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import javax.swing.JProgressBar;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,24 +199,37 @@ public final class MicrosoftAuth {
       message = message.substring(message.indexOf("\n") + 1);
 
       JSONObject jsonMessage = new JSONObject(message);
-      if (jsonMessage.has("error")) {
-        String error = jsonMessage.getString("error");
-        switch (error) {
-          case "authorization_pending":
-          case "invalid_grant":
-            break;
-          default:
-            LauncherUtils.swapContainers(
-                LauncherPanel.getInstance(),
-                new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
-            LauncherUtils.setNotPremium(true);
-
-            LOGGER.error("Cannot acquire token", ioe);
-            break;
-        }
-      }
+      handleTokenException(ioe, jsonMessage);
     }
     return null;
+  }
+
+  /**
+   * Handles any message(s) received from the server when attempting to acquire a token.
+   *
+   * @param ioe a {@link IOException} thrown when attempting to acquire a token
+   * @param object a {@link JSONObject} containing the response from the server
+   */
+  private static void handleTokenException(IOException ioe, JSONObject object) {
+    if (object.has("error")) {
+      String error = object.getString("error");
+      switch (error) {
+        case "authorization_pending":
+          JProgressBar progressBar = MicrosoftAuthPanel.getInstance().getExpiresInProgressBar();
+          progressBar.setValue(progressBar.getValue() - 1);
+          break;
+        case "invalid_grant":
+          break;
+        default:
+          LauncherUtils.swapContainers(
+              LauncherPanel.getInstance(),
+              new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
+          LauncherUtils.setNotPremium(true);
+
+          LOGGER.error("Cannot acquire token", ioe);
+          break;
+      }
+    }
   }
 
   /**
