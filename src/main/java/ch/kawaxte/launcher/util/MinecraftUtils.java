@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,25 +51,29 @@ public final class MinecraftUtils {
    * @return {@code null} if the file cannot be created, otherwise the path to the log
    */
   private static Path getFilePath(String username) {
-    long currentTime = System.currentTimeMillis();
-
     String selectedVersion = (String) LauncherConfig.get(4);
     selectedVersion = selectedVersion.replaceAll("[._]", "");
 
-    String fileName = String.format("%s_%s.log", selectedVersion, username);
-    String formattedFileName =
-        String.format("%s_%s_%s.log", selectedVersion, username, currentTime);
+    long currentTime = System.currentTimeMillis();
+
+    String fileName = String.format("%s_%s_%s.log", selectedVersion, username, currentTime);
 
     Path filePath = LOGS_DIRECTORY_PATH.resolve(fileName);
     File file = filePath.toFile();
-    if (file.exists() && file.length() > 0) {
-      Path formattedFilePath = LOGS_DIRECTORY_PATH.resolve(formattedFileName);
-      if (!file.renameTo(formattedFilePath.toFile())) {
-        LOGGER.warn("Could not rename log to '{}'", formattedFilePath);
-        return filePath;
+    try {
+      return !file.exists() && !file.createNewFile() ? null : filePath;
+    } catch (IOException ioe) {
+      LOGGER.error("Cannot create {}", filePath, ioe);
+    } finally {
+      if (file.exists() && file.length() == 0) {
+        try {
+          Files.delete(filePath);
+        } catch (IOException ioe) {
+          LOGGER.error("Cannot delete {}", filePath, ioe);
+        }
       }
     }
-    return filePath;
+    return null;
   }
 
   /**
@@ -82,6 +87,10 @@ public final class MinecraftUtils {
    */
   public static void reassignOutputStream(String username) {
     Path filePath = getFilePath(username);
+    if (Objects.isNull(filePath)) {
+      return;
+    }
+
     try {
       Files.createDirectories(LOGS_DIRECTORY_PATH);
       if (!Files.exists(filePath)) {
