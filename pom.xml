@@ -143,8 +143,8 @@
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.major>1</version.major>
-    <version.patch>01</version.patch>
+    <version.patch>02</version.patch>
   </properties>
 
-  <version>${version.major}.${maven.build.timestamp}_${version.patch}</version>
+  <version>${version.major}.${maven.build.timestamp}</version>
 </project>
