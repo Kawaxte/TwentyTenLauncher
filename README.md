@@ -6,7 +6,7 @@
 [![Github Build](https://img.shields.io/github/actions/workflow/status/Kawaxte/TwentyTenLauncher/maven.yml?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/actions/workflows/maven.yml)
 ![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?sort=semver&logo=github&style=for-the-badge)
 
-This repository contains an application that lets you play older versions of Minecraft. It's named
+A Java application that lets you play older versions of Minecraft. It's named
 after the year the original Minecraft Launcher was released, and is
 designed to give you an authentic experience of playing Minecraft as it was in the past.
 
