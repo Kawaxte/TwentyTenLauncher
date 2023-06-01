@@ -16,8 +16,8 @@ designed to give you an authentic experience of playing Minecraft as it was in t
     - _Mojang accounts are not required to migrate over to Microsoft accounts._
     - _Accounts that do not own a copy of Minecraft (Java Edition) will be unable to join servers
       with `online-mode` enabled._
-- [x] Play different versions of "Golden Age" Minecraft; from February 2010 up to
-  September 2011.
+- [x] Play different versions of Legacy Minecraft; from February 2010 up to
+  May 2013
 - [x] Play Minecraft without an internet connection.
     - _In order to play without an internet connection, you must have played at least once while
       connected to the internet._
