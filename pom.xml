@@ -15,7 +15,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Build-Time>${version}</Build-Time>
+              <Build-Time>${project.version}</Build-Time>
             </manifestEntries>
           </archive>
         </configuration>
@@ -53,6 +53,29 @@
         <inherited>true</inherited>
         <version>3.4.1</version>
       </plugin>
+      <!-- https://mvnrepository.com/artifact/com.github.wvengen/proguard-maven-plugin -->
+      <plugin>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <configuration>
+          <injar>${project.build.finalName}.jar</injar>
+          <libs>
+            <lib>${java.home}/lib/rt.jar</lib>
+            <lib>${java.home}/lib/jce.jar</lib>
+          </libs>
+          <outjar>${project.build.finalName}.jar</outjar>
+          <proguardInclude>${project.basedir}/proguard.conf</proguardInclude>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <groupId>com.github.wvengen</groupId>
+        <version>2.6.0</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -68,7 +91,7 @@
       <artifactId>lombok</artifactId>
       <groupId>org.projectlombok</groupId>
       <scope>provided</scope>
-      <version>1.18.26</version>
+      <version>1.18.28</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.http-client/google-http-client -->
     <dependency>
@@ -94,6 +117,12 @@
       <groupId>ch.qos.logback</groupId>
       <version>1.3.7</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
+    <dependency>
+      <artifactId>logback-core</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <version>1.3.7</version>
+    </dependency>
   </dependencies>
 
   <description>Resurrection of Minecraft Launcher from 2010</description>
@@ -108,8 +137,8 @@
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.major>1</version.major>
-    <version.patch>07</version.patch>
+    <version.patch>01</version.patch>
   </properties>
 
-  <version>${version.major}.${maven.build.timestamp}_{version.patch}</version>
+  <version>${version.major}.${maven.build.timestamp}_${version.patch}</version>
 </project>
