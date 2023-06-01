@@ -115,7 +115,7 @@ public final class LauncherOptionsUtils {
 
     DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<>();
 
-    String fileName = "versions.json";
+    String fileName = "assets/versions.json";
     URL fileUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
 
     InputStream is =
