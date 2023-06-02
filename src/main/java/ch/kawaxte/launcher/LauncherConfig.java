@@ -164,7 +164,7 @@ public final class LauncherConfig {
       return;
     }
 
-    URI configFilePathUri = filePath.toUri();
+    URI filePathUri = filePath.toUri();
 
     try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
       LinkedProperties properties = new LinkedProperties();
@@ -180,9 +180,9 @@ public final class LauncherConfig {
 
       fos.flush();
     } catch (FileNotFoundException fnfe) {
-      LOGGER.error("Cannot find {}", configFilePathUri, fnfe);
+      LOGGER.error("Cannot find {}", filePathUri, fnfe);
     } catch (IOException ioe) {
-      LOGGER.error("Cannot save {}", configFilePathUri, ioe);
+      LOGGER.error("Cannot save {}", filePathUri, ioe);
     }
   }
 }
