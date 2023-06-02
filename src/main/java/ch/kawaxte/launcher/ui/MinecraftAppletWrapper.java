@@ -195,9 +195,8 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
     Graphics2D g2d = (Graphics2D) g;
     GraphicsConfiguration configuration = g2d.getDeviceConfiguration();
 
-    if (Objects.isNull(this.bImg)
-        || (!Objects.equals(this.bImg.getWidth(this), appletWidth)
-            || !Objects.equals(this.bImg.getHeight(this), appletHeight))) {
+    if (this.bImg == null
+        || (this.bImg.getWidth(this) != appletWidth || this.bImg.getHeight(this) != appletHeight)) {
       this.bImg =
           configuration.createCompatibleImage(
               appletWidth >> 1, appletHeight >> 1, Transparency.OPAQUE);

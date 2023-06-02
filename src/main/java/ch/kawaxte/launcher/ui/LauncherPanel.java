@@ -29,7 +29,6 @@ import java.awt.LayoutManager;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import javax.swing.JPanel;
@@ -107,9 +106,8 @@ public class LauncherPanel extends JPanel {
     Graphics2D g2d = (Graphics2D) g;
     GraphicsConfiguration configuration = g2d.getDeviceConfiguration();
 
-    if (Objects.isNull(this.bImg)
-        || (!Objects.equals(this.bImg.getWidth(this), panelWidth)
-            || !Objects.equals(this.bImg.getHeight(this), panelHeight))) {
+    if ((this.bImg == null)
+        || (this.bImg.getWidth(this) != panelWidth || this.bImg.getHeight(this) != panelHeight)) {
       this.bImg =
           configuration.createCompatibleImage(
               panelWidth >> 1, panelHeight >> 1, Transparency.OPAQUE);
