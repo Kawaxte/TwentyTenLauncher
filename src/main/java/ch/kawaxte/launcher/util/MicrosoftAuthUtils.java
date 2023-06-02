@@ -51,9 +51,7 @@ public final class MicrosoftAuthUtils {
    * @param clientId the client ID of the Azure application required for authentication
    */
   public static void executeMicrosoftAuthWorker(String clientId) {
-    if (Objects.isNull(clientId)) {
-      throw new NullPointerException("clientId cannot be null");
-    }
+    Objects.requireNonNull(clientId, "clientId cannot be null");
     if (clientId.isEmpty()) {
       throw new IllegalArgumentException("clientId cannot be empty");
     }

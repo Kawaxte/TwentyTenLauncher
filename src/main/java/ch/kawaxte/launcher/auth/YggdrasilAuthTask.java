@@ -17,10 +17,6 @@ package ch.kawaxte.launcher.auth;
 
 import ch.kawaxte.launcher.Launcher;
 import ch.kawaxte.launcher.LauncherConfig;
-import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
-import ch.kawaxte.launcher.ui.LauncherPanel;
-import ch.kawaxte.launcher.util.LauncherLanguageUtils;
-import ch.kawaxte.launcher.util.LauncherUtils;
 import java.util.Objects;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -90,10 +86,13 @@ public class YggdrasilAuthTask implements Runnable {
    */
   private String[] getAuthenticateResponse(JSONObject object) {
     String accessToken = object.getString("accessToken");
-    JSONObject selectedProfile = object.getJSONObject("selectedProfile");
-    String id = selectedProfile.getString("id");
-    String name = selectedProfile.getString("name");
-    return new String[] {accessToken, id, name};
+    if (object.has("selectedProfile")) {
+      JSONObject selectedProfile = object.getJSONObject("selectedProfile");
+      String id = selectedProfile.getString("id");
+      String name = selectedProfile.getString("name");
+      return new String[] {accessToken, id, name};
+    }
+    return new String[] {accessToken, null, null};
   }
 
   /**
@@ -112,12 +111,6 @@ public class YggdrasilAuthTask implements Runnable {
     if (Objects.isNull(authenticate)) {
       return;
     }
-    if (authenticate.has("error")) {
-      LauncherUtils.swapContainers(
-          LauncherPanel.getInstance(),
-          new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
-      return;
-    }
 
     String[] authenticateResponse = this.getAuthenticateResponse(authenticate);
     LauncherConfig.set(17, authenticateResponse[0]);
@@ -128,7 +121,7 @@ public class YggdrasilAuthTask implements Runnable {
       LauncherConfig.set(16, false);
       LauncherConfig.saveConfig();
 
-      Launcher.launchMinecraft(null, authenticateResponse[0], null);
+      Launcher.launchMinecraft(null, authenticateResponse[0], null, true);
     } else {
       LauncherConfig.set(14, authenticateResponse[1]);
       LauncherConfig.set(15, authenticateResponse[2]);
@@ -136,7 +129,7 @@ public class YggdrasilAuthTask implements Runnable {
       LauncherConfig.saveConfig();
 
       Launcher.launchMinecraft(
-          authenticateResponse[2], authenticateResponse[0], authenticateResponse[1]);
+          authenticateResponse[2], authenticateResponse[0], authenticateResponse[1], false);
     }
   }
 }

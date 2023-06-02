@@ -68,14 +68,15 @@ public enum EPlatform {
    *     found
    */
   public static EPlatform getOSName() {
-    return Arrays.stream(values())
-        .filter(
-            platform ->
-                Objects.nonNull(platform.names)
-                    && platform.names.stream()
-                        .anyMatch(name -> OS_NAME.toLowerCase(Locale.ROOT).contains(name)))
-        .findFirst()
-        .orElse(null);
+    String osNameLowerCase = OS_NAME.toLowerCase(Locale.ROOT);
+    for (EPlatform platform : values()) {
+      for (String name : platform.names) {
+        if (osNameLowerCase.contains(name)) {
+          return platform;
+        }
+      }
+    }
+    return null;
   }
 
   /**
@@ -86,10 +87,12 @@ public enum EPlatform {
    *     is found
    */
   public static EPlatform getOSArch() {
-    return Arrays.stream(values())
-        .filter(platform -> Objects.equals(platform.arch, OS_ARCH))
-        .findFirst()
-        .orElse(null);
+    for (EPlatform platform : values()) {
+      if (Objects.equals(platform.arch, OS_ARCH)) {
+        return platform;
+      }
+    }
+    return null;
   }
 
   public static boolean isWindows() {

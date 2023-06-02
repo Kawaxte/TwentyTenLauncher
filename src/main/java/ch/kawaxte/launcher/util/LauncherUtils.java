@@ -31,11 +31,9 @@ import java.awt.Container;
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -44,17 +42,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Base64;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.swing.AbstractButton;
@@ -65,6 +58,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -84,6 +78,7 @@ public final class LauncherUtils {
   public static final Pattern UUID_PATTERN;
   public static final Path WORKING_DIRECTORY_PATH;
   private static final Logger LOGGER;
+  @Getter @Setter private static boolean notPremium;
   @Getter private static Boolean outdated;
 
   static {
@@ -99,6 +94,7 @@ public final class LauncherUtils {
                 + "[A-Fa-f0-9]{12}$");
 
     WORKING_DIRECTORY_PATH = getWorkingDirectoryPath();
+    notPremium = false;
     outdated = null;
   }
 
@@ -108,12 +104,11 @@ public final class LauncherUtils {
    * Decodes a value from Base64.
    *
    * @param index the index of the value to decode
-   * @return the decoded value if the length is not 0, otherwise {@code null}
+   * @return the decoded value if the length is not 0, otherwise an empty string
    */
   public static String decodeFromBase64(int index) {
-    if (Objects.isNull(LauncherConfig.get(index))) {
-      return null;
-    }
+    String value = LauncherConfig.get(index).toString();
+    Objects.requireNonNull(value, "value cannot be null");
 
     byte[] bytes = (LauncherConfig.get(index).toString()).getBytes(StandardCharsets.UTF_8);
     return bytes.length == 0 ? "" : new String(Base64.getDecoder().decode(bytes));
@@ -126,9 +121,7 @@ public final class LauncherUtils {
    * @return the encoded value if the length is not 0, otherwise {@code null}
    */
   public static String encodeToBase64(String value) {
-    if (Objects.isNull(value)) {
-      throw new NullPointerException("value cannot be null");
-    }
+    Objects.requireNonNull(value, "value cannot be null");
     if (value.isEmpty()) {
       throw new IllegalArgumentException("value cannot be empty");
     }
@@ -142,32 +135,37 @@ public final class LauncherUtils {
    *
    * @return the URLs to either pages as an array
    */
-  public static URL[] getUrls() {
-    URL[] urls = new URL[2];
-    try {
-      urls[0] =
-          new URL(
-              new StringBuilder()
-                  .append("https://signup.live.com/")
-                  .append("signup")
-                  .append("?client_id=000000004420578E")
-                  .append("&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d")
-                  .append("&lic=1")
-                  .append("&uaid=e6e4ffd0ad4943ab9bf740fb4a0416f9")
-                  .append("&wa=wsignin1.0")
-                  .toString());
-      urls[1] =
-          new URL(
-              new StringBuilder()
-                  .append("https://api.github.com/")
-                  .append("repos/")
-                  .append("Kawaxte/")
-                  .append("twentyten-launcher/")
-                  .append("releases")
-                  .toString());
-    } catch (MalformedURLException murle) {
-      LOGGER.error("Cannot create URL(s)", murle);
-    }
+  public static GenericUrl[] getGenericUrls() {
+    GenericUrl[] urls = new GenericUrl[3];
+    urls[0] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://signup.live.com/")
+                .append("signup")
+                .append("?client_id=000000004420578E")
+                .append("&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d")
+                .append("&lic=1")
+                .append("&uaid=e6e4ffd0ad4943ab9bf740fb4a0416f9")
+                .append("&wa=wsignin1.0")
+                .toString());
+    urls[1] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://api.github.com/")
+                .append("repos/")
+                .append("Kawaxte/")
+                .append("TwentyTenLauncher/")
+                .append("releases")
+                .toString());
+    urls[2] =
+        new GenericUrl(
+            new StringBuilder()
+                .append("https://github.com/")
+                .append("Kawaxte/")
+                .append("TwentyTenLauncher/")
+                .append("releases/")
+                .append("latest")
+                .toString());
     return urls;
   }
 
@@ -180,7 +178,7 @@ public final class LauncherUtils {
   public static String[] getProxyHostAndPort() {
     String selectedVersion = (String) LauncherConfig.get(4);
 
-    String fileName = "versions.json";
+    String fileName = "assets/versions.json";
     URL fileUrl = LauncherUtils.class.getClassLoader().getResource(fileName);
 
     InputStream is =
@@ -190,15 +188,15 @@ public final class LauncherUtils {
         new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       JSONObject json = new JSONObject(br.lines().collect(Collectors.joining()));
 
-      JSONArray versionArray = null;
-      if (selectedVersion.startsWith("b")) {
-        versionArray = json.getJSONArray("legacy_beta");
-      }
-      if (selectedVersion.startsWith("a")) {
-        versionArray = json.getJSONArray("legacy_alpha");
-      }
+      JSONArray versionArray;
       if (selectedVersion.startsWith("inf")) {
         versionArray = json.getJSONArray("legacy_infdev");
+      } else if (selectedVersion.startsWith("a")) {
+        versionArray = json.getJSONArray("legacy_alpha");
+      } else if (selectedVersion.startsWith("b")) {
+        versionArray = json.getJSONArray("legacy_beta");
+      } else {
+        versionArray = json.getJSONArray("legacy_release");
       }
 
       if (Objects.nonNull(versionArray)) {
@@ -216,34 +214,6 @@ public final class LauncherUtils {
       LOGGER.error("Cannot read {}", fileUrl, ioe);
     }
     return new String[] {null, null};
-  }
-
-  /**
-   * Retrieves the "Build-Time" attribute from the MANIFEST.MF file within the launcher's .JAR file.
-   *
-   * <p>The "Build-Time" attribute contains the current version of the launcher generated in pom.xml
-   * during the Maven build process.
-   *
-   * @param key the attribute key
-   * @return the attribute value
-   */
-  public static String getManifestAttribute(String key) {
-    URL fileUrl =
-        Optional.ofNullable(LauncherUtils.class.getProtectionDomain().getCodeSource().getLocation())
-            .orElseThrow(() -> new NullPointerException("fileUrl cannot be null"));
-    try (JarFile file = new JarFile(new File(fileUrl.toURI()))) {
-      Manifest manifest = file.getManifest();
-      Attributes attributes = manifest.getMainAttributes();
-      return attributes.getValue(key);
-    } catch (FileNotFoundException fnfe) {
-      Instant now = Instant.now();
-      return new SimpleDateFormat("1.M.ddyy").format(now.toEpochMilli());
-    } catch (IOException ioe) {
-      LOGGER.error("Cannot retrieve '{}' from {}", key, fileUrl, ioe);
-    } catch (URISyntaxException urise) {
-      LOGGER.error("Cannot parse {} as URI", fileUrl, urise);
-    }
-    return null;
   }
 
   /**
@@ -288,7 +258,7 @@ public final class LauncherUtils {
    * build is published on GitHub. and will reset whenever the month increments.
    *
    * @return {@code true} if the current version of the launcher is outdated, {@code false}
-   * @see <a href="https://github.com/Kawaxte/twentyten-launcher/releases/latest">Latest Release</a>
+   * @see <a href="https://github.com/Kawaxte/TwentyTenLauncher/releases/latest">Latest Release</a>
    */
   public static boolean isOutdated() {
     if (Objects.isNull(outdated)) {
@@ -302,7 +272,7 @@ public final class LauncherUtils {
               try {
                 HttpRequest request =
                     factory.buildGetRequest(
-                        new GenericUrl(getUrls()[1].toURI())
+                        getGenericUrls()[1]
                             .set("accept", "application/vnd.github+json")
                             .set("X-GitHub-Api-Version", "2022-11-28"));
                 HttpResponse response = request.execute();
@@ -310,8 +280,11 @@ public final class LauncherUtils {
                 String body = response.parseAsString();
                 JSONArray array = new JSONArray(body);
                 String tagName = array.getJSONObject(0).getString("tag_name");
-                String buildTime = getManifestAttribute("Build-Time");
-                return Objects.compare(buildTime, tagName, String::compareTo) < 0;
+                String implVersion = this.getClass().getPackage().getImplementationVersion();
+                if (Objects.isNull(implVersion)) {
+                  implVersion = "1.99.9999_99"; // This can be used for testing purposes
+                }
+                return Objects.compare(implVersion, tagName, String::compareTo) < 0;
               } catch (UnknownHostException uhe) {
                 LauncherUtils.swapContainers(
                     LauncherPanel.getInstance(),
@@ -319,8 +292,6 @@ public final class LauncherUtils {
                         LauncherLanguageUtils.getLNPPKeys()[1], uhe.getMessage()));
               } catch (IOException ioe) {
                 LOGGER.error("Cannot check for updates", ioe);
-              } catch (URISyntaxException urise) {
-                LOGGER.error("Cannot convert {} to URI", getUrls()[1], urise);
               }
               return false;
             }
@@ -432,9 +403,9 @@ public final class LauncherUtils {
         Desktop.getDesktop().browse(new URI(url));
       }
     } catch (IOException ioe) {
-      LauncherUtils.LOGGER.error("Cannot browse {}", url, ioe);
+      LOGGER.error("Cannot browse {}", url, ioe);
     } catch (URISyntaxException urise) {
-      LauncherUtils.LOGGER.error("Cannot convert {} to URI", url, urise);
+      LOGGER.error("Cannot parse {} as URI", url, urise);
     }
   }
 
@@ -449,7 +420,7 @@ public final class LauncherUtils {
         Desktop.getDesktop().open(p.toFile());
       }
     } catch (IOException ioe) {
-      LauncherUtils.LOGGER.error("Cannot open {}", p, ioe);
+      LOGGER.error("Cannot open {}", p, ioe);
     }
   }
 }

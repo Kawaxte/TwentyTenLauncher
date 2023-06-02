@@ -15,7 +15,6 @@
 
 package ch.kawaxte.launcher;
 
-import java.util.Objects;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import lombok.Getter;
@@ -70,33 +69,13 @@ public enum ELookAndFeel {
         UIManager.setLookAndFeel(WINDOWS.getClassName());
       }
     } catch (ClassNotFoundException cnfe) {
-      LOGGER.error(
-          "Cannot find '{}' on '{}'",
-          UIManager.getLookAndFeel().getName(),
-          EPlatform.OS_NAME,
-          cnfe);
+      LOGGER.error("Cannot find {} on '{}'", cnfe.getMessage(), EPlatform.OS_NAME, cnfe);
     } catch (InstantiationException ie) {
-      LOGGER.error(
-          "Cannot instantiate '{}' on '{}'",
-          UIManager.getLookAndFeel().getName(),
-          EPlatform.OS_NAME,
-          ie);
+      LOGGER.error("Cannot instantiate {} on '{}'", ie.getMessage(), EPlatform.OS_NAME, ie);
     } catch (IllegalAccessException iae) {
-      LOGGER.error(
-          "Cannot access '{}' on '{}'",
-          UIManager.getLookAndFeel().getName(),
-          EPlatform.OS_NAME,
-          iae);
+      LOGGER.error("Cannot access {} on '{}'", iae.getMessage(), EPlatform.OS_NAME, iae);
     } catch (UnsupportedLookAndFeelException ulafe) {
-      LOGGER.error(
-          "'{}' unsupported on '{}'",
-          UIManager.getLookAndFeel().getName(),
-          EPlatform.OS_NAME,
-          ulafe);
-    } finally {
-      if (Objects.nonNull(UIManager.getLookAndFeel())) {
-        LOGGER.info("Setting look and feel to '{}'", UIManager.getLookAndFeel().getName());
-      }
+      LOGGER.error("{} unsupported on '{}'", ulafe.getMessage(), EPlatform.OS_NAME, ulafe);
     }
   }
 }

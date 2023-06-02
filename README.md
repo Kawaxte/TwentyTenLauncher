@@ -1,12 +1,12 @@
 # TwentyTen Launcher
 
-[![GitHub Release (Latest)](https://img.shields.io/github/v/release/Kawaxte/twentyten-launcher?sort=date&logo=github&label=latest&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/releases/latest)
-[![GitHub Release (Pre-release)](https://img.shields.io/github/v/release/Kawaxte/twentyten-launcher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/releases)
+[![GitHub Release (Latest)](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?sort=date&logo=github&label=latest&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases/latest)
+[![GitHub Release (Pre-release)](https://img.shields.io/github/v/release/Kawaxte/TwentyTenLauncher?include_prereleases&sort=date&logo=github&label=pre-release&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/releases)
 
-[![Github Build](https://img.shields.io/github/actions/workflow/status/Kawaxte/twentyten-launcher/maven.yml?logo=github&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/actions/workflows/maven.yml)
-![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/twentyten-launcher/total?sort=semver&logo=github&style=for-the-badge)
+[![Github Build](https://img.shields.io/github/actions/workflow/status/Kawaxte/TwentyTenLauncher/maven.yml?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/actions/workflows/maven.yml)
+![GitHub Downloads](https://img.shields.io/github/downloads/Kawaxte/TwentyTenLauncher/total?sort=semver&logo=github&style=for-the-badge)
 
-This repository contains an application that lets you play older versions of Minecraft. It's named
+A Java application that lets you play older versions of Minecraft. It's named
 after the year the original Minecraft Launcher was released, and is
 designed to give you an authentic experience of playing Minecraft as it was in the past.
 
@@ -16,8 +16,8 @@ designed to give you an authentic experience of playing Minecraft as it was in t
     - _Mojang accounts are not required to migrate over to Microsoft accounts._
     - _Accounts that do not own a copy of Minecraft (Java Edition) will be unable to join servers
       with `online-mode` enabled._
-- [x] Play different versions of "Golden Age" Minecraft; from February 2010 up to
-  September 2011.
+- [x] Play different versions of Legacy Minecraft; from February 2010 up to
+  May 2013
 - [x] Play Minecraft without an internet connection.
     - _In order to play without an internet connection, you must have played at least once while
       connected to the internet._
@@ -28,22 +28,22 @@ designed to give you an authentic experience of playing Minecraft as it was in t
 
 ## Contributing
 
-[![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/twentyten-launcher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/stargazers)
-[![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/twentyten-launcher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/graphs/contributors)
+[![GitHub Stars](https://img.shields.io/github/stars/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/stargazers)
+[![GitHub Contributors](https://img.shields.io/github/contributors/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/graphs/contributors)
 
 If you find this project useful or interesting, please consider giving it a ⭐. It's a
 quick and easy way to show your support. It also motivates me to continue working on this project.
 
 ### Reporting Issues or Suggesting Features
 
-[![GitHub Issues (Open)](https://img.shields.io/github/issues/Kawaxte/twentyten-launcher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/issues)
-[![GitHub Issues (Closed)](https://img.shields.io/github/issues-closed/Kawaxte/twentyten-launcher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub Issues (Open)](https://img.shields.io/github/issues/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/issues)
+[![GitHub Issues (Closed)](https://img.shields.io/github/issues-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/issues?q=is%3Aissue+is%3Aclosed)
 
 If you find a bug or have a suggestion for a new feature, you can report (or suggest) it by
 following
 these steps:
 
-1. Go to the [issue tracker](https://github.com/Kawaxte/twentyten-launcher/issues) on this
+1. Go to the [issue tracker](https://github.com/Kawaxte/TwentyTenLauncher/issues) on this
    repository.
 2. Click the `New issue` button.
 3. Describe the issue or suggestion clearly and provide any relevant details.
@@ -51,8 +51,8 @@ these steps:
 
 ### Forking and Making Pull Requests
 
-[![GitHub Pull Requests (Open)](https://img.shields.io/github/issues-pr/Kawaxte/twentyten-launcher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/pulls)
-[![GitHub Pull Requests (Closed)](https://img.shields.io/github/issues-pr-closed/Kawaxte/twentyten-launcher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/pulls?q=is%3Apr+is%3Aclosed)
+[![GitHub Pull Requests (Open)](https://img.shields.io/github/issues-pr/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/pulls)
+[![GitHub Pull Requests (Closed)](https://img.shields.io/github/issues-pr-closed/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/pulls?q=is%3Apr+is%3Aclosed)
 
 If you are a developer and would like to contribute by adding a new feature or
 fixing a bug, you can do so by following these steps:
@@ -86,7 +86,7 @@ The finished build will be saved as a `.jar` file in the `target` directory.
 
 ## License
 
-[![GitHub License](https://img.shields.io/github/license/Kawaxte/twentyten-launcher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/twentyten-launcher/blob/nightly/LICENSE)
+[![GitHub License](https://img.shields.io/github/license/Kawaxte/TwentyTenLauncher?logo=github&style=for-the-badge)](https://github.com/Kawaxte/TwentyTenLauncher/blob/nightly/LICENSE)
 
 This project is licensed under
 the [GNU Lesser General Public License v3.0](https://choosealicense.com/licenses/lgpl-3.0/).

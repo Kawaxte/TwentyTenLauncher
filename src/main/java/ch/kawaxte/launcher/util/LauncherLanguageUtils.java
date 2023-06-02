@@ -90,7 +90,9 @@ public final class LauncherLanguageUtils {
    * @see MicrosoftAuthPanel
    */
   public static String[] getMAPKeys() {
-    return new String[] {"map.copyCodeLabel", "map.openBrowserButton", "map.cancelButton"};
+    return new String[] {
+      "map.enterCodeInBrowserLabel", "map.openInBrowserButton", "map.cancelButton"
+    };
   }
 
   /**

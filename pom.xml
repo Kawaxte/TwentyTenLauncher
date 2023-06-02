@@ -2,10 +2,10 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>twentyten-launcher</artifactId>
+  <artifactId>launcher</artifactId>
 
   <build>
-    <finalName>${project.artifactId}</finalName>
+    <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
@@ -14,9 +14,6 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
-            <manifestEntries>
-              <Build-Time>${version}</Build-Time>
-            </manifestEntries>
           </archive>
         </configuration>
         <groupId>org.apache.maven.plugins</groupId>
@@ -37,15 +34,21 @@
               <artifact>*:*</artifact>
               <excludes>
                 <exclude>META-INF/maven/**</exclude>
+                <exclude>META-INF/NOTICE.txt</exclude>
+                <exclude>META-INF/LICENSE.txt</exclude>
                 <exclude>META-INF/MANIFEST.MF</exclude>
                 <exclude>META-INF/DEPENDENCIES</exclude>
                 <exclude>META-INF/LICENSE</exclude>
                 <exclude>META-INF/NOTICE</exclude>
+                <exclude>META-INF/versions/9/module-info.class</exclude>
               </excludes>
             </filter>
           </filters>
+          <minimizeJar>true</minimizeJar>
           <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
           <transformers>
+            <transformer
+              implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
             <transformer
               implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
               <mainClass>ch.kawaxte.launcher.Launcher</mainClass>
@@ -55,6 +58,29 @@
         <groupId>org.apache.maven.plugins</groupId>
         <inherited>true</inherited>
         <version>3.4.1</version>
+      </plugin>
+      <!-- https://mvnrepository.com/artifact/com.github.wvengen/proguard-maven-plugin -->
+      <plugin>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <configuration>
+          <injar>${project.build.finalName}.jar</injar>
+          <libs>
+            <lib>${java.home}/lib/rt.jar</lib>
+            <lib>${java.home}/lib/jce.jar</lib>
+          </libs>
+          <outjar>${project.build.finalName}.jar</outjar>
+          <proguardInclude>${project.basedir}/proguard.conf</proguardInclude>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <groupId>com.github.wvengen</groupId>
+        <version>2.6.0</version>
       </plugin>
     </plugins>
   </build>
@@ -71,7 +97,7 @@
       <artifactId>lombok</artifactId>
       <groupId>org.projectlombok</groupId>
       <scope>provided</scope>
-      <version>1.18.26</version>
+      <version>1.18.28</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.http-client/google-http-client -->
     <dependency>
@@ -91,17 +117,22 @@
       <groupId>org.slf4j</groupId>
       <version>2.0.7</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
     <dependency>
-      <artifactId>slf4j-simple</artifactId>
-      <groupId>org.slf4j</groupId>
-      <scope>runtime</scope>
-      <version>2.0.7</version>
+      <artifactId>logback-classic</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <version>1.3.7</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
+    <dependency>
+      <artifactId>logback-core</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <version>1.3.7</version>
     </dependency>
   </dependencies>
 
   <description>Resurrection of Minecraft Launcher from 2010</description>
-  <groupId>io.github.kawaxte</groupId>
+  <groupId>ch.kawaxte</groupId>
   <inceptionYear>2022</inceptionYear>
   <modelVersion>4.0.0</modelVersion>
   <name>${project.groupId}:${project.artifactId}</name>
@@ -112,8 +143,11 @@
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.major>1</version.major>
-    <version.minor>06</version.minor>
+    <version.nightly>${version.major}.${maven.build.timestamp}_${version.zeroPatch}
+    </version.nightly>
+    <version.stable>${version.major}.${maven.build.timestamp}</version.stable>
+    <version.zeroPatch>01</version.zeroPatch>
   </properties>
 
-  <version>${version.major}.${maven.build.timestamp}</version>
+  <version>${version.stable}</version>
 </project>

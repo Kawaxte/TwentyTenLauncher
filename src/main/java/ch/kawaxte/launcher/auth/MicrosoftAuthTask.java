@@ -17,18 +17,11 @@ package ch.kawaxte.launcher.auth;
 
 import ch.kawaxte.launcher.Launcher;
 import ch.kawaxte.launcher.LauncherConfig;
-import ch.kawaxte.launcher.ui.LauncherNoNetworkPanel;
-import ch.kawaxte.launcher.ui.LauncherPanel;
 import ch.kawaxte.launcher.ui.MicrosoftAuthPanel;
-import ch.kawaxte.launcher.util.LauncherLanguageUtils;
-import ch.kawaxte.launcher.util.LauncherUtils;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
-import javax.swing.JProgressBar;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This task performs the authentication process when run, sending the necessary credentials and
@@ -46,12 +39,6 @@ import org.slf4j.LoggerFactory;
  * @see MicrosoftAuthWorker
  */
 public class MicrosoftAuthTask implements Runnable {
-
-  private static final Logger LOGGER;
-
-  static {
-    LOGGER = LoggerFactory.getLogger(MicrosoftAuthTask.class);
-  }
 
   private final ScheduledExecutorService service;
   private final String clientId;
@@ -100,32 +87,14 @@ public class MicrosoftAuthTask implements Runnable {
   /**
    * Returns the access token and refresh token as an array of strings.
    *
-   * <p>This method also handles specific errors that may occur whilst attempting to retrieve the
-   * access token and refresh token. It also the only method to adjust the UI to show the progress
-   * of the polling request.
-   *
    * @param object the JSON object containing the response from the polling request
    * @return {@code accessToken} and {@code refreshToken} as an array of strings
    */
   private static String[] getTokenResponse(JSONObject object) {
-    if (object.has("error")) {
-      String error = object.getString("error");
-      if (Objects.equals(error, "authorization_pending")) {
-        JProgressBar progressBar = MicrosoftAuthPanel.getInstance().getExpiresInProgressBar();
-        progressBar.setValue(progressBar.getValue() - 1);
-        return new String[0];
-      }
-
-      LauncherUtils.swapContainers(
-          LauncherPanel.getInstance(),
-          new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
-      return new String[0];
-    }
-
-    MicrosoftAuthPanel.getInstance().getCopyCodeLabel().setVisible(false);
+    MicrosoftAuthPanel.getInstance().getEnterCodeInBrowserLabel().setVisible(false);
     MicrosoftAuthPanel.getInstance().getUserCodeLabel().setVisible(false);
     MicrosoftAuthPanel.getInstance().getExpiresInProgressBar().setIndeterminate(true);
-    MicrosoftAuthPanel.getInstance().getOpenBrowserButton().setVisible(false);
+    MicrosoftAuthPanel.getInstance().getOpenInBrowserButton().setVisible(false);
 
     String accessToken = object.getString("access_token");
     String refreshToken = object.getString("refresh_token");
@@ -162,36 +131,10 @@ public class MicrosoftAuthTask implements Runnable {
   /**
    * Returns the XSTS token as a string.
    *
-   * <p>This method also handles specific errors that may occur whilst attempting to retrieve the
-   * XSTS token.
-   *
    * @param object the JSON object containing the response from the XBL token request
    * @return {@code token} as a string
    */
   public static String getXSTSTokenResponse(JSONObject object) {
-    if (object.has("XErr")) {
-      long xerr = object.getLong("XErr");
-      switch ((int) xerr) {
-        case (int) 2148916233L:
-          LauncherUtils.swapContainers(
-              LauncherPanel.getInstance(),
-              new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[3]));
-          break;
-        case (int) 2148916238L:
-          LauncherUtils.swapContainers(
-              LauncherPanel.getInstance(),
-              new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[4]));
-          break;
-        default:
-          LauncherUtils.swapContainers(
-              LauncherPanel.getInstance(),
-              new LauncherNoNetworkPanel(LauncherLanguageUtils.getLNPPKeys()[0]));
-          break;
-      }
-
-      LOGGER.error("{}", xerr);
-      return null;
-    }
     return object.getString("Token");
   }
 
@@ -317,7 +260,7 @@ public class MicrosoftAuthTask implements Runnable {
       LauncherConfig.set(6, null);
       LauncherConfig.saveConfig();
 
-      Launcher.launchMinecraft(null, accessTokenResponse[0], null);
+      Launcher.launchMinecraft(null, accessTokenResponse[0], null, true);
     } else {
       JSONObject minecraftProfile = MicrosoftAuth.acquireMinecraftProfile(accessTokenResponse[0]);
       if (Objects.isNull(minecraftProfile)) {
@@ -330,7 +273,7 @@ public class MicrosoftAuthTask implements Runnable {
       LauncherConfig.saveConfig();
 
       Launcher.launchMinecraft(
-          minecraftProfileResponse[1], accessTokenResponse[0], minecraftProfileResponse[0]);
+          minecraftProfileResponse[1], accessTokenResponse[0], minecraftProfileResponse[0], false);
     }
     service.shutdown();
   }

@@ -62,7 +62,9 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
     LOGGER = LoggerFactory.getLogger(MinecraftAppletWrapper.class);
   }
 
+  private final transient Image lightDirtBgImg;
   private final Map<String, String> parameters;
+  private transient BufferedImage bImg;
   @Getter @Setter private transient ClassLoader mcAppletClassLoader;
   @Getter @Setter private String taskStateMessage;
   @Getter private String taskProgressMessage;
@@ -73,20 +75,33 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
   private Applet minecraftApplet;
   private boolean active;
 
-  public MinecraftAppletWrapper(String username, String sessionId) {
+  public MinecraftAppletWrapper(String username, String sessionId, boolean demo) {
     setInstance(this);
 
+    URL lightDirtBgImgUrl =
+        Optional.ofNullable(
+                this.getClass().getClassLoader().getResource("assets/ui/light_dirt_background.png"))
+            .orElseThrow(() -> new NullPointerException("lightDirtBgImgUrl cannot be null"));
+
     this.parameters = new HashMap<>();
-    this.taskState = EState.INITIALISE.ordinal();
-    this.taskStateMessage = EState.INITIALISE.getMessage();
-    this.taskProgressMessage = null;
-    this.taskProgress = 0;
     this.parameters.put("username", username);
     this.parameters.put("sessionid", sessionId);
 
-    String[] hostAndPort = LauncherUtils.getProxyHostAndPort();
-    System.setProperty("http.proxyHost", hostAndPort[0]);
-    System.setProperty("http.proxyPort", hostAndPort[1]);
+    String selectedVersion = (String) LauncherConfig.get(4);
+    if (IntStream.rangeClosed(3, 5)
+        .anyMatch(i -> selectedVersion.contains(String.format("1.%d.", i)))) {
+      this.parameters.put("demo", String.valueOf(demo));
+    }
+
+    this.lightDirtBgImg = this.getToolkit().getImage(lightDirtBgImgUrl);
+    this.taskState = EState.INITIALISE.ordinal();
+    this.taskStateMessage = EState.INITIALISE.getMessage();
+    this.taskProgressMessage = "";
+    this.taskProgress = 0;
+
+    String[] proxies = LauncherUtils.getProxyHostAndPort();
+    System.setProperty("http.proxyHost", proxies[0]);
+    System.setProperty("http.proxyPort", proxies[1]);
     System.setProperty("java.util.Arrays.useLegacyMergeSort", String.valueOf(true));
 
     MinecraftUtils.reassignOutputStream(username);
@@ -172,35 +187,42 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
       return;
     }
 
-    URL bgImageUrl =
-        Optional.ofNullable(this.getClass().getClassLoader().getResource("dirt.png"))
-            .orElseThrow(() -> new NullPointerException("bgImageUrl cannot be null"));
-    Image bgImage = this.getToolkit().getImage(bgImageUrl);
-    int bgImageWidth = bgImage.getWidth(this) << 1;
-    int bgImageheight = bgImage.getHeight(this) << 1;
     int appletWidth = this.getWidth();
     int appletHeight = this.getHeight();
+    int lightDirtBgImgWidth = this.lightDirtBgImg.getWidth(this) << 1;
+    int lightDirtBgImgHeight = this.lightDirtBgImg.getHeight(this) << 1;
 
     Graphics2D g2d = (Graphics2D) g;
-    GraphicsConfiguration deviceConfiguration = g2d.getDeviceConfiguration();
+    GraphicsConfiguration configuration = g2d.getDeviceConfiguration();
 
-    BufferedImage bufferedImage =
-        deviceConfiguration.createCompatibleImage(
-            appletWidth >> 1, appletHeight >> 1, Transparency.OPAQUE);
-    Graphics2D g2dBuffered = bufferedImage.createGraphics();
-    g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f));
+    if (this.bImg == null
+        || (this.bImg.getWidth(this) != appletWidth || this.bImg.getHeight(this) != appletHeight)) {
+      this.bImg =
+          configuration.createCompatibleImage(
+              appletWidth >> 1, appletHeight >> 1, Transparency.OPAQUE);
+    }
+
+    Graphics2D g2dBuffered = this.bImg.createGraphics();
+    g2dBuffered.setComposite(AlphaComposite.Clear);
+    g2dBuffered.fillRect(0, 0, appletWidth, appletHeight);
+    g2dBuffered.setComposite(AlphaComposite.SrcOver);
+
     try {
-      int gridWidth = (appletWidth + bgImageWidth) >> 5;
-      int gridHeight = (appletHeight + bgImageheight) >> 5;
+      int gridWidth = (appletWidth + lightDirtBgImgWidth) >> 5;
+      int gridHeight = (appletHeight + lightDirtBgImgHeight) >> 5;
       IntStream.range(0, (gridWidth * gridHeight))
-          .parallel()
           .forEach(
               i -> {
                 int gridX = (i % gridWidth) << 5;
                 int gridY = (i / gridWidth) << 5;
-                g2dBuffered.drawImage(bgImage, gridX, gridY, bgImageWidth, bgImageheight, this);
+                g2dBuffered.drawImage(
+                    this.lightDirtBgImg,
+                    gridX,
+                    gridY,
+                    lightDirtBgImgWidth,
+                    lightDirtBgImgHeight,
+                    this);
               });
-      g2dBuffered.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
       String selectedLanguage = (String) LauncherConfig.get(0);
       UTF8ResourceBundle bundle = LauncherLanguage.getUTF8Bundle(selectedLanguage);
@@ -217,7 +239,7 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
       g2dBuffered.dispose();
     }
 
-    g2d.drawImage(bufferedImage, 0, 0, appletWidth, appletHeight, this);
+    g2d.drawImage(bImg, 0, 0, appletWidth, appletHeight, this);
   }
 
   private void drawTaskProgressRect(int width, int height, Graphics2D g2d) {
@@ -293,6 +315,7 @@ public class MinecraftAppletWrapper extends JApplet implements AppletStub {
     this.active = true;
     applet.start();
 
+    this.revalidate();
     this.repaint();
   }
 }

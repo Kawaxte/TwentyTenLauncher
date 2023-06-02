@@ -135,21 +135,19 @@ public final class LauncherConfig {
       return;
     }
 
-    URI configFilePathUri = filePath.toUri();
+    URI filePathUri = filePath.toUri();
 
     LinkedProperties properties = new LinkedProperties();
 
     try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
       properties.load(fis);
       properties.forEach((key, value) -> PROPERTIES_MAP.put((String) key, value));
-    } catch (FileNotFoundException fileNotFoundException) {
-      LOGGER.error("Cannot find {}", configFilePathUri, fileNotFoundException);
+    } catch (FileNotFoundException fnfe) {
+      LOGGER.error("Cannot find {}", filePathUri, fnfe);
     } catch (IOException ioe) {
-      LOGGER.error("Cannot load {}", configFilePathUri, ioe);
+      LOGGER.error("Cannot load {}", filePathUri, ioe);
     } finally {
-      if (!properties.isEmpty()) {
-        LOGGER.info("Loading {}", configFilePathUri);
-      } else {
+      if (properties.isEmpty()) {
         saveConfig();
       }
     }
@@ -166,7 +164,7 @@ public final class LauncherConfig {
       return;
     }
 
-    URI configFilePathUri = filePath.toUri();
+    URI filePathUri = filePath.toUri();
 
     try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
       LinkedProperties properties = new LinkedProperties();
@@ -182,13 +180,9 @@ public final class LauncherConfig {
 
       fos.flush();
     } catch (FileNotFoundException fnfe) {
-      LOGGER.error("Cannot find {}", configFilePathUri, fnfe);
+      LOGGER.error("Cannot find {}", filePathUri, fnfe);
     } catch (IOException ioe) {
-      LOGGER.error("Cannot save {}", configFilePathUri, ioe);
-    } finally {
-      if (filePath.toFile().exists()) {
-        LOGGER.info("Saving {}", configFilePathUri);
-      }
+      LOGGER.error("Cannot save {}", filePathUri, ioe);
     }
   }
 }

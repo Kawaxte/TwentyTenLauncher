@@ -18,7 +18,7 @@ package ch.kawaxte.launcher.ui;
 import ch.kawaxte.launcher.LauncherConfig;
 import ch.kawaxte.launcher.LauncherLanguage;
 import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
-import ch.kawaxte.launcher.impl.swing.CustomJPanel;
+import ch.kawaxte.launcher.impl.swing.JNotchPanel;
 import ch.kawaxte.launcher.impl.swing.TransparentJButton;
 import ch.kawaxte.launcher.util.LauncherLanguageUtils;
 import ch.kawaxte.launcher.util.LauncherUtils;
@@ -48,14 +48,14 @@ import lombok.Getter;
  * @since 1.4.1123_04
  */
 @Getter
-public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
+public class MicrosoftAuthPanel extends JNotchPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
   private static MicrosoftAuthPanel instance;
-  private final JLabel copyCodeLabel;
+  private final JLabel enterCodeInBrowserLabel;
   private final JLabel userCodeLabel;
   private final JProgressBar expiresInProgressBar;
-  private final TransparentJButton openBrowserButton;
+  private final TransparentJButton openInBrowserButton;
   private final TransparentJButton cancelButton;
   private String verificationUri;
 
@@ -77,10 +77,11 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
 
     setInstance(this);
 
-    this.copyCodeLabel = new JLabel(LauncherLanguageUtils.getMAPKeys()[0], SwingConstants.CENTER);
+    this.enterCodeInBrowserLabel =
+        new JLabel(LauncherLanguageUtils.getMAPKeys()[0], SwingConstants.CENTER);
     this.userCodeLabel = new JLabel("", SwingConstants.CENTER);
     this.expiresInProgressBar = new JProgressBar();
-    this.openBrowserButton = new TransparentJButton(LauncherLanguageUtils.getMAPKeys()[1]);
+    this.openInBrowserButton = new TransparentJButton(LauncherLanguageUtils.getMAPKeys()[1]);
     this.cancelButton = new TransparentJButton(LauncherLanguageUtils.getMAPKeys()[2]);
 
     this.setLayout(this.getGroupLayout());
@@ -97,7 +98,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
             clipboard.setContents(transferable, null);
           }
         });
-    this.openBrowserButton.addActionListener(this);
+    this.openInBrowserButton.addActionListener(this);
     this.cancelButton.addActionListener(this);
 
     String selectedLanguage = (String) LauncherConfig.get(0);
@@ -140,9 +141,9 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
    */
   public void updateComponentTexts(UTF8ResourceBundle bundle) {
     LauncherUtils.setComponentText(
-        bundle, this.copyCodeLabel, LauncherLanguageUtils.getMAPKeys()[0]);
+        bundle, this.enterCodeInBrowserLabel, LauncherLanguageUtils.getMAPKeys()[0]);
     LauncherUtils.setComponentText(
-        bundle, this.openBrowserButton, LauncherLanguageUtils.getMAPKeys()[1]);
+        bundle, this.openInBrowserButton, LauncherLanguageUtils.getMAPKeys()[1]);
     LauncherUtils.setComponentText(
         bundle, this.cancelButton, LauncherLanguageUtils.getMAPKeys()[2]);
   }
@@ -156,7 +157,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
   private LayoutManager getGroupLayout() {
     int width = 0;
 
-    JButton[] buttons = new JButton[] {this.openBrowserButton, this.cancelButton};
+    JButton[] buttons = new JButton[] {this.openInBrowserButton, this.cancelButton};
     for (JButton button : buttons) {
       width = Math.max(width, button.getPreferredSize().width);
     }
@@ -168,30 +169,32 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
         gl.createSequentialGroup()
             .addGroup(
                 gl.createParallelGroup()
-                    .addComponent(this.copyCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(
+                        this.enterCodeInBrowserLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(this.expiresInProgressBar)
                     .addGroup(
                         gl.createSequentialGroup()
-                            .addComponent(this.openBrowserButton, 0, width, Short.MAX_VALUE)
+                            .addComponent(this.openInBrowserButton, 0, width, Short.MAX_VALUE)
                             .addComponent(this.cancelButton, 0, width, Short.MAX_VALUE))));
     gl.setVerticalGroup(
         gl.createSequentialGroup()
-            .addComponent(this.copyCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(
+                this.enterCodeInBrowserLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(this.userCodeLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(this.expiresInProgressBar)
             .addGroup(
                 gl.createParallelGroup()
-                    .addComponent(this.openBrowserButton)
+                    .addComponent(this.openInBrowserButton)
                     .addComponent(this.cancelButton)));
     return gl;
   }
 
   /**
-   * Handles the actions performed on {@link #openBrowserButton} and {@link #cancelButton}.
+   * Handles the actions performed on {@link #openInBrowserButton} and {@link #cancelButton}.
    *
-   * <p>When processing {@link #openBrowserButton}, the user code is copied to the clipboard and the
-   * default browser is opened with the verification URI.
+   * <p>When processing {@link #openInBrowserButton}, the user code is copied to the clipboard and
+   * the default browser is opened with the verification URI.
    *
    * <p>When processing {@link #cancelButton}, the {@link LauncherPanel} is swapped in place of the
    * current panel. Since cancellation will make the panel 'technically' invisible, Microsoft
@@ -202,7 +205,7 @@ public class MicrosoftAuthPanel extends CustomJPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
-    if (Objects.equals(source, this.openBrowserButton)) {
+    if (Objects.equals(source, this.openInBrowserButton)) {
       Clipboard clipboard = this.getToolkit().getSystemClipboard();
       StringSelection transferable = new StringSelection(this.userCodeLabel.getText());
       clipboard.setContents(transferable, null);

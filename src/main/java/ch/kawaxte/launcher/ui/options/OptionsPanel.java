@@ -50,7 +50,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
   private static OptionsPanel instance;
   private final LanguageGroupBox languageGroupBox;
   private final VersionGroupBox versionGroupBox;
-  private final JLabel buildTimeLabel;
+  private final JLabel implVersionLabel;
   private final JButton openFolderButton;
   @Getter private final JButton saveOptionsButton;
 
@@ -71,14 +71,14 @@ public class OptionsPanel extends JPanel implements ActionListener {
 
     this.languageGroupBox = new LanguageGroupBox();
     this.versionGroupBox = new VersionGroupBox();
-    this.buildTimeLabel =
-        new JLabel(LauncherUtils.getManifestAttribute("Build-Time"), SwingConstants.CENTER);
+    this.implVersionLabel =
+        new JLabel(this.getClass().getPackage().getImplementationVersion(), SwingConstants.CENTER);
     this.openFolderButton = new JButton(LauncherLanguageUtils.getOPKeys()[2]);
     this.saveOptionsButton = new JButton(LauncherLanguageUtils.getOPKeys()[3]);
 
     this.setLayout(this.getGroupLayout());
 
-    this.buildTimeLabel.setEnabled(false);
+    this.implVersionLabel.setEnabled(false);
     this.saveOptionsButton.setEnabled(false);
 
     this.openFolderButton.addActionListener(this);
@@ -140,7 +140,10 @@ public class OptionsPanel extends JPanel implements ActionListener {
                     .addGroup(
                         gl.createSequentialGroup()
                             .addComponent(
-                                this.buildTimeLabel, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                                this.implVersionLabel,
+                                0,
+                                GroupLayout.PREFERRED_SIZE,
+                                Short.MAX_VALUE)
                             .addComponent(
                                 this.openFolderButton,
                                 0,
@@ -157,7 +160,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
             .addComponent(this.versionGroupBox)
             .addGroup(
                 gl.createParallelGroup(Alignment.CENTER)
-                    .addComponent(this.buildTimeLabel)
+                    .addComponent(this.implVersionLabel)
                     .addComponent(this.openFolderButton)
                     .addComponent(this.saveOptionsButton)));
     return gl;

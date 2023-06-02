@@ -19,8 +19,8 @@ import ch.kawaxte.launcher.Launcher;
 import ch.kawaxte.launcher.LauncherConfig;
 import ch.kawaxte.launcher.LauncherLanguage;
 import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
-import ch.kawaxte.launcher.impl.swing.CustomJPanel;
 import ch.kawaxte.launcher.impl.swing.JHyperlink;
+import ch.kawaxte.launcher.impl.swing.JNotchPanel;
 import ch.kawaxte.launcher.impl.swing.TransparentJButton;
 import ch.kawaxte.launcher.impl.swing.TransparentJCheckBox;
 import ch.kawaxte.launcher.ui.options.OptionsDialog;
@@ -52,7 +52,7 @@ import javax.swing.SwingUtilities;
  * @author Kawaxte
  * @since 1.5.0623_01
  */
-public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
+public class YggdrasilAuthPanel extends JNotchPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
   private static YggdrasilAuthPanel instance;
@@ -74,7 +74,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
    * selected language.
    *
    * <p>It also handles the click event for the {@link #linkLabel} component, which opens the
-   * browser and navigates to the link specified in {@link LauncherUtils#getUrls()}.
+   * browser and navigates to the link specified in {@link LauncherUtils#getGenericUrls()}.
    *
    * @see #setLayout(LayoutManager)
    * @see #updateComponentTexts(UTF8ResourceBundle)
@@ -121,8 +121,8 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
             LauncherUtils.openBrowser(
                 Objects.nonNull(LauncherUtils.getOutdated())
                         && Boolean.TRUE.equals(LauncherUtils.getOutdated())
-                    ? String.valueOf(LauncherUtils.getUrls()[1])
-                    : String.valueOf(LauncherUtils.getUrls()[0]));
+                    ? String.valueOf(LauncherUtils.getGenericUrls()[2])
+                    : String.valueOf(LauncherUtils.getGenericUrls()[0]));
           }
         });
     this.signinButton.addActionListener(this);
@@ -264,18 +264,7 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
         return;
       }
 
-      String microsoftProfileName = (String) LauncherConfig.get(6);
-      String microsoftProfileId = (String) LauncherConfig.get(5);
-      String microsoftAccessToken = (String) LauncherConfig.get(7);
-      boolean accessTokenMatched =
-          Objects.nonNull(microsoftAccessToken)
-              && LauncherUtils.JWT_PATTERN.matcher(microsoftAccessToken).matches();
-      if (!accessTokenMatched) {
-        MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.AZURE_CLIENT_ID);
-        return;
-      }
-
-      Launcher.launchMinecraft(microsoftProfileName, microsoftAccessToken, microsoftProfileId);
+      this.signInWithMicrosoft();
     }
     if (Objects.equals(source, this.optionsButton)) {
       SwingUtilities.invokeLater(
@@ -294,29 +283,68 @@ public class YggdrasilAuthPanel extends CustomJPanel implements ActionListener {
       String username = this.usernameField.getText();
       String password = new String(this.passwordField.getPassword());
       boolean rememberPasswordChecked = this.rememberPasswordCheckBox.isSelected();
-
-      Object mojangUsername = LauncherConfig.get(11);
-      Object mojangPassword = LauncherUtils.decodeFromBase64(12);
-      String mojangProfileName = (String) LauncherConfig.get(15);
-      String mojangProfileId = (String) LauncherConfig.get(14);
-      String mojangAccessToken = (String) LauncherConfig.get(17);
-      String mojangClientToken = (String) LauncherConfig.get(18);
-
-      boolean usernameChanged = Objects.equals(mojangUsername, username);
-      boolean passwordChanged = Objects.equals(mojangPassword, password) && !password.isEmpty();
-      boolean accessTokenMatched =
-          Objects.nonNull(mojangAccessToken)
-              && LauncherUtils.JWT_PATTERN.matcher(mojangAccessToken).matches();
-      boolean clientTokenMatched =
-          Objects.nonNull(mojangClientToken)
-              && LauncherUtils.UUID_PATTERN.matcher(mojangClientToken).matches();
-      if ((!usernameChanged || !passwordChanged) || (!accessTokenMatched || !clientTokenMatched)) {
-        YggdrasilAuthUtils.executeYggdrasilAuthWorker(
-            username, password, mojangClientToken, rememberPasswordChecked);
-        return;
-      }
-
-      Launcher.launchMinecraft(mojangProfileName, mojangAccessToken, mojangProfileId);
+      this.signInWithMojang(username, password, rememberPasswordChecked);
     }
+  }
+
+  /**
+   * Signs in the user with Mojang's authentication servers.
+   *
+   * @param username the username or email address in the text field
+   * @param password the password in the password field
+   * @param rememberPasswordChecked whether the "Remember password" checkbox is checked
+   */
+  private void signInWithMojang(String username, String password, boolean rememberPasswordChecked) {
+    Object mojangUsername = LauncherConfig.get(11);
+    Object mojangPassword = LauncherUtils.decodeFromBase64(12);
+    String mojangProfileName = (String) LauncherConfig.get(15);
+    String mojangProfileId = (String) LauncherConfig.get(14);
+    String mojangAccessToken = (String) LauncherConfig.get(17);
+    String mojangClientToken = (String) LauncherConfig.get(18);
+
+    boolean usernameChanged = Objects.equals(mojangUsername, username);
+    boolean passwordChanged = Objects.equals(mojangPassword, password) && !password.isEmpty();
+    boolean accessTokenMatched =
+        Objects.nonNull(mojangAccessToken)
+            && LauncherUtils.JWT_PATTERN.matcher(mojangAccessToken).matches();
+    boolean clientTokenMatched =
+        Objects.nonNull(mojangClientToken)
+            && LauncherUtils.UUID_PATTERN.matcher(mojangClientToken).matches();
+    if ((!usernameChanged || !passwordChanged) || (!accessTokenMatched || !clientTokenMatched)) {
+      YggdrasilAuthUtils.executeYggdrasilAuthWorker(
+          username, password, mojangClientToken, rememberPasswordChecked);
+      return;
+    }
+
+    boolean mojangCredentialsEmpty =
+        mojangProfileName.isEmpty() || mojangAccessToken.isEmpty() || mojangProfileId.isEmpty();
+
+    Launcher.launchMinecraft(
+        mojangProfileName,
+        mojangAccessToken,
+        mojangProfileId,
+        mojangProfileName.isEmpty() || mojangCredentialsEmpty);
+  }
+
+  /** Signs in the user with Microsoft's authentication servers. */
+  private void signInWithMicrosoft() {
+    String microsoftProfileName = (String) LauncherConfig.get(6);
+    String microsoftProfileId = (String) LauncherConfig.get(5);
+    String microsoftAccessToken = (String) LauncherConfig.get(7);
+    boolean accessTokenMatched =
+        Objects.nonNull(microsoftAccessToken)
+            && LauncherUtils.JWT_PATTERN.matcher(microsoftAccessToken).matches();
+    if (!accessTokenMatched) {
+      MicrosoftAuthUtils.executeMicrosoftAuthWorker(MicrosoftAuthUtils.AZURE_CLIENT_ID);
+      return;
+    }
+
+    boolean microsoftCredentialsEmpty =
+        microsoftProfileName.isEmpty()
+            || microsoftAccessToken.isEmpty()
+            || microsoftProfileId.isEmpty();
+
+    Launcher.launchMinecraft(
+        microsoftProfileName, microsoftAccessToken, microsoftProfileId, microsoftCredentialsEmpty);
   }
 }

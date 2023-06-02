@@ -17,7 +17,6 @@ package ch.kawaxte.launcher;
 
 import ch.kawaxte.launcher.impl.UTF8ResourceBundle;
 import ch.kawaxte.launcher.impl.UTF8ResourceBundle.UTF8Control;
-import ch.kawaxte.launcher.util.LauncherOptionsUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,14 +64,15 @@ public final class LauncherLanguage {
    *     codes</a>
    */
   public static UTF8ResourceBundle getUTF8Bundle(String languageCode) {
+    String baseName = "assets/lang/messages";
     return Optional.ofNullable(languageCode)
         .map(
             code ->
                 (UTF8ResourceBundle)
                     ResourceBundle.getBundle(
-                        "messages", Locale.forLanguageTag(code), new UTF8Control()))
+                        baseName, Locale.forLanguageTag(code), new UTF8Control()))
         .orElseGet(
-            () -> (UTF8ResourceBundle) ResourceBundle.getBundle("messages", new UTF8Control()));
+            () -> (UTF8ResourceBundle) ResourceBundle.getBundle(baseName, new UTF8Control()));
   }
 
   /**
@@ -89,22 +89,26 @@ public final class LauncherLanguage {
    *     codes</a>
    */
   public static void loadLanguage(String baseName, String languageCode) {
+    Objects.requireNonNull(baseName, "baseName cannot be null");
+    Objects.requireNonNull(languageCode, "languageCode cannot be null");
+
     String fileName = String.format("%s_%s.properties", baseName, languageCode);
-    URL fileUrl = LauncherOptionsUtils.class.getClassLoader().getResource(fileName);
+    URL fileUrl =
+        LauncherLanguage.class
+            .getClassLoader()
+            .getResource(String.format("assets/lang/%s", fileName));
 
     InputStream is =
         Optional.ofNullable(
-                LauncherOptionsUtils.class.getClassLoader().getResourceAsStream(fileName))
+                LauncherLanguage.class
+                    .getClassLoader()
+                    .getResourceAsStream(String.format("assets/lang/%s", fileName)))
             .orElseThrow(() -> new NullPointerException("is cannot be null"));
     try (BufferedReader br =
         new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       bundle = new UTF8ResourceBundle(br);
     } catch (IOException ioe) {
       LOGGER.error("Cannot load {}", fileUrl, ioe);
-    } finally {
-      if (Objects.nonNull(fileUrl)) {
-        LOGGER.info("Loading {}", fileUrl);
-      }
     }
   }
 }
