@@ -16,7 +16,6 @@
 package ch.kawaxte.launcher.util;
 
 import ch.kawaxte.launcher.LauncherConfig;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -57,21 +56,16 @@ public final class MinecraftUtils {
     long currentTime = System.currentTimeMillis();
 
     String fileName = String.format("%s_%s_%s.log", selectedVersion, username, currentTime);
-
+    
     Path filePath = LOGS_DIRECTORY_PATH.resolve(fileName);
-    File file = filePath.toFile();
     try {
-      return !file.exists() && !file.createNewFile() ? null : filePath;
+      Files.createDirectories(LOGS_DIRECTORY_PATH);
+      if (!Files.exists(filePath)) {
+        Files.createFile(filePath);
+      }
+      return filePath;
     } catch (IOException ioe) {
       LOGGER.error("Cannot create {}", filePath, ioe);
-    } finally {
-      if (file.exists() && file.length() == 0) {
-        try {
-          Files.delete(filePath);
-        } catch (IOException ioe) {
-          LOGGER.error("Cannot delete {}", filePath, ioe);
-        }
-      }
     }
     return null;
   }
