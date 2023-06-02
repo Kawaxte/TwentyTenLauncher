@@ -56,7 +56,7 @@ public final class MinecraftUtils {
     long currentTime = System.currentTimeMillis();
 
     String fileName = String.format("%s_%s_%s.log", selectedVersion, username, currentTime);
-    
+
     Path filePath = LOGS_DIRECTORY_PATH.resolve(fileName);
     try {
       Files.createDirectories(LOGS_DIRECTORY_PATH);
