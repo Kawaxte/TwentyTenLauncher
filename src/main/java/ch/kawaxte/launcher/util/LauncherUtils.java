@@ -104,12 +104,11 @@ public final class LauncherUtils {
    * Decodes a value from Base64.
    *
    * @param index the index of the value to decode
-   * @return the decoded value if the length is not 0, otherwise {@code null}
+   * @return the decoded value if the length is not 0, otherwise an empty string
    */
   public static String decodeFromBase64(int index) {
-    if (Objects.isNull(LauncherConfig.get(index))) {
-      return null;
-    }
+    String value = LauncherConfig.get(index).toString();
+    Objects.requireNonNull(value, "value cannot be null");
 
     byte[] bytes = (LauncherConfig.get(index).toString()).getBytes(StandardCharsets.UTF_8);
     return bytes.length == 0 ? "" : new String(Base64.getDecoder().decode(bytes));
