@@ -31,10 +31,10 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -79,19 +79,23 @@ public final class MinecraftUpdate {
 
     BIN_DIRECTORY_PATH = LauncherUtils.WORKING_DIRECTORY_PATH.resolve("bin");
     NATIVES_DIRECTORY_PATH = BIN_DIRECTORY_PATH.resolve("natives");
-
-    File nativesDirectory = NATIVES_DIRECTORY_PATH.toFile();
-    if (!nativesDirectory.exists() && !nativesDirectory.mkdirs()) {
-      LOGGER.warn("Could not create {}", NATIVES_DIRECTORY_PATH);
+    if (!Files.exists(NATIVES_DIRECTORY_PATH)) {
+      try {
+        Files.createDirectories(NATIVES_DIRECTORY_PATH);
+      } catch (IOException ioe) {
+        LOGGER.error("Cannot create {}", NATIVES_DIRECTORY_PATH);
+      }
     }
 
     String selectedVersion = (String) LauncherConfig.get(4);
     VERSIONS_DIRECTORY_PATH = LauncherUtils.WORKING_DIRECTORY_PATH.resolve("versions");
     VERSION_DIRECTORY_PATH = VERSIONS_DIRECTORY_PATH.resolve(selectedVersion);
-
-    File versionDirectory = VERSION_DIRECTORY_PATH.toFile();
-    if (!versionDirectory.exists() && !versionDirectory.mkdirs()) {
-      LOGGER.warn("Could not create {}", VERSION_DIRECTORY_PATH);
+    if (!Files.exists(VERSION_DIRECTORY_PATH)) {
+      try {
+        Files.createDirectories(VERSION_DIRECTORY_PATH);
+      } catch (IOException ioe) {
+        LOGGER.error("Cannot create {}", VERSION_DIRECTORY_PATH);
+      }
     }
   }
 
@@ -470,15 +474,15 @@ public final class MinecraftUpdate {
 
       int fileNameIndex = url.toString().lastIndexOf("/") + 1;
       String fileName = url.toString().substring(fileNameIndex);
-      File file = p.resolve(fileName).toFile();
+      Path filePath = p.resolve(fileName);
 
       try (BufferedInputStream bis = new BufferedInputStream(response.getContent());
-          FileOutputStream fos = new FileOutputStream(file)) {
+          OutputStream os = Files.newOutputStream(filePath)) {
         byte[] buffer = new byte[65536];
         int read;
 
         while ((read = bis.read(buffer)) != -1) {
-          fos.write(buffer, 0, read);
+          os.write(buffer, 0, read);
           current.addAndGet(read);
 
           int downloadProgress = (current.get() * 100) / total;
@@ -511,25 +515,25 @@ public final class MinecraftUpdate {
 
     Consumer<String> move =
         fileName -> {
-          File file = p.resolve(fileName).toFile();
-          File fileDest;
+          Path srcFile = p.resolve(fileName);
+          Path destFile;
 
           if (Objects.equals(fileName, clientJar)) {
-            fileDest = VERSION_DIRECTORY_PATH.resolve(fileName).toFile();
+            destFile = VERSION_DIRECTORY_PATH.resolve(fileName);
           } else
-            fileDest =
+            destFile =
                 fileName.startsWith("natives-") && fileName.endsWith(".zip")
-                    ? NATIVES_DIRECTORY_PATH.resolve(fileName).toFile()
-                    : BIN_DIRECTORY_PATH.resolve(fileName).toFile();
+                    ? NATIVES_DIRECTORY_PATH.resolve(fileName)
+                    : BIN_DIRECTORY_PATH.resolve(fileName);
 
           try {
-            if (file.exists()) {
-              Files.move(file.toPath(), fileDest.toPath());
+            if (Files.exists(srcFile)) {
+              Files.move(srcFile, destFile);
             }
           } catch (IOException ioe) {
             displayErrorMessage(ioe.getMessage());
 
-            LOGGER.error("Cannot move {} to {}", file, fileDest, ioe);
+            LOGGER.error("Cannot move {} to {}", srcFile, destFile, ioe);
           }
         };
     move.accept(clientJar);
@@ -547,7 +551,7 @@ public final class MinecraftUpdate {
   /**
    * Extracts the downloaded native package.
    *
-   * @see #extract(AtomicInteger, int, File)
+   * @see #extract(AtomicInteger, int, Path)
    * @see #calculateTotalExtractSize(File[])
    */
   public static void extractDownloadedPackages() {
@@ -573,7 +577,8 @@ public final class MinecraftUpdate {
       return;
     }
 
-    Arrays.stream(zipFiles).forEachOrdered(f -> extract(currentExtractSize, totalExtractSize, f));
+    Arrays.stream(zipFiles)
+        .forEachOrdered(f -> extract(currentExtractSize, totalExtractSize, f.toPath()));
   }
 
   /**
@@ -586,8 +591,8 @@ public final class MinecraftUpdate {
     long size = 0L;
 
     for (File file : files) {
-      try (FileInputStream fis = new FileInputStream(file);
-          BufferedInputStream bis = new BufferedInputStream(fis);
+      try (InputStream is = Files.newInputStream(file.toPath());
+          BufferedInputStream bis = new BufferedInputStream(is);
           ZipInputStream zis = new ZipInputStream(bis)) {
         ZipEntry entry;
 
@@ -612,11 +617,11 @@ public final class MinecraftUpdate {
    *
    * @param current the current size of the extracted files
    * @param total the total size of the files to be extracted
-   * @param file the file to extract
+   * @param p the path to the native package
    */
-  private static void extract(AtomicInteger current, int total, File file) {
-    try (FileInputStream fis = new FileInputStream(file);
-        BufferedInputStream bis = new BufferedInputStream(fis);
+  private static void extract(AtomicInteger current, int total, Path p) {
+    try (InputStream is = Files.newInputStream(p);
+        BufferedInputStream bis = new BufferedInputStream(is);
         ZipInputStream zis = new ZipInputStream(bis)) {
       ZipEntry entry;
 
@@ -626,19 +631,18 @@ public final class MinecraftUpdate {
           continue;
         }
 
-        File nativeFile = NATIVES_DIRECTORY_PATH.resolve(name).toFile();
-        String nativeFileCanonicalPath = nativeFile.getCanonicalPath();
-        if (!nativeFileCanonicalPath.startsWith(NATIVES_DIRECTORY_PATH.toString())) {
-          LOGGER.error("{} is not a valid path", nativeFile);
+        Path nativePath = NATIVES_DIRECTORY_PATH.resolve(name);
+        if (!nativePath.startsWith(NATIVES_DIRECTORY_PATH)) {
+          LOGGER.warn("{} is invalid path", nativePath);
           return;
         }
 
-        try (FileOutputStream fos = new FileOutputStream(nativeFile)) {
+        try (OutputStream os = Files.newOutputStream(nativePath)) {
           byte[] buffer = new byte[65536];
           int read;
 
           while ((read = zis.read(buffer, 0, buffer.length)) != -1) {
-            fos.write(buffer, 0, read);
+            os.write(buffer, 0, read);
             current.addAndGet(read);
 
             int extractProgress = (current.get() * 100) / total;
@@ -653,20 +657,20 @@ public final class MinecraftUpdate {
     } catch (FileNotFoundException fnfe) {
       displayErrorMessage(fnfe.getMessage());
 
-      LOGGER.error("Cannot find {}", file, fnfe);
+      LOGGER.error("Cannot find {}", p, fnfe);
     } catch (IOException ioe) {
       displayErrorMessage(ioe.getMessage());
 
-      LOGGER.error("Cannot extract {}", file, ioe);
+      LOGGER.error("Cannot extract {}", p, ioe);
     } finally {
       try {
-        if (!Files.deleteIfExists(file.toPath())) {
-          LOGGER.warn("Could not delete {}", file);
+        if (!Files.deleteIfExists(p)) {
+          LOGGER.warn("Could not delete {}", p);
         }
       } catch (IOException ioe) {
         displayErrorMessage(ioe.getMessage());
 
-        LOGGER.error("Cannot delete {}", file, ioe);
+        LOGGER.error("Cannot delete {}", p, ioe);
       }
     }
   }
