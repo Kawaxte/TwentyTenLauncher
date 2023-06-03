@@ -17,12 +17,12 @@ package ch.kawaxte.launcher;
 
 import ch.kawaxte.launcher.impl.LinkedProperties;
 import ch.kawaxte.launcher.util.LauncherUtils;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -88,13 +88,15 @@ public final class LauncherConfig {
     String fileName = String.format("%s_%s.properties", "launcher", userName);
 
     Path filePath = LauncherUtils.WORKING_DIRECTORY_PATH.resolve(fileName);
-    File file = filePath.toFile();
-    try {
-      return !file.exists() && !file.createNewFile() ? null : filePath;
-    } catch (IOException ioe) {
-      LOGGER.error("Cannot create {}", filePath, ioe);
+    if (!Files.exists(filePath)) {
+      try {
+        Files.createFile(filePath);
+      } catch (IOException ioe) {
+        LOGGER.error("Cannot create {}", filePath, ioe);
+        return null;
+      }
     }
-    return null;
+    return filePath;
   }
 
   private static Object[] getKeys() {
@@ -125,22 +127,19 @@ public final class LauncherConfig {
    * Loads the configuration from a properties file. If the file does not exist or is empty, saves
    * the current configuration.
    *
-   * <p>If the file cannot be loaded, the configuration is not changed.
-   *
+   * @throws NullPointerException if the {@code filePath} is {@code null}
    * @see #saveConfig()
    */
   public static void loadConfig() {
     Path filePath = getFilePath();
-    if (Objects.isNull(filePath)) {
-      return;
-    }
+    Objects.requireNonNull(filePath, "filePath cannot be null");
 
     URI filePathUri = filePath.toUri();
 
     LinkedProperties properties = new LinkedProperties();
 
-    try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
-      properties.load(fis);
+    try (InputStream is = Files.newInputStream(filePath)) {
+      properties.load(is);
       properties.forEach((key, value) -> PROPERTIES_MAP.put((String) key, value));
     } catch (FileNotFoundException fnfe) {
       LOGGER.error("Cannot find {}", filePathUri, fnfe);
@@ -156,17 +155,15 @@ public final class LauncherConfig {
   /**
    * Saves the current configuration to a properties file.
    *
-   * <p>If the file cannot be saved, the configuration is not changed.
+   * @throws NullPointerException if the {@code filePath} is {@code null}
    */
   public static void saveConfig() {
     Path filePath = getFilePath();
-    if (Objects.isNull(filePath)) {
-      return;
-    }
+    Objects.requireNonNull(filePath, "filePath cannot be null");
 
     URI filePathUri = filePath.toUri();
 
-    try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
+    try (OutputStream os = Files.newOutputStream(filePath)) {
       LinkedProperties properties = new LinkedProperties();
 
       PROPERTIES_MAP
@@ -176,9 +173,9 @@ public final class LauncherConfig {
                 Object value = PROPERTIES_MAP.get(key);
                 properties.put(key, Optional.ofNullable(value).map(Object::toString).orElse(""));
               });
-      properties.store(fos, "TwentyTen Launcher");
+      properties.store(os, "TwentyTen Launcher");
 
-      fos.flush();
+      os.flush();
     } catch (FileNotFoundException fnfe) {
       LOGGER.error("Cannot find {}", filePathUri, fnfe);
     } catch (IOException ioe) {
