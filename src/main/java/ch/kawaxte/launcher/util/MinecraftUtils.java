@@ -86,15 +86,6 @@ public final class MinecraftUtils {
     }
 
     try {
-      Files.createDirectories(LOGS_DIRECTORY_PATH);
-      if (!Files.exists(filePath)) {
-        Files.createFile(filePath);
-      }
-    } catch (IOException ioe) {
-      LOGGER.error("Cannot create {}", filePath, ioe);
-    }
-
-    try {
       PrintStream ps =
           new PrintStream(filePath.toFile()) {
             @Override
