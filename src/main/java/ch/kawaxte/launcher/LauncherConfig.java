@@ -133,7 +133,7 @@ public final class LauncherConfig {
   public static void loadConfig() {
     Path filePath = getFilePath();
     Objects.requireNonNull(filePath, "filePath cannot be null");
-    
+
     URI filePathUri = filePath.toUri();
 
     LinkedProperties properties = new LinkedProperties();
