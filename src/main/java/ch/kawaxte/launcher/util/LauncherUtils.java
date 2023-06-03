@@ -30,7 +30,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,6 +38,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -107,10 +107,13 @@ public final class LauncherUtils {
    * @return the decoded value if the length is not 0, otherwise an empty string
    */
   public static String decodeFromBase64(int index) {
-    String value = LauncherConfig.get(index).toString();
-    Objects.requireNonNull(value, "value cannot be null");
+    if (Objects.isNull(LauncherConfig.get(index))) {
+      return "";
+    }
 
-    byte[] bytes = (LauncherConfig.get(index).toString()).getBytes(StandardCharsets.UTF_8);
+    String value = LauncherConfig.get(index).toString();
+
+    byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
     return bytes.length == 0 ? "" : new String(Base64.getDecoder().decode(bytes));
   }
 
@@ -235,12 +238,16 @@ public final class LauncherUtils {
         EPlatform.MACOS, Paths.get(userHome, "Library", "Application Support", "twentyten"));
     directoryMap.put(EPlatform.WINDOWS, Paths.get(appData, ".twentyten"));
 
-    File workingDir = directoryMap.get(EPlatform.getOSName()).toFile();
-    if (!workingDir.exists() && !workingDir.mkdirs()) {
-      LOGGER.warn("Could not create {}", workingDir.getAbsolutePath());
-      return null;
+    Path dirPath = directoryMap.get(EPlatform.getOSName());
+    if (!Files.exists(dirPath)) {
+      try {
+        Files.createDirectories(dirPath);
+      } catch (IOException ioe) {
+        LOGGER.error("Cannot create {}", dirPath, ioe);
+        return null;
+      }
     }
-    return workingDir.toPath();
+    return dirPath;
   }
 
   /**
