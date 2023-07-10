@@ -47,10 +47,8 @@
           <minimizeJar>true</minimizeJar>
           <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
           <transformers>
-            <transformer
-              implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-            <transformer
-              implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
               <mainClass>ch.kawaxte.launcher.Launcher</mainClass>
             </transformer>
           </transformers>
@@ -109,7 +107,7 @@
     <dependency>
       <artifactId>commons-codec</artifactId>
       <groupId>commons-codec</groupId>
-      <version>1.15</version>
+      <version>1.16.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
     <dependency>
