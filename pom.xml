@@ -47,10 +47,8 @@
           <minimizeJar>true</minimizeJar>
           <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
           <transformers>
-            <transformer
-              implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-            <transformer
-              implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
               <mainClass>ch.kawaxte.launcher.Launcher</mainClass>
             </transformer>
           </transformers>
@@ -103,7 +101,7 @@
     <dependency>
       <artifactId>google-http-client</artifactId>
       <groupId>com.google.http-client</groupId>
-      <version>1.43.2</version>
+      <version>1.43.3</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
     <dependency>
